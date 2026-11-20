@@ -1,0 +1,767 @@
+{
+ "run": "SU_r04v2",
+ "status": "PASS",
+ "images": [
+  {
+   "file": "KS00_alley_start.png",
+   "tag": "KS00_alley_start",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "wall_w",
+     "rect_px": [
+      38,
+      162,
+      538,
+      756
+     ],
+     "repetition": {
+      "hp_px": 83,
+      "main_lobe_px": 3,
+      "lags": 81910,
+      "peak": 0.0308,
+      "peak_lag": [
+       -4,
+       6
+      ],
+      "dither_peak": 0.0538,
+      "top": [
+       {
+        "lag": [
+         -4,
+         6
+        ],
+        "period_px": 7.2,
+        "r": 0.031,
+        "bump": 0.086
+       },
+       {
+        "lag": [
+         -7,
+         3
+        ],
+        "period_px": 7.6,
+        "r": 0.022,
+        "bump": 0.131
+       }
+      ]
+     },
+     "micro": 3.304,
+     "meso": 0.769,
+     "valid_tiles": 1.0,
+     "mean_luma": 24.49
+    },
+    {
+     "name": "wall_e",
+     "rect_px": [
+      1382,
+      162,
+      1882,
+      756
+     ],
+     "repetition": {
+      "hp_px": 83,
+      "main_lobe_px": 8,
+      "lags": 81826,
+      "peak": 0.0809,
+      "peak_lag": [
+       -64,
+       158
+      ],
+      "dither_peak": 0.295,
+      "top": [
+       {
+        "lag": [
+         -64,
+         158
+        ],
+        "period_px": 170.5,
+        "r": 0.081,
+        "bump": 0.127
+       },
+       {
+        "lag": [
+         130,
+         165
+        ],
+        "period_px": 210.1,
+        "r": 0.077,
+        "bump": 0.118
+       },
+       {
+        "lag": [
+         15,
+         168
+        ],
+        "period_px": 168.7,
+        "r": 0.073,
+        "bump": 0.083
+       },
+       {
+        "lag": [
+         14,
+         171
+        ],
+        "period_px": 171.6,
+        "r": 0.072,
+        "bump": 0.077
+       },
+       {
+        "lag": [
+         138,
+         171
+        ],
+        "period_px": 219.7,
+        "r": 0.072,
+        "bump": 0.116
+       }
+      ]
+     },
+     "micro": 1.33,
+     "meso": 0.477,
+     "valid_tiles": 1.0,
+     "mean_luma": 24.17
+    },
+    {
+     "name": "floor",
+     "rect_px": [
+      576,
+      886,
+      1344,
+      1069
+     ],
+     "repetition": {
+      "hp_px": 31,
+      "main_lobe_px": 3,
+      "lags": 38640,
+      "peak": 0.0536,
+      "peak_lag": [
+       -1,
+       3
+      ],
+      "dither_peak": 0.3758,
+      "top": [
+       {
+        "lag": [
+         -1,
+         3
+        ],
+        "period_px": 3.2,
+        "r": 0.054,
+        "bump": 0.177
+       },
+       {
+        "lag": [
+         217,
+         30
+        ],
+        "period_px": 219.1,
+        "r": 0.032,
+        "bump": 0.051
+       },
+       {
+        "lag": [
+         -142,
+         12
+        ],
+        "period_px": 142.5,
+        "r": 0.028,
+        "bump": 0.057
+       },
+       {
+        "lag": [
+         69,
+         61
+        ],
+        "period_px": 92.1,
+        "r": 0.028,
+        "bump": 0.05
+       },
+       {
+        "lag": [
+         207,
+         40
+        ],
+        "period_px": 210.8,
+        "r": 0.028,
+        "bump": 0.057
+       }
+      ]
+     },
+     "micro": 1.229,
+     "meso": 0.188,
+     "valid_tiles": 1.0,
+     "mean_luma": 20.29
+    }
+   ],
+   "checks": [
+    {
+     "name": "wall_w repetition (any lag)",
+     "status": "INFO",
+     "value": 0.031,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-4, 6]:0.031, [-7, 3]:0.022"
+    },
+    {
+     "name": "wall_w micro",
+     "status": "INFO",
+     "value": 3.3,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_w meso",
+     "status": "INFO",
+     "value": 0.77,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e repetition (any lag)",
+     "status": "INFO",
+     "value": 0.081,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-64, 158]:0.081, [130, 165]:0.077, [15, 168]:0.073"
+    },
+    {
+     "name": "wall_e micro",
+     "status": "INFO",
+     "value": 1.33,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e meso",
+     "status": "INFO",
+     "value": 0.48,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "floor repetition (any lag)",
+     "status": "INFO",
+     "value": 0.054,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-1, 3]:0.054, [217, 30]:0.032, [-142, 12]:0.028"
+    },
+    {
+     "name": "floor micro",
+     "status": "INFO",
+     "value": 1.23,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "floor meso",
+     "status": "INFO",
+     "value": 0.19,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "KS01_alley_noodle.png",
+   "tag": "KS01_alley_noodle",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "wall_w",
+     "rect_px": [
+      38,
+      216,
+      576,
+      810
+     ],
+     "repetition": {
+      "hp_px": 89,
+      "main_lobe_px": 3,
+      "lags": 88166,
+      "peak": 0.0531,
+      "peak_lag": [
+       149,
+       168
+      ],
+      "dither_peak": 0.2837,
+      "top": [
+       {
+        "lag": [
+         149,
+         168
+        ],
+        "period_px": 224.6,
+        "r": 0.053,
+        "bump": 0.07
+       },
+       {
+        "lag": [
+         148,
+         178
+        ],
+        "period_px": 231.5,
+        "r": 0.047,
+        "bump": 0.059
+       },
+       {
+        "lag": [
+         154,
+         171
+        ],
+        "period_px": 230.1,
+        "r": 0.047,
+        "bump": 0.058
+       },
+       {
+        "lag": [
+         166,
+         149
+        ],
+        "period_px": 223.1,
+        "r": 0.044,
+        "bump": 0.059
+       },
+       {
+        "lag": [
+         145,
+         164
+        ],
+        "period_px": 218.9,
+        "r": 0.043,
+        "bump": 0.063
+       }
+      ]
+     },
+     "micro": 1.298,
+     "meso": 0.398,
+     "valid_tiles": 1.0,
+     "mean_luma": 20.64
+    }
+   ],
+   "checks": [
+    {
+     "name": "wall_w repetition (any lag)",
+     "status": "INFO",
+     "value": 0.053,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [149, 168]:0.053, [148, 178]:0.047, [154, 171]:0.047"
+    },
+    {
+     "name": "wall_w micro",
+     "status": "INFO",
+     "value": 1.3,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_w meso",
+     "status": "INFO",
+     "value": 0.4,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "KS02_alley_slit.png",
+   "tag": "KS02_alley_slit",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "wall_w",
+     "rect_px": [
+      38,
+      432,
+      384,
+      1026
+     ],
+     "repetition": {
+      "hp_px": 57,
+      "main_lobe_px": 3,
+      "lags": 56632,
+      "peak": 0.0442,
+      "peak_lag": [
+       78,
+       180
+      ],
+      "dither_peak": 0.4552,
+      "top": [
+       {
+        "lag": [
+         78,
+         180
+        ],
+        "period_px": 196.2,
+        "r": 0.044,
+        "bump": 0.061
+       },
+       {
+        "lag": [
+         -37,
+         35
+        ],
+        "period_px": 50.9,
+        "r": 0.043,
+        "bump": 0.057
+       },
+       {
+        "lag": [
+         34,
+         57
+        ],
+        "period_px": 66.4,
+        "r": 0.043,
+        "bump": 0.071
+       },
+       {
+        "lag": [
+         41,
+         209
+        ],
+        "period_px": 213.0,
+        "r": 0.041,
+        "bump": 0.057
+       },
+       {
+        "lag": [
+         38,
+         208
+        ],
+        "period_px": 211.4,
+        "r": 0.04,
+        "bump": 0.061
+       }
+      ]
+     },
+     "micro": 1.188,
+     "meso": 0.333,
+     "valid_tiles": 1.0,
+     "mean_luma": 19.77
+    },
+    {
+     "name": "wall_e",
+     "rect_px": [
+      1536,
+      432,
+      1882,
+      1026
+     ],
+     "repetition": {
+      "hp_px": 57,
+      "main_lobe_px": 3,
+      "lags": 56632,
+      "peak": 0.0349,
+      "peak_lag": [
+       -27,
+       221
+      ],
+      "dither_peak": 0.3186,
+      "top": [
+       {
+        "lag": [
+         -27,
+         221
+        ],
+        "period_px": 222.6,
+        "r": 0.035,
+        "bump": 0.05
+       },
+       {
+        "lag": [
+         -68,
+         215
+        ],
+        "period_px": 225.5,
+        "r": 0.034,
+        "bump": 0.052
+       },
+       {
+        "lag": [
+         -107,
+         109
+        ],
+        "period_px": 152.7,
+        "r": 0.03,
+        "bump": 0.11
+       },
+       {
+        "lag": [
+         -72,
+         138
+        ],
+        "period_px": 155.7,
+        "r": 0.029,
+        "bump": 0.051
+       },
+       {
+        "lag": [
+         0,
+         70
+        ],
+        "period_px": 70.0,
+        "r": 0.029,
+        "bump": 0.098
+       }
+      ]
+     },
+     "micro": 1.405,
+     "meso": 0.363,
+     "valid_tiles": 1.0,
+     "mean_luma": 19.07
+    }
+   ],
+   "checks": [
+    {
+     "name": "wall_w repetition (any lag)",
+     "status": "INFO",
+     "value": 0.044,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [78, 180]:0.044, [-37, 35]:0.043, [34, 57]:0.043"
+    },
+    {
+     "name": "wall_w micro",
+     "status": "INFO",
+     "value": 1.19,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_w meso",
+     "status": "INFO",
+     "value": 0.33,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e repetition (any lag)",
+     "status": "INFO",
+     "value": 0.035,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-27, 221]:0.035, [-68, 215]:0.034, [-107, 109]:0.03"
+    },
+    {
+     "name": "wall_e micro",
+     "status": "INFO",
+     "value": 1.41,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e meso",
+     "status": "INFO",
+     "value": 0.36,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "KS19_goal_window.png",
+   "tag": "KS19_goal_window",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "wall_w",
+     "rect_px": [
+      96,
+      378,
+      576,
+      1026
+     ],
+     "repetition": {
+      "hp_px": 81,
+      "main_lobe_px": 23,
+      "lags": 85002,
+      "peak": 0.2655,
+      "peak_lag": [
+       -23,
+       12
+      ],
+      "dither_peak": 0.0113,
+      "top": [
+       {
+        "lag": [
+         -23,
+         12
+        ],
+        "period_px": 25.9,
+        "r": 0.265,
+        "bump": 0.055
+       },
+       {
+        "lag": [
+         29,
+         13
+        ],
+        "period_px": 31.8,
+        "r": 0.238,
+        "bump": 0.072
+       },
+       {
+        "lag": [
+         178,
+         28
+        ],
+        "period_px": 180.2,
+        "r": 0.04,
+        "bump": 0.074
+       },
+       {
+        "lag": [
+         186,
+         16
+        ],
+        "period_px": 186.7,
+        "r": 0.036,
+        "bump": 0.077
+       },
+       {
+        "lag": [
+         187,
+         28
+        ],
+        "period_px": 189.1,
+        "r": 0.035,
+        "bump": 0.07
+       }
+      ]
+     },
+     "micro": 3.311,
+     "meso": 2.689,
+     "valid_tiles": 0.983,
+     "mean_luma": 37.23
+    },
+    {
+     "name": "wall_e",
+     "rect_px": [
+      1190,
+      432,
+      1824,
+      1026
+     ],
+     "repetition": {
+      "hp_px": 99,
+      "main_lobe_px": 3,
+      "lags": 103920,
+      "peak": 0.1313,
+      "peak_lag": [
+       194,
+       5
+      ],
+      "dither_peak": 0.2217,
+      "top": [
+       {
+        "lag": [
+         194,
+         5
+        ],
+        "period_px": 194.1,
+        "r": 0.131,
+        "bump": 0.099
+       },
+       {
+        "lag": [
+         3,
+         10
+        ],
+        "period_px": 10.4,
+        "r": 0.113,
+        "bump": 0.071
+       },
+       {
+        "lag": [
+         186,
+         5
+        ],
+        "period_px": 186.1,
+        "r": 0.105,
+        "bump": 0.075
+       },
+       {
+        "lag": [
+         211,
+         26
+        ],
+        "period_px": 212.6,
+        "r": 0.101,
+        "bump": 0.146
+       },
+       {
+        "lag": [
+         202,
+         4
+        ],
+        "period_px": 202.0,
+        "r": 0.096,
+        "bump": 0.09
+       }
+      ]
+     },
+     "micro": 1.575,
+     "meso": 0.618,
+     "valid_tiles": 1.0,
+     "mean_luma": 18.77
+    }
+   ],
+   "checks": [
+    {
+     "name": "wall_w repetition (any lag)",
+     "status": "WARN",
+     "value": 0.266,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-23, 12]:0.265, [29, 13]:0.238, [178, 28]:0.04"
+    },
+    {
+     "name": "wall_w micro",
+     "status": "INFO",
+     "value": 3.31,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_w meso",
+     "status": "INFO",
+     "value": 2.69,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e repetition (any lag)",
+     "status": "INFO",
+     "value": 0.131,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [194, 5]:0.131, [3, 10]:0.113, [186, 5]:0.105"
+    },
+    {
+     "name": "wall_e micro",
+     "status": "INFO",
+     "value": 1.57,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "wall_e meso",
+     "status": "INFO",
+     "value": 0.62,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "WARN"
+  }
+ ]
+}

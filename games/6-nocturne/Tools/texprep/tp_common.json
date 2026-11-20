@@ -1,0 +1,32 @@
+{
+  "_comment": "TP texprep config (TEXTURE_PLAN 1.2 OverlayArr / MicroArr, 1.3 overlay and micro slices, 1.4 steps 8-9; owner TP). Schema: Tools/texprep.py docstring. OverlayArr_Mask channels: R coverage (Leaking003 / SurfaceImperfections003 opacity, Leaking012A wet streaks = the smooth end of its roughness, MetalPlates013 rust = 1 - metalness), G 1 - 0.5 coverage (darkening weight, unused by the shaders so far), B height p1..p99, A absolute smoothness 1 - roughness of the source (unremapped). OverlayArr_Normal: the source GL normal, flat where the coverage is 0 (pads). MicroArr_Albedo: grey modifier x 0.5 (mean exactly 0.5 linear, i.e. a modifier of mean 1), MicroArr_Normal: high-passed GL normal (mean slope 0).",
+  "owner": "TP",
+  "arrays": {
+    "OverlayArr": {
+      "res": 2048, "flipbook": [2, 2], "maps": ["Mask", "Normal"], "aniso": 16, "kind": "overlay",
+      "slices": [
+        { "slice": 0, "name": "leaks", "source": "ambientcg_Leaking003", "tile": 2.0, "coverage": "opacity",
+          "square": "pad", "padSide": "bottom", "use": "anchored leak decal hanging from the top edge of a face (v 0.5-1.0 holds the decal, v 0-0.5 the opacity-0 pad)" },
+        { "slice": 1, "name": "glass grime", "source": "ambientcg_SurfaceImperfections003", "tile": 1.5, "coverage": "opacity",
+          "use": "glass and spandrel grime (NocGlass, NocFacade), ConcreteAlley grime at 8 m" },
+        { "slice": 2, "name": "rivulets", "source": "ambientcg_Leaking012A", "tile": 1.0, "coverage": "smoothRough",
+          "use": "wet rivulets on glass and paint (near band only)" },
+        { "slice": 3, "name": "rust bleed", "source": "ambientcg_MetalPlates013", "tile": 1.6, "coverage": "1-metal",
+          "use": "rust runs on painted steel (SteelPainted x0.3)" }
+      ]
+    },
+    "MicroArr": {
+      "res": 1024, "flipbook": [2, 2], "maps": ["Albedo", "Normal"], "aniso": 16, "kind": "micro",
+      "slices": [
+        { "slice": 0, "name": "concrete pores", "source": "polyhaven_concrete_floor_worn_001", "tile": 3.0, "crop": 0.5,
+          "contrast": 0.12, "normalStrength": 1.0, "use": "NocSurface concrete rows, NocWet stone floors" },
+        { "slice": 1, "name": "stone grain", "source": "polyhaven_granite_tile", "tile": 2.3, "crop": 0.38, "avoidJoints": true,
+          "contrast": 0.10, "normalStrength": 1.0, "use": "granite, pavers" },
+        { "slice": 2, "name": "metal scratches", "source": "ambientcg_Metal046B", "tile": 2.0, "crop": 0.5,
+          "contrast": 0.10, "normalStrength": 1.0, "use": "painted and bare steel, decks" },
+        { "slice": 3, "name": "asphalt grit", "source": "polyhaven_asphalt_02", "tile": 3.0, "crop": 0.5, "bakeFit": true,
+          "contrast": 0.14, "normalStrength": 1.0, "use": "asphalt rows, FloorAlley" }
+      ]
+    }
+  }
+}

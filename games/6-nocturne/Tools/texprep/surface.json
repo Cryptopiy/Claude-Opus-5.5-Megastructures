@@ -1,0 +1,119 @@
+{
+  "_comment": "SU texprep config (TEXTURE_PLAN 1.3, 1.4, 3.2; LOOK_V2 5.1, 5.4; TEXTURES.md final sets), in TP's texprep schema (Tools/texprep.py docstring; processed by TP-1, d2c7d35). One processed set per key; SU's rows reference a key through MaterialFactory.Surface Photo / PhotoWet (the v2 _Tex2 maps, tile and module from the texmeta). smooth = the dry smoothness range (1 - LOOK_V2 5.1 perceptual roughness, p5..p95 of the roughness map mapped into it); contrast = luminance std / mean of the albedo variation (1.4 step 5 class midpoints); satMax = mean HSV saturation cap of token x 2 x variation; bakeFit = step 4a; flatten = step 4c; register = lattice registration with the module in metres. hexR is recorded only (the shaders use NocTexConstants.TexHexRate).",
+  "owner": "SU",
+  "sets": {
+    "Concrete": {
+      "source": "polyhaven_concrete_floor_worn_001", "res": 2048, "tile": 3.0,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": true, "metalFromMap": false,
+      "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.14, 0.30],
+      "seamAccept": "real", "rows": ["Concrete"]
+    },
+    "ConcreteAlley": {
+      "source": "polyhaven_concrete_wall_006", "res": 2048, "tile": 2.0,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": false, "metalFromMap": false,
+      "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.14, 0.30],
+      "bakeFit": true, "rows": ["ConcreteAlley"]
+    },
+    "Granite": {
+      "source": "polyhaven_granite_tile", "res": 2048, "tile": 2.3,
+      "antiTiling": "module", "module": [0.46, 0.46], "bond": "stack", "register": "ao",
+      "toneJitter": 0.06, "rotate": false, "metalFromMap": false,
+      "class": "granite", "contrast": 0.27, "satMax": 0.12, "smooth": [0.22, 0.40],
+      "rows": ["StoneWall", "FloorPlaza"]
+    },
+    "MetalPaint": {
+      "source": "ambientcg_Metal046B", "res": 2048, "tile": 2.0,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": true, "metalFromMap": false,
+      "class": "paint", "contrast": 0.30, "satMax": 0.12, "smooth": [0.32, 0.50],
+      "rows": ["SteelPainted"]
+    },
+    "SteelPlates": {
+      "source": "ambientcg_MetalPlates013", "res": 2048, "tile": 1.6,
+      "antiTiling": "hexOffsets", "rotate": false, "metalFromMap": true,
+      "class": "steel", "contrast": 0.30, "satMax": 0.12, "smooth": [0.45, 0.65],
+      "rows": ["SteelBare", "Brass"]
+    },
+    "Moss": {
+      "source": "ambientcg_Moss001", "res": 2048, "tile": 0.45,
+      "antiTiling": "heightHex", "hexR": 0.75, "rotate": true, "metalFromMap": false,
+      "class": "moss", "contrast": 0.40, "satMax": 0.45, "chromaKeep": 0.5, "smooth": [0.06, 0.16],
+      "rows": ["Moss", "FloorMoss"]
+    },
+    "Bark": {
+      "source": "polyhaven_trident_maple_bark", "res": 2048, "tile": 1.8,
+      "antiTiling": "hexOffsets", "rotate": false, "metalFromMap": false, "mapping": "uv0",
+      "class": "bark", "contrast": 0.50, "satMax": 0.45, "smooth": [0.08, 0.22],
+      "rows": ["Bark"]
+    },
+    "Asphalt": {
+      "source": "ambientcg_Asphalt020L", "res": 2048, "tile": 4.6,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": true, "metalFromMap": false,
+      "class": "asphalt", "contrast": 0.37, "satMax": 0.12, "smooth": [0.35, 0.55],
+      "rows": ["Asphalt"]
+    },
+    "Brick": {
+      "source": "polyhaven_brick_wall_08", "res": 2048, "tile": 1.9,
+      "antiTiling": "module", "module": [null, 0.093], "bond": "running", "register": "ao", "measureLength": true,
+      "toneJitter": 0.06, "rotate": false, "metalFromMap": false,
+      "class": "brick", "contrast": 0.45, "satMax": 0.45, "smooth": [0.08, 0.22],
+      "rows": ["Brick"]
+    },
+    "Plaster": {
+      "source": "polyhaven_plastered_wall_04", "res": 2048, "tile": 3.2,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": true, "metalFromMap": false,
+      "class": "plaster", "contrast": 0.27, "satMax": 0.12, "smooth": [0.17, 0.33],
+      "flatten": 0.6, "rows": ["Plaster"]
+    },
+    "Grating": {
+      "source": "ambientcg_MetalWalkway006", "res": 2048, "tile": 1.0,
+      "antiTiling": "none", "module": [0.0625, 0.0625], "rotate": false, "metalFromMap": true, "opacity": true,
+      "class": "paint", "contrast": 0.30, "satMax": 0.12, "smooth": [0.32, 0.50],
+      "rows": ["Grating"]
+    },
+    "Wood": {
+      "source": "polyhaven_fine_grained_wood", "res": 1024, "tile": 0.6,
+      "antiTiling": "hexOffsets", "rotate": false, "metalFromMap": false, "heightFromNormal": true,
+      "class": "wood", "contrast": 0.35, "satMax": 0.45, "smooth": [0.30, 0.50],
+      "rows": ["Wood"]
+    },
+    "TileWall": {
+      "source": "polyhaven_long_white_tiles", "res": 1024, "tile": 1.27,
+      "antiTiling": "module", "module": [0.0385, 0.127], "bond": "stack", "register": "ao",
+      "toneJitter": 0.04, "rotate": false, "metalFromMap": false,
+      "class": "tile", "contrast": 0.20, "satMax": 0.12, "smooth": [0.62, 0.85],
+      "rows": ["TileWall"]
+    },
+    "Fabric": {
+      "source": "polyhaven_poly_wool_herringbone", "res": 1024, "tile": 0.27, "square": "resample",
+      "antiTiling": "hexOffsets", "rotate": false, "metalFromMap": false,
+      "class": "fabric", "contrast": 0.25, "satMax": 0.45, "smooth": [0.05, 0.15],
+      "rows": ["Fabric"]
+    },
+    "AsphaltAlley": {
+      "source": "polyhaven_asphalt_02", "res": 2048, "tile": 3.0,
+      "antiTiling": "hex", "hexR": 0.70, "rotate": true, "metalFromMap": false,
+      "class": "asphalt", "contrast": 0.37, "satMax": 0.12, "smooth": [0.35, 0.55],
+      "bakeFit": true, "rows": ["FloorAlley"]
+    },
+    "Pavers": {
+      "source": "polyhaven_concrete_tiles_02", "res": 2048, "tile": 1.825,
+      "antiTiling": "module", "module": [0.305, 0.61], "bond": "half", "longAxis": "v", "register": "ao",
+      "toneJitter": 0.06, "rotate": false, "metalFromMap": false,
+      "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.18, 0.34],
+      "rows": ["FloorStone", "GrayFloor"]
+    },
+    "DeckPlate": {
+      "source": "ambientcg_DiamondPlate008C", "res": 2048, "tile": 0.6,
+      "antiTiling": "hexOffsets", "rotate": false, "metalFromMap": true,
+      "class": "steel", "contrast": 0.30, "satMax": 0.12, "smooth": [0.45, 0.65],
+      "rows": ["FloorSteelDeck"]
+    },
+    "GardenTiles": {
+      "source": "polyhaven_large_floor_tiles_02", "res": 2048, "tile": 3.0,
+      "antiTiling": "module", "module": [1.0, 1.0], "bond": "stack", "register": "ao",
+      "toneJitter": 0.06, "rotate": false, "metalFromMap": false,
+      "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.18, 0.34],
+      "rows": ["FloorGardenPath"]
+    }
+  }
+}

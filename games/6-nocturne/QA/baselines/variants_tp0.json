@@ -1,0 +1,780 @@
+{
+    "version": 1,
+    "unity": "6000.6.0f1",
+    "note": "TEXTURE_PLAN 8.3 TP-0: forward-variant baseline of every Megastructure/* shader before any Look v2 shader change; Validate gates the forward passes against it.",
+    "shaders": [
+        {
+            "name": "Megastructure/NocFacade",
+            "path": "Assets/_Game/Shaders/NocFacade.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocFoliage",
+            "path": "Assets/_Game/Shaders/Beats/NocFoliage.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocGlass",
+            "path": "Assets/_Game/Shaders/NocGlass.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocGrade",
+            "path": "Assets/_Game/Shaders/NocGrade.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "NocBloomPrefilter",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "NocBloomDown",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "NocBloomUp",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "NocGrade",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocGraybox",
+            "path": "Assets/_Game/Shaders/NocGraybox.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocKoi",
+            "path": "Assets/_Game/Shaders/Beats/NocKoi.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "Koi",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocLine",
+            "path": "Assets/_Game/Shaders/NocLine.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 24,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing",
+                        "shader_feature_local _ _LINE_TUBE _LINE_RIBBON"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP",
+                        "_LINE_RIBBON",
+                        "_LINE_TUBE"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 6,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "shader_feature_local _ _LINE_TUBE _LINE_RIBBON"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_LINE_RIBBON",
+                        "_LINE_TUBE"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocNeon",
+            "path": "Assets/_Game/Shaders/NocNeon.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "Neon",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocRain",
+            "path": "Assets/_Game/Shaders/NocRain.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "NocRainLight",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "NocRainBlur",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "NocRainLayer",
+                    "lightMode": "SRPDefaultUnlit",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocScreen",
+            "path": "Assets/_Game/Shaders/Beats/NocScreen.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocSky",
+            "path": "Assets/_Game/Shaders/NocSky.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "Sky",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocStreak",
+            "path": "Assets/_Game/Shaders/NocStreak.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "Streak",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocSurface",
+            "path": "Assets/_Game/Shaders/NocSurface.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Megastructure/NocWet",
+            "path": "Assets/_Game/Shaders/NocWet.shader",
+            "passes": [
+                {
+                    "index": 0,
+                    "name": "ForwardLit",
+                    "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 8,
+                    "pragmas": [
+                        "multi_compile _ _ADDITIONAL_LIGHTS",
+                        "multi_compile _ _CLUSTER_LIGHT_LOOP",
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_ADDITIONAL_LIGHTS",
+                        "_CLUSTER_LIGHT_LOOP"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "ShadowCaster",
+                    "lightMode": "SHADOWCASTER",
+                    "forward": false,
+                    "variants": 4,
+                    "pragmas": [
+                        "multi_compile_instancing",
+                        "multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO",
+                        "_CASTING_PUNCTUAL_LIGHT_SHADOW"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "name": "DepthOnly",
+                    "lightMode": "DepthOnly",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "name": "DepthNormals",
+                    "lightMode": "DepthNormals",
+                    "forward": false,
+                    "variants": 2,
+                    "pragmas": [
+                        "multi_compile_instancing"
+                    ],
+                    "keywords": [
+                        "INSTANCING_ON",
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                }
+            ]
+        }
+    ]
+}

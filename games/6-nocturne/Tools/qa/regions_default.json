@@ -1,0 +1,326 @@
+{
+ "_doc": [
+  "Default analysis regions of the Nocturne key shots for Tools/qa (format: see the docstring of Tools/qa/qa_common.py).",
+  "Source: MASTER_PROMPT 14.10 per-beat table (banding regions) and 14.7 H1 (6) (encode-test views KS04 sky, KS10 abyss, KS16 wall,",
+  "KS17 plaza). Rects are frame fractions [x0, y0, x1, y1] (top-left origin, 'units': 'frac'), valid at 16:9, 16:10 and 21:9.",
+  "Beat 3 'abyss rect (x 0.1-0.9, y -0.9..-0.2)': x as a frame fraction, y in NDC -> frac y 0.60-0.95; the same rect for the",
+  "other look-down shots (KS09, KS12, KS13). The aliasing regions of 14.10 (cables, rails, blade strokes, ribs, LED grids) are thin-line",
+  "probes whose positions depend on the built geometry: each beat builder adds them (report.json 'regions' or an entry here) when",
+  "its geometry exists; neon masks (clipped / isolated-pixel exclusions) likewise ('exclude').",
+  "Q1 (Phase 3 graybox gate): every banding rect re-placed on the gradient it names in the built geometry (the D-025 abyss rect y 0.60-0.95 lies on the deck in KS09 / KS10 / KS12; the sky rects of KS00-KS04 / KS07 lay on facades and blades; KS16 spanned panel seams; KS17 / KS18 held the koi; KS19 the tenement roof edge). Rects avoid rails, cross bridges, layer lines, the upper tube and the koi at 16:9, 16:10 and 21:9 (checked on QA/captures/graybox01*). KS03 and KS19 have no sky: their darkest smooth gradient (alley wall, tenement wall) is the region. Thresholds unchanged.",
+  "TQ 2026-11-16 (requests of GE and PA after GE's masses, checked on QA/captures/PA_r03): KS04 sky to y 0.22 (the canyon skybridge starts at 0.26), KS05 cloud y 0.05-0.36 (the beam at 0.37-0.45), KS13 abyss inside the glass strip between its inner members and above the light line, KS17 plaza clear of the bollards; KS07 sky_above_gulf and KS15 crown_gap_sky dropped (face B and the east block now fill those frames: no sky or soffit gradient left); seq_enc_beat07_goal (a static clip at the KS19 pose) and seq_enc_beat01_wall carry the KS19 / KS00 wall rects.",
+  "FX 2026-11-16 (QA-2, QA-6; checked on QA/captures/lookv2_01, lookv2_01_ksv1, graybox01): KS00 mouth_glow moved off the signs and lamps of the far alley onto the wet floor that mirrors the mouth glow (x 0.487-0.527, y 0.493-0.572, BandScore 0.20); KS03 alley_wall_dark onto the dark alley wall alone (x 0.01-0.10, clear of the boulevard towers; BandScore 0.15); KS17 plaza gated on coherent visible steps only (\"gate\": \"steps\": the granite paving's own plateaus and the lamp-streak edges are not banding; a quantisation contour still fails). Thresholds unchanged."
+ ],
+ "regions": [
+  {
+   "match": "KS00_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "mouth_glow",
+     "rect": [
+      0.487,
+      0.493,
+      0.527,
+      0.572
+     ],
+     "dir": "v"
+    },
+    {
+     "name": "alley_wall",
+     "rect": [
+      0.03,
+      0.05,
+      0.25,
+      0.55
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS02_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "slit_cloud",
+     "rect": [
+      0.475,
+      0.0,
+      0.535,
+      0.21
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS03_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "alley_wall_dark",
+     "rect": [
+      0.01,
+      0.1,
+      0.1,
+      0.65
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS04_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "sky_above_facades",
+     "rect": [
+      0.42,
+      0.02,
+      0.55,
+      0.22
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS05_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "cloud_ceiling",
+     "rect": [
+      0.42,
+      0.05,
+      0.58,
+      0.36
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS09_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "abyss",
+     "rect": [
+      0.39,
+      0.28,
+      0.54,
+      0.37
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS10_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "abyss",
+     "rect": [
+      0.36,
+      0.04,
+      0.52,
+      0.22
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS12_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "abyss",
+     "rect": [
+      0.53,
+      0.2,
+      0.66,
+      0.4
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS13_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "abyss",
+     "rect": [
+      0.49,
+      0.44,
+      0.545,
+      0.64
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS16_*",
+   "aspect": "16:9",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "wall_panel",
+     "rect": [
+      0.2,
+      0.56,
+      0.32,
+      0.76
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS16_*",
+   "aspect": "16:10",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "wall_panel",
+     "rect": [
+      0.1,
+      0.62,
+      0.3,
+      0.95
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS16_*",
+   "aspect": "21:9",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "wall_panel",
+     "rect": [
+      0.2,
+      0.62,
+      0.4,
+      0.95
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS17_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "sky_koi_spire",
+     "rect": [
+      0.2,
+      0.03,
+      0.4,
+      0.17
+     ],
+     "dir": "v"
+    },
+    {
+     "name": "plaza",
+     "rect": [
+      0.1,
+      0.86,
+      0.85,
+      0.97
+     ],
+     "dir": "v",
+     "gate": "steps"
+    }
+   ]
+  },
+  {
+   "match": "KS18_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "sky_koi",
+     "rect": [
+      0.5,
+      0.03,
+      0.8,
+      0.25
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "KS19_*",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "tenement_wall",
+     "rect": [
+      0.05,
+      0.25,
+      0.12,
+      0.44
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "seq_enc_beat07_goal",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "tenement_wall",
+     "rect": [
+      0.05,
+      0.25,
+      0.12,
+      0.44
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": "seq_enc_beat01_wall",
+   "aspect": "any",
+   "units": "frac",
+   "banding": [
+    {
+     "name": "alley_wall",
+     "rect": [
+      0.03,
+      0.05,
+      0.25,
+      0.55
+     ],
+     "dir": "v"
+    }
+   ]
+  }
+ ]
+}

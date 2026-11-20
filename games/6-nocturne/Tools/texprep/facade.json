@@ -1,0 +1,74 @@
+{
+  "_comment": "FA texprep config (TEXTURE_PLAN 1.2 FacadeArr / RoomArr, 1.3 facade skin slices and room slices, 1.4, 2.3, 2.5, 2.8; LOOK_V2 5.1, 5.4; TEXTURES.md final sets). Aligned with TP's texprep schema (texprep.py VERSION 4 reads this file; offsetQuantum is recorded only: the per-slice pitches come from the texmeta sliceRegistration). Two arrays, each slice processed exactly like a set (1.4 step 9) and laid into the flipbook of 1.2 (cols x rows). Facade slices are joint-free or registered to the analytic facade grid of 2.5 (register: the measured period of the named map is resampled so `count` periods fit `per` metres on that axis; the scale change must stay <= 7 %): the cell-aligned panel shuffle of 1.6 then keeps every photographed course, lift and slab line aligned with the analytic floor and bay lines, and its seams fall inside the analytic panel joints. offsetQuantum = the panel-shuffle offset step in metres per axis (whole courses / slabs / ribs, so a shuffled panel never breaks a course). contrast = luminance std / mean of the albedo variation (1.4 step 5 class midpoints); satMax = mean HSV saturation cap of token x 2 x variation; smooth = absolute perceptual smoothness range (dry, LOOK_V2 5.1); metalFromMap only for the 1.4 step 6 allow-list. RoomArr slices carry Albedo and Mask only (no normal array: rooms are shaded analytically, 2.8).",
+  "owner": "FA",
+  "arrays": {
+    "FacadeArr": {
+      "res": 1024, "flipbook": [4, 2], "maps": ["Albedo", "Normal", "Mask"], "aniso": 16, "mipFilter": "box",
+      "slices": [
+        {
+          "slice": 0, "name": "precast", "source": "polyhaven_concrete_floor_worn_001", "tile": 3.0,
+          "register": null, "offsetQuantum": [0.0, 0.0],
+          "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.14, 0.30], "metalFromMap": false,
+          "seamAccept": "real", "use": "S1 walls, spandrels, roofs in mode 2"
+        },
+        {
+          "slice": 1, "name": "weathered concrete", "source": "polyhaven_concrete_layers", "tile": 1.55,
+          "register": { "axis": "v", "map": "AO", "per": 3.6, "count": "nearest whole number of pour lifts" }, "offsetQuantum": [0.0, "lift"],
+          "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.14, 0.30], "metalFromMap": false,
+          "use": "S1 variation; section-mode cut floors (2.10)"
+        },
+        {
+          "slice": 2, "name": "metal panel", "source": "ambientcg_Metal046B", "tile": 2.0,
+          "register": null, "offsetQuantum": [0.0, 0.0],
+          "class": "paint", "contrast": 0.30, "satMax": 0.12, "smooth": [0.32, 0.50], "metalFromMap": false,
+          "use": "S2 panels and frames (paint and cladding: metallic 0 although its map is 86 % white); louvre blades of the mechanical strata"
+        },
+        {
+          "slice": 3, "name": "ribbed metal", "source": "polyhaven_corrugated_iron_02", "tile": 2.7,
+          "register": { "axis": "u", "map": "Displacement", "per": 1.2, "count": "nearest whole number of ribs" }, "offsetQuantum": ["rib", 0.0],
+          "antiTiling": "offsets", "rotate": false,
+          "class": "steel", "contrast": 0.30, "satMax": 0.12, "smooth": [0.35, 0.55], "metalFromMap": true,
+          "use": "S2 ribbed variant (ribs vertical, offsets only)"
+        },
+        {
+          "slice": 4, "name": "facade tile", "source": "polyhaven_rectangular_facade_tiles", "tile": 2.0,
+          "register": { "axis": "v", "map": "AO", "per": 3.6, "count": 24, "sourcePitch": 0.154 }, "offsetQuantum": [0.0, 0.15],
+          "antiTiling": "offsets", "rotate": false,
+          "class": "granite", "contrast": 0.27, "satMax": 0.12, "smooth": [0.30, 0.50], "metalFromMap": false,
+          "use": "S4 tiled residential (tile widths are irregular: offset-only shuffle inside panels)"
+        },
+        {
+          "slice": 5, "name": "brick", "source": "polyhaven_brick_wall_08", "tile": 1.9,
+          "register": { "axis": "v", "map": "AO", "per": 3.6, "count": 39, "sourcePitch": 0.093, "bond": "running" }, "offsetQuantum": ["brick", 0.1846],
+          "class": "brick", "contrast": 0.45, "satMax": 0.45, "smooth": [0.10, 0.28], "metalFromMap": false,
+          "use": "S3 brick (two courses per v offset step keep the running bond)"
+        },
+        {
+          "slice": 6, "name": "plaster", "source": "polyhaven_plastered_wall_04", "tile": 3.2,
+          "register": null, "offsetQuantum": [0.0, 0.0], "flatten": 0.6,
+          "class": "plaster", "contrast": 0.27, "satMax": 0.12, "smooth": [0.16, 0.32], "metalFromMap": false,
+          "use": "S3 and S4 bands, S4 walls (repeat flattening: TEX-R blob 0.19 at 3 x 3)"
+        },
+        {
+          "slice": 7, "name": "stone", "source": "polyhaven_granite_tile", "tile": 2.3,
+          "register": { "axis": "uv", "map": "AO", "per": [2.4, 3.6], "count": [5, 8], "sourcePitch": 0.46, "bond": "stack" }, "offsetQuantum": [0.48, 0.45],
+          "class": "granite", "contrast": 0.27, "satMax": 0.12, "smooth": [0.22, 0.40], "metalFromMap": false,
+          "use": "base bands, lobbies, S3 sills and lintels, the podium override's stone base (k 4)"
+        }
+      ]
+    },
+    "RoomArr": {
+      "res": 512, "flipbook": [4, 2], "maps": ["Albedo", "Mask"], "aniso": 8, "mipFilter": "kaiser",
+      "slices": [
+        { "slice": 0, "name": "wall plaster", "source": "polyhaven_plastered_wall_04", "tile": 3.2, "class": "plaster", "contrast": 0.27, "satMax": 0.12, "smooth": [0.16, 0.32], "flatten": 0.6 },
+        { "slice": 1, "name": "wall tiles", "source": "polyhaven_long_white_tiles", "tile": 1.27, "module": [0.0385, 0.127], "class": "granite", "contrast": 0.27, "satMax": 0.12, "smooth": [0.45, 0.70] },
+        { "slice": 2, "name": "wall concrete", "source": "polyhaven_concrete_floor_worn_001", "tile": 3.0, "class": "concrete", "contrast": 0.32, "satMax": 0.12, "smooth": [0.14, 0.30], "seamAccept": "real" },
+        { "slice": 3, "name": "floor planks", "source": "polyhaven_plank_flooring_04", "tile": 2.0, "class": "bark", "contrast": 0.40, "satMax": 0.45, "smooth": [0.25, 0.45], "seamAccept": "real" },
+        { "slice": 4, "name": "floor carpet", "source": "ambientcg_Carpet016", "tile": 1.7, "class": "plaster", "contrast": 0.25, "satMax": 0.30, "smooth": [0.05, 0.15] },
+        { "slice": 5, "name": "floor tiles", "source": "polyhaven_large_floor_tiles_02", "tile": 3.0, "module": [1.0, 1.0], "class": "granite", "contrast": 0.27, "satMax": 0.12, "smooth": [0.35, 0.55] },
+        { "slice": 6, "name": "ceiling", "source": "ambientcg_OfficeCeiling001", "tile": 3.85, "maps": { "albedo": "Color", "ao": "AmbientOcclusion", "normal": "NormalGL", "rough": "Roughness" }, "ignore": ["Emission", "Metalness"], "class": "plaster", "contrast": 0.20, "satMax": 0.12, "smooth": [0.15, 0.30], "seamAccept": "real" },
+        { "slice": 7, "name": "curtain", "source": "polyhaven_poly_wool_herringbone", "tile": 0.27, "squareResample": true, "class": "plaster", "contrast": 0.25, "satMax": 0.30, "smooth": [0.05, 0.15] }
+      ]
+    }
+  }
+}
