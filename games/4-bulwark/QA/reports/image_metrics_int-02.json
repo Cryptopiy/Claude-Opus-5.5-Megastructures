@@ -1,0 +1,758 @@
+{
+ "run": "int-02",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-14T08:30:21.893Z",
+  "finished": "2026-11-14T08:30:53.177Z",
+  "seconds": 31.284829,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02",
+  "captureSet": "keyshots,transitions",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 1.5,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\Builds\\wb-int\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\Logs\\player-int-cap02.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02 -capture-set keyshots,transitions -capture-only KS13_atrium,seq_b04_b05"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 300,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.903377,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 4,
+  "lumaOutOfRange": 4,
+  "errorsLogged": 0,
+  "warningsLogged": 5
+ },
+ "spec_source": "BulwarkConst.cs (ERRORS: KeyShot KS03_door_open: could not convert string to float: 'L(KS03LumaMin)')",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [],
+  "KS12_tower_up": [],
+  "KS13_atrium": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "b05_GateTower_KS13_atrium",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02\\b05_GateTower_KS13_atrium.png",
+   "beat": 5,
+   "s": 926.0,
+   "keyshot": "KS13_atrium",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[318, 1054]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 20,
+     "threshold": "0 px",
+     "note": "first at [[1057, 927], [1058, 927], [1059, 927], [1060, 927], [1061, 927]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.3 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.1017,
+     "threshold": "0.109804..0.313725",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 4.822530864197531e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      318,
+      1054
+     ]
+    ],
+    "fireflies": 20,
+    "fireflies_pos": [
+     [
+      1057,
+      927
+     ],
+     [
+      1058,
+      927
+     ],
+     [
+      1059,
+      927
+     ],
+     [
+      1060,
+      927
+     ],
+     [
+      1061,
+      927
+     ],
+     [
+      1062,
+      927
+     ],
+     [
+      1063,
+      927
+     ],
+     [
+      1064,
+      927
+     ],
+     [
+      1065,
+      927
+     ],
+     [
+      1066,
+      927
+     ],
+     [
+      1067,
+      927
+     ],
+     [
+      1068,
+      927
+     ],
+     [
+      1069,
+      927
+     ],
+     [
+      1070,
+      927
+     ],
+     [
+      1071,
+      927
+     ],
+     [
+      1072,
+      927
+     ],
+     [
+      1073,
+      927
+     ],
+     [
+      1074,
+      927
+     ],
+     [
+      1075,
+      927
+     ],
+     [
+      1102,
+      927
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.10166287422180176,
+     "p1": 0.05902353674173355,
+     "p50": 0.08729255199432373,
+     "p99": 0.6380180716514587,
+     "std": 0.07469954341650009
+    },
+    "luma_linear": {
+     "mean": 0.015763932839035988,
+     "p1": 0.004956063348799944,
+     "p50": 0.008473603054881096,
+     "p99": 0.3670451045036316,
+     "std": 0.051243022084236145
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b05_GateTower_KS13_atrium_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02\\b05_GateTower_KS13_atrium_1610.png",
+   "beat": 5,
+   "s": 926.0,
+   "keyshot": "KS13_atrium",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.3 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.1026,
+     "threshold": "0.109804..0.313725",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.10261038690805435,
+     "p1": 0.05902353674173355,
+     "p50": 0.08729255199432373,
+     "p99": 0.6472141742706299,
+     "std": 0.07761142402887344
+    },
+    "luma_linear": {
+     "mean": 0.01635221391916275,
+     "p1": 0.004956063348799944,
+     "p50": 0.008473603054881096,
+     "p99": 0.3780394494533539,
+     "std": 0.05390045791864395
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b05_GateTower_KS13_atrium_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02\\b05_GateTower_KS13_atrium_219.png",
+   "beat": 5,
+   "s": 926.0,
+   "keyshot": "KS13_atrium",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[638, 1054]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 22,
+     "threshold": "0 px",
+     "note": "first at [[1377, 927], [1378, 927], [1379, 927], [1380, 927], [1381, 927]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.3 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.1009,
+     "threshold": "0.109804..0.313725",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 7.233796296296296e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      638,
+      1054
+     ]
+    ],
+    "fireflies": 22,
+    "fireflies_pos": [
+     [
+      1377,
+      927
+     ],
+     [
+      1378,
+      927
+     ],
+     [
+      1379,
+      927
+     ],
+     [
+      1380,
+      927
+     ],
+     [
+      1381,
+      927
+     ],
+     [
+      1382,
+      927
+     ],
+     [
+      1383,
+      927
+     ],
+     [
+      1384,
+      927
+     ],
+     [
+      1385,
+      927
+     ],
+     [
+      1386,
+      927
+     ],
+     [
+      1387,
+      927
+     ],
+     [
+      1388,
+      927
+     ],
+     [
+      1389,
+      927
+     ],
+     [
+      1390,
+      927
+     ],
+     [
+      1391,
+      927
+     ],
+     [
+      1392,
+      927
+     ],
+     [
+      1393,
+      927
+     ],
+     [
+      1394,
+      927
+     ],
+     [
+      1395,
+      927
+     ],
+     [
+      1420,
+      927
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.10089308023452759,
+     "p1": 0.05818980559706688,
+     "p50": 0.08674196153879166,
+     "p99": 0.606110692024231,
+     "std": 0.06825898587703705
+    },
+    "luma_linear": {
+     "mean": 0.014727531932294369,
+     "p1": 0.0048446268774569035,
+     "p50": 0.00834264699369669,
+     "p99": 0.3285824656486511,
+     "std": 0.04461529850959778
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b05_GateTower_KS13_atrium_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\int-02\\b05_GateTower_KS13_atrium_4k.png",
+   "beat": 5,
+   "s": 926.0,
+   "keyshot": "KS13_atrium",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 57,
+     "threshold": "0 px",
+     "note": "first at [[2098, 1855], [2099, 1855], [2100, 1855], [2101, 1855], [2102, 1855]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.3 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.1017,
+     "threshold": "0.109804..0.313725",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 4.822530864197531e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 57,
+    "fireflies_pos": [
+     [
+      2098,
+      1855
+     ],
+     [
+      2099,
+      1855
+     ],
+     [
+      2100,
+      1855
+     ],
+     [
+      2101,
+      1855
+     ],
+     [
+      2102,
+      1855
+     ],
+     [
+      2103,
+      1855
+     ],
+     [
+      2104,
+      1855
+     ],
+     [
+      2105,
+      1855
+     ],
+     [
+      2106,
+      1855
+     ],
+     [
+      2107,
+      1855
+     ],
+     [
+      2108,
+      1855
+     ],
+     [
+      2109,
+      1855
+     ],
+     [
+      2110,
+      1855
+     ],
+     [
+      2111,
+      1855
+     ],
+     [
+      2112,
+      1855
+     ],
+     [
+      2113,
+      1855
+     ],
+     [
+      2114,
+      1855
+     ],
+     [
+      2115,
+      1855
+     ],
+     [
+      2116,
+      1855
+     ],
+     [
+      2117,
+      1855
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.10170396417379379,
+     "p1": 0.05847294256091118,
+     "p50": 0.08729255199432373,
+     "p99": 0.6380180716514587,
+     "std": 0.0747147873044014
+    },
+    "luma_linear": {
+     "mean": 0.01577204465866089,
+     "p1": 0.004866541363298893,
+     "p50": 0.008473603054881096,
+     "p99": 0.3670451045036316,
+     "std": 0.05125226825475693
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "FAIL"
+  }
+ ]
+}

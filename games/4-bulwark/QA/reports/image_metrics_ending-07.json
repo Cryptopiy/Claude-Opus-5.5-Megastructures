@@ -1,0 +1,1718 @@
+{
+ "run": "ending-07",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-20T12:41:27.321Z",
+  "finished": "2026-11-20T12:41:35.019Z",
+  "seconds": 7.698758,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07",
+  "captureSet": "ending",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 2,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\Builds\\ending-b\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\Logs\\player-ending-cap07.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07 -capture-set ending"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.452014,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "BulwarkConst.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS03_door_open": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [],
+  "KS12_tower_up": [],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "b08_Ending_KS21b_cabin_door",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS21b_cabin_door.png",
+   "beat": 7,
+   "s": 1496.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 px",
+     "note": "first at [[859, 665], [859, 666]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2193,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 2,
+    "fireflies_pos": [
+     [
+      859,
+      665
+     ],
+     [
+      859,
+      666
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2193305790424347,
+     "p1": 0.026010198518633842,
+     "p50": 0.16838432848453522,
+     "p99": 0.5850297808647156,
+     "std": 0.14585798978805542
+    },
+    "luma_linear": {
+     "mean": 0.0642237588763237,
+     "p1": 0.0020204405300319195,
+     "p50": 0.025521500036120415,
+     "p99": 0.32631537318229675,
+     "std": 0.08404534310102463
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b08_Ending_KS22_ride_drop",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS22_ride_drop.png",
+   "beat": 7,
+   "s": 1530.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1748,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.17484921216964722,
+     "p1": 0.04084235429763794,
+     "p50": 0.13362902402877808,
+     "p99": 0.6270031929016113,
+     "std": 0.13207890093326569
+    },
+    "luma_linear": {
+     "mean": 0.04489349573850632,
+     "p1": 0.0032880858052521944,
+     "p50": 0.016778020188212395,
+     "p99": 0.37957754731178284,
+     "std": 0.08224546909332275
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS22b_glass_floor",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS22b_glass_floor.png",
+   "beat": 7,
+   "s": 1540.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1314,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.13143780827522278,
+     "p1": 0.04055921733379364,
+     "p50": 0.12878432869911194,
+     "p99": 0.3129160702228546,
+     "std": 0.053242526948451996
+    },
+    "luma_linear": {
+     "mean": 0.018864115700125694,
+     "p1": 0.0032642618753015995,
+     "p50": 0.015571404248476028,
+     "p99": 0.08457633852958679,
+     "std": 0.028998911380767822
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS23_ride_sunset",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS23_ride_sunset.png",
+   "beat": 7,
+   "s": 1571.2,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2666,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.26663830876350403,
+     "p1": 0.04055921733379364,
+     "p50": 0.134451761841774,
+     "p99": 0.7597458958625793,
+     "std": 0.20346446335315704
+    },
+    "luma_linear": {
+     "mean": 0.10625416785478592,
+     "p1": 0.0032642618753015995,
+     "p50": 0.016980789601802826,
+     "p99": 0.5515108704566956,
+     "std": 0.12748485803604126
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS23b_face_rush",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS23b_face_rush.png",
+   "beat": 7,
+   "s": 1600.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.144,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.14401736855506897,
+     "p1": 0.03580392524600029,
+     "p50": 0.12732315063476562,
+     "p99": 0.5260502099990845,
+     "std": 0.10111993551254272
+    },
+    "luma_linear": {
+     "mean": 0.029068011790513992,
+     "p1": 0.002840314293280244,
+     "p50": 0.015312159433960915,
+     "p99": 0.2584710419178009,
+     "std": 0.053563617169857025
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS24_ride_lookup",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS24_ride_lookup.png",
+   "beat": 7,
+   "s": 1616.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0 px",
+     "note": "first at [[1865, 643]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1925,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 1,
+    "fireflies_pos": [
+     [
+      1865,
+      643
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1924542486667633,
+     "p1": 0.0313364714384079,
+     "p50": 0.1338290274143219,
+     "p99": 0.7832910418510437,
+     "std": 0.14462220668792725
+    },
+    "luma_linear": {
+     "mean": 0.0533849336206913,
+     "p1": 0.002454605419188738,
+     "p50": 0.017043648287653923,
+     "p99": 0.5888503193855286,
+     "std": 0.09639338403940201
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b08_Ending_KS24b_ride_mist",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS24b_ride_mist.png",
+   "beat": 7,
+   "s": 1640.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[964, 704]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2399,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      964,
+      704
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2399151474237442,
+     "p1": 0.05146980658173561,
+     "p50": 0.16808472573757172,
+     "p99": 0.5233051180839539,
+     "std": 0.15446440875530243
+    },
+    "luma_linear": {
+     "mean": 0.07509874552488327,
+     "p1": 0.00433730473741889,
+     "p50": 0.02509087324142456,
+     "p99": 0.25815433263778687,
+     "std": 0.08721643686294556
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b08_Ending_KS25_ride_lanterns",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS25_ride_lanterns.png",
+   "beat": 7,
+   "s": 1680.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2017,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.201740100979805,
+     "p1": 0.06323451548814774,
+     "p50": 0.17635922133922577,
+     "p99": 0.4201200306415558,
+     "std": 0.10055943578481674
+    },
+    "luma_linear": {
+     "mean": 0.045248668640851974,
+     "p1": 0.00551132345572114,
+     "p50": 0.02711462415754795,
+     "p99": 0.15905968844890594,
+     "std": 0.04498210921883583
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS26_shuttle_back",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS26_shuttle_back.png",
+   "beat": 7,
+   "s": 1790.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1726,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1725519597530365,
+     "p1": 0.07359451055526733,
+     "p50": 0.1594729721546173,
+     "p99": 0.3579615652561188,
+     "std": 0.06316457688808441
+    },
+    "luma_linear": {
+     "mean": 0.030268806964159012,
+     "p1": 0.006795288063585758,
+     "p50": 0.02333936095237732,
+     "p99": 0.11375562846660614,
+     "std": 0.02595003880560398
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS26a_transfer",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS26a_transfer.png",
+   "beat": 7,
+   "s": 1705.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[919, 161]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0914,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.153,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      919,
+      161
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.09143518518518519,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.15299415588378906,
+     "p1": 0.031347453594207764,
+     "p50": 0.12873883545398712,
+     "p99": 0.7733420133590698,
+     "std": 0.13805609941482544
+    },
+    "luma_linear": {
+     "mean": 0.04015780985355377,
+     "p1": 0.002448734361678362,
+     "p50": 0.01596929132938385,
+     "p99": 0.5816824436187744,
+     "std": 0.09811953455209732
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b08_Ending_KS26b_platform_walk",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS26b_platform_walk.png",
+   "beat": 7,
+   "s": 1815.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[1911, 584]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0029,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2703,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      1911,
+      584
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.002941743827160494,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2703143358230591,
+     "p1": 0.05636471137404442,
+     "p50": 0.2659796178340912,
+     "p99": 0.4355231821537018,
+     "std": 0.107020802795887
+    },
+    "luma_linear": {
+     "mean": 0.07410450279712677,
+     "p1": 0.00469063688069582,
+     "p50": 0.059831369668245316,
+     "p99": 0.16951718926429749,
+     "std": 0.05151300132274628
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b08_Ending_KS27_keeper",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS27_keeper.png",
+   "beat": 7,
+   "s": 1847.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0504,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1989,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.050395447530864196,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.198936328291893,
+     "p1": 0.054964710026979446,
+     "p50": 0.165830597281456,
+     "p99": 0.7054486870765686,
+     "std": 0.10731774568557739
+    },
+    "luma_linear": {
+     "mean": 0.0455656535923481,
+     "p1": 0.004531871061772108,
+     "p50": 0.024454964324831963,
+     "p99": 0.4838927090167999,
+     "std": 0.08163045346736908
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS28_dam_reveal",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS28_dam_reveal.png",
+   "beat": 7,
+   "s": 1847.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1818,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1818484514951706,
+     "p1": 0.05553098022937775,
+     "p50": 0.1563200056552887,
+     "p99": 0.38025254011154175,
+     "std": 0.07112231105566025
+    },
+    "luma_linear": {
+     "mean": 0.033997636288404465,
+     "p1": 0.004624461755156517,
+     "p50": 0.022050147876143456,
+     "p99": 0.12737016379833221,
+     "std": 0.033892832696437836
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS28_dam_reveal_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS28_dam_reveal_219.png",
+   "beat": 7,
+   "s": 1847.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2520x1080",
+     "threshold": "2520x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1776,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.17759817838668823,
+     "p1": 0.05553098022937775,
+     "p50": 0.15520314872264862,
+     "p99": 0.36946356296539307,
+     "std": 0.06810738891363144
+    },
+    "luma_linear": {
+     "mean": 0.03229427710175514,
+     "p1": 0.004624461755156517,
+     "p50": 0.021773071959614754,
+     "p99": 0.11993798613548279,
+     "std": 0.03188902884721756
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2520,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS28_dam_reveal_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS28_dam_reveal_4k.png",
+   "beat": 7,
+   "s": 1847.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1808,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1807519495487213,
+     "p1": 0.05553098022937775,
+     "p50": 0.15548627078533173,
+     "p99": 0.3957615792751312,
+     "std": 0.07259584218263626
+    },
+    "luma_linear": {
+     "mean": 0.03393447771668434,
+     "p1": 0.004624461755156517,
+     "p50": 0.021881533786654472,
+     "p99": 0.1382884019613264,
+     "std": 0.03627225384116173
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b08_Ending_KS28b_crest_dark",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\ending\\QA\\captures\\ending-07\\b08_Ending_KS28b_crest_dark.png",
+   "beat": 7,
+   "s": 1847.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1744,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.17437095940113068,
+     "p1": 0.05553098022937775,
+     "p50": 0.15520314872264862,
+     "p99": 0.37029728293418884,
+     "std": 0.06367649137973785
+    },
+    "luma_linear": {
+     "mean": 0.030835743993520737,
+     "p1": 0.004624461755156517,
+     "p50": 0.021773071959614754,
+     "p99": 0.12086336314678192,
+     "std": 0.029864758253097534
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  }
+ ]
+}

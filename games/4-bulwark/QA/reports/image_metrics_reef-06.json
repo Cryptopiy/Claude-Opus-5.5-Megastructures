@@ -1,0 +1,2406 @@
+{
+ "run": "reef-06",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-20T11:42:15.670Z",
+  "finished": "2026-11-20T11:42:26.264Z",
+  "seconds": 10.594729,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06",
+  "captureSet": "keyshots,beats,pose:b04p_isl:3.0:1.7:776:88:3:24,pose:b04p_belt:4.5:1.7:790:115:-14:50,pose:b04p_far:3.0:1.7:840:60:1:30",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 1.5,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\Builds\\reef\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\Logs\\player-reef-cap06.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06 -capture-set keyshots,beats,pose:b04p_isl:3.0:1.7:776:88:3:24,pose:b04p_belt:4.5:1.7:790:115:-14:50,pose:b04p_far:3.0:1.7:840:60:1:30 -capture-only b04"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.41294,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 26
+ },
+ "spec_source": "BulwarkConst.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS03_door_open": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS11_reef_spray": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS12_tower_up": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "b04_ArmourSlope_KS10_reef_wide",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS10_reef_wide.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": "KS10_reef_wide",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4078,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4078354835510254,
+     "p1": 0.13760550320148468,
+     "p50": 0.46552082896232605,
+     "p99": 0.8112146669626241,
+     "std": 0.1686379611492157
+    },
+    "luma_linear": {
+     "mean": 0.17183686792850494,
+     "p1": 0.017049390822649002,
+     "p50": 0.18957237899303436,
+     "p99": 0.6239800101518633,
+     "std": 0.13150107860565186
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS10_reef_wide_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS10_reef_wide_1610.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": "KS10_reef_wide",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4045,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.40451812744140625,
+     "p1": 0.1367560774087906,
+     "p50": 0.4647812247276306,
+     "p99": 0.784183852076533,
+     "std": 0.16799822449684143
+    },
+    "luma_linear": {
+     "mean": 0.16917197406291962,
+     "p1": 0.01694764941930771,
+     "p50": 0.18728038668632507,
+     "p99": 0.5786780714988708,
+     "std": 0.12985855340957642
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS10_reef_wide_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS10_reef_wide_219.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": "KS10_reef_wide",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4175,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4174613952636719,
+     "p1": 0.14152707159519196,
+     "p50": 0.4723412096500397,
+     "p99": 0.8617114424705505,
+     "std": 0.17038725316524506
+    },
+    "luma_linear": {
+     "mean": 0.17957428097724915,
+     "p1": 0.017886165529489517,
+     "p50": 0.19334958493709564,
+     "p99": 0.7141377329826355,
+     "std": 0.13476720452308655
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS10_reef_wide_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS10_reef_wide_4k.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": "KS10_reef_wide",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4082,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4082180857658386,
+     "p1": 0.13732236623764038,
+     "p50": 0.4653318226337433,
+     "p99": 0.835161566734314,
+     "std": 0.1699829399585724
+    },
+    "luma_linear": {
+     "mean": 0.17265881597995758,
+     "p1": 0.01703115552663803,
+     "p50": 0.18948212265968323,
+     "p99": 0.6664975881576538,
+     "std": 0.13374832272529602
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS11_reef_spray.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5167,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5167413949966431,
+     "p1": 0.19878198206424713,
+     "p50": 0.5184988975524902,
+     "p99": 0.8337569236755371,
+     "std": 0.1419518142938614
+    },
+    "luma_linear": {
+     "mean": 0.2561475932598114,
+     "p1": 0.03397943079471588,
+     "p50": 0.23598691821098328,
+     "p99": 0.6639383435249329,
+     "std": 0.1316937655210495
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS11_reef_spray_1610.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5205,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5204538106918335,
+     "p1": 0.19587844610214233,
+     "p50": 0.5252408385276794,
+     "p99": 0.8501467108726501,
+     "std": 0.14248573780059814
+    },
+    "luma_linear": {
+     "mean": 0.25997233390808105,
+     "p1": 0.032904766499996185,
+     "p50": 0.24305377900600433,
+     "p99": 0.6924416422843933,
+     "std": 0.13342702388763428
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS11_reef_spray_219.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5086,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5085824728012085,
+     "p1": 0.19941719815135014,
+     "p50": 0.5095702409744263,
+     "p99": 0.8259137868881226,
+     "std": 0.13978311419487
+    },
+    "luma_linear": {
+     "mean": 0.24749720096588135,
+     "p1": 0.03397943079471588,
+     "p50": 0.22806626558303833,
+     "p99": 0.6499860286712646,
+     "std": 0.12655162811279297
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS11_reef_spray_4k.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5167,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.516709566116333,
+     "p1": 0.19906513392925262,
+     "p50": 0.5182313919067383,
+     "p99": 0.8401843309402466,
+     "std": 0.14252914488315582
+    },
+    "luma_linear": {
+     "mean": 0.25631439685821533,
+     "p1": 0.03397943079471588,
+     "p50": 0.23598691821098328,
+     "p99": 0.6752141714096069,
+     "std": 0.13247066736221313
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS12_tower_up",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS12_tower_up.png",
+   "beat": 4,
+   "s": 852.0,
+   "keyshot": "KS12_tower_up",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4858,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.48584142327308655,
+     "p1": 0.2222282588481903,
+     "p50": 0.46588239073753357,
+     "p99": 0.6633788347244263,
+     "std": 0.09129585325717926
+    },
+    "luma_linear": {
+     "mean": 0.21584732830524445,
+     "p1": 0.040841616690158844,
+     "p50": 0.1898392140865326,
+     "p99": 0.3979065418243408,
+     "std": 0.08152640610933304
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS12_tower_up_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS12_tower_up_1610.png",
+   "beat": 4,
+   "s": 852.0,
+   "keyshot": "KS12_tower_up",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.486,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.48603296279907227,
+     "p1": 0.2258666753768921,
+     "p50": 0.4656149446964264,
+     "p99": 0.6638149619102478,
+     "std": 0.09248579293489456
+    },
+    "luma_linear": {
+     "mean": 0.21631425619125366,
+     "p1": 0.04210568591952324,
+     "p50": 0.1898392140865326,
+     "p99": 0.3983337879180908,
+     "std": 0.08291678130626678
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS12_tower_up_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS12_tower_up_219.png",
+   "beat": 4,
+   "s": 852.0,
+   "keyshot": "KS12_tower_up",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4882,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.48815086483955383,
+     "p1": 0.22194510698318481,
+     "p50": 0.468985915184021,
+     "p99": 0.6628125905990601,
+     "std": 0.08814983814954758
+    },
+    "luma_linear": {
+     "mean": 0.21709828078746796,
+     "p1": 0.040718454867601395,
+     "p50": 0.19263823330402374,
+     "p99": 0.39710307121276855,
+     "std": 0.07828490436077118
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS12_tower_up_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_KS12_tower_up_4k.png",
+   "beat": 4,
+   "s": 852.0,
+   "keyshot": "KS12_tower_up",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4858,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4857766628265381,
+     "p1": 0.2222282588481903,
+     "p50": 0.46588239073753357,
+     "p99": 0.666183590888977,
+     "std": 0.09162554889917374
+    },
+    "luma_linear": {
+     "mean": 0.21585816144943237,
+     "p1": 0.040841616690158844,
+     "p50": 0.1898392140865326,
+     "p99": 0.4016702473163605,
+     "std": 0.0818164050579071
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_end",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_end.png",
+   "beat": 4,
+   "s": 918.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3012,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.30119019746780396,
+     "p1": 0.06688235700130463,
+     "p50": 0.2537333369255066,
+     "p99": 0.6720941066741943,
+     "std": 0.17721062898635864
+    },
+    "luma_linear": {
+     "mean": 0.10712475329637527,
+     "p1": 0.005738342646509409,
+     "p50": 0.05321685969829559,
+     "p99": 0.4110807478427887,
+     "std": 0.1223110482096672
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b04_ArmourSlope_look_back",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_look_back.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.6243,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.6243411898612976,
+     "p1": 0.186734139919281,
+     "p50": 0.667698085308075,
+     "p99": 0.9241529703140259,
+     "std": 0.17543673515319824
+    },
+    "luma_linear": {
+     "mean": 0.3864955008029938,
+     "p1": 0.030304767191410065,
+     "p50": 0.40436455607414246,
+     "p99": 0.8363364934921265,
+     "std": 0.18389639258384705
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_look_down",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_look_down.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.6171,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.6171088814735413,
+     "p1": 0.1864510029554367,
+     "p50": 0.6367301940917969,
+     "p99": 0.9134266972541809,
+     "std": 0.09323843568563461
+    },
+    "luma_linear": {
+     "mean": 0.34960493445396423,
+     "p1": 0.03017951361835003,
+     "p50": 0.3631848990917206,
+     "p99": 0.8142739534378052,
+     "std": 0.09742448478937149
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_look_l",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_look_l.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.6094,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.6094219088554382,
+     "p1": 0.31888315081596375,
+     "p50": 0.6346110105514526,
+     "p99": 0.9114400744438171,
+     "std": 0.08824214339256287
+    },
+    "luma_linear": {
+     "mean": 0.34127870202064514,
+     "p1": 0.08352328836917877,
+     "p50": 0.3612687885761261,
+     "p99": 0.8103707432746887,
+     "std": 0.09920104593038559
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_look_r",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_look_r.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0",
+     "note": "bright 2 (mode all), dark 0, first at [[1342, 417], [1271, 528]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4088,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 2,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      1342,
+      417
+     ],
+     [
+      1271,
+      528
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4088364541530609,
+     "p1": 0.13231529295444489,
+     "p50": 0.4650643765926361,
+     "p99": 0.7074533700942993,
+     "std": 0.1617441475391388
+    },
+    "luma_linear": {
+     "mean": 0.17014241218566895,
+     "p1": 0.016116479970514783,
+     "p50": 0.18934108316898346,
+     "p99": 0.46036434173583984,
+     "std": 0.1206444725394249
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b04_ArmourSlope_look_up",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_look_up.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4114,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4113589823246002,
+     "p1": 0.352894127368927,
+     "p50": 0.4141513705253601,
+     "p99": 0.45748865604400635,
+     "std": 0.03181891888380051
+    },
+    "luma_linear": {
+     "mean": 0.15048077702522278,
+     "p1": 0.11407184600830078,
+     "p50": 0.1517215371131897,
+     "p99": 0.1827418953180313,
+     "std": 0.023312879726290703
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_mid",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_mid.png",
+   "beat": 4,
+   "s": 810.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0003,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5284,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00028935185185185184,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5284372568130493,
+     "p1": 0.19514353573322296,
+     "p50": 0.5425788760185242,
+     "p99": 0.7755044102668762,
+     "std": 0.1318000853061676
+    },
+    "luma_linear": {
+     "mean": 0.2641206383705139,
+     "p1": 0.0328875295817852,
+     "p50": 0.2595185935497284,
+     "p99": 0.5642830771207819,
+     "std": 0.11954395473003387
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_start",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\b04_ArmourSlope_start.png",
+   "beat": 4,
+   "s": 702.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0001,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4376,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 9.645061728395061e-05,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4376404881477356,
+     "p1": 0.25206586718559265,
+     "p50": 0.47125810384750366,
+     "p99": 0.5432149767875671,
+     "std": 0.08199233561754227
+    },
+    "luma_linear": {
+     "mean": 0.16836956143379211,
+     "p1": 0.05172842741012573,
+     "p50": 0.18900007009506226,
+     "p99": 0.2565678358078003,
+     "std": 0.061585262417793274
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_b04p_belt",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\pose_b04p_belt.png",
+   "beat": 4,
+   "s": 790.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4442,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4442281723022461,
+     "p1": 0.12056627869606018,
+     "p50": 0.48541179299354553,
+     "p99": 0.7833474278450012,
+     "std": 0.19051004946231842
+    },
+    "luma_linear": {
+     "mean": 0.20773977041244507,
+     "p1": 0.013854458928108215,
+     "p50": 0.20282623171806335,
+     "p99": 0.5772265195846558,
+     "std": 0.1534663736820221
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_b04p_far",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\pose_b04p_far.png",
+   "beat": 4,
+   "s": 840.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5023,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5023274421691895,
+     "p1": 0.15748077630996704,
+     "p50": 0.5213192701339722,
+     "p99": 0.8309568762779236,
+     "std": 0.13498470187187195
+    },
+    "luma_linear": {
+     "mean": 0.23995688557624817,
+     "p1": 0.021566012874245644,
+     "p50": 0.23881691694259644,
+     "p99": 0.6589239239692688,
+     "std": 0.11833816021680832
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_b04p_isl",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\land\\QA\\captures\\reef-06\\pose_b04p_isl.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4813,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.48132050037384033,
+     "p1": 0.12026746571063995,
+     "p50": 0.5308298468589783,
+     "p99": 0.8191921710968018,
+     "std": 0.1562797725200653
+    },
+    "luma_linear": {
+     "mean": 0.2269451767206192,
+     "p1": 0.013780148699879646,
+     "p50": 0.2478501945734024,
+     "p99": 0.6381528377532959,
+     "std": 0.1265394389629364
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  }
+ ]
+}

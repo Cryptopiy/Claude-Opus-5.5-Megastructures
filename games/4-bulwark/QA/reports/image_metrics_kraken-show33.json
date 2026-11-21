@@ -1,0 +1,1211 @@
+{
+ "run": "kraken-show33",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-20T14:30:24.861Z",
+  "finished": "2026-11-20T14:30:29.253Z",
+  "seconds": 4.392023,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33",
+  "captureSet": "show",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 2,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\Builds\\kraken\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\Logs\\player-kraken-show33.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33 -capture-set show -capture-only show_k1_ks04,show_k2_kk1,show_k2_s350,show_k3_ks07,show_k4_kk2,show_k4_ks10,show_k4_s788,show_k5_ks11,show_k5_s828,show_stinger_t22,show_stinger_t28"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.452014,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "BulwarkConst.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS03_door_open": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [],
+  "KS12_tower_up": [],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "show_k1_ks04",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k1_ks04.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4153,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41529062390327454,
+     "p1": 0.24572628736495972,
+     "p50": 0.4426901936531067,
+     "p99": 0.5942109823226929,
+     "std": 0.12980300188064575
+    },
+    "luma_linear": {
+     "mean": 0.1626802235841751,
+     "p1": 0.04937215894460678,
+     "p50": 0.16562557220458984,
+     "p99": 0.3123074173927307,
+     "std": 0.09500540792942047
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k2_kk1",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k2_kk1.png",
+   "beat": 2,
+   "s": 378.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4316,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4316134452819824,
+     "p1": 0.24882981181144714,
+     "p50": 0.49141648411750793,
+     "p99": 0.5776909589767456,
+     "std": 0.10972675681114197
+    },
+    "luma_linear": {
+     "mean": 0.16975703835487366,
+     "p1": 0.05073858052492142,
+     "p50": 0.20669321715831757,
+     "p99": 0.29366788268089294,
+     "std": 0.07994375377893448
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k2_s350",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k2_s350.png",
+   "beat": 2,
+   "s": 350.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4363,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4363335371017456,
+     "p1": 0.24462512135505676,
+     "p50": 0.4947874844074249,
+     "p99": 0.5816125273704529,
+     "std": 0.111143097281456
+    },
+    "luma_linear": {
+     "mean": 0.17379407584667206,
+     "p1": 0.04905993863940239,
+     "p50": 0.20986326038837433,
+     "p99": 0.29804864525794983,
+     "std": 0.08133342862129211
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k3_ks07",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k3_ks07.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3511,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3510507345199585,
+     "p1": 0.17176707088947296,
+     "p50": 0.32000473141670227,
+     "p99": 0.5364573001861572,
+     "std": 0.11593367904424667
+    },
+    "luma_linear": {
+     "mean": 0.11522176116704941,
+     "p1": 0.025105921551585197,
+     "p50": 0.08386948704719543,
+     "p99": 0.2494657188653946,
+     "std": 0.07303519546985626
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "show_k4_kk2",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k4_kk2.png",
+   "beat": 4,
+   "s": 806.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4161,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41610801219940186,
+     "p1": 0.12976236641407013,
+     "p50": 0.4695027768611908,
+     "p99": 0.8933671712875366,
+     "std": 0.21112118661403656
+    },
+    "luma_linear": {
+     "mean": 0.1952473670244217,
+     "p1": 0.015442338772118092,
+     "p50": 0.19269298017024994,
+     "p99": 0.7748625874519348,
+     "std": 0.17280517518520355
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k4_ks10",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k4_ks10.png",
+   "beat": 4,
+   "s": 776.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4173,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41726526618003845,
+     "p1": 0.13004550337791443,
+     "p50": 0.4773796796798706,
+     "p99": 0.8849733471870422,
+     "std": 0.20687879621982574
+    },
+    "luma_linear": {
+     "mean": 0.19360142946243286,
+     "p1": 0.01551484689116478,
+     "p50": 0.19950193166732788,
+     "p99": 0.758629322052002,
+     "std": 0.15571190416812897
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k4_s788",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k4_s788.png",
+   "beat": 4,
+   "s": 788.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 3, first at [[1267, 468], [1246, 481], [1290, 495], [1279, 496]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4179,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 3,
+    "nan_like_pos": [
+     [
+      1267,
+      468
+     ],
+     [
+      1246,
+      481
+     ],
+     [
+      1290,
+      495
+     ],
+     [
+      1279,
+      496
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41789621114730835,
+     "p1": 0.12584079802036285,
+     "p50": 0.47848081588745117,
+     "p99": 0.8928166031837463,
+     "std": 0.21495631337165833
+    },
+    "luma_linear": {
+     "mean": 0.19801488518714905,
+     "p1": 0.014674204401671886,
+     "p50": 0.19998948276042938,
+     "p99": 0.7738996148109436,
+     "std": 0.17003996670246124
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "show_k5_ks11",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k5_ks11.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5295,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5295087099075317,
+     "p1": 0.1336839199066162,
+     "p50": 0.5548784732818604,
+     "p99": 0.8219922184944153,
+     "std": 0.15970493853092194
+    },
+    "luma_linear": {
+     "mean": 0.27419665455818176,
+     "p1": 0.01623358018696308,
+     "p50": 0.27189865708351135,
+     "p99": 0.6430746912956238,
+     "std": 0.13799728453159332
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k5_s828",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_k5_s828.png",
+   "beat": 4,
+   "s": 828.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5145,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.514472484588623,
+     "p1": 0.1339670568704605,
+     "p50": 0.5370549559593201,
+     "p99": 0.8482949733734131,
+     "std": 0.16481970250606537
+    },
+    "luma_linear": {
+     "mean": 0.260890394449234,
+     "p1": 0.01630789041519165,
+     "p50": 0.2540997564792633,
+     "p99": 0.6897779107093811,
+     "std": 0.13530738651752472
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_stinger_t22",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_stinger_t22.png",
+   "beat": 7,
+   "s": 1497.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1343,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.13431750237941742,
+     "p1": 0.03253646939992905,
+     "p50": 0.10386118292808533,
+     "p99": 0.27499765157699585,
+     "std": 0.05716663971543312
+    },
+    "luma_linear": {
+     "mean": 0.020101018249988556,
+     "p1": 0.002564377849921584,
+     "p50": 0.011194593273103237,
+     "p99": 0.06599480658769608,
+     "std": 0.016518495976924896
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_stinger_t28",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\kraken-show33\\show_stinger_t28.png",
+   "beat": 7,
+   "s": 1497.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.146,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.14600802958011627,
+     "p1": 0.09154588729143143,
+     "p50": 0.10552863031625748,
+     "p99": 0.2841082513332367,
+     "std": 0.06098389998078346
+    },
+    "luma_linear": {
+     "mean": 0.023308034986257553,
+     "p1": 0.009271752089262009,
+     "p50": 0.011516369879245758,
+     "p99": 0.07010202623903757,
+     "std": 0.018379144370555878
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  }
+ ]
+}

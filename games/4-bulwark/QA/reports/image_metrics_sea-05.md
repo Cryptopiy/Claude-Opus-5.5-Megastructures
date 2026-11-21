@@ -1,0 +1,616 @@
+# Image metrics: sea-05
+
+Capture folder: `<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05`  
+Scene constants: BulwarkConst.cs  
+Images: 35, failing images: 6. Checks: 280 PASS, 6 FAIL, 0 WARN, 0 SKIP, 0 INFO.
+
+**Result: FAIL**
+
+## Summary
+
+| Image | Beat | Size | Mean luma | p1 | Clipped % | Band score | Result | Failed checks |
+|---|---|---|---|---|---|---|---|---|
+| b01_WaveGallery_KS03_door_open | 1 | 1920x1080 | 0.217 | 0.056 | 0.0000 | - | FAIL | mean luma |
+| b01_WaveGallery_KS03_door_open_1610 | 1 | 1680x1050 | 0.234 | 0.056 | 0.0000 | - | FAIL | mean luma |
+| b01_WaveGallery_KS03_door_open_219 | 1 | 2560x1080 | 0.179 | 0.056 | 0.0000 | - | FAIL | mean luma |
+| b01_WaveGallery_KS03_door_open_4k | 1 | 3840x2160 | 0.217 | 0.056 | 0.0000 | - | FAIL | mean luma |
+| b02_Crest_KS04_crest_sea | 2 | 1920x1080 | 0.415 | 0.246 | 0.0000 | 0.500 | PASS |  |
+| b02_Crest_KS04_crest_sea_1610 | 2 | 1680x1050 | 0.416 | 0.246 | 0.0000 | - | PASS |  |
+| b02_Crest_KS04_crest_sea_219 | 2 | 2560x1080 | 0.415 | 0.246 | 0.0000 | - | PASS |  |
+| b02_Crest_KS04_crest_sea_4k | 2 | 3840x2160 | 0.416 | 0.246 | 0.0000 | 0.333 | PASS |  |
+| b02_Crest_KS05_crest_drop | 2 | 1920x1080 | 0.353 | 0.199 | 0.0000 | 0.500 | PASS |  |
+| b02_Crest_KS05_crest_drop_1610 | 2 | 1680x1050 | 0.355 | 0.199 | 0.0000 | - | PASS |  |
+| b02_Crest_KS05_crest_drop_219 | 2 | 2560x1080 | 0.351 | 0.199 | 0.0000 | - | PASS |  |
+| b02_Crest_KS05_crest_drop_4k | 2 | 3840x2160 | 0.353 | 0.198 | 0.0000 | 0.250 | PASS |  |
+| b02_Crest_KS06_crest_axis | 2 | 1920x1080 | 0.434 | 0.242 | 0.0000 | - | PASS |  |
+| b02_Crest_KS06_crest_axis_1610 | 2 | 1680x1050 | 0.433 | 0.242 | 0.0000 | - | PASS |  |
+| b02_Crest_KS06_crest_axis_219 | 2 | 2560x1080 | 0.435 | 0.245 | 0.0000 | - | PASS |  |
+| b02_Crest_KS06_crest_axis_4k | 2 | 3840x2160 | 0.433 | 0.242 | 0.0000 | - | PASS |  |
+| b02_Crest_end | 2 | 1920x1080 | 0.390 | 0.194 | 0.0000 | - | PASS |  |
+| b02_Crest_look_back | 2 | 1920x1080 | 0.426 | 0.241 | 0.0000 | - | PASS |  |
+| b02_Crest_look_down | 2 | 1920x1080 | 0.230 | 0.202 | 0.0000 | - | FAIL | mean luma |
+| b02_Crest_look_l | 2 | 1920x1080 | 0.440 | 0.242 | 0.0000 | - | PASS |  |
+| b02_Crest_look_r | 2 | 1920x1080 | 0.426 | 0.238 | 0.0000 | - | PASS |  |
+| b02_Crest_look_up | 2 | 1920x1080 | 0.473 | 0.446 | 0.0000 | - | PASS |  |
+| b02_Crest_mid | 2 | 1920x1080 | 0.429 | 0.241 | 0.0000 | - | PASS |  |
+| b02_Crest_start | 2 | 1920x1080 | 0.433 | 0.245 | 0.0000 | - | PASS |  |
+| pose_cartnear | 2 | 1920x1080 | 0.409 | 0.226 | 0.0000 | - | PASS |  |
+| pose_digits | 2 | 1920x1080 | 0.370 | 0.210 | 0.0000 | - | PASS |  |
+| pose_ks04near | 2 | 1920x1080 | 0.367 | 0.175 | 0.0000 | - | PASS |  |
+| pose_lampnear | 2 | 1920x1080 | 0.478 | 0.293 | 0.0000 | - | PASS |  |
+| pose_parapetpost | 2 | 1920x1080 | 0.374 | 0.183 | 0.0000 | - | PASS |  |
+| pose_sea230 | 2 | 1920x1080 | 0.403 | 0.238 | 0.0000 | - | PASS |  |
+| pose_seaback | 2 | 1920x1080 | 0.416 | 0.199 | 0.0000 | - | PASS |  |
+| pose_seadown | 2 | 1920x1080 | 0.342 | 0.172 | 0.0000 | - | PASS |  |
+| pose_seafar | 2 | 1920x1080 | 0.438 | 0.195 | 0.0000 | - | PASS |  |
+| pose_seanorth | 2 | 1920x1080 | 0.423 | 0.214 | 0.0000 | - | PASS |  |
+| pose_wallfoot | 2 | 1920x1080 | 0.259 | 0.164 | 0.0000 | - | FAIL | mean luma |
+
+## Key-shot coverage (14.10.2: every key shot at 1920x1080 and 3840x2160)
+
+| Key shot | Requested sizes found | Status |
+|---|---|---|
+| KS01_gal_far | - | INFO |
+| KS02_gal_slit | - | INFO |
+| KS03_door_open | 1680x1050, 1920x1080, 2560x1080, 3840x2160 | PASS |
+| KS04_crest_sea | 1680x1050, 1920x1080, 2560x1080, 3840x2160 | PASS |
+| KS05_crest_drop | 1680x1050, 1920x1080, 2560x1080, 3840x2160 | PASS |
+| KS06_crest_axis | 1680x1050, 1920x1080, 2560x1080, 3840x2160 | PASS |
+| KS07_spill_gates | - | INFO |
+| KS08_spill_bow | - | INFO |
+| KS09_spill_grate | - | INFO |
+| KS10_reef_wide | - | INFO |
+| KS11_reef_spray | - | INFO |
+| KS12_tower_up | - | INFO |
+| KS13_atrium | - | INFO |
+| KS14_stairs_down | - | INFO |
+| KS15_win_first | - | INFO |
+| KS16_win_up | - | INFO |
+| KS17_win_whale | - | INFO |
+| KS18_win_down | - | INFO |
+| KS19_sluice | - | INFO |
+| KS20_ledge_world | - | INFO |
+| KS21_beacon | - | INFO |
+
+## Details
+
+### b01_WaveGallery_KS03_door_open (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b01_WaveGallery_KS03_door_open.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 1.5 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.2173 | 0.27451..0.470588 | display |
+
+### b01_WaveGallery_KS03_door_open_1610 (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b01_WaveGallery_KS03_door_open_1610.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1680x1050 | 1680x1050 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 1.5 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.2342 | 0.27451..0.470588 | display |
+
+### b01_WaveGallery_KS03_door_open_219 (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b01_WaveGallery_KS03_door_open_219.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 2560x1080 | 2560x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 1.5 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.1787 | 0.27451..0.470588 | display |
+
+### b01_WaveGallery_KS03_door_open_4k (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b01_WaveGallery_KS03_door_open_4k.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 3840x2160 | 3840x2160 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 1.5 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.2173 | 0.27451..0.470588 | display |
+
+### b02_Crest_KS04_crest_sea (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS04_crest_sea.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4154 | 0.333333..0.588235 | display |
+| horizon[sea_horizon] step | PASS | 0.0240 | <= 2 dE | trend-removed at row ~420.0, 998 cols: above [141.0, 150.4, 158.4] vs below [141.0, 150.4, 158.4] |
+| banding[storm_sky] | PASS | 0.5000 | score <= 1 | longest run 3 px (max 6), mean run 1.01 px (limit 11.2), 15 strips |
+
+### b02_Crest_KS04_crest_sea_1610 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS04_crest_sea_1610.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1680x1050 | 1680x1050 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4160 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS04_crest_sea_219 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS04_crest_sea_219.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 2560x1080 | 2560x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4146 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS04_crest_sea_4k (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS04_crest_sea_4k.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 3840x2160 | 3840x2160 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4161 | 0.333333..0.588235 | display |
+| horizon[sea_horizon] step | PASS | 0.1500 | <= 2 dE | trend-removed at row ~840.0, 1996 cols: above [141.1, 150.4, 158.4] vs below [141.5, 150.8, 158.7] |
+| banding[storm_sky] | PASS | 0.3330 | score <= 1 | longest run 4 px (max 12), mean run 1.03 px (limit 21.1), 30 strips |
+
+### b02_Crest_KS05_crest_drop (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS05_crest_drop.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3534 | 0.333333..0.588235 | display |
+| banding[haze] | PASS | 0.5000 | score <= 1 | longest run 3 px (max 6), mean run 1.03 px (limit 14.5), 15 strips |
+
+### b02_Crest_KS05_crest_drop_1610 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS05_crest_drop_1610.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1680x1050 | 1680x1050 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3548 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS05_crest_drop_219 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS05_crest_drop_219.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 2560x1080 | 2560x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3508 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS05_crest_drop_4k (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS05_crest_drop_4k.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 3840x2160 | 3840x2160 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3533 | 0.333333..0.588235 | display |
+| banding[haze] | PASS | 0.2500 | score <= 1 | longest run 3 px (max 12), mean run 1.03 px (limit 18.5), 30 strips |
+
+### b02_Crest_KS06_crest_axis (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS06_crest_axis.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4335 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS06_crest_axis_1610 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS06_crest_axis_1610.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1680x1050 | 1680x1050 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4332 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS06_crest_axis_219 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS06_crest_axis_219.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 2560x1080 | 2560x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4349 | 0.333333..0.588235 | display |
+
+### b02_Crest_KS06_crest_axis_4k (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_KS06_crest_axis_4k.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 3840x2160 | 3840x2160 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4335 | 0.333333..0.588235 | display |
+
+### b02_Crest_end (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_end.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3897 | 0.333333..0.588235 | display |
+
+### b02_Crest_look_back (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_look_back.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4256 | 0.333333..0.588235 | display |
+
+### b02_Crest_look_down (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_look_down.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.2305 | 0.333333..0.588235 | display |
+
+### b02_Crest_look_l (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_look_l.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4404 | 0.333333..0.588235 | display |
+
+### b02_Crest_look_r (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_look_r.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4257 | 0.333333..0.588235 | display |
+
+### b02_Crest_look_up (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_look_up.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4732 | 0.333333..0.588235 | display |
+
+### b02_Crest_mid (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_mid.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4290 | 0.333333..0.588235 | display |
+
+### b02_Crest_start (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\b02_Crest_start.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4334 | 0.333333..0.588235 | display |
+
+### pose_cartnear (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_cartnear.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4091 | 0.333333..0.588235 | display |
+
+### pose_digits (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_digits.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3704 | 0.333333..0.588235 | display |
+
+### pose_ks04near (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_ks04near.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3673 | 0.333333..0.588235 | display |
+
+### pose_lampnear (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_lampnear.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4779 | 0.333333..0.588235 | display |
+
+### pose_parapetpost (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_parapetpost.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3744 | 0.333333..0.588235 | display |
+
+### pose_sea230 (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_sea230.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4032 | 0.333333..0.588235 | display |
+
+### pose_seaback (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_seaback.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4155 | 0.333333..0.588235 | display |
+
+### pose_seadown (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_seadown.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.3422 | 0.333333..0.588235 | display |
+
+### pose_seafar (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_seafar.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4377 | 0.333333..0.588235 | display |
+
+### pose_seanorth (PASS)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_seanorth.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | PASS | 0.4226 | 0.333333..0.588235 | display |
+
+### pose_wallfoot (FAIL)
+
+`<WORKSPACE>\4 Megastructures\4 Megastructures\QA\captures\sea-05\pose_wallfoot.png`
+
+| Check | Status | Value | Threshold | Note |
+|---|---|---|---|---|
+| size | PASS | 1920x1080 | 1920x1080 |  |
+| black frame | PASS | 0.0000 | < 0.98 of pixels <= code 3 |  |
+| white frame | PASS | 0.0000 | < 0.98 of pixels >= code 252 |  |
+| magenta | PASS | 0 | 0 px | ratio 0 (exact 255,0,255: 0 px) |
+| NaN-like pixels | PASS | 0 | 0 | bright 0 (mode all), dark 0 |
+| fireflies | PASS | 0 | 0 px | 8 x 5x5 median and +16 levels |
+| clipped highlights | PASS | 0.0000 | <= 0.4 % | any channel >= 254; 0 px excluded |
+| mean luma | FAIL | 0.2590 | 0.333333..0.588235 | display |
+
+## Method notes
+
+- Luma: Rec.709 weights; 'display' on the 8-bit encoded values / 255, 'linear' on the exact sRGB-decoded values. The 14.10.3 gates (p1, expected mean ranges, region std) use display luma unless --luma-scale linear.
+- Clipped: any channel at code 255 (>= 0.999), percentage of all pixels outside the exclusion discs.
+- Horizon 'trend' items: a line per channel fitted to rows h-7..h-2 and h+2..h+7 (1080p px) per column, both extrapolated to h, Lab dE of the column medians (limit 2.0): a real step, not the gradient on either side.
+- Off-path material sheets (set 'materials', tags 'mat_*') carry no 14.10.3 beat luma band.
+- NaN-like: display luma more than 0.30 above the max / 0.30 below the min of the 24 neighbours (isolated); beat 6 counts bright outliers only when they also clip (snow).
+- Banding (14.10.3 + R6 6.2): 64-px strips, 9-px box, steps > 0.6 code per 1000 px <= 2; longest run (< 0.05 code) <= 6 px only where |slope| >= 0.06 code/px; residual vs a 129-px quadratic trend RMS <= 0.10 and p-p <= 0.60 code.  Score = worst ratio to its limit (<= 1 passes).
+- Thin line: crop 64 x 256 on linear luminance, flank-fitted background, FWHM per row (reported at 1080p scale), monotone 3-level edge on >= 95 % of rows, centroid residual <= 0.25 px, energy variation <= 10 %.

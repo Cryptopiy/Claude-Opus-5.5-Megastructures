@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-14 01:35:48Z" end-time="2026-11-14 01:35:49Z" duration="0,6619697">
+  <test-suite type="TestSuite" id="1000" name="Bulwark" fullname="Bulwark" runstate="Runnable" testcasecount="184" result="Passed" start-time="2026-11-14 01:35:48Z" end-time="2026-11-14 01:35:49Z" duration="0.661970" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1208" name="Megastructure.Tests.EditMode.dll" fullname="<WORKSPACE>/4 Megastructures/4 Megastructures/Library/ScriptAssemblies/Megastructure.Tests.EditMode.dll" runstate="Runnable" testcasecount="184" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.618590" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31364" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1209" name="Megastructure" fullname="Megastructure" runstate="Runnable" testcasecount="184" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.613107" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1210" name="Tests" fullname="Megastructure.Tests" runstate="Runnable" testcasecount="184" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.588927" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1184" name="VisibilityAuditTests" fullname="Megastructure.Tests.VisibilityAuditTests" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.583255" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1188" name="AnalyticFloorRule_DeckEdgeAndTrench" fullname="Megastructure.Tests.VisibilityAuditTests.AnalyticFloorRule_DeckEdgeAndTrench" methodname="AnalyticFloorRule_DeckEdgeAndTrench" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" seed="1114404659" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.030236" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1189" name="Audit_WritesVisibilityJson" fullname="Megastructure.Tests.VisibilityAuditTests.Audit_WritesVisibilityJson" methodname="Audit_WritesVisibilityJson" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" seed="197257406" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.460663" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[BW] graybox: WorldSky present, stand-in sky not built
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: gb_road_deck
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: gb_faces
+[BW] visibility audit: 21 key shots, 88 subjects (71 pass at the target pose), 26 findings, sweep 33 named subjects; Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent) -> QA/reports/visibility.json
+[BW] visibility finding KS02-slit_z66: width px 277.1 vs spec 270 +-6 (4K) | pose (-1.5, 1.7, 66) yaw 90 pitch 4 vFOV 62; focal 4K 1797.4 px; 16:9 ndc x [-0.072, 0.072] y [-0.716, 0.769] limit +-0.94; 16:10 ndc x [-0.08, 0.08] y [-0.716, 0.769] limit +-0.94; 21:9 ndc x [-0.054, 0.054] y [-0.716, 0.769] limit +-0.94; 4K w x h 277.1 x 1604.7, row 1051.4, col 1920
+[BW] visibility finding KS04-plume_z175: not inside the frame with the 3 % margin at 16:9, 16:10, 21:9 | pose (4.2, 1.7, 160) yaw 80 pitch -8 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [-5.003, -0.721] y [0.263, 10.497] limit +-0.94; 16:10 ndc x [-5.558, -0.801] y [0.263, 10.497] limit +-0.94; 21:9 ndc x [-3.752, -0.54] y [0.263, 10.497] limit +-0.94; 4K w x h 8221.4 x 11052.8, row -4730.3, col -3574.2
+[BW] visibility finding KS05-deck_strip_row: row 1627.9 vs spec 1661 +-10 (4K) | pose (-4.5, 1.7, 230) yaw -75 pitch -30 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [0, 0] y [-0.507, -0.507] limit +-0.94; 16:10 ndc x [0, 0] y [-0.507, -0.507] limit +-0.94; 21:9 ndc x [0, 0] y [-0.507, -0.507] limit +-0.94; 4K w x h 0 x 0, row 1627.9, col 1920
+[BW] visibility finding KS06-cart: height px 115.2 vs spec 109 +-5 (4K) | pose (-1.5, 1.7, 300) yaw 0 pitch 2 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [0.082, 0.131] y [-0.151, -0.045] limit +-0.94; 16:10 ndc x [0.091, 0.146] y [-0.151, -0.045] limit +-0.94; 21:9 ndc x [0.061, 0.098] y [-0.151, -0.045] limit +-0.94; 4K w x h 94.5 x 115.2, row 1185.8, col 2124.2
+[BW] visibility finding KS07-pier_z522_east_end-built: hidden by the built geometry: unoccluded 0 % of 59 rays; main blocker gb_spill_piers@12.74m (59 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS07-gate_house_z522: not inside the frame with the 3 % margin at 16:9, 16:10, 21:9 | pose (1, 1.7, 492) yaw 70 pitch -6 vFOV 66; focal 4K 1663.1 px; 16:9 ndc x [-1.318, -0.869] y [0.053, 0.516] limit +-0.94; 16:10 ndc x [-1.464, -0.965] y [0.053, 0.516] limit +-0.94; 21:9 ndc x [-0.988, -0.652] y [0.053, 0.516] limit +-0.94; 4K w x h 862.4 x 499.9, row 772.4, col -179.3
+[BW] visibility finding KS07-funnel_slot4-built: hidden by the built geometry: unoccluded 0 % of 41 rays; main blocker gb_road_deck@3.79m (36 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS09-water_below-built: hidden by the built geometry: unoccluded 0 % of 42 rays; main blocker gb_road_deck@1.99m (42 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS09-lip-built: hidden by the built geometry: unoccluded 0 % of 62 rays; main blocker gb_road_deck@1.83m (62 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS09-sheet_first_40m-built: hidden by the built geometry: unoccluded 0 % of 42 rays; main blocker gb_road_deck@1.97m (42 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS10-islet_1_150_745: not inside the frame with the 3 % margin at 16:9, 16:10 | pose (3, 1.7, 776) yaw 78 pitch -3 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [-0.061, 1.151] y [-0.145, 0.575] limit +-0.94; 16:10 ndc x [-0.068, 1.278] y [-0.145, 0.575] limit +-0.94; 21:9 ndc x [-0.046, 0.863] y [-0.145, 0.575] limit +-0.94; 4K w x h 2326.8 x 777.5, row 848.1, col 2965.7
+[BW] visibility finding KS12-tower_top_edge-follower: passes at the target pose but not at the follower pose: top row 264.9 vs spec 273 +-8 (4K) | follower yaw 0.163 pitch 23.809 (lag 0.243 deg)
+[BW] visibility finding KS13-pendant_w_z931: not inside the frame with the 3 % margin at 16:9, 16:10, 21:9 | pose (-1.5, 1.7, 926) yaw 0 pitch 14 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [-0.293, -0.206] y [0.78, 0.966] limit +-0.94; 16:10 ndc x [-0.326, -0.229] y [0.78, 0.966] limit +-0.94; 21:9 ndc x [-0.22, -0.155] y [0.78, 0.966] limit +-0.94; 4K w x h 166.5 x 200.6, row 136.9, col 1440.3
+[BW] visibility finding KS13-pendant_e_z931: not inside the frame with the 3 % margin at 16:9, 16:10, 21:9 | pose (-1.5, 1.7, 926) yaw 0 pitch 14 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [0.683, 0.811] y [0.78, 0.966] limit +-0.94; 16:10 ndc x [0.759, 0.901] y [0.78, 0.966] limit +-0.94; 21:9 ndc x [0.512, 0.608] y [0.78, 0.966] limit +-0.94; 4K w x h 245 x 200.6, row 136.9, col 3353.8
+[BW] visibility finding KS13-stair_mouth: width px 917.3 vs spec 842 +-10 (4K) | pose (-1.5, 1.7, 926) yaw 0 pitch 14 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [-0.239, 0.239] y [-0.845, -0.23] limit +-0.94; 16:10 ndc x [-0.265, 0.265] y [-0.845, -0.23] limit +-0.94; 21:9 ndc x [-0.179, 0.179] y [-0.845, -0.23] limit +-0.94; 4K w x h 917.3 x 664.1, row 1660.8, col 1920
+[BW] visibility finding KS13-north_arch: width px 318.7 vs spec 293 +-6 (4K) | pose (-1.5, 1.7, 926) yaw 0 pitch 14 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [0.076, 0.242] y [-0.539, -0.202] limit +-0.94; 16:10 ndc x [0.084, 0.269] y [-0.539, -0.202] limit +-0.94; 21:9 ndc x [0.057, 0.181] y [-0.539, -0.202] limit +-0.94; 4K w x h 318.7 x 364.3, row 1480.5, col 2225
+[BW] visibility finding KS14-next_landing: row 1896.9 vs spec 1675.5 +-112.5 (4K); height px 415.7 vs spec 205 +-10 (4K) | pose (1.11, -25.3, 985) yaw 3 pitch -24 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [-0.459, 0.463] y [-0.949, -0.564] limit +-0.94; 16:10 ndc x [-0.51, 0.515] y [-0.949, -0.564] limit +-0.94; 21:9 ndc x [-0.344, 0.347] y [-0.949, -0.564] limit +-0.94; 4K w x h 1770.8 x 415.7, row 1896.9, col 1923.9
+[BW] visibility finding KS14-following_flight: top row 1520.6 vs spec 1497 +-10 (4K) | pose (1.11, -25.3, 985) yaw 3 pitch -24 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [-0.348, 0.351] y [-0.543, -0.408] limit +-0.94; 16:10 ndc x [-0.386, 0.39] y [-0.543, -0.408] limit +-0.94; 21:9 ndc x [-0.261, 0.263] y [-0.543, -0.408] limit +-0.94; 4K w x h 1341.2 x 145.8, row 1593.5, col 1922.9
+[BW] visibility finding KS14-riser_3m: height px 57.3 vs spec 117 +-6 (4K) | pose (1.11, -25.3, 985) yaw 3 pitch -24 vFOV 60; focal 4K 1870.6 px; 16:9 ndc x [-0.095, 0.098] y [-0.594, -0.541] limit +-0.94; 16:10 ndc x [-0.105, 0.109] y [-0.594, -0.541] limit +-0.94; 21:9 ndc x [-0.071, 0.073] y [-0.594, -0.541] limit +-0.94; 4K w x h 369.9 x 57.3, row 1693.1, col 1922.9
+[BW] visibility finding KS15-pane_k1: does not fill the frame (a frame corner misses the subject) at 21:9 | pose (4.92, -57.7, 1115) yaw 90 pitch 12 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [-2.545, 2.667] y [-5.504, 3.594] limit +-0.94; 16:10 ndc x [-2.828, 2.964] y [-5.504, 3.594] limit +-0.94; 21:9 ndc x [-1.909, 2.001] y [-5.504, 3.594] limit +-0.94; 4K w x h 10007.6 x 9825.1, row 2111.5, col 2037.6
+[BW] visibility finding KS17-whale: not inside the frame with the 3 % margin at 16:9, 16:10 | pose (6.64, -71.5, 1230) yaw 90 pitch 2 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [-1.062, 0.831] y [-0.254, 0.251] limit +-0.94; 16:10 ndc x [-1.18, 0.923] y [-0.254, 0.251] limit +-0.94; 21:9 ndc x [-0.797, 0.623] y [-0.254, 0.251] limit +-0.94; 4K w x h 3634.3 x 545.2, row 1081.5, col 1697.9
+[BW] visibility finding KS18-view_el_m30: no centred in-frame part at 16:9, 16:10, 21:9; hidden by the walkable floor (11.13 analytic rule): unoccluded 0 % | pose (8, -82.3, 1320) yaw 60 pitch -24 vFOV 64; focal 4K 1728.4 px; 16:9 ndc x [0, 0] y [-0.168, -0.168] limit +-0.94; 16:10 ndc x [0, 0] y [-0.168, -0.168] limit +-0.94; 21:9 ndc x [0, 0] y [-0.168, -0.168] limit +-0.94; 4K w x h 0 x 0, row 1261.7, col 1920; nearest open floor edge 3.5 m
+[BW] visibility finding KS18-view_el_m30-built: hidden by the built geometry: unoccluded 0 % of 1 rays; main blocker gb_floor_3@3.85m (1 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS20-lantern_post: height px 53.2 vs spec 47 +-3 (4K) | pose (-9.2, -88.3, 1449.1) yaw -27.5 pitch -7 vFOV 66; focal 4K 1663.1 px; 16:9 ndc x [0.451, 0.455] y [0.129, 0.179] limit +-0.94; 16:10 ndc x [0.501, 0.506] y [0.129, 0.179] limit +-0.94; 21:9 ndc x [0.338, 0.341] y [0.129, 0.179] limit +-0.94; 4K w x h 7.6 x 53.2, row 913.8, col 2789.8
+[BW] visibility finding KS20-jets-built: hidden by the built geometry: unoccluded 25.7 % of 105 rays; main blocker gb_ledge_slab@9.08m (70 rays) | Physics ray casts against 39 MeshColliders of the built world (Graybox_Path; 16 renderers skipped as non-occluders: sky, sea, water, mist, glass, lamps, transparent)
+[BW] visibility finding KS20-north_vanishing_point-follower: passes at the target pose but not at the follower pose: column 2794.9 vs spec 2783 +-10 (4K) | follower yaw -27.574 pitch -6.974 (lag 0.077 deg)
+]]></output>
+            </test-case>
+            <test-case id="1186" name="Bow_TopIsAt25p4AndThe141PointsLieAboveTheHorizon" fullname="Megastructure.Tests.VisibilityAuditTests.Bow_TopIsAt25p4AndThe141PointsLieAboveTheHorizon" methodname="Bow_TopIsAt25p4AndThe141PointsLieAboveTheHorizon" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" seed="1064570906" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.009941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1187" name="Follower_IsFiniteAndEndsOnTheKeyShotS" fullname="Megastructure.Tests.VisibilityAuditTests.Follower_IsFiniteAndEndsOnTheKeyShotS" methodname="Follower_IsFiniteAndEndsOnTheKeyShotS" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" seed="141231235" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.025523" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1185" name="HorizonRows_OfTheKeyShotTableHold" fullname="Megastructure.Tests.VisibilityAuditTests.HorizonRows_OfTheKeyShotTableHold" methodname="HorizonRows_OfTheKeyShotTableHold" classname="Megastructure.Tests.VisibilityAuditTests" runstate="Runnable" seed="860660585" result="Passed" start-time="2026-11-14 01:35:49Z" end-time="2026-11-14 01:35:49Z" duration="0.003688" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/<USER>/AppData/LocalLow/Megastructures/Bulwark\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

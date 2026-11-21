@@ -1,0 +1,1260 @@
+{
+ "run": "audio_examples",
+ "status": "PASS",
+ "files": [
+  {
+   "file": "QA/audio/kraken_call.wav",
+   "sidecar": "QA/audio/kraken_call.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 14.0,
+   "frames": 672000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.5282579064369202,
+   "sample_peak_dbfs": -5.543079882816167,
+   "sample_peak_at_s": 7.0045,
+   "true_peak": 0.5282700451552993,
+   "true_peak_dbtp": -5.542880294025291,
+   "true_peak_at_s": 7.0045,
+   "speed": null,
+   "dc_per_channel": [
+    1.8528988891353105e-05,
+    -2.2288432387000164e-05
+   ],
+   "max_step": 0.05967094004154205,
+   "max_step_at_s": 6.08025,
+   "steps_over_limit": 0,
+   "rms_dbfs": -23.501597525395702,
+   "max_400ms_rms_dbfs": -21.721285481627433,
+   "rms_per_window_dbfs": [
+    -24.03,
+    -23.33,
+    -25.41,
+    -23.16,
+    -22.25,
+    -22.21,
+    -22.36,
+    -22.16,
+    -24.1,
+    -26.94,
+    -24.24,
+    -23.56,
+    -24.16,
+    -23.55
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -22.658788936514068,
+   "lufs_momentary_max": -20.71643922311139,
+   "lufs_short_term_max": -21.226117224663522,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -5.54,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 7.005 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -5.54,
+     "threshold": null,
+     "note": "at 7.005 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 2.2e-05,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0597,
+     "threshold": "<= 0.25 FS",
+     "note": "at 6.0803 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-22.66",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken Call at 2.0 s audible",
+     "status": "PASS",
+     "value": 4.23,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -31.6, during -27.4 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_call_underwater.wav",
+   "sidecar": "QA/audio/kraken_call_underwater.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 14.0,
+   "frames": 672000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.4422570765018463,
+   "sample_peak_dbfs": -7.086504185386141,
+   "sample_peak_at_s": 7.6236041666666665,
+   "true_peak": 0.44236571804391545,
+   "true_peak_dbtp": -7.084370737197638,
+   "true_peak_at_s": 7.623583333333333,
+   "speed": null,
+   "dc_per_channel": [
+    -2.7234389405712227e-07,
+    -5.659043848238666e-07
+   ],
+   "max_step": 0.015944726765155792,
+   "max_step_at_s": 7.006083333333334,
+   "steps_over_limit": 0,
+   "rms_dbfs": -29.541977494756733,
+   "max_400ms_rms_dbfs": -24.267422137929408,
+   "rms_per_window_dbfs": [
+    -39.14,
+    -39.38,
+    -36.14,
+    -27.35,
+    -26.37,
+    -26.14,
+    -25.79,
+    -24.89,
+    -27.79,
+    -35.6,
+    -38.06,
+    -37.89,
+    -37.28,
+    -37.61
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -25.996229271669424,
+   "lufs_momentary_max": -22.9132221119179,
+   "lufs_short_term_max": -24.633256654995897,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -7.08,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 7.624 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -7.09,
+     "threshold": null,
+     "note": "at 7.624 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 1e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0159,
+     "threshold": "<= 0.25 FS",
+     "note": "at 7.0061 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-26.00",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken Call at 2.0 s audible",
+     "status": "PASS",
+     "value": 21.83,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -53.0, during -31.2 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_surface_roar.wav",
+   "sidecar": "QA/audio/kraken_surface_roar.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 16.0,
+   "frames": 768000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.4653475880622864,
+   "sample_peak_dbfs": -6.6444506546401385,
+   "sample_peak_at_s": 6.381854166666667,
+   "true_peak": 0.4655272548066989,
+   "true_peak_dbtp": -6.641097753775043,
+   "true_peak_at_s": 6.381833333333334,
+   "speed": null,
+   "dc_per_channel": [
+    -4.829404615399602e-07,
+    -7.264881798994534e-05
+   ],
+   "max_step": 0.055080294609069824,
+   "max_step_at_s": 1.8212708333333334,
+   "steps_over_limit": 0,
+   "rms_dbfs": -22.408809177097268,
+   "max_400ms_rms_dbfs": -20.053618820262443,
+   "rms_per_window_dbfs": [
+    -23.27,
+    -22.58,
+    -23.92,
+    -22.67,
+    -21.15,
+    -20.76,
+    -20.74,
+    -22.05,
+    -20.8,
+    -20.84,
+    -24.74,
+    -25.91,
+    -24.07,
+    -23.14,
+    -22.78,
+    -23.08
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -21.36502015486433,
+   "lufs_momentary_max": -18.860462452696932,
+   "lufs_short_term_max": -19.749821648595738,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -6.64,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 6.382 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -6.64,
+     "threshold": null,
+     "note": "at 6.382 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 7.3e-05,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0551,
+     "threshold": "<= 0.25 FS",
+     "note": "at 1.8213 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-21.37",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken SurfaceRoar at 2.0 s audible",
+     "status": "PASS",
+     "value": 3.85,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -30.5, during -26.6 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_slap.wav",
+   "sidecar": "QA/audio/kraken_slap.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 10.0,
+   "frames": 480000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.5667914152145386,
+   "sample_peak_dbfs": -4.931534726472815,
+   "sample_peak_at_s": 2.0867708333333335,
+   "true_peak": 0.5668773076366066,
+   "true_peak_dbtp": -4.930218553440573,
+   "true_peak_at_s": 2.0867708333333335,
+   "speed": null,
+   "dc_per_channel": [
+    -8.822837301282665e-05,
+    -1.1644188367314474e-06
+   ],
+   "max_step": 0.07869893312454224,
+   "max_step_at_s": 2.029145833333333,
+   "steps_over_limit": 0,
+   "rms_dbfs": -22.979020753282885,
+   "max_400ms_rms_dbfs": -16.542138062081243,
+   "rms_per_window_dbfs": [
+    -23.27,
+    -22.58,
+    -17.86,
+    -26.75,
+    -28.47,
+    -25.32,
+    -23.98,
+    -23.79,
+    -23.35,
+    -23.49
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -22.20254115311332,
+   "lufs_momentary_max": -16.280801180007124,
+   "lufs_short_term_max": -20.0994863369971,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -4.93,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 2.087 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -4.93,
+     "threshold": null,
+     "note": "at 2.087 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 8.8e-05,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0787,
+     "threshold": "<= 0.25 FS",
+     "note": "at 2.0291 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-22.20",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken Slap at 2.0 s audible",
+     "status": "PASS",
+     "value": 5.51,
+     "threshold": ">= +3 dB (80-800 Hz, 1 s after vs 3 s before)",
+     "note": "before -30.5, during -25.0 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_dam_shudder.wav",
+   "sidecar": "QA/audio/kraken_dam_shudder.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 11.0,
+   "frames": 528000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.5577000975608826,
+   "sample_peak_dbfs": -5.071985590708524,
+   "sample_peak_at_s": 2.0433958333333333,
+   "true_peak": 0.5604114168026424,
+   "true_peak_dbtp": -5.0298605154096645,
+   "true_peak_at_s": 2.0433958333333333,
+   "speed": null,
+   "dc_per_channel": [
+    1.209292917156212e-05,
+    -4.127935523484167e-05
+   ],
+   "max_step": 0.04650821536779404,
+   "max_step_at_s": 1.8212708333333334,
+   "steps_over_limit": 0,
+   "rms_dbfs": -21.7147105568512,
+   "max_400ms_rms_dbfs": -18.463841525266922,
+   "rms_per_window_dbfs": [
+    -23.88,
+    -23.18,
+    -20.74,
+    -20.23,
+    -19.21,
+    -18.85,
+    -21.98,
+    -24.51,
+    -23.87,
+    -24.03,
+    -23.65
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -21.01130098470526,
+   "lufs_momentary_max": -17.516748457896046,
+   "lufs_short_term_max": -18.43340272035386,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -5.03,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 2.043 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -5.07,
+     "threshold": null,
+     "note": "at 2.043 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 4.1e-05,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0465,
+     "threshold": "<= 0.25 FS",
+     "note": "at 1.8213 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-21.01",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken DamShudder at 2.0 s audible",
+     "status": "PASS",
+     "value": 5.24,
+     "threshold": ">= +3 dB (80-800 Hz, 2 s after vs 3 s before)",
+     "note": "before -31.4, during -26.2 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_glass_creak.wav",
+   "sidecar": "QA/audio/kraken_glass_creak.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 14.0,
+   "frames": 672000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.20487286150455475,
+   "sample_peak_dbfs": -13.770311332650351,
+   "sample_peak_at_s": 6.2413541666666665,
+   "true_peak": 0.20491424535587952,
+   "true_peak_dbtp": -13.76855697991153,
+   "true_peak_at_s": 6.241333333333333,
+   "speed": null,
+   "dc_per_channel": [
+    -3.757864240720787e-08,
+    -6.516255223031078e-07
+   ],
+   "max_step": 0.0066116563975811005,
+   "max_step_at_s": 7.181958333333333,
+   "steps_over_limit": 0,
+   "rms_dbfs": -31.848056051425637,
+   "max_400ms_rms_dbfs": -25.94139711087025,
+   "rms_per_window_dbfs": [
+    -39.14,
+    -39.38,
+    -38.42,
+    -32.23,
+    -29.14,
+    -28.95,
+    -29.1,
+    -26.69,
+    -29.0,
+    -34.53,
+    -37.74,
+    -37.89,
+    -37.28,
+    -37.61
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -29.04074752348271,
+   "lufs_momentary_max": -24.02898900040337,
+   "lufs_short_term_max": -26.09657167174679,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -13.77,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 6.241 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -13.77,
+     "threshold": null,
+     "note": "at 6.241 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 1e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0066,
+     "threshold": "<= 0.25 FS",
+     "note": "at 7.1820 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-29.04",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken GlassCreak at 2.0 s audible",
+     "status": "PASS",
+     "value": 21.07,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -53.0, during -32.0 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_sucker_pops.wav",
+   "sidecar": "QA/audio/kraken_sucker_pops.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 16.0,
+   "frames": 768000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.46086254715919495,
+   "sample_peak_dbfs": -6.728571683593373,
+   "sample_peak_at_s": 7.501729166666666,
+   "true_peak": 0.4608731372149297,
+   "true_peak_dbtp": -6.728372094802495,
+   "true_peak_at_s": 7.501729166666666,
+   "speed": null,
+   "dc_per_channel": [
+    2.062725935096608e-07,
+    -2.841289777102518e-06
+   ],
+   "max_step": 0.008116006851196289,
+   "max_step_at_s": 7.500770833333333,
+   "steps_over_limit": 0,
+   "rms_dbfs": -33.40839841161688,
+   "max_400ms_rms_dbfs": -27.639192826338665,
+   "rms_per_window_dbfs": [
+    -39.14,
+    -39.38,
+    -38.34,
+    -34.2,
+    -34.14,
+    -32.08,
+    -31.22,
+    -30.36,
+    -31.06,
+    -29.71,
+    -30.35,
+    -33.64,
+    -36.94,
+    -37.6,
+    -38.49,
+    -38.81
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -33.224615027955366,
+   "lufs_momentary_max": -27.254634419246965,
+   "lufs_short_term_max": -29.533926742057098,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -6.73,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 7.502 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -6.73,
+     "threshold": null,
+     "note": "at 7.502 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 3e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0081,
+     "threshold": "<= 0.25 FS",
+     "note": "at 7.5008 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-33.22",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken SuckerPops at 2.0 s audible",
+     "status": "PASS",
+     "value": 14.76,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -53.0, during -38.3 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_eye_swell.wav",
+   "sidecar": "QA/audio/kraken_eye_swell.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 18.0,
+   "frames": 864000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.40960729122161865,
+   "sample_peak_dbfs": -7.752646425940794,
+   "sample_peak_at_s": 8.802604166666667,
+   "true_peak": 0.40965974071777894,
+   "true_peak_dbtp": -7.751534284189493,
+   "true_peak_at_s": 8.802604166666667,
+   "speed": null,
+   "dc_per_channel": [
+    3.312263197395736e-07,
+    -2.4852183306845324e-06
+   ],
+   "max_step": 0.01174934208393097,
+   "max_step_at_s": 8.803354166666667,
+   "steps_over_limit": 0,
+   "rms_dbfs": -30.088524959912885,
+   "max_400ms_rms_dbfs": -24.180635154629456,
+   "rms_per_window_dbfs": [
+    -39.14,
+    -39.38,
+    -42.34,
+    -46.31,
+    -45.34,
+    -34.81,
+    -28.67,
+    -25.32,
+    -25.24,
+    -25.03,
+    -24.87,
+    -26.88,
+    -32.5,
+    -38.73,
+    -38.9,
+    -38.81,
+    -39.06,
+    -38.74
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -26.509325620655538,
+   "lufs_momentary_max": -23.466866197266548,
+   "lufs_short_term_max": -24.469471783087005,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -7.75,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 8.803 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -7.75,
+     "threshold": null,
+     "note": "at 8.803 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 2e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0117,
+     "threshold": "<= 0.25 FS",
+     "note": "at 8.8034 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-26.51",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken EyeSwell at 2.0 s audible",
+     "status": "PASS",
+     "value": 22.08,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -53.0, during -31.0 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/kraken_stinger.wav",
+   "sidecar": "QA/audio/kraken_stinger.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 14.0,
+   "frames": 672000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.10546234995126724,
+   "sample_peak_dbfs": -19.538051115714524,
+   "sample_peak_at_s": 7.707229166666667,
+   "true_peak": 0.10546477334663922,
+   "true_peak_dbtp": -19.537851526923646,
+   "true_peak_at_s": 7.707229166666667,
+   "speed": null,
+   "dc_per_channel": [
+    1.070619739581436e-06,
+    1.2017417021139881e-06
+   ],
+   "max_step": 0.0315745547413826,
+   "max_step_at_s": 12.229541666666666,
+   "steps_over_limit": 0,
+   "rms_dbfs": -38.13011292908386,
+   "max_400ms_rms_dbfs": -33.71613932693956,
+   "rms_per_window_dbfs": [
+    -46.16,
+    -44.43,
+    -41.68,
+    -34.56,
+    -34.89,
+    -34.96,
+    -34.99,
+    -34.45,
+    -37.53,
+    -43.52,
+    -44.49,
+    -44.16,
+    -44.38,
+    -46.08
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -37.32352788414963,
+   "lufs_momentary_max": -32.20672941807369,
+   "lufs_short_term_max": -34.183818625568954,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -19.54,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 7.707 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -19.54,
+     "threshold": null,
+     "note": "at 7.707 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 1e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0316,
+     "threshold": "<= 0.25 FS",
+     "note": "at 12.2295 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-37.32",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    },
+    {
+     "name": "kraken Stinger at 2.0 s audible",
+     "status": "PASS",
+     "value": 10.96,
+     "threshold": ">= +3 dB (80-800 Hz, 3 s after vs 3 s before)",
+     "note": "before -50.5, during -39.5 dBFS"
+    }
+   ],
+   "status": "PASS"
+  },
+  {
+   "file": "QA/audio/ride.wav",
+   "sidecar": "QA/audio/ride.json",
+   "stem": "example",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 146.0,
+   "frames": 7008000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.14765149354934692,
+   "sample_peak_dbfs": -16.615243112554527,
+   "sample_peak_at_s": 110.76475,
+   "true_peak": 0.14805513322608388,
+   "true_peak_dbtp": -16.591530611408466,
+   "true_peak_at_s": 110.76472916666667,
+   "speed": null,
+   "dc_per_channel": [
+    -1.1105973172718757e-07,
+    -8.698056880968714e-08
+   ],
+   "max_step": 0.05803579743951559,
+   "max_step_at_s": 2.2017291666666665,
+   "steps_over_limit": 0,
+   "rms_dbfs": -32.181669500262174,
+   "max_400ms_rms_dbfs": -28.46121533451946,
+   "rms_per_window_dbfs": [
+    -34.79,
+    -34.26,
+    -33.62,
+    -39.43,
+    -42.85,
+    -42.96,
+    -43.12,
+    -42.96,
+    -41.61,
+    -38.76,
+    -36.38,
+    -34.12,
+    -32.56,
+    -31.71,
+    -31.41,
+    -31.43,
+    -31.51,
+    -31.44,
+    -31.22,
+    -31.32,
+    -31.32,
+    -31.08,
+    -31.18,
+    -31.24,
+    -30.98,
+    -31.14,
+    -30.83,
+    -31.16,
+    -30.66,
+    -31.03,
+    -30.57,
+    -31.01,
+    -31.32,
+    -31.02,
+    -31.23,
+    -31.67,
+    -31.58,
+    -31.56,
+    -32.22,
+    -32.49,
+    -32.34,
+    -32.51,
+    -32.47,
+    -33.09,
+    -33.08,
+    -33.13,
+    -32.96,
+    -32.87,
+    -32.71,
+    -32.5,
+    -32.34,
+    -32.38,
+    -32.42,
+    -31.69,
+    -31.26,
+    -31.76,
+    -31.35,
+    -30.84,
+    -31.04,
+    -30.88,
+    -30.51,
+    -30.86,
+    -30.52,
+    -30.98,
+    -30.68,
+    -30.97,
+    -30.86,
+    -31.28,
+    -30.86,
+    -31.22,
+    -31.2,
+    -30.97,
+    -31.12,
+    -31.34,
+    -31.33,
+    -31.2,
+    -31.36,
+    -31.3,
+    -31.42,
+    -31.48,
+    -32.39,
+    -33.3,
+    -37.12,
+    -39.12,
+    -42.05,
+    -46.73,
+    -46.31,
+    -46.55,
+    -46.57,
+    -46.55,
+    -46.19,
+    -33.22,
+    -31.19,
+    -30.9,
+    -30.81,
+    -30.68,
+    -30.53,
+    -30.31,
+    -30.26,
+    -29.96,
+    -29.82,
+    -29.65,
+    -29.43,
+    -29.18,
+    -28.93,
+    -28.91,
+    -28.98,
+    -29.6,
+    -30.28,
+    -29.69,
+    -29.14,
+    -28.68,
+    -28.82,
+    -28.97,
+    -29.08,
+    -29.25,
+    -29.65,
+    -29.8,
+    -30.09,
+    -30.13,
+    -30.43,
+    -30.59,
+    -30.74,
+    -30.95,
+    -31.0,
+    -32.39,
+    -38.32,
+    -47.92,
+    -45.79,
+    -44.46,
+    -44.37,
+    -45.77,
+    -47.67,
+    -49.13,
+    -49.05,
+    -48.02,
+    -46.3,
+    -45.02,
+    -44.2,
+    -44.56,
+    -45.57,
+    -47.66,
+    -49.08,
+    -48.83,
+    -47.7,
+    -46.56
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -28.92030678323752,
+   "lufs_momentary_max": -25.14108058881758,
+   "lufs_short_term_max": -25.45292327512645,
+   "warnings": [],
+   "has_s": false,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -16.59,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 110.765 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -16.62,
+     "threshold": null,
+     "note": "at 110.765 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.058,
+     "threshold": "<= 0.25 FS",
+     "note": "at 2.2017 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-28.92",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    }
+   ],
+   "status": "PASS"
+  }
+ ],
+ "errors": [],
+ "beats": [
+  {
+   "beat": 1,
+   "name": "WaveGallery",
+   "rms_dbfs": "-",
+   "target": -34.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 2,
+   "name": "Crest",
+   "rms_dbfs": "-",
+   "target": -24.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 3,
+   "name": "SpillwayBridge",
+   "rms_dbfs": "-",
+   "target": -18.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 4,
+   "name": "ArmourSlope",
+   "rms_dbfs": "-",
+   "target": -23.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 5,
+   "name": "GateTower",
+   "rms_dbfs": "-",
+   "target": -32.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 6,
+   "name": "WindowGallery",
+   "rms_dbfs": "-",
+   "target": -38.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 7,
+   "name": "SluiceLedge",
+   "rms_dbfs": "-",
+   "target": -25.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  }
+ ],
+ "beat_checks": [
+  {
+   "name": "beat 1 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 2 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 3 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 4 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 5 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 6 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 7 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  }
+ ],
+ "lufs_combined": null
+}

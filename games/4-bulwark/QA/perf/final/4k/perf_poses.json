@@ -1,0 +1,53 @@
+{
+  "tool": "Megastructure.QA.PerfPoseRunner",
+  "report": "perf_poses",
+  "pass": true,
+  "started": "2026-11-20T18:43:51.181Z",
+  "finished": "2026-11-20T18:44:21.523Z",
+  "realSeconds": 30.332723,
+  "summary": "3 poses at 3840x2160 uncapped",
+  "env": {
+    "unity": "6000.6.0f1",
+    "isEditor": false,
+    "batchMode": false,
+    "platform": "WindowsPlayer",
+    "graphicsApi": "Direct3D11",
+    "gpu": "NVIDIA GeForce RTX 5070",
+    "gpuMemoryMB": 11944,
+    "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+    "reversedZ": true,
+    "screen": "1920x1080",
+    "vSyncCount": 0,
+    "seed": 1,
+    "targetFrameRate": -1,
+    "ditherMode": "Static",
+    "ditherStatic": true,
+    "ditherPeak": 2,
+    "ditherPeakOverride": -1,
+    "freezeAmbient": false,
+    "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\Builds\\Bulwark\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\Logs\\player-fin-perf4k.log -perf-poses KS17,ride,KS28 -perf-log <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\perf\\final\\perf4k.csv -perf-rt 3840x2160 -uncapped -nofade -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\perf\\final\\4k"
+  },
+  "resolution": "3840x2160",
+  "uncapped": true,
+  "frameTiming": true,
+  "warmSeconds": 2,
+  "measureSeconds": 6,
+  "poses": [
+    {"name":"KS17", "s":1268, "pos":[7.215, -76.06, 1267.838], "yaw":90, "pitch":2, "fov":64, "tg":-1, "frames":815, "avgMs":7.366069, "avgFps":135.757626, "p99Ms":8.315795, "maxMs":8.935105, "gpuAvgMs":7.303925, "gpuP99Ms":8.219392, "cpuAvgMs":7.365586},
+    {"name":"ride", "s":1600, "pos":[-9.199028, -2877.8, 1497.114122], "yaw":10, "pitch":-25, "fov":66, "tg":-1, "frames":1007, "avgMs":5.960892, "avgFps":167.760123, "p99Ms":6.703798, "maxMs":7.486402, "gpuAvgMs":5.920995, "gpuP99Ms":6.743808, "cpuAvgMs":5.960551},
+    {"name":"KS28", "s":1897.5, "pos":[-3485.765398, -5997.3, 1517.114122], "yaw":90, "pitch":29, "fov":66, "tg":8.5, "frames":803, "avgMs":7.480309, "avgFps":133.684318, "p99Ms":8.7019, "maxMs":9.375496, "gpuAvgMs":7.441517, "gpuP99Ms":8.688384, "cpuAvgMs":7.481208}
+  ],
+  "checks": [
+    {"name":"pose KS17", "ok":true, "required":true, "detail":"815 frames, avg 7.37 ms, GPU 7.30 ms"},
+    {"name":"pose ride", "ok":true, "required":true, "detail":"1007 frames, avg 5.96 ms, GPU 5.92 ms"},
+    {"name":"pose KS28", "ok":true, "required":true, "detail":"803 frames, avg 7.48 ms, GPU 7.44 ms"},
+    {"name":"noErrorLogs", "ok":true, "required":true, "detail":"0 error/exception/assert messages"},
+    {"name":"noKillVolumeEvents", "ok":true, "required":true, "detail":"PathGuide.KillCount = 0"},
+    {"name":"colliderCoverage", "ok":true, "required":false, "detail":"skipped: "},
+    {"name":"inputDevices", "ok":true, "required":false, "detail":""},
+    {"name":"loadUnder15s", "ok":true, "required":false, "detail":"5.32 s (T-LOAD)"}
+  ],
+  "errorsLogged": 0,
+  "warningsLogged": 0,
+  "errorMessages": []
+}

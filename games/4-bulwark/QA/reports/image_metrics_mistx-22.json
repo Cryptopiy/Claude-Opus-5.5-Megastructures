@@ -1,0 +1,3157 @@
+{
+ "run": "mistx-22",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-20T16:44:16.897Z",
+  "finished": "2026-11-20T16:44:44.127Z",
+  "seconds": 27.230851,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22",
+  "captureSet": "show,keyshots,beats",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 1.5,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\Builds\\mistx\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\Logs\\player-mistx-cap22.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22 -capture-set show,keyshots,beats -capture-only show_k5_ks11,show_k5_s828,show_k5_s821,seq_show_k5,KS07,KS08,KS09,KS11,b02_Crest_end,b03_SpillwayBridge_mid,b03_SpillwayBridge_look_back,b03_SpillwayBridge_end"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.404501,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 5,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "BulwarkConst.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS03_door_open": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS08_spill_bow": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS09_spill_grate": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS12_tower_up": [],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "b02_Crest_end",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b02_Crest_end.png",
+   "beat": 2,
+   "s": 418.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3845,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.38448038697242737,
+     "p1": 0.19419530034065247,
+     "p50": 0.43678200244903564,
+     "p99": 0.5434823632240295,
+     "std": 0.1172587126493454
+    },
+    "luma_linear": {
+     "mean": 0.13703282177448273,
+     "p1": 0.031553011387586594,
+     "p50": 0.16049885749816895,
+     "p99": 0.25675317645072937,
+     "std": 0.07594970613718033
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS07_spill_gates",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS07_spill_gates.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": "KS07_spill_gates",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3531,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3530799150466919,
+     "p1": 0.17260080575942993,
+     "p50": 0.3281309902667999,
+     "p99": 0.5364573001861572,
+     "std": 0.11461381614208221
+    },
+    "luma_linear": {
+     "mean": 0.11614848673343658,
+     "p1": 0.025298580527305603,
+     "p50": 0.0885951817035675,
+     "p99": 0.2494657188653946,
+     "std": 0.07238265872001648
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS07_spill_gates_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS07_spill_gates_1610.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": "KS07_spill_gates",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3539,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3539060056209564,
+     "p1": 0.17260080575942993,
+     "p50": 0.3281309902667999,
+     "p99": 0.5364573001861572,
+     "std": 0.11491428315639496
+    },
+    "luma_linear": {
+     "mean": 0.11672859638929367,
+     "p1": 0.025298580527305603,
+     "p50": 0.0885951817035675,
+     "p99": 0.2494657188653946,
+     "std": 0.07276873290538788
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS07_spill_gates_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS07_spill_gates_219.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": "KS07_spill_gates",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3426,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3426358699798584,
+     "p1": 0.17260080575942993,
+     "p50": 0.31631454825401306,
+     "p99": 0.53253573179245,
+     "std": 0.11181557178497314
+    },
+    "luma_linear": {
+     "mean": 0.10924650728702545,
+     "p1": 0.025298580527305603,
+     "p50": 0.08178552240133286,
+     "p99": 0.24551592767238617,
+     "std": 0.06998550891876221
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS07_spill_gates_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS07_spill_gates_4k.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": "KS07_spill_gates",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3532,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.35316967964172363,
+     "p1": 0.17260080575942993,
+     "p50": 0.3325357139110565,
+     "p99": 0.5364573001861572,
+     "std": 0.11594539135694504
+    },
+    "luma_linear": {
+     "mean": 0.11650526523590088,
+     "p1": 0.025298580527305603,
+     "p50": 0.09095925092697144,
+     "p99": 0.2494657188653946,
+     "std": 0.0728101134300232
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS08_spill_bow",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS08_spill_bow.png",
+   "beat": 3,
+   "s": 604.0,
+   "keyshot": "KS08_spill_bow",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4756,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[sky]",
+     "status": "PASS",
+     "value": 0.5,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 6), mean run 1.02 px (limit 11.1), 15 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4755823016166687,
+     "p1": 0.2294219583272934,
+     "p50": 0.5029898285865784,
+     "p99": 0.650385345220566,
+     "std": 0.09419240057468414
+    },
+    "luma_linear": {
+     "mean": 0.2034960240125656,
+     "p1": 0.043032750487327576,
+     "p50": 0.21799112856388092,
+     "p99": 0.3862681984901428,
+     "std": 0.07555197179317474
+    },
+    "banding": {
+     "sky": {
+      "direction": "v",
+      "n_strips": 15,
+      "longest_run_px": 3,
+      "longest_run_max_px": 6.0,
+      "mean_run_px": 1.0223214285714286,
+      "mean_run_limit_px": 11.113656918902537,
+      "mean_run_ratio": 0.09198785206628296,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.05629825538233112,
+      "score": 0.5,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0216216216216216,
+        "mean_run_limit_px": 23.790900290416598
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0299727520435968,
+        "mean_run_limit_px": 17.050878815911165
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0137741046831956,
+        "mean_run_limit_px": 11.191256830601093
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0223214285714286,
+        "mean_run_limit_px": 11.113656918902537
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0423280423280423,
+        "mean_run_limit_px": 14.211256746337773
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0204081632653061,
+        "mean_run_limit_px": 13.688822874118065
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0231660231660231,
+        "mean_run_limit_px": 13.08626198083067
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0299625468164795,
+        "mean_run_limit_px": 15.633587786259541
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0261194029850746,
+        "mean_run_limit_px": 14.235952886657635
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0294117647058822,
+        "mean_run_limit_px": 14.542011834319558
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0264900662251655,
+        "mean_run_limit_px": 13.451559934318555
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0198675496688743,
+        "mean_run_limit_px": 16.168421052631658
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0471380471380471,
+        "mean_run_limit_px": 17.562648880419218
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0188679245283019,
+        "mean_run_limit_px": 18.496738585047446
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         450
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0470914127423823,
+        "mean_run_limit_px": 21.774365032486898
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.5
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS08_spill_bow_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS08_spill_bow_1610.png",
+   "beat": 3,
+   "s": 604.0,
+   "keyshot": "KS08_spill_bow",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4798,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.47981658577919006,
+     "p1": 0.2285882532596588,
+     "p50": 0.5052486062049866,
+     "p99": 0.6531537771224976,
+     "std": 0.09311985224485397
+    },
+    "luma_linear": {
+     "mean": 0.20707085728645325,
+     "p1": 0.04274170845746994,
+     "p50": 0.220803365111351,
+     "p99": 0.38957011699676514,
+     "std": 0.0750882551074028
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS08_spill_bow_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS08_spill_bow_219.png",
+   "beat": 3,
+   "s": 604.0,
+   "keyshot": "KS08_spill_bow",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.467,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.46701014041900635,
+     "p1": 0.2263341248035431,
+     "p50": 0.49538278579711914,
+     "p99": 0.6399851441383362,
+     "std": 0.09520938247442245
+    },
+    "luma_linear": {
+     "mean": 0.19609546661376953,
+     "p1": 0.04191377013921738,
+     "p50": 0.21081335842609406,
+     "p99": 0.37350305914878845,
+     "std": 0.07489241659641266
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS08_spill_bow_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS08_spill_bow_4k.png",
+   "beat": 3,
+   "s": 604.0,
+   "keyshot": "KS08_spill_bow",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4756,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[sky]",
+     "status": "PASS",
+     "value": 0.25,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 12), mean run 1.04 px (limit 20.5), 30 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.47558143734931946,
+     "p1": 0.2294219583272934,
+     "p50": 0.5030462741851807,
+     "p99": 0.6504619717597961,
+     "std": 0.09422994405031204
+    },
+    "luma_linear": {
+     "mean": 0.2035037875175476,
+     "p1": 0.043032750487327576,
+     "p50": 0.21802765130996704,
+     "p99": 0.3864051103591919,
+     "std": 0.07558021694421768
+    },
+    "banding": {
+     "sky": {
+      "direction": "v",
+      "n_strips": 30,
+      "longest_run_px": 3,
+      "longest_run_max_px": 12.0,
+      "mean_run_px": 1.0378071833648392,
+      "mean_run_limit_px": 20.479999999999627,
+      "mean_run_ratio": 0.05067417887523721,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.02918293488376746,
+      "score": 0.25,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0286069651741294,
+        "mean_run_limit_px": 47.14066496163595
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0247524752475248,
+        "mean_run_limit_px": 44.30769230769279
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0389447236180904,
+        "mean_run_limit_px": 41.35053280987134
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0298507462686568,
+        "mean_run_limit_px": 25.734031413612662
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0247524752475248,
+        "mean_run_limit_px": 31.293718166384185
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0076628352490422,
+        "mean_run_limit_px": 28.335126825518277
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0176565008025682,
+        "mean_run_limit_px": 22.643734643734895
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0378071833648392,
+        "mean_run_limit_px": 20.479999999999627
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.03125,
+        "mean_run_limit_px": 26.684039087947408
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.019434628975265,
+        "mean_run_limit_px": 31.561643835616536
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.016025641025641,
+        "mean_run_limit_px": 28.172716851357258
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.021909233176839,
+        "mean_run_limit_px": 26.444763271161847
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0169230769230768,
+        "mean_run_limit_px": 29.084023668639116
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0260736196319018,
+        "mean_run_limit_px": 28.53250773993788
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.02130898021309,
+        "mean_run_limit_px": 30.617940199335642
+       },
+       {
+        "strip": [
+         1920,
+         2048
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0242057488653555,
+        "mean_run_limit_px": 30.952141057933943
+       },
+       {
+        "strip": [
+         2048,
+         2176
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0287878787878788,
+        "mean_run_limit_px": 27.8850226928896
+       },
+       {
+        "strip": [
+         2176,
+         2304
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0287878787878788,
+        "mean_run_limit_px": 28.129721480350973
+       },
+       {
+        "strip": [
+         2304,
+         2432
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.022354694485842,
+        "mean_run_limit_px": 31.187817258882674
+       },
+       {
+        "strip": [
+         2432,
+         2560
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0313432835820895,
+        "mean_run_limit_px": 28.24827586206932
+       },
+       {
+        "strip": [
+         2560,
+         2688
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0221238938053097,
+        "mean_run_limit_px": 27.65491372843207
+       },
+       {
+        "strip": [
+         2688,
+         2816
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0311572700296736,
+        "mean_run_limit_px": 29.922077922077968
+       },
+       {
+        "strip": [
+         2816,
+         2944
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.03328509406657,
+        "mean_run_limit_px": 32.08355091383782
+       },
+       {
+        "strip": [
+         2944,
+         3072
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0248618784530388,
+        "mean_run_limit_px": 27.387815750371285
+       },
+       {
+        "strip": [
+         3072,
+         3200
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.022038567493113,
+        "mean_run_limit_px": 31.548138639281202
+       },
+       {
+        "strip": [
+         3200,
+         3328
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.025,
+        "mean_run_limit_px": 32.30850131463639
+       },
+       {
+        "strip": [
+         3328,
+         3456
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.023485784919654,
+        "mean_run_limit_px": 33.03225806451613
+       },
+       {
+        "strip": [
+         3456,
+         3584
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.019704433497537,
+        "mean_run_limit_px": 34.10175763182207
+       },
+       {
+        "strip": [
+         3584,
+         3712
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0285714285714285,
+        "mean_run_limit_px": 39.80993520518366
+       },
+       {
+        "strip": [
+         3712,
+         3840
+        ],
+        "rows": [
+         0,
+         900
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.023485784919654,
+        "mean_run_limit_px": 43.42049469964552
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.25
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS09_spill_grate",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS09_spill_grate.png",
+   "beat": 3,
+   "s": 572.0,
+   "keyshot": "KS09_spill_grate",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3796,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.37960854172706604,
+     "p1": 0.1464666724205017,
+     "p50": 0.4009576439857483,
+     "p99": 0.6396855711936951,
+     "std": 0.09397672861814499
+    },
+    "luma_linear": {
+     "mean": 0.1290099173784256,
+     "p1": 0.018840573728084564,
+     "p50": 0.13424506783485413,
+     "p99": 0.37221384048461914,
+     "std": 0.06670994311571121
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS09_spill_grate_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS09_spill_grate_1610.png",
+   "beat": 3,
+   "s": 572.0,
+   "keyshot": "KS09_spill_grate",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3823,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3822987675666809,
+     "p1": 0.1464666724205017,
+     "p50": 0.4038745164871216,
+     "p99": 0.6431552767753601,
+     "std": 0.0943303108215332
+    },
+    "luma_linear": {
+     "mean": 0.13089418411254883,
+     "p1": 0.018840573728084564,
+     "p50": 0.13590891659259796,
+     "p99": 0.37613046169281006,
+     "std": 0.06724433600902557
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS09_spill_grate_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS09_spill_grate_219.png",
+   "beat": 3,
+   "s": 572.0,
+   "keyshot": "KS09_spill_grate",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3675,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.36751434206962585,
+     "p1": 0.1341513991355896,
+     "p50": 0.39030981063842773,
+     "p99": 0.632094144821167,
+     "std": 0.09774116426706314
+    },
+    "luma_linear": {
+     "mean": 0.12177003920078278,
+     "p1": 0.01618051901459694,
+     "p50": 0.1268157660961151,
+     "p99": 0.3628687560558319,
+     "std": 0.06610064953565598
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_KS09_spill_grate_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_KS09_spill_grate_4k.png",
+   "beat": 3,
+   "s": 572.0,
+   "keyshot": "KS09_spill_grate",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3792,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.37915486097335815,
+     "p1": 0.1464666724205017,
+     "p50": 0.4012407958507538,
+     "p99": 0.6423215866088867,
+     "std": 0.09524379670619965
+    },
+    "luma_linear": {
+     "mean": 0.12896351516246796,
+     "p1": 0.018840573728084564,
+     "p50": 0.13446661829948425,
+     "p99": 0.374873548746109,
+     "std": 0.06751275062561035
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b03_SpillwayBridge_end",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_end.png",
+   "beat": 3,
+   "s": 698.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[975, 525]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0001,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4262,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      975,
+      525
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00014467592592592592,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4261719882488251,
+     "p1": 0.2475937455892563,
+     "p50": 0.457491010427475,
+     "p99": 0.5315467119216919,
+     "std": 0.07933269441127777
+    },
+    "luma_linear": {
+     "mean": 0.15891584753990173,
+     "p1": 0.049987878650426865,
+     "p50": 0.17701922357082367,
+     "p99": 0.24481534957885742,
+     "std": 0.05812225118279457
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_look_back",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_look_back.png",
+   "beat": 3,
+   "s": 560.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[651, 592]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4167,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      651,
+      592
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4166806638240814,
+     "p1": 0.1806439310312271,
+     "p50": 0.4570416212081909,
+     "p99": 0.5559459328651428,
+     "std": 0.09444279968738556
+    },
+    "luma_linear": {
+     "mean": 0.1545376032590866,
+     "p1": 0.027424639090895653,
+     "p50": 0.17652185261249542,
+     "p99": 0.270510196685791,
+     "std": 0.06460724025964737
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b03_SpillwayBridge_mid",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b03_SpillwayBridge_mid.png",
+   "beat": 3,
+   "s": 560.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[959, 519]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4053,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      959,
+      519
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.40530598163604736,
+     "p1": 0.1952964961528778,
+     "p50": 0.45467057824134827,
+     "p99": 0.5342572927474976,
+     "std": 0.09741545468568802
+    },
+    "luma_linear": {
+     "mean": 0.14688873291015625,
+     "p1": 0.03178961202502251,
+     "p50": 0.17458152770996094,
+     "p99": 0.24763447046279907,
+     "std": 0.06442468613386154
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b04_ArmourSlope_KS11_reef_spray.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5097,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5097041130065918,
+     "p1": 0.17014668881893158,
+     "p50": 0.5011608004570007,
+     "p99": 0.9202675819396973,
+     "std": 0.15583635866641998
+    },
+    "luma_linear": {
+     "mean": 0.2542171776294708,
+     "p1": 0.02494322881102562,
+     "p50": 0.22039008140563965,
+     "p99": 0.8285345435142517,
+     "std": 0.15081238746643066
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b04_ArmourSlope_KS11_reef_spray_1610.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5129,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5129421949386597,
+     "p1": 0.16644079983234406,
+     "p50": 0.5022619962692261,
+     "p99": 0.9218204617500305,
+     "std": 0.15788841247558594
+    },
+    "luma_linear": {
+     "mean": 0.2580987811088562,
+     "p1": 0.02389378659427166,
+     "p50": 0.22114133834838867,
+     "p99": 0.8313271999359131,
+     "std": 0.15435118973255157
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b04_ArmourSlope_KS11_reef_spray_219.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 1, first at [[2289, 465]]"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4975,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      2289,
+      465
+     ]
+    ],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.49745479226112366,
+     "p1": 0.14616942405700684,
+     "p50": 0.49161413311958313,
+     "p99": 0.912408709526062,
+     "std": 0.15545476973056793
+    },
+    "luma_linear": {
+     "mean": 0.24227753281593323,
+     "p1": 0.018993942067027092,
+     "p50": 0.21069777011871338,
+     "p99": 0.8126399517059326,
+     "std": 0.14410781860351562
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b04_ArmourSlope_KS11_reef_spray_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\b04_ArmourSlope_KS11_reef_spray_4k.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": "KS11_reef_spray",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5101,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5100775361061096,
+     "p1": 0.1681082397699356,
+     "p50": 0.5014439225196838,
+     "p99": 0.92108553647995,
+     "std": 0.1562749594449997
+    },
+    "luma_linear": {
+     "mean": 0.25473257899284363,
+     "p1": 0.02425030805170536,
+     "p50": 0.22057457268238068,
+     "p99": 0.830165445804596,
+     "std": 0.15138618648052216
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k3_ks07",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\show_k3_ks07.png",
+   "beat": 3,
+   "s": 492.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.3531,
+     "threshold": "0.372549..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3530799150466919,
+     "p1": 0.17260080575942993,
+     "p50": 0.3281309902667999,
+     "p99": 0.5364573001861572,
+     "std": 0.11461381614208221
+    },
+    "luma_linear": {
+     "mean": 0.11614848673343658,
+     "p1": 0.025298580527305603,
+     "p50": 0.0885951817035675,
+     "p99": 0.2494657188653946,
+     "std": 0.07238265872001648
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "show_k5_ks11",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\show_k5_ks11.png",
+   "beat": 4,
+   "s": 824.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.5097,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.5097041130065918,
+     "p1": 0.17014668881893158,
+     "p50": 0.5011608004570007,
+     "p99": 0.9202675819396973,
+     "std": 0.15583635866641998
+    },
+    "luma_linear": {
+     "mean": 0.2542171776294708,
+     "p1": 0.02494322881102562,
+     "p50": 0.22039008140563965,
+     "p99": 0.8285345435142517,
+     "std": 0.15081238746643066
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k5_s821",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\show_k5_s821.png",
+   "beat": 4,
+   "s": 821.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4887,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4887163043022156,
+     "p1": 0.15263278007507328,
+     "p50": 0.4899623692035675,
+     "p99": 0.7558965682983398,
+     "std": 0.14747637510299683
+    },
+    "luma_linear": {
+     "mean": 0.2312335968017578,
+     "p1": 0.020474223420023918,
+     "p50": 0.21050359308719635,
+     "p99": 0.5331706404685974,
+     "std": 0.12589958310127258
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "show_k5_s828",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\.worktrees\\seamist\\QA\\captures\\mistx-22\\show_k5_s828.png",
+   "beat": 4,
+   "s": 828.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.6 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4976,
+     "threshold": "0.392157..0.647059",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.49755534529685974,
+     "p1": 0.15005961060523987,
+     "p50": 0.4980729818344116,
+     "p99": 0.9156447649002075,
+     "std": 0.15602777898311615
+    },
+    "luma_linear": {
+     "mean": 0.24235637485980988,
+     "p1": 0.01989794336259365,
+     "p50": 0.21731944382190704,
+     "p99": 0.8189069133996963,
+     "std": 0.14184588193893433
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  }
+ ]
+}

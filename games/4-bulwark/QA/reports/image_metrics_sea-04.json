@@ -1,0 +1,4490 @@
+{
+ "run": "sea-04",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-14T08:41:00.990Z",
+  "finished": "2026-11-14T08:42:19.109Z",
+  "seconds": 78.119208,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04",
+  "captureSet": "keyshots,beats,statics,pans,transitions,pose:seafar:5.0:1.7:250:60:-3:0,pose:seadown:5.0:1.7:200:110:-25:0,pose:sea230:4.2:1.7:230:95:-12:0,pose:wallfoot:5.0:1.7:300:90:-60:0,pose:ks04near:4.2:1.7:160:80:-20:0,pose:cartnear:-1.0:1.7:322:20:-4:0,pose:lampnear:-4.6:1.7:345:-20:15:0",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 1.5,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\Builds\\wb-sea\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\Logs\\player-sea-cap04.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04 -capture-set keyshots,beats,statics,pans,transitions,pose:seafar:5.0:1.7:250:60:-3:0,pose:seadown:5.0:1.7:200:110:-25:0,pose:sea230:4.2:1.7:230:95:-12:0,pose:wallfoot:5.0:1.7:300:90:-60:0,pose:ks04near:4.2:1.7:160:80:-20:0,pose:cartnear:-1.0:1.7:322:20:-4:0,pose:lampnear:-4.6:1.7:345:-20:15:0 -capture-only KS03,KS04,KS05,KS06,b02_Crest,pose,seq_b01_b02,seq_b02_b03"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.903377,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 4,
+  "lumaOutOfRange": 4,
+  "errorsLogged": 0,
+  "warningsLogged": 6
+ },
+ "spec_source": "BulwarkConst.cs (ERRORS: KeyShot KS03_door_open: could not convert string to float: 'L(KS03LumaMin)')",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS04_crest_sea": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS05_crest_drop": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS06_crest_axis": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [],
+  "KS12_tower_up": [],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [],
+  "KS20_ledge_world": [],
+  "KS21_beacon": []
+ },
+ "images": [
+  {
+   "tag": "b01_WaveGallery_KS03_door_open",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b01_WaveGallery_KS03_door_open.png",
+   "beat": 1,
+   "s": 116.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.5 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2523,
+     "threshold": "0.27451..0.470588",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2522754967212677,
+     "p1": 0.10024157166481018,
+     "p50": 0.1913231462240219,
+     "p99": 0.6106995940208435,
+     "std": 0.16257493197917938
+    },
+    "luma_linear": {
+     "mean": 0.07774067670106888,
+     "p1": 0.010106151923537254,
+     "p50": 0.030467549338936806,
+     "p99": 0.3313603699207306,
+     "std": 0.09696739166975021
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b01_WaveGallery_KS03_door_open_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b01_WaveGallery_KS03_door_open_1610.png",
+   "beat": 1,
+   "s": 116.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.5 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2683,
+     "threshold": "0.27451..0.470588",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2683394253253937,
+     "p1": 0.1086352989077568,
+     "p50": 0.2100972682237625,
+     "p99": 0.6106995940208435,
+     "std": 0.16365770995616913
+    },
+    "luma_linear": {
+     "mean": 0.0851186066865921,
+     "p1": 0.01148869376629591,
+     "p50": 0.036347396671772,
+     "p99": 0.3313603699207306,
+     "std": 0.0995202288031578
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b01_WaveGallery_KS03_door_open_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b01_WaveGallery_KS03_door_open_219.png",
+   "beat": 1,
+   "s": 116.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.5 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2154,
+     "threshold": "0.27451..0.470588",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.21537895500659943,
+     "p1": 0.0963200032711029,
+     "p50": 0.12432156503200531,
+     "p99": 0.6067780256271362,
+     "std": 0.15464836359024048
+    },
+    "luma_linear": {
+     "mean": 0.061019014567136765,
+     "p1": 0.009506510570645332,
+     "p50": 0.014296222478151321,
+     "p99": 0.3266969919204712,
+     "std": 0.08883195370435715
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b01_WaveGallery_KS03_door_open_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b01_WaveGallery_KS03_door_open_4k.png",
+   "beat": 1,
+   "s": 116.5,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.5 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2522,
+     "threshold": "0.27451..0.470588",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.252219021320343,
+     "p1": 0.10024157166481018,
+     "p50": 0.1913231462240219,
+     "p99": 0.6106995940208435,
+     "std": 0.16263699531555176
+    },
+    "luma_linear": {
+     "mean": 0.07773743569850922,
+     "p1": 0.010106151923537254,
+     "p50": 0.030467549338936806,
+     "p99": 0.3313603699207306,
+     "std": 0.0970311388373375
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b02_Crest_KS04_crest_sea",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS04_crest_sea.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": "KS04_crest_sea",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4159,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "horizon[sea_horizon] step",
+     "status": "PASS",
+     "value": 0.1,
+     "threshold": "<= 2 dE",
+     "note": "trend-removed at row ~420.0, 998 cols: above [143.3, 153.5, 161.7] vs below [143.2, 153.3, 161.7]"
+    },
+    {
+     "name": "banding[storm_sky]",
+     "status": "PASS",
+     "value": 0.5,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 6), mean run 1.02 px (limit 11.2), 15 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4158765375614166,
+     "p1": 0.24572628736495972,
+     "p50": 0.44661179184913635,
+     "p99": 0.5970157384872437,
+     "std": 0.13057485222816467
+    },
+    "luma_linear": {
+     "mean": 0.1633172333240509,
+     "p1": 0.04937215894460678,
+     "p50": 0.16855016350746155,
+     "p99": 0.31559479236602783,
+     "std": 0.0957488939166069
+    },
+    "horizon_trend": {
+     "sea_horizon": {
+      "dE": 0.100479665792932,
+      "row": 420.0,
+      "cols": 998
+     }
+    },
+    "banding": {
+     "storm_sky": {
+      "direction": "v",
+      "n_strips": 15,
+      "longest_run_px": 3,
+      "longest_run_max_px": 6.0,
+      "mean_run_px": 1.0218068535825544,
+      "mean_run_limit_px": 11.15063520871147,
+      "mean_run_ratio": 0.09163664979231537,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.04755470126961739,
+      "score": 0.5,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0221518987341771,
+        "mean_run_limit_px": 27.145802650957652
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0347003154574133,
+        "mean_run_limit_px": 21.646506165590505
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0445859872611465,
+        "mean_run_limit_px": 17.92124453087012
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.03125,
+        "mean_run_limit_px": 15.000610376398724
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0168350168350169,
+        "mean_run_limit_px": 13.2987012987013
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.025,
+        "mean_run_limit_px": 12.355957767722407
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0218068535825544,
+        "mean_run_limit_px": 11.15063520871147
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0390879478827362,
+        "mean_run_limit_px": 11.58152686145142
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.016025641025641,
+        "mean_run_limit_px": 11.50741376619314
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0092307692307692,
+        "mean_run_limit_px": 11.228754188242474
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0154798761609907,
+        "mean_run_limit_px": 11.796480000000109
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0379746835443038,
+        "mean_run_limit_px": 13.079297498669531
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0218068535825544,
+        "mean_run_limit_px": 13.577900552486133
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0186335403726707,
+        "mean_run_limit_px": 14.681003584229295
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         400
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0154798761609907,
+        "mean_run_limit_px": 17.495965828191864
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.5
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS04_crest_sea_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS04_crest_sea_1610.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": "KS04_crest_sea",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4167,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41667768359184265,
+     "p1": 0.24572628736495972,
+     "p50": 0.44854670763015747,
+     "p99": 0.5972988605499268,
+     "std": 0.131354421377182
+    },
+    "luma_linear": {
+     "mean": 0.1641484797000885,
+     "p1": 0.04937215894460678,
+     "p50": 0.1699041724205017,
+     "p99": 0.3159518837928772,
+     "std": 0.09658939391374588
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS04_crest_sea_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS04_crest_sea_219.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": "KS04_crest_sea",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4149,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4148639738559723,
+     "p1": 0.24572628736495972,
+     "p50": 0.44716235995292664,
+     "p99": 0.5947616100311279,
+     "std": 0.12741097807884216
+    },
+    "luma_linear": {
+     "mean": 0.16165104508399963,
+     "p1": 0.04937215894460678,
+     "p50": 0.16889074444770813,
+     "p99": 0.31284967064857483,
+     "std": 0.09294471144676208
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS04_crest_sea_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS04_crest_sea_4k.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": "KS04_crest_sea",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4165,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "horizon[sea_horizon] step",
+     "status": "PASS",
+     "value": 0.184,
+     "threshold": "<= 2 dE",
+     "note": "trend-removed at row ~840.0, 1996 cols: above [143.4, 153.5, 161.8] vs below [143.8, 154.0, 162.3]"
+    },
+    {
+     "name": "banding[storm_sky]",
+     "status": "PASS",
+     "value": 0.333,
+     "threshold": "score <= 1",
+     "note": "longest run 4 px (max 12), mean run 1.03 px (limit 21.1), 30 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4165148437023163,
+     "p1": 0.24490824341773987,
+     "p50": 0.445829838514328,
+     "p99": 0.5981326103210449,
+     "std": 0.13130046427249908
+    },
+    "luma_linear": {
+     "mean": 0.16401028633117676,
+     "p1": 0.04918941110372543,
+     "p50": 0.1682192087173462,
+     "p99": 0.31684839725494385,
+     "std": 0.09655532240867615
+    },
+    "horizon_trend": {
+     "sea_horizon": {
+      "dE": 0.18448821384307532,
+      "row": 840.0,
+      "cols": 1996
+     }
+    },
+    "banding": {
+     "storm_sky": {
+      "direction": "v",
+      "n_strips": 30,
+      "longest_run_px": 4,
+      "longest_run_max_px": 12.0,
+      "mean_run_px": 1.0267983074753173,
+      "mean_run_limit_px": 21.065142857143165,
+      "mean_run_ratio": 0.048743951770881595,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.02386281841358349,
+      "score": 0.3333333333333333,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0196078431372548,
+        "mean_run_limit_px": 52.252303330971074
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0291970802919708,
+        "mean_run_limit_px": 44.90133982947605
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0267983074753173,
+        "mean_run_limit_px": 41.93856655290207
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0253521126760563,
+        "mean_run_limit_px": 38.86557722720159
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0239099859353025,
+        "mean_run_limit_px": 37.50152594099556
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0253521126760563,
+        "mean_run_limit_px": 35.825072886297185
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0282485875706215,
+        "mean_run_limit_px": 30.3033292231818
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0253521126760563,
+        "mean_run_limit_px": 25.905832747716058
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 25.56449375866845
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0267983074753173,
+        "mean_run_limit_px": 25.671309192200102
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0253521126760563,
+        "mean_run_limit_px": 24.807537012113023
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0239099859353025,
+        "mean_run_limit_px": 23.79857972885705
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0297029702970297,
+        "mean_run_limit_px": 21.748672566371823
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0267983074753173,
+        "mean_run_limit_px": 21.065142857143165
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0297029702970297,
+        "mean_run_limit_px": 22.56058751530043
+       },
+       {
+        "strip": [
+         1920,
+         2048
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0224719101123596,
+        "mean_run_limit_px": 23.170333123821788
+       },
+       {
+        "strip": [
+         2048,
+         2176
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 23.420584498093813
+       },
+       {
+        "strip": [
+         2176,
+         2304
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0239099859353025,
+        "mean_run_limit_px": 22.368932038834703
+       },
+       {
+        "strip": [
+         2304,
+         2432
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 22.328285887340687
+       },
+       {
+        "strip": [
+         2432,
+         2560
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0385164051355207,
+        "mean_run_limit_px": 22.43700547778464
+       },
+       {
+        "strip": [
+         2560,
+         2688
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 22.650691244239326
+       },
+       {
+        "strip": [
+         2688,
+         2816
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0267983074753173,
+        "mean_run_limit_px": 24.252631578947135
+       },
+       {
+        "strip": [
+         2816,
+         2944
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0385164051355207,
+        "mean_run_limit_px": 26.126151665486145
+       },
+       {
+        "strip": [
+         2944,
+         3072
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 25.79706088173525
+       },
+       {
+        "strip": [
+         3072,
+         3200
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0239099859353025,
+        "mean_run_limit_px": 26.539956803455308
+       },
+       {
+        "strip": [
+         3200,
+         3328
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0311614730878187,
+        "mean_run_limit_px": 25.85133239831684
+       },
+       {
+        "strip": [
+         3328,
+         3456
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0210378681626928,
+        "mean_run_limit_px": 25.978858350951775
+       },
+       {
+        "strip": [
+         3456,
+         3584
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0253521126760563,
+        "mean_run_limit_px": 29.574007220216608
+       },
+       {
+        "strip": [
+         3584,
+         3712
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 4,
+        "mean_run_px": 1.0385164051355207,
+        "mean_run_limit_px": 32.19563318777282
+       },
+       {
+        "strip": [
+         3712,
+         3840
+        ],
+        "rows": [
+         0,
+         800
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0267983074753173,
+        "mean_run_limit_px": 38.84510010537378
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.3333333333333333
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS05_crest_drop.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3522,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[haze]",
+     "status": "PASS",
+     "value": 0.333,
+     "threshold": "score <= 1",
+     "note": "longest run 2 px (max 6), mean run 1.04 px (limit 19.5), 15 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3521575927734375,
+     "p1": 0.19895058870315552,
+     "p50": 0.33345258235931396,
+     "p99": 0.5869184732437134,
+     "std": 0.11184455454349518
+    },
+    "luma_linear": {
+     "mean": 0.11512284725904465,
+     "p1": 0.03296944126486778,
+     "p50": 0.09133709967136383,
+     "p99": 0.3038720488548279,
+     "std": 0.0753093957901001
+    },
+    "banding": {
+     "haze": {
+      "direction": "v",
+      "n_strips": 15,
+      "longest_run_px": 2,
+      "longest_run_max_px": 6.0,
+      "mean_run_px": 1.0441176470588236,
+      "mean_run_limit_px": 19.520254169976198,
+      "mean_run_ratio": 0.053488937078737676,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.29580653847542704,
+      "score": 0.3333333333333333,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0363636363636364,
+        "mean_run_limit_px": 26.97694840834221
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.045045045045045,
+        "mean_run_limit_px": 32.9731663685151
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0166666666666666,
+        "mean_run_limit_px": 30.51655629139043
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0081967213114753,
+        "mean_run_limit_px": 28.643356643356096
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0330578512396693,
+        "mean_run_limit_px": 29.42059058260244
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.024,
+        "mean_run_limit_px": 22.26086956521739
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0147058823529411,
+        "mean_run_limit_px": 27.066079295154402
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0441176470588236,
+        "mean_run_limit_px": 19.520254169976198
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0148148148148148,
+        "mean_run_limit_px": 35.755577109602584
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.015267175572519,
+        "mean_run_limit_px": 42.22680412371055
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0153846153846153,
+        "mean_run_limit_px": 29.970731707317206
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.03125,
+        "mean_run_limit_px": 54.09244314013307
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.032258064516129,
+        "mean_run_limit_px": 41.795918367347326
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0163934426229508,
+        "mean_run_limit_px": 33.9603869184707
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0,
+        "mean_run_limit_px": 42.91501746216495
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.3333333333333333
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS05_crest_drop_1610.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3538,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3537861406803131,
+     "p1": 0.19895058870315552,
+     "p50": 0.33682355284690857,
+     "p99": 0.5869184732437134,
+     "std": 0.11274141073226929
+    },
+    "luma_linear": {
+     "mean": 0.11631380766630173,
+     "p1": 0.03296944126486778,
+     "p50": 0.09335499256849289,
+     "p99": 0.3038720488548279,
+     "std": 0.07580114901065826
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS05_crest_drop_219.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3491,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.34909680485725403,
+     "p1": 0.199233740568161,
+     "p50": 0.3258250951766968,
+     "p99": 0.5858016014099121,
+     "std": 0.10942312330007553
+    },
+    "luma_linear": {
+     "mean": 0.11274483054876328,
+     "p1": 0.033072225749492645,
+     "p50": 0.08699660003185272,
+     "p99": 0.30264559388160706,
+     "std": 0.07400882244110107
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS05_crest_drop_4k.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3521,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[haze]",
+     "status": "PASS",
+     "value": 0.333,
+     "threshold": "score <= 1",
+     "note": "longest run 4 px (max 12), mean run 1.02 px (limit 26.3), 30 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.35212865471839905,
+     "p1": 0.19840000569820404,
+     "p50": 0.3333851099014282,
+     "p99": 0.5869184732437134,
+     "std": 0.11191242188215256
+    },
+    "luma_linear": {
+     "mean": 0.1151205450296402,
+     "p1": 0.03285341337323189,
+     "p50": 0.09133709967136383,
+     "p99": 0.3038720488548279,
+     "std": 0.07533726841211319
+    },
+    "banding": {
+     "haze": {
+      "direction": "v",
+      "n_strips": 30,
+      "longest_run_px": 4,
+      "longest_run_max_px": 12.0,
+      "mean_run_px": 1.02,
+      "mean_run_limit_px": 26.322027847197702,
+      "mean_run_ratio": 0.03875081380208293,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.14794837754757653,
+      "score": 0.3333333333333333,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0249307479224377,
+        "mean_run_limit_px": 36.42687747035547
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0163487738419619,
+        "mean_run_limit_px": 40.33260393873262
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0080428954423593,
+        "mean_run_limit_px": 42.765661252900415
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0356164383561643,
+        "mean_run_limit_px": 41.74858437146162
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.016,
+        "mean_run_limit_px": 43.06542056074839
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0213903743315509,
+        "mean_run_limit_px": 44.468033775634076
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0184696569920844,
+        "mean_run_limit_px": 51.486033519553594
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0211081794195251,
+        "mean_run_limit_px": 42.71610660486602
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0291777188328912,
+        "mean_run_limit_px": 47.020408163265195
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0182291666666667,
+        "mean_run_limit_px": 46.90076335877879
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0287958115183247,
+        "mean_run_limit_px": 36.882441220610275
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0205655526992288,
+        "mean_run_limit_px": 32.91428571428598
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.02,
+        "mean_run_limit_px": 26.322027847197702
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.02676399026764,
+        "mean_run_limit_px": 32.88492417484314
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0292682926829269,
+        "mean_run_limit_px": 29.084023668639116
+       },
+       {
+        "strip": [
+         1920,
+         2048
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0245700245700247,
+        "mean_run_limit_px": 38.201036269429906
+       },
+       {
+        "strip": [
+         2048,
+         2176
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0297766749379653,
+        "mean_run_limit_px": 38.84510010537445
+       },
+       {
+        "strip": [
+         2176,
+         2304
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0198511166253101,
+        "mean_run_limit_px": 41.37373737373738
+       },
+       {
+        "strip": [
+         2304,
+         2432
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 4,
+        "mean_run_px": 1.0488431876606683,
+        "mean_run_limit_px": 76.48132780082844
+       },
+       {
+        "strip": [
+         2432,
+         2560
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0226130653266332,
+        "mean_run_limit_px": 40.80132816823362
+       },
+       {
+        "strip": [
+         2560,
+         2688
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0279187817258884,
+        "mean_run_limit_px": 45.03848503359809
+       },
+       {
+        "strip": [
+         2688,
+         2816
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0203045685279188,
+        "mean_run_limit_px": 32.493609519612136
+       },
+       {
+        "strip": [
+         2816,
+         2944
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0230179028132993,
+        "mean_run_limit_px": 40.24454148471704
+       },
+       {
+        "strip": [
+         2944,
+         3072
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0231362467866323,
+        "mean_run_limit_px": 70.89230769231042
+       },
+       {
+        "strip": [
+         3072,
+         3200
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0287206266318538,
+        "mean_run_limit_px": 54.857142857141966
+       },
+       {
+        "strip": [
+         3200,
+         3328
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0,
+        "mean_run_limit_px": 54.09244314013437
+       },
+       {
+        "strip": [
+         3328,
+         3456
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0182291666666667,
+        "mean_run_limit_px": 47.96877033181636
+       },
+       {
+        "strip": [
+         3456,
+         3584
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0210526315789474,
+        "mean_run_limit_px": 49.44869215291823
+       },
+       {
+        "strip": [
+         3584,
+         3712
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.037837837837838,
+        "mean_run_limit_px": 51.37839721254505
+       },
+       {
+        "strip": [
+         3712,
+         3840
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0380434782608696,
+        "mean_run_limit_px": 42.47004608294935
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.3333333333333333
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS06_crest_axis",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS06_crest_axis.png",
+   "beat": 2,
+   "s": 300.0,
+   "keyshot": "KS06_crest_axis",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4372,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.43716979026794434,
+     "p1": 0.24182042479515076,
+     "p50": 0.4987090528011322,
+     "p99": 0.5869184732437134,
+     "std": 0.11361230909824371
+    },
+    "luma_linear": {
+     "mean": 0.17503535747528076,
+     "p1": 0.047942157834768295,
+     "p50": 0.21346502006053925,
+     "p99": 0.3038720488548279,
+     "std": 0.0837094634771347
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS06_crest_axis_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS06_crest_axis_1610.png",
+   "beat": 2,
+   "s": 300.0,
+   "keyshot": "KS06_crest_axis",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.437,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4369591474533081,
+     "p1": 0.24182042479515076,
+     "p50": 0.4987090528011322,
+     "p99": 0.5897231698036194,
+     "std": 0.11433207243680954
+    },
+    "luma_linear": {
+     "mean": 0.1750597357749939,
+     "p1": 0.047942157834768295,
+     "p50": 0.21346502006053925,
+     "p99": 0.30710461735725403,
+     "std": 0.0843891054391861
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS06_crest_axis_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS06_crest_axis_219.png",
+   "beat": 2,
+   "s": 300.0,
+   "keyshot": "KS06_crest_axis",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4385,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.438519686460495,
+     "p1": 0.24462512135505676,
+     "p50": 0.4989922046661377,
+     "p99": 0.5860847234725952,
+     "std": 0.11112605035305023
+    },
+    "luma_linear": {
+     "mean": 0.1754603534936905,
+     "p1": 0.04905993863940239,
+     "p50": 0.21375872194766998,
+     "p99": 0.30299142003059387,
+     "std": 0.081584133207798
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS06_crest_axis_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_KS06_crest_axis_4k.png",
+   "beat": 2,
+   "s": 300.0,
+   "keyshot": "KS06_crest_axis",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4371,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4371386170387268,
+     "p1": 0.24182042479515076,
+     "p50": 0.4987090528011322,
+     "p99": 0.5869184732437134,
+     "std": 0.11376909911632538
+    },
+    "luma_linear": {
+     "mean": 0.17504988610744476,
+     "p1": 0.047942157834768295,
+     "p50": 0.21346502006053925,
+     "p99": 0.3038720488548279,
+     "std": 0.0838339552283287
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_end",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_end.png",
+   "beat": 2,
+   "s": 418.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3921,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3921350836753845,
+     "p1": 0.19419530034065247,
+     "p50": 0.47124236822128296,
+     "p99": 0.5600023865699768,
+     "std": 0.1244080439209938
+    },
+    "luma_linear": {
+     "mean": 0.1441081017255783,
+     "p1": 0.031553011387586594,
+     "p50": 0.1888355314731598,
+     "p99": 0.27402999997138977,
+     "std": 0.08237992972135544
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_look_back",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_look_back.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4256,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4256010353565216,
+     "p1": 0.2407035529613495,
+     "p50": 0.49086591601371765,
+     "p99": 0.5824463367462158,
+     "std": 0.11606040596961975
+    },
+    "luma_linear": {
+     "mean": 0.16667066514492035,
+     "p1": 0.04754094034433365,
+     "p50": 0.20629724860191345,
+     "p99": 0.29891344904899597,
+     "std": 0.08440964668989182
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_look_down",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_look_down.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2305,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.23047314584255219,
+     "p1": 0.2023215889930725,
+     "p50": 0.22221258282661438,
+     "p99": 0.4852612316608429,
+     "std": 0.039179567247629166
+    },
+    "luma_linear": {
+     "mean": 0.045196451246738434,
+     "p1": 0.034079231321811676,
+     "p50": 0.04072427377104759,
+     "p99": 0.20125874876976013,
+     "std": 0.023199254646897316
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b02_Crest_look_l",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_look_l.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.445,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4450240433216095,
+     "p1": 0.24153728783130646,
+     "p50": 0.4972933530807495,
+     "p99": 0.5947616100311279,
+     "std": 0.1074887290596962
+    },
+    "luma_linear": {
+     "mean": 0.17973864078521729,
+     "p1": 0.04781479761004448,
+     "p50": 0.21203652024269104,
+     "p99": 0.31284967064857483,
+     "std": 0.07893641293048859
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_look_r",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_look_r.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4257,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4256542921066284,
+     "p1": 0.2378988415002823,
+     "p50": 0.502347469329834,
+     "p99": 0.5942109823226929,
+     "std": 0.12792658805847168
+    },
+    "luma_linear": {
+     "mean": 0.16988754272460938,
+     "p1": 0.04644329473376274,
+     "p50": 0.2168089598417282,
+     "p99": 0.3123074173927307,
+     "std": 0.09386228024959564
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_look_up",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_look_up.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4742,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.47415387630462646,
+     "p1": 0.44634437561035156,
+     "p50": 0.4743459224700928,
+     "p99": 0.5026305913925171,
+     "std": 0.01589302532374859
+    },
+    "luma_linear": {
+     "mean": 0.19187738001346588,
+     "p1": 0.16847868263721466,
+     "p50": 0.19174370169639587,
+     "p99": 0.21710266172885895,
+     "std": 0.013754610903561115
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_mid",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_mid.png",
+   "beat": 2,
+   "s": 270.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.431,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.43096619844436646,
+     "p1": 0.2407035529613495,
+     "p50": 0.4987090528011322,
+     "p99": 0.5860847234725952,
+     "std": 0.11494018882513046
+    },
+    "luma_linear": {
+     "mean": 0.1705044060945511,
+     "p1": 0.04754094034433365,
+     "p50": 0.21346502006053925,
+     "p99": 0.30299142003059387,
+     "std": 0.08397108316421509
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_start",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\b02_Crest_start.png",
+   "beat": 2,
+   "s": 122.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4355,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.43550097942352295,
+     "p1": 0.24545885622501373,
+     "p50": 0.49897652864456177,
+     "p99": 0.5916580557823181,
+     "std": 0.11506853997707367
+    },
+    "luma_linear": {
+     "mean": 0.17397284507751465,
+     "p1": 0.04933949187397957,
+     "p50": 0.2135820984840393,
+     "p99": 0.30910536646842957,
+     "std": 0.08528469502925873
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_cartnear",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_cartnear.png",
+   "beat": 2,
+   "s": 322.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4107,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.41067659854888916,
+     "p1": 0.22585098445415497,
+     "p50": 0.4331435561180115,
+     "p99": 0.5813294053077698,
+     "std": 0.1261107325553894
+    },
+    "luma_linear": {
+     "mean": 0.1581384837627411,
+     "p1": 0.041993867605924606,
+     "p50": 0.1578151136636734,
+     "p99": 0.297702819108963,
+     "std": 0.0901493951678276
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_ks04near",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_ks04near.png",
+   "beat": 2,
+   "s": 160.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.368,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3680008351802826,
+     "p1": 0.17542117834091187,
+     "p50": 0.28895139694213867,
+     "p99": 0.5930941700935364,
+     "std": 0.13150259852409363
+    },
+    "luma_linear": {
+     "mean": 0.1304353028535843,
+     "p1": 0.02613992616534233,
+     "p50": 0.06895415484905243,
+     "p99": 0.31106460094451904,
+     "std": 0.09491181373596191
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_lampnear",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_lampnear.png",
+   "beat": 2,
+   "s": 345.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4823,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4822705090045929,
+     "p1": 0.2927851378917694,
+     "p50": 0.5026305913925171,
+     "p99": 0.5897231698036194,
+     "std": 0.07101687043905258
+    },
+    "luma_linear": {
+     "mean": 0.20422077178955078,
+     "p1": 0.06991907209157944,
+     "p50": 0.21710266172885895,
+     "p99": 0.30710461735725403,
+     "std": 0.05769207701086998
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_sea230",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_sea230.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4025,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.40252983570098877,
+     "p1": 0.23788315057754517,
+     "p50": 0.3894917964935303,
+     "p99": 0.5964651703834534,
+     "std": 0.13369852304458618
+    },
+    "luma_linear": {
+     "mean": 0.1544456034898758,
+     "p1": 0.046347662806510925,
+     "p50": 0.12651027739048004,
+     "p99": 0.31506332755088806,
+     "std": 0.09728841483592987
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_seadown",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_seadown.png",
+   "beat": 2,
+   "s": 200.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3399,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3399241864681244,
+     "p1": 0.17233335971832275,
+     "p50": 0.29588863253593445,
+     "p99": 0.5902894735336304,
+     "std": 0.12863609194755554
+    },
+    "luma_linear": {
+     "mean": 0.11238007992506027,
+     "p1": 0.025278575718402863,
+     "p50": 0.07156923413276672,
+     "p99": 0.307804673910141,
+     "std": 0.0877801775932312
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_seafar",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_seafar.png",
+   "beat": 2,
+   "s": 250.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.4361,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.4361208975315094,
+     "p1": 0.19476157426834106,
+     "p50": 0.5026305913925171,
+     "p99": 0.5942109823226929,
+     "std": 0.12178775668144226
+    },
+    "luma_linear": {
+     "mean": 0.17643891274929047,
+     "p1": 0.031756602227687836,
+     "p50": 0.21710266172885895,
+     "p99": 0.3123074173927307,
+     "std": 0.08864199370145798
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_wallfoot",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\sea-04\\pose_wallfoot.png",
+   "beat": 2,
+   "s": 300.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "FAIL",
+     "value": 0.2594,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.25938180088996887,
+     "p1": 0.16365648806095123,
+     "p50": 0.25777411460876465,
+     "p99": 0.49337178468704224,
+     "std": 0.08616931736469269
+    },
+    "luma_linear": {
+     "mean": 0.062297310680150986,
+     "p1": 0.023068297654390335,
+     "p50": 0.05425155907869339,
+     "p99": 0.20844802260398865,
+     "std": 0.049693141132593155
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  }
+ ]
+}

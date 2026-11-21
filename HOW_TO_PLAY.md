@@ -11,8 +11,16 @@
 - **Abyss** (Unity 6000.6.0f1): [Abyss-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Abyss-Windows-x64.zip) → запустите `Abyss.exe` · [Abyss-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Abyss-macOS.zip)
 - **The Ring** (Unity 6000.6.0f1): [TheRing-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/TheRing-Windows-x64.zip) → запустите `The Ring.exe` · [TheRing-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/TheRing-macOS.zip)
 - **Thread** (Unity 6000.6.0f1): [Thread-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Thread-Windows-x64.zip) → запустите `Thread.exe` · [Thread-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Thread-macOS.zip)
+- **Bulwark** (Unity 6000.6.0f1, Claude Fable 5.2): [Bulwark-Windows-x64.exe](../../releases/download/bulwark-v1.0/Bulwark-Windows-x64.exe) → скачайте и дважды кликните один файл · [отдельный гайд](games/4-bulwark/HOW_TO_PLAY.md)
 
-### Готовая сборка для Windows (1 файл)
+### Bulwark — один EXE без ручной распаковки
+
+1. Скачайте `Bulwark-Windows-x64.exe` по ссылке выше. Другие файлы и исходники не нужны.
+2. Дважды кликните по EXE. Игра автоматически распакуется во временную папку и запустится; после выхода временные файлы удаляются.
+3. Требования: Windows 10/11 64-bit, Direct3D 11 и около 300 МБ свободного места во временной папке.
+4. Подробности, управление и проверка SHA-256 — в [гайде Bulwark](games/4-bulwark/HOW_TO_PLAY.md).
+
+### Abyss, The Ring и Thread — ZIP-сборки для Windows
 
 1. Скачайте zip игры (ссылка выше или вкладка **Releases** справа на странице репозитория).
 2. Нажмите по zip правой кнопкой → **Извлечь всё…** Не запускайте игру прямо из архива.
@@ -28,7 +36,7 @@
 
 ### Как открыть исходники в движке
 
-**Unity (6000.6.0f1):** установите Unity Hub и редактор этой версии. **Hub → Add → Add project from disk** → выберите папку игры (где лежат `Assets`, `Packages`, `ProjectSettings`). Первое открытие долгое — Unity создаёт папку `Library`. Откройте основную сцену (см. README игры или `File → Build Profiles`) и нажмите **Play**.
+**Unity (6000.6.0f1):** установите Unity Hub и редактор этой версии. **Hub → Add → Add project from disk** → выберите папку игры (где лежат `Assets`, `Packages`, `ProjectSettings`). Первое открытие долгое — Unity создаёт папку `Library`. Откройте основную сцену (см. README игры или `File → Build Profiles`) и нажмите **Play**. Для Bulwark основная сцена — `Assets/_Game/Scenes/Main.unity`.
 
 ### Сделать такую же игру с ИИ
 
@@ -43,8 +51,16 @@
 - **Abyss** (Unity 6000.6.0f1): [Abyss-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Abyss-Windows-x64.zip) → run `Abyss.exe` · [Abyss-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Abyss-macOS.zip)
 - **The Ring** (Unity 6000.6.0f1): [TheRing-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/TheRing-Windows-x64.zip) → run `The Ring.exe` · [TheRing-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/TheRing-macOS.zip)
 - **Thread** (Unity 6000.6.0f1): [Thread-Windows-x64.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Thread-Windows-x64.zip) → run `Thread.exe` · [Thread-macOS.zip](https://github.com/Cryptopiy/Claude-Opus-5.5-Megastructures/releases/download/v1.0/Thread-macOS.zip)
+- **Bulwark** (Unity 6000.6.0f1, Claude Fable 5.2): [Bulwark-Windows-x64.exe](../../releases/download/bulwark-v1.0/Bulwark-Windows-x64.exe) → download and double-click one file · [dedicated guide](games/4-bulwark/HOW_TO_PLAY.md)
 
-### Ready-made Windows build (1 file)
+### Bulwark — one EXE, no manual extraction
+
+1. Download `Bulwark-Windows-x64.exe` from the link above. No other files or source code are needed.
+2. Double-click the EXE. The game automatically extracts to a temporary folder and starts; temporary files are removed when you exit.
+3. Requirements: 64-bit Windows 10/11, Direct3D 11, and about 300 MB of free space in the temporary folder.
+4. See the [Bulwark guide](games/4-bulwark/HOW_TO_PLAY.md) for details, controls, and SHA-256 verification.
+
+### Abyss, The Ring, and Thread — Windows ZIP builds
 
 1. Download the game's zip (link above or the **Releases** tab on the right side of the repo page).
 2. Right-click the zip → **Extract All…** Do not run the game from inside the archive.
@@ -52,7 +68,7 @@
 4. If Windows shows “Windows protected your PC”, it's because the build isn't signed with a paid certificate. Click **More info → Run anyway**. The full source code of every game is in this repo.
 5. To verify the download: in PowerShell run `Get-FileHash .\FileName.zip` and compare with `SHA256SUMS.txt` in the release.
 
-Requirements: Windows 10/11 64-bit, a GPU with DirectX 12 / Vulkan support. For Unreal Engine games, if you get a missing-DLL error, install the Microsoft Visual C++ Redistributable (x64) from Microsoft's website.
+Requirements: Windows 10/11 64-bit, a GPU with DirectX 12 / Vulkan support. For Unreal Engine games, if you get a missing-DLL error, install Microsoft Visual C++ Redistributable (x64) from Microsoft's website.
 
 ### macOS
 
@@ -60,7 +76,7 @@ Unzip, then right-click the app → **Open** → **Open** (the build is not nota
 
 ### Open the source in the engine
 
-**Unity (6000.6.0f1):** install Unity Hub and that editor version. **Hub → Add → Add project from disk** → pick the game folder (the one with `Assets`, `Packages`, `ProjectSettings`). The first open is slow — Unity rebuilds `Library`. Open the main scene (see the game's README or `File → Build Profiles`) and press **Play**.
+**Unity (6000.6.0f1):** install Unity Hub and that editor version. **Hub → Add → Add project from disk** → pick the game folder (the one with `Assets`, `Packages`, `ProjectSettings`). The first open is slow — Unity rebuilds `Library`. Open the main scene (see the game's README or `File → Build Profiles`) and press **Play**. For Bulwark, the main scene is `Assets/_Game/Scenes/Main.unity`.
 
 ### Make a game like this with AI
 

@@ -1,0 +1,4840 @@
+{
+ "run": "dusk-05",
+ "capture_dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.QA.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-14T11:38:46.877Z",
+  "finished": "2026-11-14T11:38:55.227Z",
+  "seconds": 8.349781,
+  "dir": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05",
+  "captureSet": "keyshots,beats,pose:tun1405:-0.1:-88.3:1398.0:-18:0:0,pose:tunback1395:2.607:-88.3:1393.932:162:0:0,pose:conddown:-0.48:-88.3:1403.44:35:-35:0,pose:shaft:-4.81:-88.3:1416.757:60:-15:0,pose:mouthback:-11.0:-88.3:1440:155:3:0,pose:ledgedown:-11.6:-88.3:1460:-90:-60:0,pose:northdown:-11.75:-88.3:1497:15:-40:0,pose:faceup:-9.2:-88.3:1460:10:35:0,pose:south:-9.2:-88.3:1445:180:2:0,pose:nadir1470:-11.6:-88.3:1470:-90:-89:0,pose:ks20s1470:-9.2:-88.3:1467.1:-27.5:-7:66,pose:north1470:-9.2:-88.3:1470:0:-4:0",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "targetFrameRate": 60,
+   "ditherMode": "Static",
+   "ditherStatic": true,
+   "ditherPeak": 2,
+   "ditherPeakOverride": -1,
+   "freezeAmbient": false,
+   "args": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\Builds\\wb-dusk\\Bulwark.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile <WORKSPACE>\\4 Megastructures\\4 Megastructures\\Logs\\player-dusk-cap05.log -report-dir <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\reports -capture <WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05 -capture-set keyshots,beats,pose:tun1405:-0.1:-88.3:1398.0:-18:0:0,pose:tunback1395:2.607:-88.3:1393.932:162:0:0,pose:conddown:-0.48:-88.3:1403.44:35:-35:0,pose:shaft:-4.81:-88.3:1416.757:60:-15:0,pose:mouthback:-11.0:-88.3:1440:155:3:0,pose:ledgedown:-11.6:-88.3:1460:-90:-60:0,pose:northdown:-11.75:-88.3:1497:15:-40:0,pose:faceup:-9.2:-88.3:1460:10:35:0,pose:south:-9.2:-88.3:1445:180:2:0,pose:nadir1470:-11.6:-88.3:1470:-90:-89:0,pose:ks20s1470:-9.2:-88.3:1467.1:-27.5:-7:66,pose:north1470:-9.2:-88.3:1470:0:-4:0 -capture-only KS05,KS19,KS20,KS21,b07_,pose_"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 2.470586,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 1
+ },
+ "spec_source": "BulwarkConst.cs (ERRORS: KeyShot KS03_door_open: could not convert string to float: 'L(KS03LumaMin)')",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS01_gal_far": [],
+  "KS02_gal_slit": [],
+  "KS04_crest_sea": [],
+  "KS05_crest_drop": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS06_crest_axis": [],
+  "KS07_spill_gates": [],
+  "KS08_spill_bow": [],
+  "KS09_spill_grate": [],
+  "KS10_reef_wide": [],
+  "KS11_reef_spray": [],
+  "KS12_tower_up": [],
+  "KS13_atrium": [],
+  "KS14_stairs_down": [],
+  "KS15_win_first": [],
+  "KS16_win_up": [],
+  "KS17_win_whale": [],
+  "KS18_win_down": [],
+  "KS19_sluice": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS20_ledge_world": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ],
+  "KS21_beacon": [
+   "1680x1050",
+   "1920x1080",
+   "2560x1080",
+   "3840x2160"
+  ]
+ },
+ "images": [
+  {
+   "tag": "b02_Crest_KS05_crest_drop",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b02_Crest_KS05_crest_drop.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3546,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[haze]",
+     "status": "PASS",
+     "value": 0.5,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 6), mean run 1.01 px (limit 24.9), 15 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.35460078716278076,
+     "p1": 0.19895058870315552,
+     "p50": 0.3367561101913452,
+     "p99": 0.5712321996688843,
+     "std": 0.10917462408542633
+    },
+    "luma_linear": {
+     "mean": 0.11588890850543976,
+     "p1": 0.03296944126486778,
+     "p50": 0.09304878115653992,
+     "p99": 0.28637266159057617,
+     "std": 0.07161003351211548
+    },
+    "banding": {
+     "haze": {
+      "direction": "v",
+      "n_strips": 15,
+      "longest_run_px": 3,
+      "longest_run_max_px": 6.0,
+      "mean_run_px": 1.0080645161290323,
+      "mean_run_limit_px": 24.85772083614315,
+      "mean_run_ratio": 0.040553376666106304,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.290814036822631,
+      "score": 0.5,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0360360360360361,
+        "mean_run_limit_px": 28.422513492675005
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.017094017094017,
+        "mean_run_limit_px": 31.53464499572333
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0254237288135593,
+        "mean_run_limit_px": 31.45392491467589
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0336134453781514,
+        "mean_run_limit_px": 28.054794520547944
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0080645161290323,
+        "mean_run_limit_px": 24.85772083614315
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.032,
+        "mean_run_limit_px": 25.79706088173584
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.023076923076923,
+        "mean_run_limit_px": 26.97694840834205
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0296296296296297,
+        "mean_run_limit_px": 26.25641025641056
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0072992700729928,
+        "mean_run_limit_px": 32.027801911381914
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0072992700729928,
+        "mean_run_limit_px": 78.43404255318815
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0,
+        "mean_run_limit_px": 57.06501547987648
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0451127819548873,
+        "mean_run_limit_px": 63.99999999999818
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0227272727272727,
+        "mean_run_limit_px": 69.03370786516466
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.015267175572519,
+        "mean_run_limit_px": 42.32376578645253
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         300
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.056910569105691,
+        "mean_run_limit_px": 36.82717282717329
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.5
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b02_Crest_KS05_crest_drop_1610.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3558,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3558215796947479,
+     "p1": 0.19895058870315552,
+     "p50": 0.3401114046573639,
+     "p99": 0.5714995861053467,
+     "std": 0.10976486653089523
+    },
+    "luma_linear": {
+     "mean": 0.11675979942083359,
+     "p1": 0.03296944126486778,
+     "p50": 0.09493071585893631,
+     "p99": 0.28656309843063354,
+     "std": 0.07184109836816788
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b02_Crest_KS05_crest_drop_219.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3525,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3524732291698456,
+     "p1": 0.199233740568161,
+     "p50": 0.328980416059494,
+     "p99": 0.5701153874397278,
+     "std": 0.10748863220214844
+    },
+    "luma_linear": {
+     "mean": 0.11424431949853897,
+     "p1": 0.033072225749492645,
+     "p50": 0.08880533277988434,
+     "p99": 0.2851889431476593,
+     "std": 0.07094483822584152
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b02_Crest_KS05_crest_drop_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b02_Crest_KS05_crest_drop_4k.png",
+   "beat": 2,
+   "s": 230.0,
+   "keyshot": "KS05_crest_drop",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.4 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3546,
+     "threshold": "0.333333..0.588235",
+     "note": "display"
+    },
+    {
+     "name": "banding[haze]",
+     "status": "PASS",
+     "value": 0.25,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 12), mean run 1.03 px (limit 26.4), 30 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3545700013637543,
+     "p1": 0.19840000569820404,
+     "p50": 0.3365404009819031,
+     "p99": 0.5712321996688843,
+     "std": 0.1092449501156807
+    },
+    "luma_linear": {
+     "mean": 0.11588553339242935,
+     "p1": 0.03285341337323189,
+     "p50": 0.09296749532222748,
+     "p99": 0.28637266159057617,
+     "std": 0.07163899391889572
+    },
+    "banding": {
+     "haze": {
+      "direction": "v",
+      "n_strips": 30,
+      "longest_run_px": 3,
+      "longest_run_max_px": 12.0,
+      "mean_run_px": 1.0276381909547738,
+      "mean_run_limit_px": 26.369098712446405,
+      "mean_run_ratio": 0.038971305093174126,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.14548457968806855,
+      "score": 0.25,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.033426183844011,
+        "mean_run_limit_px": 35.075166508087655
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0331491712707181,
+        "mean_run_limit_px": 39.21702127659476
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0161725067385445,
+        "mean_run_limit_px": 39.63870967741912
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0243243243243243,
+        "mean_run_limit_px": 40.711209276643025
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.016,
+        "mean_run_limit_px": 42.27522935779746
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.024,
+        "mean_run_limit_px": 42.13028571428554
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0265957446808511,
+        "mean_run_limit_px": 47.782242384963624
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0237467018469657,
+        "mean_run_limit_px": 38.240663900414866
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0317460317460319,
+        "mean_run_limit_px": 40.73370165745926
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.037037037037037,
+        "mean_run_limit_px": 39.57487922705314
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.020671834625323,
+        "mean_run_limit_px": 39.511254019292835
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0179028132992327,
+        "mean_run_limit_px": 39.63870967741982
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0414507772020725,
+        "mean_run_limit_px": 30.044009779950766
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0276381909547738,
+        "mean_run_limit_px": 26.369098712446405
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0248138957816377,
+        "mean_run_limit_px": 34.646616541354334
+       },
+       {
+        "strip": [
+         1920,
+         2048
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.027431421446384,
+        "mean_run_limit_px": 34.549203373945346
+       },
+       {
+        "strip": [
+         2048,
+         2176
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0248756218905473,
+        "mean_run_limit_px": 38.08264462809817
+       },
+       {
+        "strip": [
+         2176,
+         2304
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.027431421446384,
+        "mean_run_limit_px": 36.53518334985186
+       },
+       {
+        "strip": [
+         2304,
+         2432
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.022332506203474,
+        "mean_run_limit_px": 56.539877300614286
+       },
+       {
+        "strip": [
+         2432,
+         2560
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0272952853598014,
+        "mean_run_limit_px": 75.85185185184929
+       },
+       {
+        "strip": [
+         2560,
+         2688
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0298507462686568,
+        "mean_run_limit_px": 66.18312387791471
+       },
+       {
+        "strip": [
+         2688,
+         2816
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.022167487684729,
+        "mean_run_limit_px": 38.181253236665086
+       },
+       {
+        "strip": [
+         2816,
+         2944
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0350877192982457,
+        "mean_run_limit_px": 44.79222357229608
+       },
+       {
+        "strip": [
+         2944,
+         3072
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0403022670025188,
+        "mean_run_limit_px": 74.17303822937572
+       },
+       {
+        "strip": [
+         3072,
+         3200
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0224438902743143,
+        "mean_run_limit_px": 55.85454545454499
+       },
+       {
+        "strip": [
+         3200,
+         3328
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0329113924050632,
+        "mean_run_limit_px": 66.78260869564953
+       },
+       {
+        "strip": [
+         3328,
+         3456
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0251256281407035,
+        "mean_run_limit_px": 55.77004538577989
+       },
+       {
+        "strip": [
+         3456,
+         3584
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0279187817258884,
+        "mean_run_limit_px": 59.65048543689373
+       },
+       {
+        "strip": [
+         3584,
+         3712
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.028205128205128,
+        "mean_run_limit_px": 52.17834394904519
+       },
+       {
+        "strip": [
+         3712,
+         3840
+        ],
+        "rows": [
+         0,
+         600
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0390625,
+        "mean_run_limit_px": 41.51351351351262
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.25
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS19_sluice",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS19_sluice.png",
+   "beat": 7,
+   "s": 1405.0,
+   "keyshot": "KS19_sluice",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0004,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1898,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00038580246913580245,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1897871494293213,
+     "p1": 0.06933648139238358,
+     "p50": 0.16921648383140564,
+     "p99": 0.5674815773963928,
+     "std": 0.0976606011390686
+    },
+    "luma_linear": {
+     "mean": 0.040516406297683716,
+     "p1": 0.006339842453598976,
+     "p50": 0.025998905301094055,
+     "p99": 0.2853839695453644,
+     "std": 0.054902806878089905
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS19_sluice_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS19_sluice_1610.png",
+   "beat": 7,
+   "s": 1405.0,
+   "keyshot": "KS19_sluice",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0004,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1896,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0003968253968253968,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1896021068096161,
+     "p1": 0.0687858834862709,
+     "p50": 0.16728158295154572,
+     "p99": 0.5822824239730835,
+     "std": 0.0997169241309166
+    },
+    "luma_linear": {
+     "mean": 0.040862854570150375,
+     "p1": 0.006218413356691599,
+     "p50": 0.025640666484832764,
+     "p99": 0.30063873529434204,
+     "std": 0.05672955513000488
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS19_sluice_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS19_sluice_219.png",
+   "beat": 7,
+   "s": 1405.0,
+   "keyshot": "KS19_sluice",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0003,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2041,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00028935185185185184,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.20407524704933167,
+     "p1": 0.07242431491613388,
+     "p50": 0.174007847905159,
+     "p99": 0.6030502319335938,
+     "std": 0.11215991526842117
+    },
+    "luma_linear": {
+     "mean": 0.04858432337641716,
+     "p1": 0.006664912682026625,
+     "p50": 0.02737385407090187,
+     "p99": 0.3455013036727905,
+     "std": 0.06888119876384735
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS19_sluice_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS19_sluice_4k.png",
+   "beat": 7,
+   "s": 1405.0,
+   "keyshot": "KS19_sluice",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0006,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1895,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.000554591049382716,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.18951964378356934,
+     "p1": 0.06933648139238358,
+     "p50": 0.1683984398841858,
+     "p99": 0.5714031457901001,
+     "std": 0.0981684997677803
+    },
+    "luma_linear": {
+     "mean": 0.04054025560617447,
+     "p1": 0.006339842453598976,
+     "p50": 0.02591876871883869,
+     "p99": 0.28967398405075073,
+     "std": 0.055352725088596344
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS20_ledge_world",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS20_ledge_world.png",
+   "beat": 7,
+   "s": 1452.0,
+   "keyshot": "KS20_ledge_world",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 6014 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2845,
+     "threshold": "0.117647..0.352941",
+     "note": "display"
+    },
+    {
+     "name": "horizon[lowland_horizon] step",
+     "status": "PASS",
+     "value": 0.245,
+     "threshold": "<= 2 dE",
+     "note": "trend-removed at row ~474.0, 1094 cols: above [207.0, 141.7, 110.6] vs below [207.8, 142.2, 111.1]"
+    },
+    {
+     "name": "banding[dusk_sky]",
+     "status": "PASS",
+     "value": 0.333,
+     "threshold": "score <= 1",
+     "note": "longest run 2 px (max 6), mean run 1.02 px (limit 7.1), 10 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 4.822530864197531e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 6014,
+    "luma_display": {
+     "mean": 0.2845030725002289,
+     "p1": 0.07394510507583618,
+     "p50": 0.20997491478919983,
+     "p99": 0.6530494689941406,
+     "std": 0.19680273532867432
+    },
+    "luma_linear": {
+     "mean": 0.11317494511604309,
+     "p1": 0.00669056735932827,
+     "p50": 0.038265712559223175,
+     "p99": 0.41406646370887756,
+     "std": 0.1275193989276886
+    },
+    "horizon_trend": {
+     "lowland_horizon": {
+      "dE": 0.24477371685749577,
+      "row": 474.0,
+      "cols": 1094
+     }
+    },
+    "banding": {
+     "dusk_sky": {
+      "direction": "v",
+      "n_strips": 10,
+      "longest_run_px": 2,
+      "longest_run_max_px": 6.0,
+      "mean_run_px": 1.0223880597014925,
+      "mean_run_limit_px": 7.086505190311419,
+      "mean_run_ratio": 0.1442725338152985,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.11756542393567489,
+      "score": 0.3333333333333333,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0129870129870129,
+        "mean_run_limit_px": 12.577277379733903
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.027027027027027,
+        "mean_run_limit_px": 9.182712666583614
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0391304347826087,
+        "mean_run_limit_px": 9.12475247524753
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         419
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0211267605633803,
+        "mean_run_limit_px": 7.210562347188274
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         418
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0204081632653061,
+        "mean_run_limit_px": 9.018715596330251
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0161290322580645,
+        "mean_run_limit_px": 7.086505190311397
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0223880597014925,
+        "mean_run_limit_px": 7.086505190311419
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0119047619047619,
+        "mean_run_limit_px": 8.507731363951027
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0194174757281553,
+        "mean_run_limit_px": 13.189266547406039
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         440
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0129870129870129,
+        "mean_run_limit_px": 11.17429524098214
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.3333333333333333
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS20_ledge_world_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS20_ledge_world_1610.png",
+   "beat": 7,
+   "s": 1452.0,
+   "keyshot": "KS20_ledge_world",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 5688 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2854,
+     "threshold": "0.117647..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 5688,
+    "luma_display": {
+     "mean": 0.28540855646133423,
+     "p1": 0.07366196811199188,
+     "p50": 0.19318746030330658,
+     "p99": 0.6553349494934082,
+     "std": 0.19956937432289124
+    },
+    "luma_linear": {
+     "mean": 0.11480583995580673,
+     "p1": 0.00669056735932827,
+     "p50": 0.03268861398100853,
+     "p99": 0.4174495339393616,
+     "std": 0.12904387712478638
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS20_ledge_world_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS20_ledge_world_219.png",
+   "beat": 7,
+   "s": 1452.0,
+   "keyshot": "KS20_ledge_world",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 6014 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2822,
+     "threshold": "0.117647..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 3.616898148148148e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 6014,
+    "luma_display": {
+     "mean": 0.2822486460208893,
+     "p1": 0.07442823797464371,
+     "p50": 0.24924473464488983,
+     "p99": 0.6463232040405273,
+     "std": 0.1889474093914032
+    },
+    "luma_linear": {
+     "mean": 0.10878591984510422,
+     "p1": 0.00676184194162488,
+     "p50": 0.055964890867471695,
+     "p99": 0.40535441040992737,
+     "std": 0.12240123748779297
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS20_ledge_world_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS20_ledge_world_4k.png",
+   "beat": 7,
+   "s": 1452.0,
+   "keyshot": "KS20_ledge_world",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 24075 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2843,
+     "threshold": "0.117647..0.352941",
+     "note": "display"
+    },
+    {
+     "name": "horizon[lowland_horizon] step",
+     "status": "PASS",
+     "value": 0.29,
+     "threshold": "<= 2 dE",
+     "note": "trend-removed at row ~948.0, 2188 cols: above [207.0, 141.6, 110.8] vs below [207.9, 142.2, 111.2]"
+    },
+    {
+     "name": "banding[dusk_sky]",
+     "status": "PASS",
+     "value": 0.25,
+     "threshold": "score <= 1",
+     "note": "longest run 3 px (max 12), mean run 1.02 px (limit 6.9), 20 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 2.4112654320987653e-05,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 24075,
+    "luma_display": {
+     "mean": 0.28427889943122864,
+     "p1": 0.07394510507583618,
+     "p50": 0.21048001945018768,
+     "p99": 0.6527819633483887,
+     "std": 0.19708722829818726
+    },
+    "luma_linear": {
+     "mean": 0.11317077279090881,
+     "p1": 0.00669056735932827,
+     "p50": 0.03857967630028725,
+     "p99": 0.4138803780078888,
+     "std": 0.12755627930164337
+    },
+    "horizon_trend": {
+     "lowland_horizon": {
+      "dE": 0.2898526479862432,
+      "row": 948.0,
+      "cols": 2188
+     }
+    },
+    "banding": {
+     "dusk_sky": {
+      "direction": "v",
+      "n_strips": 20,
+      "longest_run_px": 3,
+      "longest_run_max_px": 12.0,
+      "mean_run_px": 1.0225464190981433,
+      "mean_run_limit_px": 6.8776119402985065,
+      "mean_run_ratio": 0.14867753923519011,
+      "steps_per_1000": null,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.05995082940473687,
+      "score": 0.25,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         128
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0214917825537295,
+        "mean_run_limit_px": 17.731601731602012
+       },
+       {
+        "strip": [
+         128,
+         256
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0189155107187895,
+        "mean_run_limit_px": 18.07058823529402
+       },
+       {
+        "strip": [
+         256,
+         384
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0189155107187895,
+        "mean_run_limit_px": 18.035225048923518
+       },
+       {
+        "strip": [
+         384,
+         512
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0176322418136021,
+        "mean_run_limit_px": 14.772189941895336
+       },
+       {
+        "strip": [
+         512,
+         640
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0227848101265822,
+        "mean_run_limit_px": 11.878202029966147
+       },
+       {
+        "strip": [
+         640,
+         768
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.013801756587202,
+        "mean_run_limit_px": 10.025564318738121
+       },
+       {
+        "strip": [
+         768,
+         896
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0189155107187895,
+        "mean_run_limit_px": 8.85728015377228
+       },
+       {
+        "strip": [
+         896,
+         1024
+        ],
+        "rows": [
+         0,
+         837
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0292072322670376,
+        "mean_run_limit_px": 8.655552946701096
+       },
+       {
+        "strip": [
+         1024,
+         1152
+        ],
+        "rows": [
+         0,
+         835
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0198019801980198,
+        "mean_run_limit_px": 7.2381700373060855
+       },
+       {
+        "strip": [
+         1152,
+         1280
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0210526315789474,
+        "mean_run_limit_px": 6.921517085993245
+       },
+       {
+        "strip": [
+         1280,
+         1408
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0225464190981433,
+        "mean_run_limit_px": 6.8776119402985065
+       },
+       {
+        "strip": [
+         1408,
+         1536
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0204918032786885,
+        "mean_run_limit_px": 7.511767702496135
+       },
+       {
+        "strip": [
+         1536,
+         1664
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0318118948824344,
+        "mean_run_limit_px": 8.184724689165233
+       },
+       {
+        "strip": [
+         1664,
+         1792
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0243243243243243,
+        "mean_run_limit_px": 8.126088394136492
+       },
+       {
+        "strip": [
+         1792,
+         1920
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.023872679045093,
+        "mean_run_limit_px": 8.542231491136569
+       },
+       {
+        "strip": [
+         1920,
+         2048
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.0207253886010363,
+        "mean_run_limit_px": 8.437628747997255
+       },
+       {
+        "strip": [
+         2048,
+         2176
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0229299363057325,
+        "mean_run_limit_px": 8.33461451503503
+       },
+       {
+        "strip": [
+         2176,
+         2304
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 2,
+        "mean_run_px": 1.013801756587202,
+        "mean_run_limit_px": 10.025564318738121
+       },
+       {
+        "strip": [
+         2304,
+         2432
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0253807106598984,
+        "mean_run_limit_px": 13.30350054132091
+       },
+       {
+        "strip": [
+         2432,
+         2560
+        ],
+        "rows": [
+         0,
+         880
+        ],
+        "longest_run_px": 3,
+        "mean_run_px": 1.0216836734693877,
+        "mean_run_limit_px": 13.142245989304838
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.25
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS21_beacon",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS21_beacon.png",
+   "beat": 7,
+   "s": 1490.0,
+   "keyshot": "KS21_beacon",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0145,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2812,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.014467592592592593,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2811640501022339,
+     "p1": 0.07526197284460068,
+     "p50": 0.273650199174881,
+     "p99": 0.6208431720733643,
+     "std": 0.16316397488117218
+    },
+    "luma_linear": {
+     "mean": 0.09852799773216248,
+     "p1": 0.006948159076273441,
+     "p50": 0.0673232302069664,
+     "p99": 0.3709143102169037,
+     "std": 0.1022118479013443
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS21_beacon_1610",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS21_beacon_1610.png",
+   "beat": 7,
+   "s": 1490.0,
+   "keyshot": "KS21_beacon",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1680x1050",
+     "threshold": "1680x1050",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 5,
+     "threshold": "0 px",
+     "note": "first at [[838, 626], [839, 626], [840, 626], [841, 626], [842, 626]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0154,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2792,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 5,
+    "fireflies_pos": [
+     [
+      838,
+      626
+     ],
+     [
+      839,
+      626
+     ],
+     [
+      840,
+      626
+     ],
+     [
+      841,
+      626
+     ],
+     [
+      842,
+      626
+     ]
+    ],
+    "clipped_pct": 0.01536281179138322,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2791917026042938,
+     "p1": 0.07841726392507553,
+     "p50": 0.27459219098091125,
+     "p99": 0.615548312664032,
+     "std": 0.16236059367656708
+    },
+    "luma_linear": {
+     "mean": 0.09717341512441635,
+     "p1": 0.007247942499816418,
+     "p50": 0.06785255670547485,
+     "p99": 0.3644968867301941,
+     "std": 0.10074035823345184
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1680,
+    1050
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS21_beacon_219",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS21_beacon_219.png",
+   "beat": 7,
+   "s": 1490.0,
+   "keyshot": "KS21_beacon",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "2560x1080",
+     "threshold": "2560x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0109,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 20764 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.289,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.010850694444444444,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 20764,
+    "luma_display": {
+     "mean": 0.28904762864112854,
+     "p1": 0.07554510235786438,
+     "p50": 0.2685804069042206,
+     "p99": 0.6342800259590149,
+     "std": 0.16451549530029297
+    },
+    "luma_linear": {
+     "mean": 0.10333850979804993,
+     "p1": 0.00706498512066901,
+     "p50": 0.06468120217323303,
+     "p99": 0.3883170783519745,
+     "std": 0.10698600858449936
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    2560,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_KS21_beacon_4k",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_KS21_beacon_4k.png",
+   "beat": 7,
+   "s": 1490.0,
+   "keyshot": "KS21_beacon",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "3840x2160",
+     "threshold": "3840x2160",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0137,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2807,
+     "threshold": "0.078431..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 2.4112654320987655e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.013744212962962963,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2807029187679291,
+     "p1": 0.07449568808078766,
+     "p50": 0.27382826805114746,
+     "p99": 0.6208431720733643,
+     "std": 0.16388460993766785
+    },
+    "luma_linear": {
+     "mean": 0.0985269695520401,
+     "p1": 0.006815397180616856,
+     "p50": 0.0674319937825203,
+     "p99": 0.3708478075265734,
+     "std": 0.10234483331441879
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    3840,
+    2160
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_end",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_end.png",
+   "beat": 7,
+   "s": 1498.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.1356,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3049,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.1355613425925926,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.30494365096092224,
+     "p1": 0.09128314256668091,
+     "p50": 0.29006510972976685,
+     "p99": 0.623941957950592,
+     "std": 0.14918003976345062
+    },
+    "luma_linear": {
+     "mean": 0.10675938427448273,
+     "p1": 0.009050590917468071,
+     "p50": 0.07534514367580414,
+     "p99": 0.37528756260871887,
+     "std": 0.10212605446577072
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_look_back",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_look_back.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0001,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.2434,
+     "threshold": "0.0784314..0.352941",
+     "note": "sky 53.3 % of the frame (> 50 %): beat-7 band not applied (14.10.5 ruling)"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00014467592592592592,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.24337905645370483,
+     "p1": 0.08288942277431488,
+     "p50": 0.1991811841726303,
+     "p99": 0.51289963722229,
+     "std": 0.13500595092773438
+    },
+    "luma_linear": {
+     "mean": 0.07182856649160385,
+     "p1": 0.007869734428822994,
+     "p50": 0.035791222006082535,
+     "p99": 0.2535501718521118,
+     "std": 0.07758935540914536
+    },
+    "sky_fraction": 0.53317575030611,
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_look_down",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_look_down.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.083,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.08302585035562515,
+     "p1": 0.0697403997182846,
+     "p50": 0.08178823441267014,
+     "p99": 0.10418039560317993,
+     "std": 0.009696521796286106
+    },
+    "luma_linear": {
+     "mean": 0.00793019775301218,
+     "p1": 0.006175435148179531,
+     "p50": 0.007677177898585796,
+     "p99": 0.011060748249292374,
+     "std": 0.0018692142330110073
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_look_l",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_look_l.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 8754 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.3466,
+     "threshold": "0.0784314..0.352941",
+     "note": "sky 53.3 % of the frame (> 50 %): beat-7 band not applied (14.10.5 ruling)"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 8754,
+    "luma_display": {
+     "mean": 0.3466138243675232,
+     "p1": 0.07366196811199188,
+     "p50": 0.4072588384151459,
+     "p99": 0.6611913442611694,
+     "std": 0.19618076086044312
+    },
+    "luma_linear": {
+     "mean": 0.14974336326122284,
+     "p1": 0.006637012120336294,
+     "p50": 0.14760470390319824,
+     "p99": 0.42400112748146057,
+     "std": 0.13000334799289703
+    },
+    "sky_fraction": 0.53317575030611,
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_look_r",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_look_r.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "FAIL",
+     "value": 5,
+     "threshold": "0 px",
+     "note": "first at [[1565, 747], [1565, 750], [1565, 753], [1565, 754], [1565, 755]]"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.2133,
+     "threshold": "0.0784314..0.352941",
+     "note": "sky 53.3 % of the frame (> 50 %): beat-7 band not applied (14.10.5 ruling)"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 5,
+    "fireflies_pos": [
+     [
+      1565,
+      747
+     ],
+     [
+      1565,
+      750
+     ],
+     [
+      1565,
+      753
+     ],
+     [
+      1565,
+      754
+     ],
+     [
+      1565,
+      755
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.21328948438167572,
+     "p1": 0.07029098272323608,
+     "p50": 0.21930824220180511,
+     "p99": 0.2886604070663452,
+     "std": 0.04904425889253616
+    },
+    "luma_linear": {
+     "mean": 0.043346431106328964,
+     "p1": 0.0062454622238874435,
+     "p50": 0.04332667961716652,
+     "p99": 0.07559003680944443,
+     "std": 0.01579255424439907
+    },
+    "sky_fraction": 0.53317575030611,
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "b07_SluiceLedge_look_up",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_look_up.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2601,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2600972354412079,
+     "p1": 0.16264627873897552,
+     "p50": 0.23730668425559998,
+     "p99": 0.46489962935447693,
+     "std": 0.06587452441453934
+    },
+    "luma_linear": {
+     "mean": 0.06398644298315048,
+     "p1": 0.024956997483968735,
+     "p50": 0.050198450684547424,
+     "p99": 0.19855590164661407,
+     "std": 0.03582766279578209
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_mid",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_mid.png",
+   "beat": 7,
+   "s": 1435.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0003,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2899,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 4.822530864197531e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.00033757716049382714,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2899015545845032,
+     "p1": 0.08310510963201523,
+     "p50": 0.2578902244567871,
+     "p99": 0.6436015963554382,
+     "std": 0.1708277463912964
+    },
+    "luma_linear": {
+     "mean": 0.10604105144739151,
+     "p1": 0.007892942987382412,
+     "p50": 0.0597224161028862,
+     "p99": 0.40027207136154175,
+     "std": 0.11460509151220322
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "b07_SluiceLedge_start",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\b07_SluiceLedge_start.png",
+   "beat": 7,
+   "s": 1372.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0008,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1657,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0007716049382716049,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.16572542488574982,
+     "p1": 0.09126588702201843,
+     "p50": 0.14808706939220428,
+     "p99": 0.5330078601837158,
+     "std": 0.07796135544776917
+    },
+    "luma_linear": {
+     "mean": 0.03021768480539322,
+     "p1": 0.008802935481071472,
+     "p50": 0.019835347309708595,
+     "p99": 0.26597118377685547,
+     "std": 0.048555340617895126
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_conddown",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_conddown.png",
+   "beat": 7,
+   "s": 1404.996764,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1509,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.1509300321340561,
+     "p1": 0.06010902300477028,
+     "p50": 0.1261262744665146,
+     "p99": 0.48529258370399475,
+     "std": 0.08658721297979355
+    },
+    "luma_linear": {
+     "mean": 0.027305223047733307,
+     "p1": 0.005207490175962448,
+     "p50": 0.015553930774331093,
+     "p99": 0.2019466608762741,
+     "std": 0.03690854087471962
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_faceup",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_faceup.png",
+   "beat": 7,
+   "s": 1462.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.3119,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.3119129240512848,
+     "p1": 0.20644235610961914,
+     "p50": 0.2660321891307831,
+     "p99": 0.5503819584846497,
+     "std": 0.10489045828580856
+    },
+    "luma_linear": {
+     "mean": 0.0990348532795906,
+     "p1": 0.0388672761619091,
+     "p50": 0.06350468099117279,
+     "p99": 0.2864091992378235,
+     "std": 0.0760231763124466
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_ks20s1470",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_ks20s1470.png",
+   "beat": 7,
+   "s": 1469.985878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2755,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 4.822530864197531e-07,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2755219638347626,
+     "p1": 0.06945725530385971,
+     "p50": 0.16974589228630066,
+     "p99": 0.6524674892425537,
+     "std": 0.2026984542608261
+    },
+    "luma_linear": {
+     "mean": 0.11090567708015442,
+     "p1": 0.00612514466047287,
+     "p50": 0.02533818781375885,
+     "p99": 0.41341811418533325,
+     "std": 0.1286863088607788
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_ledgedown",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_ledgedown.png",
+   "beat": 7,
+   "s": 1462.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1026,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.10255259275436401,
+     "p1": 0.05153725668787956,
+     "p50": 0.08184000104665756,
+     "p99": 0.29106988251209265,
+     "std": 0.04949720948934555
+    },
+    "luma_linear": {
+     "mean": 0.012898429296910763,
+     "p1": 0.004203767515718937,
+     "p50": 0.007706543896347284,
+     "p99": 0.07325879484415054,
+     "std": 0.015146615915000439
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_mouthback",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_mouthback.png",
+   "beat": 7,
+   "s": 1442.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2279,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 4.8225308641975306e-05,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.2279493361711502,
+     "p1": 0.08400627970695496,
+     "p50": 0.2120627611875534,
+     "p99": 0.48436787724494934,
+     "std": 0.10747440159320831
+    },
+    "luma_linear": {
+     "mean": 0.05822297930717468,
+     "p1": 0.008036287501454353,
+     "p50": 0.04057189077138901,
+     "p99": 0.22335374355316162,
+     "std": 0.05814514309167862
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_nadir1470",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_nadir1470.png",
+   "beat": 7,
+   "s": 1472.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.0803,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.08028493076562881,
+     "p1": 0.05153725668787956,
+     "p50": 0.07337883114814758,
+     "p99": 0.23112472891807556,
+     "std": 0.030484922230243683
+    },
+    "luma_linear": {
+     "mean": 0.008247051388025284,
+     "p1": 0.004203767515718937,
+     "p50": 0.006585096474736929,
+     "p99": 0.04637596011161804,
+     "std": 0.00947363767772913
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_north1470",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_north1470.png",
+   "beat": 7,
+   "s": 1472.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0021,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2609,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0020736882716049384,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.260917067527771,
+     "p1": 0.0697403997182846,
+     "p50": 0.24867846071720123,
+     "p99": 0.6200204491615295,
+     "std": 0.16992346942424774
+    },
+    "luma_linear": {
+     "mean": 0.09085118770599365,
+     "p1": 0.006175435148179531,
+     "p50": 0.05585280433297157,
+     "p99": 0.3701844811439514,
+     "std": 0.10458669066429138
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_northdown",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_northdown.png",
+   "beat": 7,
+   "s": 1497.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1605,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.16049355268478394,
+     "p1": 0.07224627584218979,
+     "p50": 0.14194431900978088,
+     "p99": 0.368807852268219,
+     "std": 0.06666768342256546
+    },
+    "luma_linear": {
+     "mean": 0.02726403810083866,
+     "p1": 0.006466793827712536,
+     "p50": 0.018358200788497925,
+     "p99": 0.12138169258832932,
+     "std": 0.024654414504766464
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_shaft",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_shaft.png",
+   "beat": 7,
+   "s": 1419.000027,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.276,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 1.4467592592592592e-06,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.27597862482070923,
+     "p1": 0.07495687156915665,
+     "p50": 0.26806432008743286,
+     "p99": 0.5145749449729919,
+     "std": 0.1141565591096878
+    },
+    "luma_linear": {
+     "mean": 0.07658153027296066,
+     "p1": 0.006944486405700445,
+     "p50": 0.06149642542004585,
+     "p99": 0.22779123485088348,
+     "std": 0.05941735580563545
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_south",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_south.png",
+   "beat": 7,
+   "s": 1447.885878,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.2512,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 4.8225308641975306e-05,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.25124773383140564,
+     "p1": 0.07980157434940338,
+     "p50": 0.2106470763683319,
+     "p99": 0.49975064396858215,
+     "std": 0.13029325008392334
+    },
+    "luma_linear": {
+     "mean": 0.07387885451316833,
+     "p1": 0.00752058532088995,
+     "p50": 0.03987523540854454,
+     "p99": 0.23979777097702026,
+     "std": 0.07296043634414673
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_tun1405",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_tun1405.png",
+   "beat": 7,
+   "s": 1399.70559,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0041,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1598,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.004099151234567901,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.15977931022644043,
+     "p1": 0.06543059647083282,
+     "p50": 0.1588878482580185,
+     "p99": 0.3583240884542467,
+     "std": 0.0612105056643486
+    },
+    "luma_linear": {
+     "mean": 0.027410410344600677,
+     "p1": 0.005885240156203508,
+     "p50": 0.02363727241754532,
+     "p99": 0.11369721591472626,
+     "std": 0.03218431398272514
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "pose_tunback1395",
+   "file": "<WORKSPACE>\\4 Megastructures\\4 Megastructures\\QA\\captures\\dusk-05\\pose_tunback1395.png",
+   "beat": 7,
+   "s": 1395.000183,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "fireflies",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "8 x 5x5 median and +16 levels"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0045,
+     "threshold": "<= 1 %",
+     "note": "any channel >= 254; 0 px excluded"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1535,
+     "threshold": "0.0784314..0.352941",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "fireflies": 0,
+    "fireflies_pos": [],
+    "clipped_pct": 0.004533179012345679,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "luma_display": {
+     "mean": 0.15348897874355316,
+     "p1": 0.0715905949473381,
+     "p50": 0.13732470571994781,
+     "p99": 0.4322737455368042,
+     "std": 0.07167552411556244
+    },
+    "luma_linear": {
+     "mean": 0.026609722524881363,
+     "p1": 0.006521569099277258,
+     "p50": 0.018265429884195328,
+     "p99": 0.16065095365047455,
+     "std": 0.034688275307416916
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  }
+ ]
+}

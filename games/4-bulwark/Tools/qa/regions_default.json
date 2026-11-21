@@ -1,0 +1,46 @@
+{
+  "_doc": [
+    "Default analysis regions per capture tag for Tools/qa (format: see the docstring of Tools/qa/qa_common.py).",
+    "Coordinates are pixels at 1920 x 1080 ('ref') scaled per axis to the image, unless 'units' says otherwise.",
+    "Entries apply to 16:9 images (1080p and 4K) unless 'aspect' says otherwise. report.json 'regions' per shot are merged on top.",
+    "Wave B (integrate): the atmosphere owner's Wave A regions. BandScore regions from the 14.10.3 'Banding region' column",
+    "(KS04 storm sky, KS05 haze, KS08 sky, KS20 dusk sky), the horizon pairs as trend-removed steps ('mode': 'trend': a line",
+    "per channel fitted to rows h-7..h-2 and h+2..h+7, extrapolated to h, Lab dE <= 2.0; rows from the visibility audit:",
+    "KS04 sea horizon 840 / 2160 = 420 at 1080, KS20 lowland horizon 948 / 2160 = 474), and the 2.5 deg sun-disc exclusion",
+    "('azEl': 'sun' takes the shot's report.json 'sun' [az, el], written by CaptureHarness from BulwarkSchedule at the shot's s).",
+    "Fix wave X2 (lead QA): b08_* ending stills = A1 4.10 beats 8 (ride, sun disc 2.5 deg excluded) and 9 (platform; the Keeper's Lantern core excluded); banding in the dusk sky (KS22/KS23), the face gradient (KS24), the alpenglow (KS28) and the sky above the crest (KS29)."
+  ],
+  "regions": [
+    {
+      "match": "*KS04_crest_sea*", "aspect": "16:9",
+      "banding": [{"name": "storm_sky", "rect": [0, 0, 1920, 400], "dir": "v"}],
+      "horizon": [{"name": "sea_horizon", "mode": "trend", "row": 420, "cols": [0.46, 0.57], "tolDE": 2.0}]
+    },
+    {
+      "match": "*KS05_crest_drop*", "aspect": "16:9",
+      "banding": [{"name": "haze", "rect": [0, 0, 1920, 300], "dir": "v"}]
+    },
+    {
+      "match": "*KS08_spill_bow*", "aspect": "16:9",
+      "banding": [{"name": "sky", "rect": [0, 0, 1920, 450], "dir": "v"}],
+      "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]
+    },
+    {
+      "match": "*KS20_ledge_world*", "aspect": "16:9",
+      "banding": [{"name": "dusk_sky", "rect": [0, 0, 1300, 440], "dir": "v"}],
+      "horizon": [{"name": "lowland_horizon", "mode": "trend", "row": 474, "cols": [0.0, 0.57], "tolDE": 2.0}]
+    },
+    {
+      "match": ["*KS20_ledge_world*", "*KS21_beacon*", "*b07_SluiceLedge_end*", "*b07_SluiceLedge_look_l*"], "aspect": "any",
+      "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]
+    },
+    {"match": "b08_Ending_KS22*", "aspect": "any", "banding": [{"name": "dusk_sky", "rect": [0, 0, 1920, 150], "dir": "v"}], "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]},
+    {"match": "b08_Ending_KS23_*", "aspect": "any", "banding": [{"name": "dusk_sky", "rect": [0, 0, 1920, 420], "dir": "v"}], "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]},
+    {"match": "b08_Ending_KS24*", "aspect": "any", "banding": [{"name": "face_gradient", "rect": [600, 0, 1320, 700], "dir": "v"}], "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]},
+    {"match": "b08_Ending_KS25*", "aspect": "any", "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]},
+    {"match": "b08_Ending_KS26*", "aspect": "any", "exclude": [{"name": "sun", "azEl": "sun", "clipDeg": 2.5}]},
+    {"match": "b08_Ending_KS27*", "aspect": "any", "exclude": [{"name": "keeper_lantern", "world": [-3483.865, -5997.95, 1516.714], "clipDeg": 1.5}]},
+    {"match": "b08_Ending_KS28*", "aspect": "16:9", "banding": [{"name": "alpenglow", "rect": [200, 50, 1720, 220], "dir": "v"}], "exclude": [{"name": "keeper_lantern", "world": [-3483.865, -5997.95, 1516.714], "clipDeg": 1.5}]},
+    {"match": "b08_Ending_KS29*", "aspect": "16:9", "banding": [{"name": "sky", "rect": [200, 0, 1720, 120], "dir": "v"}], "exclude": [{"name": "keeper_lantern", "world": [-3483.865, -5997.95, 1516.714], "clipDeg": 1.5}]}
+  ]
+}

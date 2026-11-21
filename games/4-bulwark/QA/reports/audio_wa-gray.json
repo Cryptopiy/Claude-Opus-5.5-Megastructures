@@ -1,0 +1,248 @@
+{
+ "run": "wa-gray",
+ "status": "FAIL",
+ "files": [
+  {
+   "file": "QA/audio/wa-gray-dump.wav",
+   "sidecar": "QA/audio/wa-gray-dump.json",
+   "stem": "mix",
+   "format": "float32",
+   "fs": 48000,
+   "channels": 2,
+   "seconds": 30.0,
+   "frames": 1440000,
+   "nan_or_inf": 0,
+   "sample_peak": 0.2099592089653015,
+   "sample_peak_dbfs": -13.557301442658975,
+   "sample_peak_at_s": 1.5986875,
+   "true_peak": 0.20996403357024862,
+   "true_peak_dbtp": -13.557101853868097,
+   "true_peak_at_s": 1.5986875,
+   "speed": null,
+   "dc_per_channel": [
+    6.476087169975399e-07,
+    -2.5097915223191494e-06
+   ],
+   "max_step": 0.006179405958391726,
+   "max_step_at_s": 17.466708333333333,
+   "steps_over_limit": 0,
+   "rms_dbfs": -39.840883370786685,
+   "max_400ms_rms_dbfs": -25.34197463104009,
+   "rms_per_window_dbfs": [
+    -240.0,
+    -29.07,
+    -44.12,
+    -46.18,
+    -42.18,
+    -41.93,
+    -41.66,
+    -41.76,
+    -41.42,
+    -41.14,
+    -41.55,
+    -41.39,
+    -41.65,
+    -41.95,
+    -41.82,
+    -41.99,
+    -41.15,
+    -41.69,
+    -41.48,
+    -41.41,
+    -41.85,
+    -41.15,
+    -41.32,
+    -41.18,
+    -41.36,
+    -41.99,
+    -41.37,
+    -41.3,
+    -41.61,
+    -41.79
+   ],
+   "window_s": 1.0,
+   "lufs_integrated": -41.383190716394424,
+   "lufs_momentary_max": -27.207789718778,
+   "lufs_short_term_max": -35.48312728727452,
+   "warnings": [],
+   "has_s": true,
+   "checks": [
+    {
+     "name": "NaN/Inf samples",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": null
+    },
+    {
+     "name": "true peak",
+     "status": "PASS",
+     "value": -13.56,
+     "threshold": "<= -1 dBTP",
+     "note": "4x oversampled, at 1.599 s"
+    },
+    {
+     "name": "sample peak",
+     "status": "INFO",
+     "value": -13.56,
+     "threshold": null,
+     "note": "at 1.599 s"
+    },
+    {
+     "name": "DC offset",
+     "status": "PASS",
+     "value": 3e-06,
+     "threshold": "< 0.001",
+     "note": null
+    },
+    {
+     "name": "sample step",
+     "status": "PASS",
+     "value": 0.0062,
+     "threshold": "<= 0.25 FS",
+     "note": "at 17.4667 s, 0 over (footsteps excluded)"
+    },
+    {
+     "name": "not silent",
+     "status": "PASS",
+     "value": "-39.84",
+     "threshold": "> -80 dBFS RMS",
+     "note": null
+    },
+    {
+     "name": "integrated loudness",
+     "status": "INFO",
+     "value": "-41.38",
+     "threshold": null,
+     "note": "BS.1770-4, reported only"
+    }
+   ],
+   "status": "PASS"
+  }
+ ],
+ "errors": [],
+ "beats": [
+  {
+   "beat": 1,
+   "name": "WaveGallery",
+   "rms_dbfs": -39.84,
+   "target": -34.0,
+   "delta": "-5.84",
+   "measured": "30.0 s",
+   "status": "FAIL"
+  },
+  {
+   "beat": 2,
+   "name": "Crest",
+   "rms_dbfs": "-",
+   "target": -24.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 3,
+   "name": "SpillwayBridge",
+   "rms_dbfs": "-",
+   "target": -18.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 4,
+   "name": "ArmourSlope",
+   "rms_dbfs": "-",
+   "target": -23.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 5,
+   "name": "GateTower",
+   "rms_dbfs": "-",
+   "target": -32.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 6,
+   "name": "WindowGallery",
+   "rms_dbfs": "-",
+   "target": -38.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  },
+  {
+   "beat": 7,
+   "name": "SluiceLedge",
+   "rms_dbfs": "-",
+   "target": -25.0,
+   "delta": "-",
+   "measured": "-",
+   "status": "SKIP"
+  }
+ ],
+ "beat_checks": [
+  {
+   "name": "beat 1 RMS",
+   "status": "FAIL",
+   "value": -39.84,
+   "threshold": "-34 +- 1.5 dB",
+   "note": ""
+  },
+  {
+   "name": "beat 2 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 3 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 4 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 5 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 6 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 7 RMS",
+   "status": "SKIP",
+   "value": null,
+   "threshold": null,
+   "note": "no blocks (no s sidecar / beat tag)"
+  },
+  {
+   "name": "beat 1 sliding 3 s RMS",
+   "status": "FAIL",
+   "value": -10.73,
+   "threshold": "+- 1.5 dB of target",
+   "note": "worst at s 6.0 (wa-gray-dump.wav)"
+  }
+ ],
+ "lufs_combined": null
+}
