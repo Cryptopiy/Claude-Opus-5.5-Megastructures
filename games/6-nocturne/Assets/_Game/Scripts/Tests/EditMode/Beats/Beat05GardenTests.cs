@@ -16,6 +16,7 @@ namespace Megastructure.Tests
         G3BeatWorld _world;
         Transform _root, _bridge;
         long _tris;
+        int _wet4;
         static readonly string[] TopMeshes = { "path", "moss", "promenade" };
 
         [OneTimeSetUp]
@@ -23,6 +24,7 @@ namespace Megastructure.Tests
         {
             _world = G3BeatWorld.Build(new Beat04_Skybridge());
             long t4 = _world.Ctx.Triangles;
+            _wet4 = NocWetRegistry.TotalSources;                                 // beat 4's own wet sources (TR's, any number)
             new Beat05_Garden().Build(_world.Ctx);
             _tris = _world.Ctx.Triangles - t4;
             _root = _world.Ctx.BeatRoot(Beat05_Garden.BeatIndex);
@@ -44,15 +46,17 @@ namespace Megastructure.Tests
                 var t = trees[i];
                 if (i < spec.Length) Assert.AreEqual(spec[i], t.Height, 0.5, t.Name + " height");
                 sb.Append(FormattableString.Invariant($" {t.Name}({t.X:F0},{t.Z:F0}) h {t.Height:F1} r {t.CrownR:F1} r0 {t.R0:F2} crownZ {t.CrownZ:F1};"));
-                // the crown geometry: one crown alone, bounds = the ellipsoid within its lumps (0.90 .. 1.02)
+                // the crown geometry: one lobed crown surface alone (GD: the v1 lumps are deleted), bounds = the ellipsoid within its
+                // lobes (tops 0.94-1.0 x the fine +-3 % lump)
                 var mb = new MeshBuilder();
-                GardenTree.Crown(mb, t.CrownCentre, t.CrownRadii, 1000 + i);
+                GardenTree.Crown(mb, t.CrownCentre, t.CrownRadii, 1000 + i, GardenLeafCards.Shape(t, 1000 + i));
                 var b = mb.ToMesh("crownTest").bounds;
-                Assert.AreEqual(t.CrownCentre.y, b.center.y, 0.06f * t.CrownRadii.y, t.Name + " crown centre at 0.66 h");
-                Assert.LessOrEqual(b.max.y, t.CrownCentre.y + 1.021f * t.CrownRadii.y, t.Name + " crown top");
-                Assert.GreaterOrEqual(b.max.y, t.CrownCentre.y + 0.89f * t.CrownRadii.y, t.Name + " crown top");
-                Assert.LessOrEqual(b.extents.x, 1.021f * t.CrownR, t.Name + " crown radius");
-                Assert.GreaterOrEqual(b.extents.x, 0.89f * t.CrownR, t.Name + " crown radius");
+                Assert.LessOrEqual(b.min.y, t.CrownCentre.y - 0.62f * t.CrownRadii.y, t.Name + " crown bottom (lobe floor 0.66)");
+                Assert.GreaterOrEqual(b.min.y, t.CrownCentre.y - 1.031f * t.CrownRadii.y, t.Name + " crown bottom");
+                Assert.LessOrEqual(b.max.y, t.CrownCentre.y + 1.031f * t.CrownRadii.y, t.Name + " crown top");
+                Assert.GreaterOrEqual(b.max.y, t.CrownCentre.y + 0.80f * t.CrownRadii.y, t.Name + " crown top");
+                Assert.LessOrEqual(b.extents.x, 1.031f * t.CrownR, t.Name + " crown radius");
+                Assert.GreaterOrEqual(b.extents.x, 0.80f * t.CrownR, t.Name + " crown radius");
             }
             Debug.Log(sb.ToString());
         }
@@ -175,9 +179,11 @@ namespace Megastructure.Tests
         public void Lights_WetSources_Foliage()
         {
             var lights = _root.GetComponentsInChildren<Light>(true);
-            Assert.AreEqual(GardenDims.LeafLights, lights.Length, "8 leaf points (14.2.3 row 5)");
+            Assert.AreEqual(GardenDims.LeafLights + GardenLanterns.PostCount, lights.Length, "8 leaf points (14.2.3 row 5) + 10 lantern clusters (LOOK_V2 6)");
             foreach (var l in lights) Assert.AreEqual(LightShadows.None, l.shadows);
-            Assert.AreEqual(SkybridgeDims.LampCount + GardenDims.Trees.Length, NocWetRegistry.TotalSources, "one wet source per crown");
+            // GD fix wave: count the garden's own sources (beat 4 adds its lamps and, since TR's fix wave, the gate's light content)
+            Assert.AreEqual(GardenDims.Trees.Length, NocWetRegistry.TotalSources - _wet4, "one wet source per crown");
+            Assert.GreaterOrEqual(_wet4, SkybridgeDims.LampCount, "beat 4 registered its lamps first");
             Assert.LessOrEqual(NocWetRegistry.MaxActive(), NocturneConstants.WetSourceMax);
             var sh = Shader.Find(GardenMaterials.FoliageShader);
             Assert.IsNotNull(sh, "NocFoliage compiles and is found");

@@ -1,0 +1,150 @@
+{
+ "run": "INTB_enc2_enc_beat02_axis_4k",
+ "status": "PASS",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat02_axis_4k",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\INTB_enc2_enc_beat02_axis_4k\\enc_beat02_axis_4k",
+   "checks": [
+    {
+     "name": "x264_crf23[sky_above_facades]",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 8.75 (run 99 px) (source score 2.000), frame 18; luma Y 0.00 / 0.00; chroma Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code, gated); R 0.00, G 0.00, B 2.31 steps/1000 (reported, not gated on a decode, D-041 2)"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\INTB_enc2_enc_beat02_axis_4k\\enc_beat02_axis_4k\\x264_crf23.mp4",
+     "encode_s": 5.7,
+     "kbps": 11909.1,
+     "decoded_frames": 120,
+     "mean_abs_error": 1.771755193262924,
+     "decoded": {
+      "sky_above_facades": {
+       "direction": "v",
+       "n_strips": 7,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 8.747442540322568,
+       "longest_run_px": 99,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.016400474734308952,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         2.3094688221709005,
+         1.0400591563786037
+        ]
+       },
+       "score": 5.831628360215046,
+       "pass": false,
+       "frame": 18
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\INTB_enc2_enc_beat02_axis_4k\\enc_beat02_axis_4k\\crops\\x264_crf23_sky_above_facades_f00061_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\INTB_enc2_enc_beat02_axis_4k\\enc_beat02_axis_4k\\crops\\x264_crf23_sky_above_facades_f00061_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\INTB_enc2_enc_beat02_axis_4k\\enc_beat02_axis_4k\\crops\\x264_crf23_sky_above_facades_f00061_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    3840,
+    2160
+   ],
+   "fps": 60.0,
+   "frames_encoded": 120,
+   "regions": [
+    {
+     "name": "sky_above_facades",
+     "rect": [
+      1612,
+      43,
+      2112,
+      476
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "sky_above_facades": {
+     "direction": "v",
+     "n_strips": 7,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 2.3094688221709005,
+     "steps": 1,
+     "step_max_code": 1.3886924962292682,
+     "bandscore": 0.6245536838107635,
+     "longest_run_px": 9,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.014971098598347277,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       0.0,
+       0.0
+      ],
+      "R": [
+       2.3094688221709005,
+       1.3886924962292682
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 2.0,
+     "pass": false,
+     "frame": 55
+    }
+   },
+   "status": "PASS"
+  }
+ ],
+ "lookv2_encoded": null
+}

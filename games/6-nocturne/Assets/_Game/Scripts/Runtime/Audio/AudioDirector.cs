@@ -32,8 +32,11 @@ namespace Megastructure
         NocAudioParams m_params;
         bool m_paused;
         float m_duck = 1f;
-        bool m_errorLogged, m_heartbeatLogged;
-        double m_startTime;
+        bool m_errorLogged, m_heartbeatLogged, m_introMarked, m_summaryLogged;
+        double m_startTime, m_nextBeat;
+        int m_introSlow, m_introOver, m_lastCallbacks;
+        /// <summary>Heartbeat period (s) and the end of the intro (s after Start: the loading frames' long callbacks are not counted).</summary>
+        const double HeartbeatPeriod = 30.0, IntroSeconds = 10.0;
         string m_dumpPath;
         float m_dumpSeconds = 10f;
         AudioCapture m_capture;
@@ -65,6 +68,19 @@ namespace Megastructure
             m_source.Play();   // generator mode: OnAudioFilterRead of NocSynth runs on this clip-less, playing source
             m_startTime = Time.realtimeSinceStartupAsDouble;
             Debug.Log(FormattableString.Invariant($"[NOC] audio: generator on a clip-less AudioSource, device rate {rate} Hz, speaker mode {AudioSettings.speakerMode}"));
+        }
+
+        void LogBeat(string what)
+        {
+            int cb = m_synth.Callbacks;
+            string line = FormattableString.Invariant($"[NOC] audio {what} t {Time.realtimeSinceStartupAsDouble - m_startTime:F0} s, s {ProgressDirector.S:F1}: {cb - m_lastCallbacks} callbacks, window max {m_synth.TakeWindowMaxMs():F2} ms, since the intro: slow (> 50 % of the buffer) {m_synth.SlowCallbacks - m_introSlow}, overruns {m_synth.Overruns - m_introOver} (audio overruns after the intro = {m_synth.Overruns - m_introOver})");
+            m_lastCallbacks = cb;
+            if (m_synth.Overruns - m_introOver > 0) Debug.LogWarning(line); else Debug.Log(line);
+        }
+
+        void OnApplicationQuit()
+        {
+            if (m_introMarked && !m_summaryLogged) { m_summaryLogged = true; LogBeat("summary"); }
         }
 
         void OnDestroy()
@@ -100,11 +116,24 @@ namespace Megastructure
 
             var err = m_synth.TakeError();
             if (err != null && !m_errorLogged) { m_errorLogged = true; Debug.LogError("[NOC-FAIL] audio thread exception: " + err); }
-            if (!m_heartbeatLogged && Time.realtimeSinceStartupAsDouble - m_startTime > 3.0)
+            double age = Time.realtimeSinceStartupAsDouble - m_startTime;
+            if (!m_heartbeatLogged && age > 3.0)
             {
                 m_heartbeatLogged = true;
                 if (m_synth.Callbacks > 0) Debug.Log(FormattableString.Invariant($"[NOC] audio heartbeat: {m_synth.Callbacks} callbacks, last {m_synth.LastCallbackMs:F3} ms, max {m_synth.MaxCallbackMs:F3} ms"));
                 else Debug.LogWarning("[NOC] audio heartbeat: no OnAudioFilterRead callback after 3 s (no audio device?)");
+            }
+            // C52: the intro's long callbacks (loading) are the baseline; then a line every 30 s with the window's longest callback and
+            // the callbacks over half / all of their buffer's period since the intro (a 2160p recording must keep "overruns 0")
+            if (!m_introMarked && age > IntroSeconds)
+            {
+                m_introMarked = true; m_introSlow = m_synth.SlowCallbacks; m_introOver = m_synth.Overruns; m_lastCallbacks = m_synth.Callbacks;
+                m_synth.TakeWindowMaxMs(); m_nextBeat = age + HeartbeatPeriod;
+            }
+            if (m_introMarked && age >= m_nextBeat)
+            {
+                m_nextBeat += HeartbeatPeriod;
+                LogBeat("heartbeat");
             }
             Dump();
         }

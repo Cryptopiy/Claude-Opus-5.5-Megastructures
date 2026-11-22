@@ -16,7 +16,8 @@ Checks per KS*.png (the beat comes from s in report.json, else from the 14.10 ta
   6  crush: share of 4 x 4 block means at luma <= Floor + 3 (14.8) per beat; 1st percentile >= 9
   7  texture (KS00, KS01, KS02, KS19 wall regions): micro >= 1.4, meso >= 1.0 (0.75 --encoded), pool share >= 40 % (KS00, KS02)
   8  warm uniqueness (KS19); 9 separation sky - unresolved towers >= 6 codes; 10 highlights p99 / p99.9;
-  11 dark cast on luma 12-40: mean (B - G) in -2..+6, |mean (R - G)| <= 4 (<= 6 in beat 1, D-032 4); 12 Heart discipline (KS17, KS18)
+  11 dark cast on luma 12-40: mean (B - G) in -2..+6 (beat 5: <= +6 only, D-041 4), |mean (R - G)| <= 4 (<= 6 in
+      beat 1, D-032 4; beat 5 in -8..+4, D-040 5); 12 Heart discipline (KS17, KS18)
   (owner AT since Phase 4 wave A; QA-1: KS07 has no separation box, its frame holds no sky)
 Values are 8-bit sRGB codes; luma is Rec.709 on the encoded values (the 14.10 convention). Exit code 1 if any shot fails.
 As a run_all step: run(capture_dir) returns {"tool", "status", "fails", "shots"}.
@@ -30,8 +31,8 @@ import numpy as np
 from PIL import Image
 
 FLOOR_LUMA = 11.8                 # Floor #0A0C0F (LOOK_V2 2.1)
-KS = {  # id: (mean-luma lo, hi, beat by s) - LOOK_V2 8.1
-    "KS00": (16, 30, 1), "KS01": (20, 34, 1), "KS02": (22, 40, 1), "KS03": (24, 40, 1), "KS04": (30, 48, 2), "KS05": (34, 54, 2),
+KS = {  # id: (mean-luma lo, hi, beat by s) - LOOK_V2 8.1; KS01 20-36 by D-041 (3) (the modelled noodle bar is the subject)
+    "KS00": (16, 31, 1), "KS01": (20, 36, 1), "KS02": (22, 40, 1), "KS03": (24, 40, 1), "KS04": (30, 48, 2), "KS05": (34, 54, 2),
     "KS06": (28, 46, 2), "KS07": (26, 40, 3), "KS08": (28, 44, 3), "KS09": (30, 46, 3), "KS10": (32, 48, 3), "KS11": (24, 40, 4),
     "KS12": (30, 46, 4), "KS13": (28, 48, 4), "KS14": (24, 40, 4), "KS15": (24, 42, 5), "KS16": (38, 62, 6), "KS17": (32, 50, 7),
     "KS18": (38, 60, 7), "KS19": (18, 32, 7)}
@@ -52,6 +53,8 @@ SEP = {  # id: (sky box, unresolved-tower box)
     "KS17": ((0.03, 0.03, 0.20, 0.20), (0.02, 0.45, 0.20, 0.65)), "KS18": ((0.52, 0.03, 0.82, 0.25), (0.02, 0.55, 0.22, 0.80))}
 P999_SHOTS = ("KS04", "KS05", "KS06", "KS09", "KS10", "KS17", "KS18", "KS19")
 RG_MAX_BEAT1 = 6          # D-032 (4): beat 1's warm pools are the design (14.5.1): |mean (R - G)| <= 6 there, 4 elsewhere
+RG_WIN_BEAT5 = (-8, 4)    # D-040 (5): beat 5's green darks (the garden's identity): R - G in [-8, +4]
+BG_MIN_BEAT5 = None       # D-041 (4): beat 5 is exempt from B - G >= -2 (lit leaves: B - G = -chroma for hue < 120); <= 6 stays
 GOAL_BOX = (0.33, 0.42, 0.57, 0.72)       # KS19
 GOAL_KS17 = (0.43, 0.71, 0.475, 0.76)     # the projected goal window in KS17 (0.452, 0.736)
 KOI_BOX = {"KS17": (0.24, 0.15, 0.75, 0.52), "KS18": (0.28, 0.02, 0.78, 0.82), "KS19": (0.75, 0.00, 1.00, 0.30)}
@@ -167,8 +170,15 @@ def check(path, beat_of=None, encoded=False):
     mid = (Y4 >= 16) & (Y4 < 160)
     ms = float(s4[mid].mean()) if mid.any() else 0.0
     C["R3_midtone_mean_sat"] = (round(ms, 3), bool(ms <= R3_MAX.get(beat, 0.30)))
-    # 4 mean luma
-    ml = float(Y.mean())
+    # 4 mean luma. LOOK_V2 8.1's windows describe the 16:9 composition: a wider frame (the _219 framing variant, same vFOV) is
+    # measured on its central 16:9 part, which is the 16:9 key shot itself; its extra side strips are framing material (QA fix wave,
+    # lead ruling 2026-11-21: KS03 / KS10 at 21:9 read 22.9 / 31.8 over the whole frame against 25.1 / 33.2 at 16:9)
+    if W / float(H) > 16.0 / 9.0 + 0.02:
+        w169 = int(round(H * 16.0 / 9.0))
+        x0 = (W - w169) // 2
+        ml = float(Y[:, x0:x0 + w169].mean())
+    else:
+        ml = float(Y.mean())
     mb = MEAN_BEAT.get(beat, (0, 255))
     C["mean_luma"] = (round(ml, 1), bool(lo <= ml <= hi and mb[0] <= ml <= mb[1]))
     # 5 sky top
@@ -194,8 +204,10 @@ def check(path, beat_of=None, encoded=False):
     dk = (Y >= 12) & (Y <= 40)
     if dk.mean() > 0.01:
         bg, rg = float((im[..., 2] - im[..., 1])[dk].mean()), float((im[..., 0] - im[..., 1])[dk].mean())
-        C["dark_cast_BG"] = (round(bg, 2), bool(-2 <= bg <= 6))
-        C["dark_cast_RG"] = (round(rg, 2), bool(abs(rg) <= (RG_MAX_BEAT1 if beat == 1 else 4)))
+        bg_lo = BG_MIN_BEAT5 if beat == 5 else -2
+        C["dark_cast_BG"] = (round(bg, 2), bool((bg_lo is None or bg_lo <= bg) and bg <= 6))
+        ok_rg = (RG_WIN_BEAT5[0] <= rg <= RG_WIN_BEAT5[1]) if beat == 5 else abs(rg) <= (RG_MAX_BEAT1 if beat == 1 else 4)
+        C["dark_cast_RG"] = (round(rg, 2), bool(ok_rg))
     # 9 separation
     if ks in SEP:
         sky_, twr = SEP[ks]

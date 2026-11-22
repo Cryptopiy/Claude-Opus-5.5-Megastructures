@@ -5,6 +5,10 @@
 // (tint model, 4-octave billows) fogged like geometry, the abyss with the H3 sheet modulation, the HazeLow share of the alley. It is the same function every fog fades toward, so fog, sky and dome agree at every elevation (H3; a fogged
 // ray to the dome at 11 km is the sky colour itself, so NocFog is the identity here). Then NocFloor. No local dither (the one
 // dither is in NocGrade, 14.7 H1). The camera clears SolidColor with no skybox (D-008: URP's skybox would paint over it).
+// Fix wave (AT): in beat 7 the dome adds the koi's in-scatter (NocKoiAir, the same term NocFog adds to geometry) along the ray to
+// the deck plane, so the air around the 900 m koi glows behind and beside the body (C02-air).
+// The Ark (D-043, AT): the dome adds NocArkAir (the glow of the Ark's lights and its searchlight cones in the haze, the same term
+// NocFog adds to geometry) along the ray to the deck plane, or 8 km below the horizon.
 Shader "Megastructure/NocSky"
 {
     Properties
@@ -37,6 +41,16 @@ Shader "Megastructure/NocSky"
     half4 SkyFrag(SkyVaryings i) : SV_Target
     {
         float3 c = NocSkyColorBlur(i.dirWS, NocPixelAngle());
+        [branch] if (_NocAir.z > 0.0)                                   // C02-air (AT fix wave): the koi's light in the air, to the deck
+        {
+            float3 d = normalize(i.dirWS);
+            c += NocKoiAir(d, d.y > 1e-3 ? min((NC_CloudBaseY - _WorldSpaceCameraPos.y) / d.y, 8000.0) : 8000.0);
+        }
+        [branch] if (_NocArkL.x + _NocArkG.z > 0.0)                     // D-043 (AT): the Ark's lights and searchlights in the air
+        {
+            float3 d = normalize(i.dirWS);
+            c += NocArkAir(d, d.y > 1e-3 ? min((NC_CloudBaseY - _WorldSpaceCameraPos.y) / d.y, 8000.0) : 8000.0);
+        }
         return half4(NocFloor(c), 1.0);
     }
     ENDHLSL

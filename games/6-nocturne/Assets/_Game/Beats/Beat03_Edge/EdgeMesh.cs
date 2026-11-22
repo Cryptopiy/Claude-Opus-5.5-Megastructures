@@ -12,7 +12,8 @@ using UnityEngine;
 namespace Megastructure
 {
     /// <summary>Material slots of beat 3 (resolved to MaterialLibrary materials or runtime variants in Beat03_Edge).</summary>
-    /// AB: LayerLine / LayerLineNear (the Phase-3 layer strokes) are gone; TunnelMouth is the cross-bridge portal glow.
+    /// AB: LayerLine / LayerLineNear (the Phase-3 layer strokes) are gone; TunnelMouth is the cross-bridge portal glow; PortalRing is
+    /// the tube portals' collar lamps (fix wave C03: separate lamps, GulfPortal.LampGain).
     public enum EdgeMat { Floor, Stone, Facade, Concrete, Steel, Glass, Rail, LampHead, BalLight, PortalRing, BridgeLight, TunnelMouth, Moss }
 
     public sealed class EdgePart
@@ -32,6 +33,11 @@ namespace Megastructure
         public bool Realtime;
         public float Rho;           // wet-source glow half-width (m)
         public float Radiance;      // wet-source radiance factor (x Linear, <= 3 by the brightest channel)
+        /// <summary>AB (fix wave C13): the realtime light's offset from Pos (the emitter, which stays the wet source); zero = at Pos.</summary>
+        public Vector3 LightOffset;
+        /// <summary>AB (fix wave C13): a spot light along SpotDir (unit) with the outer / inner cone angles (deg); zero = a point light.</summary>
+        public Vector3 SpotDir;
+        public float SpotAngle, SpotInner;
     }
 
     /// <summary>Writes NocFacade quads (the CityMesher vertex contract) into a MeshBuilder.</summary>

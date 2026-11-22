@@ -2,8 +2,10 @@
 // "28 lights", LOOK_V2 6 row 2 and its reading of the caps: "lights enabled at once, nearest first").
 //   * the 40 median lamps as DOWNWARD SPOT lights under their lenses (LampWarm; LOOK_V2's r 14 i 3.5 point light 1.2 m under a 12 m
 //     head put 1.2 % of its 1 m irradiance on the street: the pools never showed, INT-12 / KS04's black lower third; a 12 m street
-//     lamp throws a pool of about its height in radius: spot 150 deg (inner 80), r 26, i LampIntensity, so the paving under every
-//     head reads as a lit, wet pool and the lamp does not wash the facades above it);
+//     lamp throws a pool of about its height in radius: spot 120 deg (inner 60: full light within 6.9 m of the foot, gone by 20.8 m,
+//     so the 14 m pitch leaves darker paving between the pools), r 26, i LampIntensity 40 (fifth start: i 18 under a 150 / 80 cone
+//     lifted the median only ~3 codes and evenly, BV_r01 KS04 rows 900-1080: no pools), so the paving under every head reads as a
+//     lit, wet pool and the lamp does not wash the facades above it);
 //   * the 12 blade lights (r 40 i 4, lerp(c, WinNeutral, 0.4); BladeSign keeps their colours and positions);
 //   * 8 arcade soffit lights (WinNeutral r 11 i 2.5) 0.4 m inside the column line under the arcade ceiling: they graze the columns,
 //     the shop frames and the fascias (INT-23: the podium base near the eye was black);
@@ -22,11 +24,11 @@ namespace Megastructure
         public const int Cap = 28;
         public const double Ramp = 16.0;
         /// <summary>The median lamps' spots (LampWarm): range, intensity, outer / inner cone (deg), the source 0.55 m under the head.</summary>
-        public const float LampRange = 26f, LampIntensity = 18f, LampSpot = 150f, LampSpotInner = 80f, LampDrop = 0.55f;
+        public const float LampRange = 26f, LampIntensity = 40f, LampSpot = 120f, LampSpotInner = 60f, LampDrop = 0.55f;
         public const double LampAhead = 52.0, LampBehind = 14.0;
         public const double BladeAhead = 48.0, BladeBehind = 14.0;
         public const float SoffitRange = 11f, SoffitIntensity = 2.5f, SoffitY = 6.8f, SoffitIn = 0.4f;
-        public const double SoffitAhead = 110.0, SoffitBehind = 10.0;
+        public const double SoffitAhead = 80.0, SoffitBehind = 10.0;
         /// <summary>The soffit lights: (x, side) beside lit bays in the KS03 / KS04 / KS06 views.</summary>
         public static readonly Vector2[] Soffits =
         {

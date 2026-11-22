@@ -1,4 +1,4 @@
-// FoliageTests: EditMode checks of the Look v2 foliage (TEXTURE_PLAN 4 and 8.3 FO; -foliage-v 2), on the real GardenTree /
+// FoliageTests: EditMode checks of the Look v2 foliage (TEXTURE_PLAN 4 and 8.3 FO; v1 deleted by GD in Phase 4), on the real GardenTree /
 // GardenLeafCards output of all 17 trees emitted through GardenTree.EmitCrowns:
 //   - the budget: 135 k cards and 270 k card triangles or fewer, one card mesh per tree (17 draws), each tree near its target
 //     (1.5 x shell area / 4.4 m^2, x 0.5 for the back trees);
@@ -33,7 +33,6 @@ namespace Megastructure.Tests
         [OneTimeSetUp]
         public void Build()
         {
-            GardenDims.FoliageVersionOverride = 2;
             NocWetRegistry.Clear();
             var lib = AssetDatabase.LoadAssetAtPath<MaterialLibrary>(NocPaths.LibraryAsset);
             _city = new GameObject("FoliageTestCity").transform;
@@ -57,7 +56,6 @@ namespace Megastructure.Tests
         [OneTimeTearDown]
         public void TearDown()
         {
-            GardenDims.FoliageVersionOverride = 0;
             NocWetRegistry.Clear();
             if (_city == null) return;
             var meshes = new HashSet<Mesh>();
@@ -280,10 +278,7 @@ namespace Megastructure.Tests
         public void Bark_Uv0_WholeTilesAroundEveryRing()
         {
             var trees = GardenDims.Trees;
-            for (int v = 1; v <= 2; v++)
             {
-                GardenDims.FoliageVersionOverride = v;
-                try
                 {
                     for (int i = 0; i < trees.Length; i += 4)
                     {
@@ -297,10 +292,9 @@ namespace Megastructure.Tests
                         Assert.Less((trunk.Positions[0] - trunk.Positions[cols - 1]).magnitude, 1e-4f, "seam closes");
                         int pairs = SeamPairs(trunk, out int bad);
                         Assert.Greater(pairs, GardenDims.TrunkRings, "seam pairs found");
-                        Assert.AreEqual(0, bad, FormattableString.Invariant($"v{v} {trees[i].Name}: {bad} of {pairs} seam pairs are not whole bark tiles apart"));
+                        Assert.AreEqual(0, bad, FormattableString.Invariant($"{trees[i].Name}: {bad} of {pairs} seam pairs are not whole bark tiles apart"));
                     }
                 }
-                finally { GardenDims.FoliageVersionOverride = 2; }
             }
             GardenTree.EmitCrowns(_ctx, BridgeGardenKit.Group(_city, "scratch"), new MeshBuilder(), _mats);   // drop the pending cards
         }
@@ -331,30 +325,6 @@ namespace Megastructure.Tests
             StringAssert.Contains("#define NOC_FRONT_FACE", pass);
             StringAssert.DoesNotContain("shader_feature", src, "no new keyword");
             Assert.AreEqual(0f, _mats.Moss != null ? _mats.Moss.GetFloat("_PuddleFraction") : 0f, "no puddle blots on the lawn");
-        }
-
-        [Test]
-        public void V1_EmitsOnlyTheGrayboxCrowns()
-        {
-            GardenDims.FoliageVersionOverride = 1;
-            try
-            {
-                var g = BridgeGardenKit.Group(_city, "v1");
-                var crowns = new MeshBuilder();
-                var t = GardenDims.Trees[0];
-                GardenTree.Build(t, 1000, new MeshBuilder(), crowns);
-                Assert.AreEqual(0, GardenTree.PendingCardMeshes);
-                Assert.AreEqual((GardenDims.CrownLat - 1) * GardenDims.CrownLon + 2, crowns.VertexCount, "one lumpy crown");
-                var m1 = new GardenMaterials(null);
-                Assert.IsNull(m1.Leaves);
-                Assert.IsNull(m1.LeafCore);
-                GardenTree.EmitCrowns(_ctx, g, crowns, m1);
-                Assert.AreEqual(1, g.childCount);
-                Assert.AreEqual("crowns", g.GetChild(0).name);
-                Assert.AreEqual(m1.Foliage, g.GetChild(0).GetComponent<MeshRenderer>().sharedMaterial);
-                if (m1.Foliage != null) UnityEngine.Object.DestroyImmediate(m1.Foliage);
-            }
-            finally { GardenDims.FoliageVersionOverride = 2; }
         }
 
         [Test]
@@ -433,9 +403,9 @@ namespace Megastructure.Tests
     {
         static readonly string[] Kinds = { "occlusion", "hidden", "composition", "composition-built", "frame", "readable" };
 
-        static HashSet<string> Findings(int version, out int total, out string world)
+        static HashSet<string> Findings(bool lanterns, out int total, out string world)
         {
-            GardenDims.FoliageVersionOverride = version;
+            GardenLanterns.Enabled = lanterns;
             NocWetRegistry.Clear();
             var culture = System.Globalization.CultureInfo.CurrentCulture;
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
@@ -454,22 +424,23 @@ namespace Megastructure.Tests
             finally
             {
                 System.Globalization.CultureInfo.CurrentCulture = culture;
-                GardenDims.FoliageVersionOverride = 0;
+                GardenLanterns.Enabled = true;
                 NocWetRegistry.Clear();
             }
         }
 
         [Test]
-        public void V2_AddsNoVisibilityFinding()
+        public void Lanterns_AddNoVisibilityFinding()
         {
-            var v1 = Findings(1, out int n1, out string w1);
-            var v2 = Findings(2, out int n2, out string w2);
+            // GD (Phase 4): v1 is deleted, so the comparison is now the garden without and with its lanterns, posts and fireflies
+            var off = Findings(false, out int n1, out string w1);
+            var on = Findings(true, out int n2, out string w2);
             var added = new List<string>();
-            foreach (var f in v2) if (!v1.Contains(f)) added.Add(f);
-            Debug.Log(FormattableString.Invariant($"[FO] visibility audit v1: {n1} failures ({v1.Count} of the checked kinds), world {w1}"));
-            Debug.Log(FormattableString.Invariant($"[FO] visibility audit v2: {n2} failures ({v2.Count} of the checked kinds), world {w2}"));
-            foreach (var f in added) Debug.Log("[FO] v2 adds: " + f);
-            Assert.IsEmpty(added, "findings that only the v2 crowns cause: " + string.Join("; ", added));
+            foreach (var f in on) if (!off.Contains(f)) added.Add(f);
+            Debug.Log(FormattableString.Invariant($"[GD] visibility audit without lanterns: {n1} failures ({off.Count} of the checked kinds), world {w1}"));
+            Debug.Log(FormattableString.Invariant($"[GD] visibility audit with lanterns: {n2} failures ({on.Count} of the checked kinds), world {w2}"));
+            foreach (var f in added) Debug.Log("[GD] lanterns add: " + f);
+            Assert.IsEmpty(added, "findings that only the lanterns cause: " + string.Join("; ", added));
         }
     }
 }

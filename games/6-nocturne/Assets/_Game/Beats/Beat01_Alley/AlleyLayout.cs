@@ -72,13 +72,14 @@ namespace Megastructure
         // ---- catwalk (14.5.1, KS02: x +-0.21, y -0.93..-0.70)
         public const double CatwalkZ0 = 96.0, CatwalkZ1 = 97.6, CatwalkY0 = 8.8, CatwalkY1 = 9.2, CatwalkEmbed = 0.25, CatwalkRail = 1.0;
 
-        // ---- fire escapes, cables, blade signs, AC units (graybox subset of 14.5.1: 3 + 3 modules, 24 cables, 22 blades, 10 AC)
+        // ---- fire escapes, cables, blade signs (14.5.1: 3 + 3 escape modules, 140 cables, 22 blades; AL wave B: the AC units, pipes,
+        //      awnings, bins and steam vents are laid out by AlleyFixtures)
         // fire escapes stay south of z 86: from the KS02 eye (z 88) anything north of it at y 4-15 m stands inside the slit
         public const double EscapeLandingD = 0.9, EscapeLandingL = 2.0, EscapeRail = 1.0, EscapeFirstY = 4.2, EscapeRise = 3.4;
         public static readonly double[] EscapeWestZ = { 12.0, 70.0, 84.0 };
         public static readonly double[] EscapeEastZ = { 6.0, 22.0, 80.0 };
         public const int EscapeLevels = 4;
-        public const int CableCount = 24;
+        public const int CableCount = 140;
         public const double CableY0 = 5.0, CableY1 = 19.0, CableSag = 0.35;
         /// <summary>22 blade signs 0.5 x 2.0 m (14.5.1), 11 per wall, clear of the escapes, AC units, bar frontage and niche;
         /// bottoms y 3.8-6.0 by hash; every third one carries a small light (8 lights, 14.2.3).</summary>
@@ -96,10 +97,6 @@ namespace Megastructure
 
         // ---- lit windows in the podium walls (graybox life: apartment and back-of-house windows above the street)
         public const double WinW = 1.0, WinH = 1.4, WinFloor = 3.2, WinY0 = 3.6, WinPitch = 4.5, WinProud = 0.02, WinLit = 0.45, WinWarmShare = 0.6;
-        /// <summary>AC units (side, z, y): clear of the bar frontage, the niche, the escapes, the signs and the catwalk.</summary>
-        public static readonly double[] AcSide = { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 };
-        public static readonly double[] AcZ = { 10.0, 24.0, 35.0, 57.0, 50.0, 64.0, 72.0, 90.0, 100.0, 116.0 };
-        public static readonly double[] AcY = { 7.5, 9.0, 5.5, 8.0, 6.0, 6.5, 10.0, 7.0, 5.5, 9.0 };
 
         // ---- light kit (14.2.3 beat 1) and wet-floor registry (14.7 H4, D-003)
         public const double MouthLightY = 6.0, MouthLightZ = 121.0, MouthLightRange = 25.0, MouthLightIntensity = 4.0;

@@ -7,8 +7,10 @@
 //   * a concrete head beam along the opening (x 813.8..816.2, 1.5 m proud of face B, y 124.8..129.4, 1 m into the face's mass past
 //     each notch wall);
 //   * the keystone block of the upper tube's east portal hanging under the head (x 813.5..818.0, z 186..204, y 106.0..129.6): its
-//     west face is a square panel around the collar hole, the collar 1 m proud, the NeonCyan ring, a 4 m tunnel (the tube ends at
-//     x 815.3 inside it);
+//     west face is a square panel around the collar hole, the collar 1 m proud, the NeonCyan collar lamps, a 4 m tunnel (the tube
+//     ends at x 815.3 inside it). AB fix wave (C03): the west face is face B's skin (NocFacade section mode, face B's id and u, as
+//     the lintel above it), so the portal sits in the face's window field instead of on a dark concrete square that framed the
+//     ring like a reticle; the sides and the bottom stay concrete;
 //   * one tunnel per boulevard lane through the lintel (7 x 5 m, lit 4 m at both mouths) with a 0.35 m concrete frame on both faces;
 //     the lanes then cross the open courtyard above the crowns and end in the east block (NotchEastBlock).
 // Crown clearances (FO's 1.10 envelopes): ribs 128.0 / soffit 129 over 124.6 (T4 at x 839.3), head beam 124.8 over 110.4 (T4 at x
@@ -64,18 +66,22 @@ namespace Megastructure
                 ReliefKit.FrameX(cb, o, x1, 1.0, h, GateDims.PortalFrame, 0.4);
             }
 
-            Keystone(cb, ring.Mb, o);
+            Keystone(cb, ring.Mb, o, fw);
         }
 
         /// <summary>The keystone block under the head with the upper tube's east portal in its west face.</summary>
-        static void Keystone(MeshBuilder cb, MeshBuilder ring, Vector3 o)
+        static void Keystone(MeshBuilder cb, MeshBuilder ring, Vector3 o, FacadeWriter fw)
         {
             double xa = GateDims.KeyX0, xb = GateDims.KeyX1, ya = GateDims.KeyY0, yb = GateDims.KeyY1, za = GateDims.KeyZ0, zb = GateDims.KeyZ1;
             double yc = SkybridgeDims.UpperY, zc = SkybridgeDims.UpperZ, h = 0.5 * (zb - za);   // square panel 18 m: z 186..204, y 109..127
-            // west face: the square panel with the collar hole, plain strips above and below it
-            ReliefKit.PanelWithHolePlain(cb, o, xa, yc, zc, h, Vector3.left);
-            EdgeMesh.FlatQuad(cb, o, ReliefKit.P(xa, ya, za), ReliefKit.P(xa, yc - h, za), ReliefKit.P(xa, yc - h, zb), ReliefKit.P(xa, ya, zb), Vector3.left);
-            EdgeMesh.FlatQuad(cb, o, ReliefKit.P(xa, yc + h, za), ReliefKit.P(xa, yb, za), ReliefKit.P(xa, yb, zb), ReliefKit.P(xa, yc + h, zb), Vector3.left);
+            // west face (fix wave C03): face B's skin, u = ArcLength(1, z) like the lintel's west face (one sigma per face id)
+            float uMinB = (float)EdgeDims.ArcLength(1, EdgeDims.FaceZ0), uMaxB = (float)EdgeDims.ArcLength(1, EdgeDims.FaceZ1);
+            float ua = (float)EdgeDims.ArcLength(1, za), ub = (float)EdgeDims.ArcLength(1, zb), uc = (float)EdgeDims.ArcLength(1, zc);
+            float uSign = ub >= ua ? 1f : -1f;
+            ReliefKit.PanelWithHole(fw, xa, yc, zc, h, Vector3.left, uc, uSign, GulfFace.IdB, FacadeWriter.ModeSection, uMinB, uMaxB);
+            var nl = Vector3.left;
+            fw.Flat(ReliefKit.P(xa, ya, za), ReliefKit.P(xa, yc - h, za), ReliefKit.P(xa, yc - h, zb), ReliefKit.P(xa, ya, zb), nl, ua, ua, ub, ub, GulfFace.IdB, FacadeWriter.ModeSection, uMinB, uMaxB);
+            fw.Flat(ReliefKit.P(xa, yc + h, za), ReliefKit.P(xa, yb, za), ReliefKit.P(xa, yb, zb), ReliefKit.P(xa, yc + h, zb), nl, ua, ua, ub, ub, GulfFace.IdB, FacadeWriter.ModeSection, uMinB, uMaxB);
             // sides, bottom, back (below the soffit), top in front of the lintel
             EdgeMesh.FlatQuad(cb, o, ReliefKit.P(xa, ya, za), ReliefKit.P(xb, ya, za), ReliefKit.P(xb, yb, za), ReliefKit.P(xa, yb, za), Vector3.back);
             EdgeMesh.FlatQuad(cb, o, ReliefKit.P(xa, ya, zb), ReliefKit.P(xb, ya, zb), ReliefKit.P(xb, yb, zb), ReliefKit.P(xa, yb, zb), Vector3.forward);

@@ -7,6 +7,9 @@
 //   (a) sky   NocSkyColorBlur(r, sqrt(Syy)) (the cloud octaves fade by the lobe footprint);
 //   (b) walls up to 4 finite vertical rectangles of the beat (NocWetRegistry), first hit in t, edges softened by the lobe
 //          footprint on the wall, macro colour (facade strata or a flat emitter), mirror-consistent fog toward NocSkyColor(r);
+//          FX (INT-13, D-032 3): on the floor a facade plane shows its lit windows (NocWallWindows, filtered by the lobe's
+//          lateral and vertical footprints apart: vertical streaks) x NC_SurfWallGain; a pixel past the puddle fade mixes
+//          the puddle and film lobes (NocMirrorEnvMix / NocMirrorSourcesMix) instead of one lobe of the blended variance;
 //   (c) area sources (<= 32, NocWetRegistry): segments or discs with glow half-width rho and L_eff <= 3; Karis eq. 19 gives the
 //          representative distance, the segment is clipped to the r hemisphere, the closed-form Gaussian mass (one exp, two
 //          erf) integrates the lobe over the source, so a reflection is never brighter than its emitter (no fireflies);
@@ -18,6 +21,7 @@
 #include "NocAtmosphere.hlsl"
 #include "../Beats/NocScreenWave.hlsl"                 // kind 2: the LED screen wall of beat 6 (SG; _NocScreenT from SignsDriver)
 #include "../Generated/NocSurfaceConstantsGen.hlsl"   // Look v2 (SU): NC_Surf*
+#include "../Generated/NocFacadeConstantsGen.hlsl"    // NC_FaLit: the lit share of the wall planes' windows (FX, INT-13)
 
 #define NOC_SRC_MAX 32
 #define NOC_WALL_MAX 4
@@ -111,30 +115,40 @@ float NocSegmentMass(float2 p0, float2 p1, float3 S, float w)
 // Extinction coefficient for reflected paths near the ground (regional sigma + the alley haze at its ground value).
 float NocMirrorSigma() { return _NocFog.x + _NocFog.y; }
 
-// (c) the area sources, already x F G1.
-float3 NocMirrorSources(float3 P, float dEye, NocLobe o)
+// (c) the area sources, already x F G1. A floor pixel holds a share m of puddle (lobe oP) and 1 - m of the rain film (lobe oD):
+// its specular is the mixture m oP + (1 - m) oD (FX, INT-13 / D-032 3). Past the puddle fade a pixel covers both; one lobe of
+// the blended variance would spread the puddles' sharp streaks into the film's wide lobe (peak x (sP / sMix)^2, 0.15 at m 0.35)
+// and lose their G1 at grazing too. Both lobes share the frame (r, X, Y: one normal), so the source's clipped, projected segment
+// is computed once and only its Gaussian mass twice. oP = oD with m = 1 is the single lobe.
+// rhoMax (FX, C06): NocGlass mirrors the sources as their lamp-sized cores (the registered rho is the wet floor's glow width).
+float3 NocMirrorSourcesMixR(float3 P, float dEye, NocLobe oP, NocLobe oD, float m, float rhoMax)
 {
     float3 sum = 0;
     float sig2 = NocMirrorSigma() * NocMirrorSigma();
+    float wP = m * oP.FG, wD = (1.0 - m) * oD.FG;
     int count = (int)min(_NocSrcCount, (float)NOC_SRC_MAX);
     [loop] for (int i = 0; i < count; i++)
     {
         float3 A = _NocSrcP0[i].xyz - P, B = _NocSrcP1[i].xyz - P, Ld = B - A;
-        float rLd = dot(o.r, Ld);
-        float tq = saturate((dot(o.r, A) * rLd - dot(A, Ld)) / max(dot(Ld, Ld) - rLd * rLd, 1e-6));   // Karis eq. 19
+        float rLd = dot(oP.r, Ld);
+        float tq = saturate((dot(oP.r, A) * rLd - dot(A, Ld)) / max(dot(Ld, Ld) - rLd * rLd, 1e-6));  // Karis eq. 19
         float dq = max(length(A + tq * Ld), 1e-2);
-        float la = dot(A, o.r), lb = dot(B, o.r), lc = 0.1 * dq;                                         // clip to the r hemisphere
+        float la = dot(A, oP.r), lb = dot(B, oP.r), lc = 0.1 * dq;                                       // clip to the r hemisphere
         if (max(la, lb) <= lc) continue;
         float3 Ac = la < lc ? lerp(A, B, (lc - la) / (lb - la)) : A;
         float3 Bc = lb < lc ? lerp(B, A, (lc - lb) / (la - lb)) : B;
-        float2 p0 = float2(dot(Ac, o.X), dot(Ac, o.Y)) / dot(Ac, o.r);                                   // gnomonic
-        float2 p1 = float2(dot(Bc, o.X), dot(Bc, o.Y)) / dot(Bc, o.r);
-        float mass = NocSegmentMass(p0, p1, o.S, 2.0 * _NocSrcP0[i].w / dq);
+        float2 p0 = float2(dot(Ac, oP.X), dot(Ac, oP.Y)) / dot(Ac, oP.r);                                // gnomonic
+        float2 p1 = float2(dot(Bc, oP.X), dot(Bc, oP.Y)) / dot(Bc, oP.r);
+        float w = 2.0 * min(_NocSrcP0[i].w, rhoMax) / dq;
+        float mass = wP * NocSegmentMass(p0, p1, oP.S, w) + wD * NocSegmentMass(p0, p1, oD.S, w);
         float Tr = exp(-sig2 * dq * (dq + 2.0 * dEye));                                                  // mirror-consistent fog
         sum += _NocSrcL[i].rgb * (mass * Tr);
     }
-    return o.FG * sum;
+    return sum * NC_SurfSrcGain;
 }
+
+float3 NocMirrorSourcesMix(float3 P, float dEye, NocLobe oP, NocLobe oD, float m) { return NocMirrorSourcesMixR(P, dEye, oP, oD, m, 1e6); }
+float3 NocMirrorSources(float3 P, float dEye, NocLobe o) { return NocMirrorSourcesMixR(P, dEye, o, o, 1.0, 1e6); }
 
 // Macro radiance of a reflected wall at hit H: kind 0 = facade (its strata every 24 floors, faded by the footprint), 1 = flat,
 // 2 = the LED screen wall (the 14.5.6 colour wave at the hit, scaled to the registered mean; periods 360-700 m need no footprint).
@@ -147,16 +161,49 @@ float3 NocWallMacro(float3 H, float kind, float3 colour, float soft)
     return colour * (1.0 + amp * cos(k * H.y));
 }
 
+// FX (INT-13, D-032 3): the lit windows of a facade wall plane (kind 0) in the wet mirror, mean 1 (NocSurfaceConstants SurfWall*;
+// C# twin NocMirrorMath.WallWindows). u, y: metres on the wall; sU, sV: the lobe's footprint half-widths on it (m), apart, so the
+// windows streak vertically; seed: the wall's index.
+float NocWallPulseInt(float x, float w)                     // integral of a periodic pulse of duty w centred in each cell
+{
+    float fl = floor(x);
+    return fl * w + clamp(x - fl - (0.5 - 0.5 * w), 0.0, w);
+}
+float NocWallShare(float c, float g, int seed)             // the lit share of bay c in group g: A + B h^3, mean 1
+{
+    float h = NocU01(NocPcg2((int)(2.0 * c + 1.0), (int)g + seed * 7919));
+    return NC_SurfWallShareA + NC_SurfWallShareB * h * h * h;
+}
+float NocWallWindows(float u, float y, float sU, float sV, int seed)
+{
+    float x = u / NC_SurfWallBayU, c = floor(x);
+    float gy = y / (NC_SurfWallFloorV * NC_SurfWallGroupFloors) - 0.5, g = floor(gy), fg = gy - g;
+    fg = fg * fg * (3.0 - 2.0 * fg);
+    float q = lerp(NocWallShare(c, g, seed), NocWallShare(c, g + 1.0, seed), fg);
+    float nB = max(1.0, 2.0 * sV / (NC_SurfWallFloorV * NC_SurfWallGroupFloors)) * max(1.0, 2.0 * sU / NC_SurfWallBayU);
+    float qB = 1.0 + (q - 1.0) * rsqrt(nB);
+    float yv = y / NC_SurfWallFloorV, j = floor(yv);
+    float lit = NocU01(NocPcg2((int)(2.0 * c), (int)j + seed * 7919)) < NC_FaLit * q ? 1.0 : 0.0;
+    float s = max(sV / NC_SurfWallFloorV, 1e-3), a = 0.5 - 0.5 * NC_SurfWallWinV;
+    float covV = (clamp(yv - j + s, a, 1.0 - a) - clamp(yv - j - s, a, 1.0 - a)) / (2.0 * s);
+    float V = lerp(qB, lit * covV / (NC_FaLit * NC_SurfWallWinV), saturate(2.0 - 4.0 * sV / NC_SurfWallFloorV));
+    float su = max(sU / NC_SurfWallBayU, 1e-3);
+    float covU = max(0.0, NocWallPulseInt(x + su, NC_SurfWallWinU) - NocWallPulseInt(x - su, NC_SurfWallWinU)) / (2.0 * su);   // >= 0 (round-off)
+    return covU / NC_SurfWallWinU * V;
+}
+
 // The first registered wall plane hit by the ray P + t r (t > 0): rgb = its macro radiance fogged toward `sky` along the
 // mirror-consistent path (exp(-sigma^2 t (t + 2 dEye))), a = its coverage. softRad is the angular half-width (rad) over which
 // the rectangle's ends and top fade (the lobe width). Look v2 (-surf-v 2, TEXTURE_PLAN 3.3, CRIT0 #8): the fade is at least
 // NC_SurfWallBlendRad (2.5 deg) wide, so a wall's end blends into the sky (or the next wall) over about 5 deg around its vanishing line
 // instead of switching: a macro plane has no real edge to mirror. FA's glass reflects the canyon and Gulf walls through it
-// (TEXTURE_PLAN 2.7; read-only include for FA).
-float4 NocWallReflect(float3 P, float3 r, float softRad, float dEye, float3 sky)
+// (TEXTURE_PLAN 2.7; read-only include for FA). win 1 (the wet floor only, FX INT-13): a facade plane (kind 0) shows its lit
+// windows (NocWallWindows over the lobe's vertical softRad and lateral softLat footprints) x NC_SurfWallGain.
+float4 NocWallReflectEx(float3 P, float3 r, float softRad, float softLat, float dEye, float3 sky, float win)
 {
     float sig2 = NocMirrorSigma() * NocMirrorSigma();
     float ang = max(softRad, NC_SurfWallBlendRad);                                  // TP-2: the v2 blend is the only one
+    float rh = max(length(r.xz), 1e-4);
     // the nearest hit (t1) and, in v2, the one behind it (t2): a near wall's fading end shows the wall behind it, not the sky
     float t1 = 1e9, t2 = 1e9;
     float3 c1 = sky, c2 = sky;
@@ -177,7 +224,11 @@ float4 NocWallReflect(float3 P, float3 r, float softRad, float dEye, float3 sky)
         float cov = saturate(0.5 + (B.x - abs(u)) / (2.0 * soft)) * saturate(0.5 + (B.y - H.y) / (2.0 * soft)) * B.w;
         if (cov <= 0.0) continue;
         float Tr = exp(-sig2 * t * (t + 2.0 * dEye));
-        float3 col = lerp(sky, NocWallMacro(H, B.z, _NocWallC[i].rgb, t * softRad + 1e-3), Tr);
+        float3 mac = NocWallMacro(H, B.z, _NocWallC[i].rgb, t * softRad + 1e-3);
+        // the lateral footprint on the wall: t x softLat stretched by the ray's incidence in plan (1 / cos, at most x 10)
+        float wsU = t * softLat / max(-denom / rh, 0.1) + 1e-3;
+        if (win > 0.5 && B.z < 0.5) mac *= NC_SurfWallGain * NocWallWindows(u, H.y, wsU, t * softRad + 1e-3, i);
+        float3 col = lerp(sky, mac, Tr);
         if (t < t1) { t2 = t1; c2 = c1; a2 = a1; t1 = t; c1 = col; a1 = cov; }
         else { t2 = t; c2 = col; a2 = cov; }
     }
@@ -185,13 +236,26 @@ float4 NocWallReflect(float3 P, float3 r, float softRad, float dEye, float3 sky)
     return float4((a1 * c1 + (1.0 - a1) * a2 * c2) / max(a, 1e-6), a);
 }
 
-// (a) + (b): sky and the first wall the lobe axis hits, not yet x F G1.
+float4 NocWallReflect(float3 P, float3 r, float softRad, float dEye, float3 sky) { return NocWallReflectEx(P, r, softRad, softRad, dEye, sky, 0.0); }
+
+// (a) + (b): sky and the first wall the lobe axis hits, not yet x F G1; the facade planes with their lit windows (FX, INT-13).
 float3 NocMirrorEnv(float3 P, float dEye, NocLobe o)
 {
     float sy = sqrt(o.S.y);
     float3 sky = NocSkyColorBlur(o.r, sy);
-    float4 w = NocWallReflect(P, o.r, sy, dEye, sky);
+    float4 w = NocWallReflectEx(P, o.r, sy, sqrt(o.S.x), dEye, sky, 1.0);
     return lerp(sky, w.rgb, w.a);
+}
+
+// (a) + (b) of the puddle / film mixture (see NocMirrorSourcesMix), already x F G1; a lobe of zero weight is skipped (no
+// derivatives below this point, so the branches are safe).
+float3 NocMirrorEnvMix(float3 P, float dEye, NocLobe oP, NocLobe oD, float m)
+{
+    float wP = m * oP.FG, wD = (1.0 - m) * oD.FG;
+    float3 e = 0;
+    [branch] if (wP > 0.0) e += wP * NocMirrorEnv(P, dEye, oP);
+    [branch] if (wD > 0.0) e += wD * NocMirrorEnv(P, dEye, oD);
+    return e;
 }
 
 // ------------------------------------------------------------------ puddles and ripples (R1 2.6)

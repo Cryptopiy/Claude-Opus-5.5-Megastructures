@@ -7,7 +7,11 @@
 //   layers (unit RMS at gain 1; NocturneScore gives the gains as functions of s and t):
 //     R RainBed, D DripField, H CityHum, T TrafficWash, W WindBed, P PadEngine (+ its own FDN: 6 s, 40 ms, size 2.5),
 //     K KoiTone, X = AlleyBed / CanyonBed + TramPass / EdgeBed / TubeHum + TubeTrain x7 / LeafRain / ScreenHum / LampBuzz,
-//     F footsteps (FootstepBank voices)
+//     F footsteps (FootstepBank voices), E the D-034 dread layer (DreadLayer: horns, strikes, groans, the panel's creak, the
+//     tram chime, far rumbles, the sub swells, the hull, machine hums, the bridge's gust sound, the Gulf echo bus; docs/DREAD.md)
+//   the silence drops of DREAD 1.4 duck R, D, H, T, the X beds and the passes by 21 dB, the koi by 21, the pad by 12 (after its
+//   FDN, so the tail goes with it) and the wind by 4 dB (DreadScore.DropGainAt; fix wave C07) through the same 50 ms ramps;
+//   the door chime clears T and the X beds by 6 dB (DreadScore.ChimeDuckGain, C53);
 //   -> sends into the environment FDN (14.3 places, blended over the 14.6 windows) -> sum -> 20 Hz DC blocker -> master gain
 //      (fades, pause duck) -> TruePeakLimiter (knee -4.5 dBFS, ceiling -1.5 dBFS, 5 ms look-ahead, 80 ms release, BS.1770
 //      true-peak detector) -> output.
@@ -54,6 +58,8 @@ namespace Megastructure
         public const double SendR = 0.12, SendD = 1.0, SendT = 0.25, SendW = 0.08, SendK = 0.2, SendX = 0.3, SendPass = 0.6, SendF = 1.0;
         /// <summary>Pad output normaliser (after the chorus and the pad FDN: unit RMS at gain 1; measured by the harness "calibrate").</summary>
         public static double PadOutNorm = 0.68;
+        /// <summary>Width of the pad FDN's wet output (1 = as the FDN gives it) and the gain that keeps its power (C51).</summary>
+        public static readonly double PadWetWidth = 0.35, PadWetGain = Math.Sqrt(2.0 / (1.0 + PadWetWidth * PadWetWidth));
 
         public readonly int SampleRate;
         readonly double m_fs, m_cr;
@@ -73,10 +79,11 @@ namespace Megastructure
         readonly EdgeBed m_edge; readonly TubeHum m_tube; readonly ScreenHum m_screen; readonly LampBuzz m_lamp; readonly TramPass m_tram;
         readonly TubeTrain[] m_trains;
         readonly FootstepBank m_bank; readonly FootstepVoices m_steps; StepScheduler m_sched;
+        readonly DreadLayer m_dread;
         readonly ulong m_stepSeed;
         int m_lastFoot;
         // gains
-        GainRamp m_gR, m_gD, m_gH, m_gT, m_gW, m_gP, m_gK, m_gX, m_gF, m_gPass, m_master;
+        GainRamp m_gR, m_gD, m_gH, m_gT, m_gW, m_gP, m_gK, m_gX, m_gF, m_gPass, m_gE, m_gPd, m_master;
         // reverbs, master
         readonly FdnReverb8 m_env, m_padFdn;
         DcBlockD m_dcL, m_dcR;
@@ -112,7 +119,8 @@ namespace Megastructure
             m_stepSeed = DspHash.Mix(sd ^ 0x57E9UL);
             m_gR.Init(0.05, m_cr); m_gD.Init(0.05, m_cr); m_gH.Init(0.05, m_cr); m_gT.Init(0.05, m_cr); m_gW.Init(0.05, m_cr);
             m_gP.Init(0.05, m_cr); m_gK.Init(0.05, m_cr); m_gX.Init(0.05, m_cr); m_gF.Init(0.05, m_cr); m_gPass.Init(0.05, m_cr);
-            m_gLeaf.Init(0.05, m_cr); m_gLamp.Init(0.05, m_cr);
+            m_gLeaf.Init(0.05, m_cr); m_gLamp.Init(0.05, m_cr); m_gE.Init(0.05, m_cr); m_gPd.Init(0.05, m_cr); m_gPd.Snap(1.0);
+            m_dread = new DreadLayer(m_fs, m_cr, sd);
             m_master.Init(0.02, m_cr);
             m_env = new FdnReverb8(m_fs, NocturneScore.EnvReverbSize, NocturneScore.EnvReverbMaxPreDelay) { BlendSeconds = NocturneScore.ReverbBlendSeconds };
             NocturneScore.Reverb(0.0, out double rt, out double pre, out double damp, out double wet);
@@ -131,6 +139,7 @@ namespace Megastructure
         public PadEngine Pad => m_pad;
         public TramPass Tram => m_tram;
         public TubeTrain Train(int i) => m_trains[i];
+        public DreadLayer Dread => m_dread;
         public ScoreFrame Frame => m_f;
 
         /// <summary>Player path: renders interleaved output with this frame's snapshot (any channel count; 0 and 1 carry the mix).</summary>
@@ -224,19 +233,31 @@ namespace Megastructure
             for (int i = 0; i < m_trains.Length; i++) m_trains[i].Control(in f, vx);
             // gains
             double rr = Math.Sqrt(Math.Max(0.0, Math.Min(4.0, f.RhoRatio)));
-            m_gR.Step(NocturneScore.LayerAmp(NocturneScore.R, s) * rr);
-            m_gD.Step(NocturneScore.LayerAmp(NocturneScore.D, s) * Math.Min(1.0, rr * 1.5));
-            m_gH.Step(NocturneScore.LayerAmp(NocturneScore.H, s));
-            m_gT.Step(NocturneScore.LayerAmp(NocturneScore.T, s) * release);
-            m_gW.Step(NocturneScore.LayerAmp(NocturneScore.W, s) * release);
+            // DREAD 1.4: everything but the breath, the wind and the swell ducks before KS09 and KS17 (C07); the chime clears T and X
+            // D-043: the silence before the Ark's bow takes the same depths (the larger shape wins); under its belly the city hum, the
+            // traffic wash and the X beds duck (ArkCover: the hull shuts the city's sky) and come back as the stern slides away
+            double eKs = DreadScore.DropShape(s), eArk = m_dread.ArkDrop, eDrop = Math.Max(eKs, eArk), cov = m_dread.ArkCover;
+            bool inDrop = eDrop > 0.0;
+            double drop = inDrop ? DreadScore.DropGainOf(eDrop, DreadScore.DropDepthDb) : 1.0, chime = DreadScore.ChimeDuckGain(s);
+            double cover = cov > 0.0 ? NocAudio.Db(DreadScore.ArkCoverDb * cov) : 1.0, coverBed = cov > 0.0 ? NocAudio.Db(DreadScore.ArkCoverBedDb * cov) : 1.0;
+            m_gR.Step(NocturneScore.LayerAmp(NocturneScore.R, s) * rr * drop);
+            m_gD.Step(NocturneScore.LayerAmp(NocturneScore.D, s) * Math.Min(1.0, rr * 1.5) * drop);
+            m_gH.Step(NocturneScore.LayerAmp(NocturneScore.H, s) * drop * cover);
+            m_gT.Step(NocturneScore.LayerAmp(NocturneScore.T, s) * release * drop * chime * cover);
+            double windDrop = inDrop ? Math.Min(DreadScore.DropGainOf(eKs, DreadScore.DropWindDb), DreadScore.DropGainOf(eArk, DreadScore.ArkDropWindDb)) : 1.0;
+            m_gW.Step(NocturneScore.LayerAmp(NocturneScore.W, s) * release * windDrop);
             m_gP.Step(NocturneScore.LayerAmp(NocturneScore.P, s) * PadOutNorm * attack * release);
-            m_gK.Step(NocturneScore.LayerAmp(NocturneScore.K, s) * release);
+            m_gPd.Step(inDrop ? Math.Min(DreadScore.DropGainOf(eKs, DreadScore.DropPadDb), DreadScore.DropGainOf(eArk, DreadScore.ArkDropPadDb)) : 1.0);
+            m_gK.Step(NocturneScore.LayerAmp(NocturneScore.K, s) * release * (inDrop ? DreadScore.DropGainOf(eDrop, DreadScore.DropKoiDb) : 1.0));
             double xs = NocturneScore.SwellGain(NocturneScore.X, s);
-            m_gX.Step(xs * release);
-            m_gPass.Step(xs * release);
+            m_gX.Step(xs * release * drop * chime * coverBed);
+            m_gPass.Step(xs * release * drop * coverBed);
             m_gLamp.Step(xs);
             m_gF.Step(NocturneScore.SwellGain(NocturneScore.F, s) * NocAudio.Db(FootDb));
             m_master.Step(Math.Max(0.0, Math.Min(1.5, master)));
+            // the dread layer (its sources carry their own levels; the goal release takes it out with the pad)
+            m_dread.Control(in f, 1.0);
+            m_gE.Step(release);
             // reverb by place (14.3, 14.6 windows)
             NocturneScore.Reverb(s, out double rt, out double pre, out double damp, out double wet);
             m_env.SetTargets(rt, pre, wet, damp); m_env.Control(Block); m_padFdn.Control(Block);
@@ -270,6 +291,7 @@ namespace Megastructure
             m_rain.Flush(); m_drips.Flush(); m_hum.Flush(); m_traffic.Flush(); m_wind.Flush(); m_pad.Flush(); m_leaf.Flush();
             m_alley.Flush(); m_canyon.Flush(); m_edge.Flush(); m_tube.Flush(); m_tram.Flush();
             for (int i = 0; i < m_trains.Length; i++) m_trains[i].Flush();
+            m_dread.Flush();
             m_env.Flush(); m_padFdn.Flush(); m_dcL.Flush(); m_dcR.Flush();
         }
 
@@ -331,7 +353,11 @@ namespace Megastructure
             m_pad.Tick(u, out l, out r); g = (mask & (1 << NocturneScore.P)) != 0 ? m_gP.At(u) : 0.0;
             double pl = g * l, pr = g * r;
             m_padFdn.Tick((float)pl, (float)pr, out float pwl, out float pwr);
-            pl += pwl; pr += pwr;
+            // C51: the FDN's steady response to a held chord tone has an arbitrary L/R phase (C#4 of the garden's Dmaj9 came out
+            // anti-phase): its side is narrowed to PadWetWidth, the power kept (incoherent wet: m^2 + s^2 -> m^2 + w^2 s^2)
+            double pm = 0.5 * (pwl + pwr), ps = 0.5 * PadWetWidth * (pwl - pwr);
+            double gpd = m_gPd.At(u);   // the drop takes the pad's tail with it (C07)
+            pl = gpd * (pl + PadWetGain * (pm + ps)); pr = gpd * (pr + PadWetGain * (pm - ps));
             dl += pl; dr += pr;
             if (meter) Meter(NocturneScore.P, pl, pr);
             // K
@@ -370,6 +396,15 @@ namespace Megastructure
             g = (mask & (1 << NocturneScore.F)) != 0 ? m_gF.At(u) : 0.0;
             xl = g * l; xr = g * r; dl += xl; dr += xr; sl += SendF * xl; sr += SendF * xr;
             if (meter) Meter(NocturneScore.F, xl, xr);
+            // E: the dread layer with its Gulf echoes, and its send into the environment reverb
+            xl = 0; xr = 0;
+            if ((mask & (1 << NocturneScore.E)) != 0)
+            {
+                m_dread.Tick(u, n, out l, out r, out double esl, out double esr);
+                g = m_gE.At(u);
+                xl = g * l; xr = g * r; dl += xl; dr += xr; sl += g * esl; sr += g * esr;
+            }
+            if (meter) Meter(NocturneScore.E, xl, xr);
             // environment reverb, DC, master, limiter
             m_env.Tick((float)sl, (float)sr, out float el, out float er);
             double ol = m_dcL.Tick(dl + el), or = m_dcR.Tick(dr + er);
@@ -379,7 +414,7 @@ namespace Megastructure
             if (double.IsNaN(ol) || double.IsNaN(or) || double.IsInfinity(ol) || double.IsInfinity(or))
             {
                 ol = 0; or = 0; NanResets++;
-                m_env.Clear(); m_padFdn.Clear(); m_dcL.Clear(); m_dcR.Clear();
+                m_env.Clear(); m_padFdn.Clear(); m_dcL.Clear(); m_dcR.Clear(); m_dread.Clear();
                 m_lim.Configure(m_fs, LimiterThresholdDb, NocturneConstants.LimiterCeilingDb, NocturneConstants.LimiterLookAheadMs, NocturneConstants.LimiterReleaseMs, true);
             }
             if (meter) StemFrames++;

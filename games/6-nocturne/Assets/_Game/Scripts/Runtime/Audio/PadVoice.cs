@@ -65,6 +65,9 @@ namespace Megastructure
         SvfD m_lpL, m_lpR;
         LogFreqSmoother m_fc;
         public readonly StereoChorus Chorus;
+        /// <summary>Width of the chorus's wet taps (C51: 0.3 keeps the pad's L/R correlation positive and its mono loss under 2 dB in
+        /// every chord; the wet power is kept by StereoChorus.WetFor).</summary>
+        public static double ChorusWidth = 1.0;
         // unit-RMS normaliser table: note 24..96 x cutoff grid 300..2 400 Hz (log), analytic harmonic sums (R5 3.5 BankNorm)
         const int NoteLo = 24, NoteHi = 96, CutN = 25;
         const double CutLo = 300.0, CutHi = 2400.0;
@@ -85,7 +88,7 @@ namespace Megastructure
             Plan = BuildPlan(NocturneScore.Chords, Slots, out Run);
             m_fc.Init(NocturneScore.PadCutoffHz(0.0), CutoffSmoothSeconds, controlRate);
             m_lpL.Set(NocturneScore.PadCutoffHz(0.0), FilterQ, fs); m_lpR.CopyCoefficients(in m_lpL);
-            Chorus = new StereoChorus(fs);
+            Chorus = new StereoChorus(fs) { Width = ChorusWidth, Wet = StereoChorus.WetFor(ChorusWidth) };
             for (int b = 0; b < Banks; b++)
             {
                 m_v[b].Note = -1; m_v[b].Pending = -2;

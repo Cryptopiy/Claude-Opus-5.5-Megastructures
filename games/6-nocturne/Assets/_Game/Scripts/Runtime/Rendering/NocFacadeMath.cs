@@ -354,6 +354,10 @@ namespace Megastructure
         public static double ZoneCellU(uint face, int zrg, int zc) => U01(H3y(unchecked((uint)(zc + 1048576)), unchecked((uint)(zrg + 1048576)), face));
         public static double ZoneZ(double uRow, double uCell) => NocFacadeConstants.FaZoneLo + NocFacadeConstants.FaZoneSpan * 0.5 * (uRow + uCell);
 
+        /// <summary>C11 (AT, integration round): the depth fade of the lit probability at world height y, 1 - 0.6 S01((-40 - y) / 400)
+        /// (NocFaDepthLitV2): 1 above y -40, 0.4 below y -440. The pixel mean takes the fragment's y, a resolved window its row centre.</summary>
+        public static double DepthLitV2(double yWS) => 1.0 - 0.6 * NocMath.Smoothstep(0.0, 1.0, (-40.0 - yWS) / 400.0);
+
         /// <summary>Lit probability of window (i, jl) of band `band`: min(1, FaLit f m_T g z).</summary>
         public static double PCell(uint K, uint face, int band, int type, int i, int jl, double pMul = 1.0)
         {
@@ -454,10 +458,29 @@ namespace Megastructure
             double x = tEpoch + U01(c);
             double e = Math.Floor(x);
             uint ki = unchecked((uint)(i + 1048576)), kj = unchecked((uint)(jg + 1048576)), ke = (uint)e;
-            double aNow = U01(NocHash.H4x(ki, kj, face, ke)) <= p ? 1.0 : 0.0;
-            double aPrev = U01(NocHash.H4x(ki, kj, face, unchecked(ke - 1u))) <= p ? 1.0 : 0.0;
-            w.lit = aPrev + (aNow - aPrev) * NocMath.Smoothstep(0.0, NocFacadeConstants.FaToggle / NocFacadeConstants.FaEpoch, x - e);
-            double uh = U01(b);
+            // FX (INT-14): section floors light in runs (NocWindowV2): run on with p / q, cell on with q = max(FaSecRunFill, p)
+            double pc = p, runLit = 1.0, uRun = -1.0;
+            if (type == StratumSection)
+            {
+                double qf = Math.Max(NocFacadeConstants.FaSecRunFill, p), pr = p / qf;
+                pc = qf;
+                uint ra = unchecked((uint)(jg + 1048576)), rb = face, rc = 0x52554E53u;
+                NocHash.Pcg3d(ref ra, ref rb, ref rc);
+                uint hr = ra;
+                double L = NocFacadeConstants.FaSecRunMin + Math.Floor((NocFacadeConstants.FaSecRunMax - NocFacadeConstants.FaSecRunMin + 1.0) * U01(hr));
+                double r = Math.Floor((i + Math.Floor(L * U01(Pcg(hr)))) / L);
+                uint qa = unchecked((uint)(r + 1048576.0)), qb = unchecked((uint)(jg + 1048576)), qc = face ^ 0x52554E31u;
+                NocHash.Pcg3d(ref qa, ref qb, ref qc);
+                double xr = tEpoch + U01(qc), er = Math.Floor(xr);
+                double rNow = U01(NocHash.H4x(qa, qb, face, (uint)er)) <= pr ? 1.0 : 0.0;
+                double rPrev = U01(NocHash.H4x(qa, qb, face, unchecked((uint)er - 1u))) <= pr ? 1.0 : 0.0;
+                runLit = rPrev + (rNow - rPrev) * NocMath.Smoothstep(0.0, NocFacadeConstants.FaToggle / NocFacadeConstants.FaEpoch, xr - er);
+                uRun = U01(Pcg(qa ^ 0x48554555u));                 // one hue per run (NocWindowV2)
+            }
+            double aNow = U01(NocHash.H4x(ki, kj, face, ke)) <= pc ? 1.0 : 0.0;
+            double aPrev = U01(NocHash.H4x(ki, kj, face, unchecked(ke - 1u))) <= pc ? 1.0 : 0.0;
+            w.lit = runLit * (aPrev + (aNow - aPrev) * NocMath.Smoothstep(0.0, NocFacadeConstants.FaToggle / NocFacadeConstants.FaEpoch, x - e));
+            double uh = uRun >= 0.0 ? uRun : U01(b);
             C3 hue = type == StratumMech ? MechHue(uh, wf) : HueV2(uh, wf, nf);
             w.eLit = hue * BrightnessV2(a);
             w.eUn = NocFogMath.Pal(NocPal.WinNeutral) * (NocFacadeConstants.FaStandby * (0.5 + U01(Pcg(a ^ c))));
@@ -647,7 +670,7 @@ namespace Megastructure
 
             // lit probability at the pixel (levels blended by their own fades) and the band means
             double rq = s.region == RegionOQ ? NocFacadeConstants.FaOqLit : 1.0;   // the Old Quarter lights fewer windows (lead decision 6)
-            double aT = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(K) * rq;
+            double aT = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(K) * rq * DepthLitV2(q.v);   // C11 depth fade at the fragment
             double wg = NocMath.Smoothstep(NocFacadeConstants.FaGroupFadePx0, NocFacadeConstants.FaGroupFadePx1, NocFacadeConstants.FaGroupMinRows * c.Pv / fwv);
             double gEff = wg > 0 ? 1.0 + (GroupFiltered(K, band, vl, fwv, c) - 1.0) * wg : 1.0;
             double wz = NocMath.Smoothstep(NocFacadeConstants.FaFadePx0, NocFacadeConstants.FaFadePx1, Math.Min(NocturneConstants.FacadeZoneCols * c.Pu / fwu, NocturneConstants.FacadeZoneRows * c.Pv / fwv));
@@ -681,7 +704,7 @@ namespace Megastructure
                         // mode 1: the district of the cell (cells never straddle a district: 28 bays x 75 floors)
                         double mc = q.mode == 1 ? SecDistMul(q.face, Math.Floor((i + 0.5) * c.Pu / NocFacadeConstants.FaSecDistU),
                             Math.Floor((band * bandH + (j + 0.5) * c.Pv) / NocFacadeConstants.FaSecDistV)) : 1.0;
-                        mc *= rq;
+                        mc *= rq * DepthLitV2(band * bandH + (j + 0.5) * c.Pv);   // C11 depth fade at the window row centre
                         Win w = WindowV2(i, j, band, q.face, K, type, q.tEpoch, q.wf, q.nf, mc);
                         if (q.expectState) { w.lit = PCell(K, q.face, band, type, i, j, mc); w.eLit = eLitMean; w.eUn = eUnMean; }
                         // interior factor at the pixel's glass-plane point (NocFacadeEvalV2)
@@ -733,7 +756,9 @@ namespace Megastructure
         {
             uint a = unchecked((uint)(ub + 1048576.0)), b = unchecked((uint)(vb + 1048576.0)), c = face ^ 0x44495354u;
             NocHash.Pcg3d(ref a, ref b, ref c);
-            return LogNormal1(Normal(a, b), NocFacadeConstants.FaSecDistSigma);
+            // FX (INT-14): a share FaSecVoidP of the districts are dark voids, the rest carry the remainder (mean 1)
+            double vp = NocFacadeConstants.FaSecVoidP, vm = NocFacadeConstants.FaSecVoidMul;
+            return U01(c) < vp ? vm : LogNormal1(Normal(a, b), NocFacadeConstants.FaSecDistSigma) * ((1.0 - vp * vm) / (1.0 - vp));
         }
 
         static double SecDistFiltered(uint face, double u, double v, double fwu, double fwv)
@@ -817,7 +842,8 @@ namespace Megastructure
             o.aJamb += k * Math.Max(0.0, (Ox - Vx) * Oy); o.aSillHead += k * Math.Max(0.0, Vx * (Oy - Vy));
             o.aSlab += k * (c.slab / c.Pv) * Aband;
             if (c.sp1 > c.sp0) o.aSpandrel += k * GlassX(0, 1, 0, c, 0.0, true, c.Pu) * Ax * (Len(c.sp0, c.sp1) / c.Pv) * Ay;
-            double p = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(s.key) * (s.region == RegionOQ ? NocFacadeConstants.FaOqLit : 1.0);
+            double p = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(s.key) * (s.region == RegionOQ ? NocFacadeConstants.FaOqLit : 1.0)
+                * DepthLitV2(band * c.bandH + vlNb);   // C11 depth fade (NocBandMeanPartV2)
             C3 hue = type == StratumMech ? MeanMechHue(q.wf) : MeanHueV2(q.wf, q.nf);
             C3 eLitMean = hue * NocFacadeConstants.FaBMean, eUnMean = NocFogMath.Pal(NocPal.WinNeutral) * NocFacadeConstants.FaStandby;
             C3 albRev = WallToken(s, type) * NocFacadeConstants.FaAoReveal;

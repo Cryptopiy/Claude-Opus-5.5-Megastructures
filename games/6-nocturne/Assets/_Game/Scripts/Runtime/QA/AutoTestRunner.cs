@@ -75,7 +75,27 @@ namespace Megastructure
         long m_rollFrames;
 
         /// <summary>Expected walk seconds (from rest at s 0) to the goal trigger for a mode (smootherstep ramp: T / 2 is lost).</summary>
+        /// <summary>-autotest-until S: NaN (no until: the whole walk with its trigger / stop checks) when S is NaN or at least the path
+        /// length (HT's request), else S.</summary>
+        public static double EffectiveUntil(double until) => double.IsNaN(until) || until >= NocturneConstants.PathLength ? double.NaN : until;
+
         public static double ExpectedTrigger(double speed, bool cinematic) => ExpectedTrigger(speed, cinematic, 0.0);
+
+        /// <summary>
+        /// The expected runner time [lo, hi] of the -autotest-until stop: before the goal trigger, the cruise time to S; at or past
+        /// the trigger (AT's request: -autotest-until 1497..1500 compared the stop 169.30 with the trigger 166.90) S is crossed in the
+        /// 14.11 stop ramp, or the walker comes to rest short of it (m_tStop is then the stop time), so the window runs from the
+        /// expected trigger to the expected stop.
+        /// </summary>
+        public static void ExpectedUntil(double until, double s0, double speed, bool cinematic, double expTrigger, double expStop, out double lo, out double hi)
+        {
+            if (until < NocturneConstants.GoalTriggerS)
+            {
+                lo = hi = (until - s0) / speed + 0.5 * (cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel);
+                return;
+            }
+            lo = expTrigger; hi = Math.Max(expTrigger, expStop);
+        }
 
         /// <summary>Expected walk seconds from rest at s0 to the goal trigger (GB-19: -beat N starts at beat N's boundary).</summary>
         public static double ExpectedTrigger(double speed, bool cinematic, double s0)
@@ -115,6 +135,9 @@ namespace Megastructure
             m_cinematic = CliArgs.Cinematic;
             m_speed = m_cinematic ? NocturneConstants.CinematicSpeed : QaMode.DriveSpeed;
             m_until = CliArgs.AutoTestUntil;
+            // HT's request (QA fix wave): an until at or past the path end is no until, so the end-of-walk trigger / stop checks
+            // apply (-autotest-until 1500 -beat 7 failed untilTime: stop 97.30 s vs the trigger 94.90 +- 2.0)
+            m_until = EffectiveUntil(m_until);
             m_s0 = Math.Max(0.0, Math.Min(CliArgs.StartS, NocturneConstants.GoalTriggerS - 1.0));
             m_b0 = NocMath.BeatIndex(m_s0);
             m_lastBeat = m_b0 - 1;
@@ -281,8 +304,9 @@ namespace Megastructure
             if (until)
             {
                 Checks.Add("reachedUntil", abort == null && m_tStop >= 0, abort ?? ("s=" + m_sStop.ToString("0.000", inv) + " at t=" + m_tStop.ToString("0.00", inv) + " s"));
-                double expUntil = m_until < NocturneConstants.GoalTriggerS ? (m_until - m_s0) / m_speed + 0.5 * (m_cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel) : m_expTrigger;
-                Checks.Add("untilTime", m_tStop >= 0 && Math.Abs(m_tStop - expUntil) <= m_tol, m_tStop.ToString("0.00", inv) + " s vs " + expUntil.ToString("0.00", inv) + " +- " + m_tol.ToString("0.0", inv));
+                ExpectedUntil(m_until, m_s0, m_speed, m_cinematic, m_expTrigger, m_expStop, out double expLo, out double expHi);
+                Checks.Add("untilTime", m_tStop >= 0 && m_tStop >= expLo - m_tol && m_tStop <= expHi + m_tol,
+                           m_tStop.ToString("0.00", inv) + " s vs " + expLo.ToString("0.00", inv) + (expHi > expLo ? ".." + expHi.ToString("0.00", inv) + " (trigger..stop)" : "") + " +- " + m_tol.ToString("0.0", inv));
             }
             else
             {

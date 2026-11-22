@@ -18,7 +18,9 @@ namespace Megastructure.Tests
         [Test]
         public void Layers_SpecPlacementAndCounts()
         {
-            double[] x = { 600, 380, 540, 350, 560, 470, 650, 420 }, y = { 300, 180, 30, -120, -520, -880, -1100, -1400 };
+            // ARK D-043: the 14.5.3 layers (600, 300), (380, 180), (540, 30), (350, -120) moved to the abyss (200 m from the walk, out
+            // of the Ark); the four deep ones (the KS09-KS13 subject at x 560 / y -520 among them) unchanged
+            double[] x = { 300, 720, 640, 360, 560, 470, 650, 420 }, y = { -225, -240, -340, -440, -520, -880, -1100, -1400 };
             Assert.AreEqual(8, AbyssTraffic.LayerX.Length);
             for (int k = 0; k < 8; k++) { Assert.AreEqual(x[k], AbyssTraffic.LayerX[k], 1e-9); Assert.AreEqual(y[k], AbyssTraffic.LayerY[k], 1e-9); }
             var lanes = AbyssTraffic.AllLayerLanes();
@@ -120,6 +122,32 @@ namespace Megastructure.Tests
             {
                 double alphaAtFace = NocTraffic.Alpha(Math.Abs((EdgeDims.FrontX(0, l.ay - AbyssTraffic.BridgeLaneY, l.az) - l.ax) / (l.bx - l.ax)), l.ramp);
                 Assert.Greater(alphaAtFace, 0.98, l.name + ": fully opaque where it leaves face A");
+            }
+        }
+
+        /// <summary>ARK: the air crossings' fliers leave and enter the faces through their portals: every ramp point lies behind a face
+        /// plane (at the portal's base height), and each lane is fully opaque where it leaves face A.</summary>
+        [Test]
+        public void AirLanes_RampsBehindTheFaces_H7()
+        {
+            var lanes = AbyssTraffic.AllAirLanes();
+            Assert.AreEqual(4 * CrossBridge.AirZ.Length, lanes.Count, "four lanes per air crossing");
+            CheckRamps(lanes, (l, x, y, z) =>
+            {
+                double yb = y - CrossBridge.AirBelow;
+                return x <= EdgeDims.FrontX(0, yb, z) + 1e-6 || x >= EdgeDims.FrontX(1, yb, z) - 1e-6;
+            });
+            foreach (var l in lanes)
+            {
+                double yb = l.ay - CrossBridge.AirBelow;
+                double alphaAtFace = NocTraffic.Alpha(Math.Abs((EdgeDims.FrontX(0, yb, l.az) - l.ax) / (l.bx - l.ax)), l.ramp);
+                Assert.Greater(alphaAtFace, 0.98, l.name + ": fully opaque where it leaves face A");
+            }
+            for (int i = 0; i < CrossBridge.AirZ.Length; i++)
+            {
+                var li = new List<TrafficLane>();
+                AbyssTraffic.AirLanes(i, li);
+                foreach (var l in li) Assert.Less(Math.Abs(l.az - CrossBridge.AirZ[i]), 0.5 * CrossBridge.PortalW, l.name + " inside its portal's opening");
             }
         }
 
@@ -234,6 +262,122 @@ namespace Megastructure.Tests
             Assert.Greater(deepA, 50, "face A carries pieces below y -1 260");
             Assert.Greater(deepB, 50, "face B carries pieces below y -1 260");
             Assert.Greater(deepLight, 30, "galleries and atria below y -960");
+        }
+
+        // ------------------------------------------------------------------ ARK (D-043): the user's "lasers"
+        static List<TrafficLane> BoulevardLanes()
+        {
+            var e = new List<TrafficLane>(); var w = new List<TrafficLane>();
+            NocTraffic.BoulevardLanes(e, w);
+            e.AddRange(w);
+            return e;
+        }
+
+        /// <summary>ARK.md: no layer or cross-bridge vehicle within 200 m of the walk of beats 3-4 (s 400-880) or of the skybridge,
+        /// and no layer, bridge or boulevard lane inside the Ark's volume (x 295-735, y 300-600, the whole rift length).</summary>
+        [Test]
+        public void Traffic_ClearOfTheWalkTheSkybridgeAndTheArk_ARK()
+        {
+            double worst = double.MaxValue;
+            for (int k = 0; k < AbyssTraffic.LayerX.Length; k++)
+            {
+                var lanes = new List<TrafficLane>();
+                AbyssTraffic.LayerLanes(k, lanes);
+                double m = double.MaxValue;
+                foreach (var l in lanes) m = Math.Min(m, AbyssTraffic.LaneClearance(l));
+                Report(FormattableString.Invariant($"layer {k} (x {AbyssTraffic.LayerX[k]:F0}, y {AbyssTraffic.LayerY[k]:F0}): {m:F1} m from the walk / skybridge"));
+                Assert.GreaterOrEqual(m, AbyssTraffic.WalkClearance, "layer " + k + " 200 m from the walk of beats 3-4 and the skybridge");
+                worst = Math.Min(worst, m);
+            }
+            double bridges = double.MaxValue, air = double.MaxValue;
+            foreach (var l in AbyssTraffic.AllBridgeLanes()) bridges = Math.Min(bridges, AbyssTraffic.LaneClearance(l));
+            foreach (var l in AbyssTraffic.AllAirLanes()) air = Math.Min(air, AbyssTraffic.LaneClearance(l));
+            Report(FormattableString.Invariant($"layers >= {worst:F1} m, cross-bridge lanes >= {bridges:F1} m, air crossings >= {air:F1} m"));
+            Assert.GreaterOrEqual(bridges, AbyssTraffic.WalkClearance, "cross-bridge lanes 200 m from the walk");
+            Assert.GreaterOrEqual(air, AbyssTraffic.WalkClearance, "air-crossing lanes 200 m from the walk");
+            // the Ark's volume: a lane is a segment; it enters the box iff it overlaps it in x, y and z (the box spans every z)
+            var all = new List<TrafficLane>(AbyssTraffic.AllLayerLanes());
+            all.AddRange(AbyssTraffic.AllBridgeLanes());
+            all.AddRange(AbyssTraffic.AllAirLanes());
+            all.AddRange(BoulevardLanes());
+            foreach (var l in all)
+            {
+                bool inX = Math.Max(l.ax, l.bx) >= AbyssTraffic.ArkX0 && Math.Min(l.ax, l.bx) <= AbyssTraffic.ArkX1;
+                bool inY = Math.Max(l.ay, l.by) >= AbyssTraffic.ArkY0 && Math.Min(l.ay, l.by) <= AbyssTraffic.ArkY1;
+                Assert.IsFalse(inX && inY, FormattableString.Invariant($"{l.name} (y {l.ay:F0}) enters the Ark's volume"));
+            }
+        }
+
+        /// <summary>The boulevard's sky lanes cross the rift 147 m and more from the walker: over the rift no boulevard vehicle is
+        /// drawn within 300 m of the camera (NocStreak NocWalkClear; its C# twin here), anywhere on s 400-880 (camera +-2.5 m off the
+        /// axis), and the fade is off in beat 2 and in the garden beyond s 904.</summary>
+        [Test]
+        public void BoulevardLanes_NoVehicleNearTheWalkOverTheRift_ARK()
+        {
+            var lanes = BoulevardLanes();
+            double nearest = double.MaxValue, worstFactor = 0.0;
+            for (double s = AbyssTraffic.WalkS0; s <= AbyssTraffic.WalkS1 + 1e-9; s += 2.0)
+                foreach (double lat in new[] { -AbyssTraffic.WalkHalfW, 0.0, AbyssTraffic.WalkHalfW })
+                {
+                    double cx = s - NocturneConstants.EastLegOffset, cy = AbyssTraffic.WalkEyeY, cz = AbyssTraffic.WalkZ + lat;
+                    foreach (var l in lanes)
+                    {
+                        // closest point of the lane (along x at y, z) to the camera
+                        double x = Math.Max(Math.Min(l.ax, l.bx), Math.Min(Math.Max(l.ax, l.bx), cx));
+                        double d = Math.Sqrt((x - cx) * (x - cx) + (l.ay - cy) * (l.ay - cy) + (l.az - cz) * (l.az - cz));
+                        nearest = Math.Min(nearest, d);
+                        if (d < AbyssTraffic.WalkClearance) worstFactor = Math.Max(worstFactor, AbyssTraffic.BoulevardClear(cx, cz, d));
+                    }
+                }
+            Report(FormattableString.Invariant($"boulevard lanes: nearest {nearest:F1} m from the camera over s 400-880; max drawn factor within 200 m {worstFactor:F4}"));
+            Assert.AreEqual(0.0, worstFactor, 1e-12, "no boulevard vehicle drawn within 200 m of the walker in beats 3-4");
+            Assert.AreEqual(1.0, AbyssTraffic.BoulevardClear(125.3, 195.0, 150.0), 1e-12, "beat 2 (KS05, x 125): untouched");
+            Assert.AreEqual(1.0, AbyssTraffic.BoulevardClear(785.3, 195.0, 150.0), 1e-12, "the garden (KS15, x 785): untouched");
+            Assert.AreEqual(1.0, AbyssTraffic.BoulevardClear(475.3, 195.0, 400.0), 1e-12, "far parts keep flowing");
+        }
+
+        /// <summary>ARK.md's proof at 60 fps, analytic: from every camera position on s 400-880 (every 1 m, +-2.5 m off the axis) the
+        /// longest streak any drawn vehicle can show (NocStreak: v x 0.12 s, at most v x 0.12 x f / d px at distance d) stays under
+        /// 80 px at 1080p even for a 50 deg vertical FOV (f 1 158 px; the key shots use 62-68 deg), and nothing is drawn within 200 m.
+        /// The per-frame step of the nearest vehicles is reported (at 60 fps).</summary>
+        [Test]
+        public void Streaks_ShortFromTheWalk_60fps_ARK()
+        {
+            double f = 540.0 / Math.Tan(25.0 * Math.PI / 180.0);
+            var groups = new List<(string, List<TrafficLane>, bool)>
+            {
+                ("layers", AbyssTraffic.AllLayerLanes(), false), ("bridges", AbyssTraffic.AllBridgeLanes(), false), ("air", AbyssTraffic.AllAirLanes(), false),
+                ("boulevard", BoulevardLanes(), true),
+            };
+            foreach (var g in groups)
+            {
+                double worstPx = 0.0, worstStep = 0.0, nearest = double.MaxValue;
+                foreach (var l in g.Item2)
+                {
+                    double v = l.speed * 1.03, len = v * NocturneConstants.StreakSeconds;
+                    for (double s = AbyssTraffic.WalkS0; s <= AbyssTraffic.WalkS1 + 1e-9; s += 1.0)
+                        foreach (double lat in new[] { -AbyssTraffic.WalkHalfW, AbyssTraffic.WalkHalfW })
+                        {
+                            double cx = s - NocturneConstants.EastLegOffset, cy = AbyssTraffic.WalkEyeY, cz = AbyssTraffic.WalkZ + lat;
+                            // closest point of the straight lane to the camera
+                            double dx = l.bx - l.ax, dy = l.by - l.ay, dz = l.bz - l.az, L2 = dx * dx + dy * dy + dz * dz;
+                            double t = Math.Max(0.0, Math.Min(1.0, ((cx - l.ax) * dx + (cy - l.ay) * dy + (cz - l.az) * dz) / L2));
+                            double px = l.ax + dx * t - cx, py = l.ay + dy * t - cy, pz = l.az + dz * t - cz;
+                            double d = Math.Sqrt(px * px + py * py + pz * pz);
+                            if (g.Item3 && AbyssTraffic.BoulevardClear(cx, cz, d) <= 0.0)
+                            {
+                                // the nearest point is not drawn: the nearest drawn point lies where the fade starts
+                                d = AbyssTraffic.BoulevardClear0;
+                            }
+                            nearest = Math.Min(nearest, d);
+                            worstPx = Math.Max(worstPx, len * f / d);
+                            worstStep = Math.Max(worstStep, v / 60.0 * f / d);
+                        }
+                }
+                Report(FormattableString.Invariant($"{g.Item1}: nearest drawn {nearest:F1} m, longest streak <= {worstPx:F1} px, step <= {worstStep:F1} px / frame at 60 fps (1080p, vFOV 50)"));
+                Assert.GreaterOrEqual(nearest, AbyssTraffic.WalkClearance, g.Item1 + ": nothing drawn within 200 m");
+                Assert.Less(worstPx, 80.0, g.Item1 + ": no streak of 80 px or more");
+            }
         }
     }
 }

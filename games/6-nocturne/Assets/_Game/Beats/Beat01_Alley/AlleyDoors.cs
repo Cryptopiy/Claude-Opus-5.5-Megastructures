@@ -2,7 +2,8 @@
 // the walls a human scale where the free-look stills see them at eye height). 9 doors per wall (AlleyLayout.DoorZWest / DoorZEast),
 // following the wall on the profile's flanks: the wall strips leave a 1.0 x 2.1 m opening (AlleyBlocks); here the reveals (jambs and
 // lintel, 12 cm deep), the steel leaf at the back of the recess with a handle, and a lit transom 2 cm proud above the door
-// (y 2.2-2.45, warm or cold by hash). Everything below y 2.1 lies behind the wall plane (the capsule touches the wall plane).
+// (y 2.2-2.45, warm or cold by hash; AL wave B: a framed fanlight over a lit hallway, NocAlleyWindow). Everything below y 2.1 lies
+// behind the wall plane (the capsule touches the wall plane).
 using UnityEngine;
 
 namespace Megastructure
@@ -21,8 +22,8 @@ namespace Megastructure
             var origin = new Vector3(0f, 1f, 60f);
             var reveal = parts.Get("doorReveals", G1Mat.Concrete, origin);
             var leaf = parts.Get("doorLeaves", G1Mat.SteelPainted, origin);
-            var warm = parts.Get("doorTransomWarm", G1Mat.EmitShopWarm, origin);
-            var cold = parts.Get("doorTransomCold", G1Mat.EmitShopCold, origin);
+            // AL (wave B, INT-06): the transoms are small framed fanlights over a lit hallway (NocAlleyWindow, lit, no covering)
+            var fan = parts.Get("doorTransoms", G1Mat.AlleyWindow, origin);
             float hw = 0.5f * (float)AlleyLayout.SideDoorW, h = (float)AlleyLayout.SideDoorH, dep = (float)AlleyLayout.SideDoorDepth;
             for (int side = -1; side <= 1; side += 2)
             {
@@ -46,12 +47,15 @@ namespace Megastructure
                     G1Mesh.Chamfer(leaf, new Vector3(hx0, 1.0f, hz - 0.03f), new Vector3(hx1, 1.06f, hz + 0.03f), 0.008f);
                     // lit transom above the door
                     uint hsh = NocMath.Pcg((uint)(i * 97 + (side > 0 ? 501 : 0)) ^ 0x54524E53u);
-                    var mb = NocMath.U01(hsh) < 0.6 ? warm : cold;
+                    var mb = fan;
+                    var savedC = mb.Color;
+                    mb.Color = new Color32((byte)(NocMath.Pcg(hsh + 5u) >> 24), 255, 0, (byte)(NocMath.U01(hsh) < 0.6 ? 0 : 255));
                     float ta = z0 + 0.05f, tb = z1 - 0.05f;
                     float xta = side * ((float)AlleyLayout.HalfWidth(ta) - (float)AlleyLayout.TransomProud);
                     float xtb = side * ((float)AlleyLayout.HalfWidth(tb) - (float)AlleyLayout.TransomProud);
                     G1Mesh.Quad(mb, new Vector3(xta, (float)AlleyLayout.TransomY0, ta), new Vector3(xta, (float)AlleyLayout.TransomY1, ta),
                         new Vector3(xtb, (float)AlleyLayout.TransomY1, tb), new Vector3(xtb, (float)AlleyLayout.TransomY0, tb), inward);
+                    mb.Color = savedC;
                 }
             }
         }

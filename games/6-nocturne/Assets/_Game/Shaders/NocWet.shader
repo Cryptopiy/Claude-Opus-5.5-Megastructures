@@ -216,12 +216,16 @@ Shader "Megastructure/NocWet"
         float fade = smoothstep(NC_SurfRippleFadePx0, NC_SurfRippleFadePx1, NC_SurfRippleLambda / fwm);
         float2 grad = 0;
         [branch] if (rho > 0.001 && fade > 0.0 && m > 0.001) grad = NocRippleGrad2(xz, _NocTime.y, rho) * (NC_SurfRippleSlope * fade * m);
-        float rippleVar = NC_SurfRippleSlope * NC_SurfRippleSlope * NC_SurfRippleVar * rho * (1.0 - fade * fade) * m;
+        float rippleVar = NC_SurfRippleSlope * NC_SurfRippleSlope * NC_SurfRippleVar * rho * (1.0 - fade * fade);   // in the puddle lobe
 
         // lobe: the absolute (wet) mask smoothness between the puddles, never sharper than SurfAlphaDryMin; flat water in them
+        // FX (INT-13, D-032 3): two lobes, mixed by m in the forward hook (NocMirrorEnvMix / NocMirrorSourcesMix): the puddle lobe
+        // (flat water + the rings' moved variance) and the film lobe between them. A pixel past the puddle fade covers both; one
+        // lobe of the blended variance spread the puddles' sharp streaks into the film lobe (peak x 0.15 at m 0.35)
         float aDry = max((1.0 - smooth) * (1.0 - smooth), NC_SurfAlphaDryMin);
-        sigma2 = lerp(aDry * aDry, NC_SurfAlphaPuddle * NC_SurfAlphaPuddle, m) + NC_WetSigmaFloor + rippleVar;
-        refl = lerp(lerp(_ReflDry, NC_SurfReflPuddle, m), 0.5 * _ReflDry, weld);   // the row's dry reflectivity (moss 0.35)
+        float s2Dry = aDry * aDry + NC_WetSigmaFloor;
+        sigma2 = NC_SurfAlphaPuddle * NC_SurfAlphaPuddle + NC_WetSigmaFloor + rippleVar;
+        refl = lerp(_ReflDry, 0.5 * _ReflDry, weld);   // the film's reflectivity (moss 0.35); the puddles' is NC_SurfReflPuddle
 
         // puddle normals stay flat: up plus the rings; the texture slope is weighted by (1 - m)
         n = normalize(float3(-sl.x * (1.0 - m) + grad.x, 1.0, -sl.y * (1.0 - m) + grad.y));
@@ -235,7 +239,7 @@ Shader "Megastructure/NocWet"
         s.occlusion = ao;
         s.emission = _EmissionColor.rgb;
         f.normalWS = n;
-        f.custom = float4(m, sigma2, refl, 0.0);
+        f.custom = float4(m, sigma2, refl, s2Dry);       // puddle share, puddle-lobe variance, film reflectivity, film-lobe variance
         [branch] if (NocDebugView() == 8) f.debug = float4(NocWetDensityCode(xz, fwm), 1.0);
     }
     ENDHLSL
@@ -264,12 +268,15 @@ Shader "Megastructure/NocWet"
 
             half3 NocForwardHook(NocFragData f, SurfaceData s, InputData inputData)
             {
-                NocLobe o = NocMirrorLobe(f.positionWS, _WorldSpaceCameraPos.xyz, inputData.normalWS, f.custom.y, f.custom.z);
+                // the puddle and film lobes share r, X, Y (one normal); both are built here, outside any branch (derivatives)
+                NocLobe oP = NocMirrorLobe(f.positionWS, _WorldSpaceCameraPos.xyz, inputData.normalWS, f.custom.y, NC_SurfReflPuddle);
+                NocLobe oD = NocMirrorLobe(f.positionWS, _WorldSpaceCameraPos.xyz, inputData.normalWS, f.custom.w, f.custom.z);
+                float m = f.custom.x;
                 BRDFData brdf;
                 InitializeBRDFData(s, brdf);
                 half3 diffuse = brdf.diffuse * inputData.bakedGI * s.occlusion + NocDirect(brdf, inputData);
-                half3 spec = o.FG * NocMirrorEnv(f.positionWS, f.viewDist, o) + NocMirrorSources(f.positionWS, f.viewDist, o);
-                return min(diffuse * (1.0 - o.F) + spec + s.emission, 1000.0);
+                half3 spec = NocMirrorEnvMix(f.positionWS, f.viewDist, oP, oD, m) + NocMirrorSourcesMix(f.positionWS, f.viewDist, oP, oD, m);
+                return min(diffuse * (1.0 - lerp(oD.F, oP.F, m)) + spec + s.emission, 1000.0);
             }
 
             #include "Include/NocLitPass.hlsl"

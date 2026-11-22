@@ -1,7 +1,15 @@
 // AbyssTraffic (AB, Phase 4 wave A, INT-01): the eight H7 traffic layers of MASTER_PROMPT 14.5.3 and the lanes of the six cross-gulf
 // bridges as rivers of vehicles (NocTraffic lanes, NocStreak kind 4), replacing the Phase-3 stand-ins (TrafficLayerLines: one white
 // NocLine stroke per layer, the "laser beams" of KS09 / KS10 / KS12 / KS13).
-//   Layers (x, y) = (600, 300), (380, 180), (540, 30), (350, -120), (560, -520), (470, -880), (650, -1 100), (420, -1 400),
+//   Layers (x, y) = (300, -225), (720, -240), (640, -340), (360, -440), (560, -520), (470, -880), (650, -1 100), (420, -1 400)
+//   (ARK D-043, the user's order: the 14.5.3 layers (540, 30), (380, 180) and (350, -120) passed 28 / 178 / 122 m from the walker on
+//   the pier and the skybridge, and seen that close a vehicle's 0.12 s streak sweeps across the frame like a laser bolt; (600, 300)
+//   lay inside the Ark's volume x 295-735, y 300-600. Every layer is now at least WalkClearance (200 m) from the walk of beats 3-4
+//   (s 400-880: x 215.3-695.3, z 195, eye y 1.7) and from the skybridge (y -14..+16), all of them below the walker: the sky over the
+//   rift belongs to the Ark, the abyss to the rivers. The four new ones (0-3) sit in pairs along the faces and step in toward the
+//   axis as they go down - (300, -225) / (720, -240) along the walls just above the first haze veil (y -250), (640, -340) /
+//   (360, -440) half-way in - so from the bridge the eight rivers read as a funnel of light converging into the deep, the y -520
+//   subject river (x 560) and the deep three (x 470 / 650 / 420) at its centre),
 //   z -5 500..5 500 (T at the ends <= 0.02 from every walk pose, 14.7 H7). Each layer is a sky road of six lanes: three north-bound
 //   (+z) east of the layer line and three south-bound west of it (right-hand traffic seen from above), 5 m apart, 10 m median; mean
 //   spacing 32 m per lane (+-30 % jitter, phases phi_i = (i + jitter) / N), speeds per layer 17-26 m/s (+-3 %, quantised: no
@@ -27,14 +35,63 @@ namespace Megastructure
     public static class AbyssTraffic
     {
         // ------------------------------------------------------------------ layers (14.5.3)
-        public static readonly double[] LayerX = { 600.0, 380.0, 540.0, 350.0, 560.0, 470.0, 650.0, 420.0 };
-        public static readonly double[] LayerY = { 300.0, 180.0, 30.0, -120.0, -520.0, -880.0, -1100.0, -1400.0 };
+        public static readonly double[] LayerX = { 300.0, 720.0, 640.0, 360.0, 560.0, 470.0, 650.0, 420.0 };
+        public static readonly double[] LayerY = { -225.0, -240.0, -340.0, -440.0, -520.0, -880.0, -1100.0, -1400.0 };
         /// <summary>Layer speeds (m/s), one per layer (aerial roads run faster than the boulevard's 14 m/s).</summary>
         public static readonly double[] LayerSpeed = { 24.0, 21.0, 18.0, 17.0, 20.0, 22.0, 26.0, 23.0 };
         public const double LayerZ0 = -5500.0, LayerZ1 = 5500.0;
         public const int LanesPerDirection = 3;
-        public const double LaneGap = 5.0, MedianGap = 10.0, LayerSpacing = 32.0;
+        public const double LaneGap = 5.0, MedianGap = 10.0, LayerSpacing = 24.0;   // r04: 32 -> 24 m (AB_r03 KS10 / KS12: the rivers read as dotted lines)
         public const double LayerRamp = NocturneConstants.TrafficRampLayer;
+
+        // ------------------------------------------------------------------ ARK (D-043): clearances
+        /// <summary>No vehicle closer than this (m) to the walk of beats 3-4 or to the skybridge (ARK.md, the user's "lasers").</summary>
+        public const double WalkClearance = 200.0;
+        /// <summary>The walk of beats 3-4: s 400-880 runs straight along z 195 from x 215.3 to 695.3 (x = s - 184.7), eye y 1.7, the
+        /// camera within +-2.5 m of the axis (the 5 m deck).</summary>
+        public const double WalkS0 = 400.0, WalkS1 = 880.0, WalkX0 = 215.3, WalkX1 = 695.3, WalkZ = 195.0, WalkEyeY = 1.7, WalkHalfW = 2.5;
+        /// <summary>The skybridge as a box (gate frames 16 m tall, the pier bottoms at -14 m, gates A..B, z 175..215).</summary>
+        public const double SkyX0 = 371.7, SkyX1 = 695.3, SkyY0 = -14.0, SkyY1 = 16.0, SkyZ0 = 175.0, SkyZ1 = 215.0;
+        /// <summary>The Ark's volume (ARK.md: the whole rift length): no layer inside it.</summary>
+        public const double ArkX0 = 295.0, ArkX1 = 735.0, ArkY0 = 300.0, ArkY1 = 600.0;
+
+        /// <summary>The boulevard lanes' walk clearance (NocStreak's NocWalkClear, kinds 0 / 1): no vehicle within BoulevardClear0 m
+        /// of a camera over the rift, full at BoulevardClear1; the weight eases in over x 191.3-215.3 (s 376-400) and out over
+        /// x 695.3-719.3 (s 880-904), and off the z 195 axis over 60-90 m.</summary>
+        public const double BoulevardClear0 = 300.0, BoulevardClear1 = 400.0;
+
+        /// <summary>C# twin of NocStreak's NocWalkClear: the factor on a boulevard vehicle at distance d from a camera at (cx, cz).</summary>
+        public static double BoulevardClear(double cx, double cz, double d)
+        {
+            double w = NocMath.Smoothstep(191.3, 215.3, cx) * (1.0 - NocMath.Smoothstep(695.3, 719.3, cx)) * (1.0 - NocMath.Smoothstep(60.0, 90.0, Math.Abs(cz - 195.0)));
+            return 1.0 - w * (1.0 - NocMath.Smoothstep(BoulevardClear0, BoulevardClear1, d));
+        }
+
+        /// <summary>Distance (m) from a point to an axis-aligned box (0 inside).</summary>
+        public static double BoxDistance(double x, double y, double z, double x0, double x1, double y0, double y1, double z0, double z1)
+        {
+            double dx = Math.Max(0.0, Math.Max(x0 - x, x - x1)), dy = Math.Max(0.0, Math.Max(y0 - y, y - y1)), dz = Math.Max(0.0, Math.Max(z0 - z, z - z1));
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+        /// <summary>Distance (m) from a point to the walk of beats 3-4 (the eye's box: x 215.3-695.3, y 1.7, z 195 +- 2.5).</summary>
+        public static double WalkDistance(double x, double y, double z)
+            => BoxDistance(x, y, z, WalkX0, WalkX1, WalkEyeY, WalkEyeY, WalkZ - WalkHalfW, WalkZ + WalkHalfW);
+
+        /// <summary>The smallest distance (m) of a straight lane A..B to the walk and to the skybridge box (sampled every 1 m or less;
+        /// a distance changes by at most 1 m per metre along the lane, so the samples are within 0.5 m of the true minimum).</summary>
+        public static double LaneClearance(TrafficLane l)
+        {
+            double L = l.Length, best = double.MaxValue;
+            int n = Math.Max(2, (int)Math.Ceiling(L));
+            for (int i = 0; i <= n; i++)
+            {
+                double p = (double)i / n;
+                double x = l.ax + (l.bx - l.ax) * p, y = l.ay + (l.by - l.ay) * p, z = l.az + (l.bz - l.az) * p;
+                best = Math.Min(best, Math.Min(WalkDistance(x, y, z), BoxDistance(x, y, z, SkyX0, SkyX1, SkyY0, SkyY1, SkyZ0, SkyZ1)));
+            }
+            return best;
+        }
 
         // ------------------------------------------------------------------ cross-bridge lanes
         public const double BridgeLaneZ0 = 1.75, BridgeLaneDz = 3.5, BridgeLaneY = 0.9, BridgeSpacing = 30.0, BridgeSpeed = 14.0, BridgeRamp = 0.03;
@@ -42,13 +99,25 @@ namespace Megastructure
         // ------------------------------------------------------------------ vehicle lights (NocStreak kind 4)
         /// <summary>Lamp pair separation (m) and lamp width (m); head and tail radiance gains (x SignWhite / x the tail colour).</summary>
         public const double PairSep = 1.5, LampWidth = 0.3;
-        public const float HeadGain = 6.0f, TailGain = 4.4f;
+        public const float HeadGain = 10.0f, TailGain = 6.0f;   // r03: 6 / 4.4 -> 8 / 5, r04: 10 / 6 (D-032 5: the heads are the abyss's highlights)
         /// <summary>Layer glow (NocStreak kind 6, the aggregate in-scatter of a layer's lamps in the haze): Gaussian sigma (m), the
-        /// strip's segments, peak radiance gain x the glow colour (lerp(WinNeutral, SodiumAmber, GlowAmber)).</summary>
-        public const double GlowSigma = 14.0, GlowAmber = 0.35;
+        /// strip's segments, peak radiance gain x the glow colour (lerp(WinNeutral, SodiumAmber, GlowAmber)).
+        /// r03 (AB_r02 KS08 / KS09 / KS12: sigma 14 m at gain 0.12 drew the layers as hard searchlight beams fanning from the vanishing
+        /// point, +35-60 codes over the haze in KS10): sigma 22 m, gain 0.06, and a per-layer intensity that follows the haze density
+        /// (GlowIntensity: 0.15 for the layers in the clear air above the deck, rising to 1 at y -600 and below, where the abyss
+        /// haze is dense and the glow is all that is left of a layer).</summary>
+        public const double GlowSigma = 22.0, GlowAmber = 0.35;
         public const int GlowSegments = 128;
-        public const float GlowGain = 0.12f;
-        public const float BridgeHeadGain = 2.4f, BridgeTailGain = 1.8f;
+        public const float GlowGain = 0.06f;
+        public const double GlowAbove = 0.15, GlowFullDepth = -600.0;
+
+        /// <summary>The glow intensity of layer k (x GlowGain): GlowAbove at y >= 0, linear to 1 at GlowFullDepth.</summary>
+        public static double GlowIntensity(int k)
+        {
+            double t = Math.Max(0.0, Math.Min(1.0, LayerY[k] / GlowFullDepth));
+            return GlowAbove + (1.0 - GlowAbove) * t;
+        }
+        public const float BridgeHeadGain = 6.0f, BridgeTailGain = 4.0f;   // r06: 2.4 / 1.8 -> 6 / 4 (the deck traffic read dimmer than the deck lamps)
 
         /// <summary>The lanes of layer k: north-bound first (A at z0), then south-bound (A at z1).</summary>
         public static void LayerLanes(int k, List<TrafficLane> lanes)
@@ -94,6 +163,39 @@ namespace Megastructure
                 }
         }
 
+        /// <summary>ARK (D-043): fliers on the air crossings (CrossBridge.AirZ / AirY): faster than the deck traffic.</summary>
+        public const double AirSpeed = 19.0, AirSpacing = 18.0;   // a03: 26 -> 18 (KS11 p99 116.7)
+
+        /// <summary>The four lanes of air crossing i (CrossBridge.AirZ / AirY): the bridge-lane layout (east-bound south of the
+        /// crossing's axis, west-bound north of it), lamps at AirY, each lane from inside face A to inside face B with its whole alpha
+        /// ramp behind the face planes (the portals' glow walls close the openings).</summary>
+        public static void AirLanes(int i, List<TrafficLane> lanes)
+        {
+            double z = CrossBridge.AirZ[i], y = CrossBridge.AirY[i], yb = CrossBridge.AirBase(i);
+            for (int dirn = 0; dirn < 2; dirn++)
+                for (int j = 0; j < 2; j++)
+                {
+                    double zz = dirn == 0 ? z - BridgeLaneZ0 - BridgeLaneDz * j : z + BridgeLaneZ0 + BridgeLaneDz * j;
+                    double xa = EdgeDims.FrontX(0, yb, zz), xb = EdgeDims.FrontX(1, yb, zz);
+                    double span = xb - xa, r = BridgeRamp * span / (1.0 - 2.0 * BridgeRamp);
+                    lanes.Add(new TrafficLane
+                    {
+                        name = FormattableString.Invariant($"air{i}_{(dirn == 0 ? "e" : "w")}{j}"),
+                        ax = dirn == 0 ? xa - r : xb + r, bx = dirn == 0 ? xb + r : xa - r,
+                        ay = y, by = y, az = zz, bz = zz,
+                        speed = AirSpeed, spacing = AirSpacing, ramp = BridgeRamp,
+                    });
+                }
+        }
+
+        /// <summary>Every air-crossing lane.</summary>
+        public static List<TrafficLane> AllAirLanes()
+        {
+            var l = new List<TrafficLane>(CrossBridge.AirZ.Length * 4);
+            for (int i = 0; i < CrossBridge.AirZ.Length; i++) AirLanes(i, l);
+            return l;
+        }
+
         /// <summary>Every layer lane (8 layers x 6 lanes).</summary>
         public static List<TrafficLane> AllLayerLanes()
         {
@@ -111,18 +213,22 @@ namespace Megastructure
         }
 
         /// <summary>Counts of the last Build (logged).</summary>
-        public static int LayerVehicles, BridgeVehicles;
+        public static int LayerVehicles, BridgeVehicles, AirVehicles;
+        /// <summary>ARK: head / tail gains of the fliers (the layers' 10 / 6: the crossing carries the eye-level highlights).</summary>
+        public const float AirHeadGain = 14.0f, AirTailGain = 6.0f;   // a02: 10 -> 12, a03: 14
 
         /// <summary>Builds and registers the two batches (layers, bridges); lib may be null (no scene output).</summary>
         public static void Build(MaterialLibrary lib)
         {
-            LayerVehicles = 0; BridgeVehicles = 0;
+            LayerVehicles = 0; BridgeVehicles = 0; AirVehicles = 0;
             if (lib == null || lib.StreakTail == null) return;
             Mesh quad = NocTraffic.LaneQuad();
             var layerMat = Variant(lib.StreakTail, HeadGain, TailGain, LayerRamp, "AbyssLayerVehicles");
             var bridgeMat = Variant(lib.StreakTail, BridgeHeadGain, BridgeTailGain, BridgeRamp, "AbyssBridgeVehicles");
             LayerVehicles = NocTraffic.Batch("AbyssLayers", AllLayerLanes(), layerMat, quad, 0x4C415952u).Count;
             BridgeVehicles = NocTraffic.Batch("AbyssBridges", AllBridgeLanes(), bridgeMat, quad, 0x42524447u).Count;
+            var airMat = Variant(lib.StreakTail, AirHeadGain, AirTailGain, BridgeRamp, "AbyssAirVehicles");
+            AirVehicles = NocTraffic.Batch("AbyssAir", AllAirLanes(), airMat, quad, 0x41495221u).Count;
             // the glow of every layer: one strip along the layer's centre line
             var glowMat = new Material(lib.StreakTail) { name = "AbyssLayerGlow" };
             Color g = Color.Lerp(NocturnePalette.Linear(NocPal.WinNeutral), NocturnePalette.Linear(NocPal.SodiumAmber), (float)GlowAmber);
@@ -135,9 +241,9 @@ namespace Megastructure
             for (int k = 0; k < LayerX.Length; k++)
             {
                 var centre = new TrafficLane { ax = LayerX[k], bx = LayerX[k], ay = LayerY[k], by = LayerY[k], az = LayerZ0, bz = LayerZ1 };
-                glow.Add(NocTraffic.RibbonMatrix(centre, 1.0, GlowSigma));
+                glow.Add(NocTraffic.RibbonMatrix(centre, GlowIntensity(k), GlowSigma));
             }
-            NocCameraBatches.Register(glow);
+            if (!NocTraffic.Off) NocCameraBatches.Register(glow);   // QA A/B (NOC_TRAFFIC_OFF)
         }
 
         static readonly int s_kind = Shader.PropertyToID("_Kind"), s_gain = Shader.PropertyToID("_Gain"), s_ramp = Shader.PropertyToID("_Ramp");

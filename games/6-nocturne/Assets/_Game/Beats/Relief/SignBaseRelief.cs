@@ -1,11 +1,12 @@
 // SignBaseRelief: the base of the wall of signs (TEXTURE_PLAN 5 item 5, CRIT0 #22): a 2 km screen that meets the promenade floor
 // as a bare LED face has no human scale; a real screen wall stands on a street-level arcade of shops. In front of the screen face
-// (x 874, ScreenWallBuilder not edited) along z 281..515: a 6.6 m arcade (concrete columns 0.8 m every 9 m at x 880.6..881.4, a
-// canopy slab y 6.0..6.6 out to x 882.2 with a painted-steel fascia and a dim light line under its edge) and one shopfront per bay
+// (x 874, ScreenWallBuilder not edited) along z 281..515: a cantilevered canopy (fix wave C16: was 8.2 m deep on columns, 4.5 % of
+// KS16; now a slab y 6.0..6.25 out to x 876.8 on steel brackets at every pier, a slim painted-steel fascia and a dim light line
+// under its edge, 1.1 % of KS16) and one shopfront per bay
 // on the plane x 874.3 (y 0.4..5.4, steel frames 0.2 m). SG (Phase 4 wave A, INT-34: "flat lit panes"): the panes are no longer
 // relief parts; Beat06_Signs builds them from ShopBays as NocShopfront rooms with depth (4 in 5 cold, 1 in 5 neutral, 1 in 7
 // closed) and hangs a small NocNeon blade sign under the canopy of every open bay (ShopSign).
-// Everything stays west of x 882.3 (the walk lane is x 891.74..911.74, its wall face at 891.36) and below y 6.6 (KS16's wall point
+// Everything stays west of x 876.9 (the walk lane is x 891.74..911.74, its wall face at 891.36) and below y 6.3 (KS16's wall point
 // at (874, 10, 300) and the sight lines to the screen above it pass over the canopy: the eye's line crosses x 882 at y 7.6).
 // TEXTURE_PLAN 5 relief: built with ReliefBuilder.ReliefOn (the v2 facade), like the other relief.
 using System;
@@ -16,8 +17,10 @@ namespace Megastructure
 {
     public static class SignBaseRelief
     {
-        public const double X0 = 874.0, ShopX = 874.3, ColX0 = 880.6, ColX1 = 881.4, CanopyX1 = 882.2, Z0 = 281.0, Z1 = 515.0;
-        public const double CanopyY0 = 6.0, CanopyY1 = 6.6, ShopY0 = 0.4, ShopY1 = 5.4, Pitch = 9.0, Frame = 0.2;
+        public const double X0 = 874.0, ShopX = 874.3, CanopyX1 = 876.8, Z0 = 281.0, Z1 = 515.0;
+        public const double CanopyY0 = 6.0, CanopyY1 = 6.25, ShopY0 = 0.4, ShopY1 = 5.4, Pitch = 9.0, Frame = 0.2;
+        /// <summary>Cantilever bracket under the canopy at every pier: x 874.15 - 876.0, 0.35 m deep, 0.12 m wide.</summary>
+        public const double BracketX1 = 876.0, BracketD = 0.35, BracketW = 0.12;
         /// <summary>Beat root: beat 6, the wall of signs.</summary>
         public const int Beat = 5;
         public static int Bays;
@@ -34,12 +37,12 @@ namespace Megastructure
             Bays = n;
             // canopy, fascia, light line
             Box(conc, X0 - 0.1, CanopyX1, CanopyY0, CanopyY1, z0 - 0.4, z0 + n * Pitch + 0.4);
-            Box(steel, CanopyX1 - 0.25, CanopyX1 + 0.08, CanopyY0 - 0.35, CanopyY1 + 0.04, z0 - 0.45, z0 + n * Pitch + 0.45);
+            Box(steel, CanopyX1 - 0.20, CanopyX1 + 0.06, CanopyY0 - 0.08, CanopyY1 + 0.03, z0 - 0.45, z0 + n * Pitch + 0.45);
             Quad(line.Mb, origin, CanopyX1 - 0.6, CanopyX1 - 0.35, CanopyY0 - 0.01, z0 + 0.3, z0 + n * Pitch - 0.3);
             for (int k = 0; k <= n; k++)
             {
                 double zc = z0 + k * Pitch;
-                Box(conc, ColX0, ColX1, -0.05, CanopyY0 + 0.05, zc - 0.4, zc + 0.4);                    // column (into floor and canopy)
+                Box(steel, X0 + 0.15, BracketX1, CanopyY0 - BracketD, CanopyY0 + 0.02, zc - 0.5 * BracketW, zc + 0.5 * BracketW);   // bracket
                 if (k == n) continue;
                 // shopfront of bay k: a steel frame around the room glass (the glass itself: ShopBays, built by Beat06_Signs)
                 double za = zc + 0.4 + Frame, zb = zc + Pitch - 0.4 - Frame;
@@ -80,8 +83,8 @@ namespace Megastructure
             return l;
         }
 
-        /// <summary>The NocNeon blade sign of a bay: 0.6 x 1.8 m, perpendicular to the face, under the canopy at x 880.4..881.0.</summary>
-        public static Vector3 ShopSignCentre(double za, double zb) => new Vector3(880.7f, 5.0f, (float)(0.5 * (za + zb)));
+        /// <summary>The NocNeon blade sign of a bay: 0.6 x 1.8 m, perpendicular to the face, under the canopy at x 875.8..876.4.</summary>
+        public static Vector3 ShopSignCentre(double za, double zb) => new Vector3(876.1f, 4.9f, (float)(0.5 * (za + zb)));
         public const double ShopSignW = 0.6, ShopSignH = 1.8;
 
         static void Quad(MeshBuilder mb, Vector3 o, double x0, double x1, double y, double z0, double z1)

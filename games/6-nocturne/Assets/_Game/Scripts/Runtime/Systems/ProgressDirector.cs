@@ -60,6 +60,7 @@ namespace Megastructure
             NocState.S = s;
             NocState.Beat = NocMath.BeatIndex(s);
             m_atmo.Apply(s, dt);
+            NocDarkWave.Apply(s);   // D-034 5.1 (FX): a pure function of s
 
             Camera cam = m_ctx != null && m_ctx.Camera != null ? m_ctx.Camera : Camera.main;
             Frame.s = s;

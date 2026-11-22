@@ -70,10 +70,13 @@ namespace Megastructure
 
         // ------------------------------------------------------------------ 4. promenade lintel (the courtyard's north side)
         /// <summary>From the screen-wall slab (x 874; 0.5 m into it) to the east block's line x 914, z 280..286 (B8's crown envelope
-        /// reaches z 276.7: 3.3 m clear), y 40..560. GE-t03: from the garden (KS15, the beat-5 mid still and look_up60) the koi
+        /// reaches z 276.7: 3.3 m clear), y 50..560. GE-t03: from the garden (KS15, the beat-5 mid still and look_up60) the koi
         /// showed through the promenade gap and over the 38 m arcade (sight lines at y 58-78 over z 275); the lintel closes the gap
-        /// above y 40, the walker passes under it onto the promenade (KS16's sight lines to the wall cross z 286 below y 31).</summary>
-        public const double PlX0 = 873.5, PlX1 = 914.0, PlZ0 = 280.0, PlZ1 = 286.0, PlY0 = 40.0;
+        /// above its soffit, the walker passes under it onto the promenade. Integration round (D-041 (5), SG's C16): the soffit rose
+        /// from y 40 to 50 for KS16's wall share: the lintel (head band included) took 2.9 % of the 16:9 frame at 40 and takes 1.0 %
+        /// at 50 (KS16 built share 0.545 -> about 0.564, target 0.55); it leaves the frame entirely only at y 70, which would reopen
+        /// the koi's sight lines over the arcade (y 58 and up), so 50 keeps the promenade's framing with 8 m to spare.</summary>
+        public const double PlX0 = 873.5, PlX1 = 914.0, PlZ0 = 280.0, PlZ1 = 286.0, PlY0 = 50.0;
 
         // ------------------------------------------------------------------ lane portals
         /// <summary>Lane tunnel opening 7 x 5 m about the lane (z, y); lit mouth 4 m; tunnels in the block 30 m deep.</summary>

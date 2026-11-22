@@ -232,6 +232,96 @@ def test_line_probe():
            "stair %.3f px" % r.get("centroid_resid_max_px", -1))
 
 
+def _photo_run(frame_fn, n=90, fps=30, static=False, H=270, W=480):
+    import seq_extra as sx
+    e = sx.Extra("cinematic", {}, W, H, fps)
+    luma = []
+    for t in range(n):
+        y = frame_fn(t, H, W)
+        g8 = np.clip(np.round(enc(y) * 255.0), 0, 255).astype(np.uint8)
+        rgb = np.repeat(g8[..., None], 3, axis=2)
+        e.add(t, rgb, rgb[..., 0].astype(np.float64), None)
+        luma.append(rgb[..., 0].mean() / 255.0)
+    res = {"checks": [], "summary": {}}
+    e.photo_checks(res, luma, static)
+    return {c["name"].split(" (")[0]: (c["status"], c["value"]) for c in res["checks"]}
+
+
+def test_photo_pairs():
+    """D-041 (1): a flash is a pair of opposing changes >= 0.1 (darker < 0.8) inside a 1/3 s window (G1); a monotonic change and
+    a slow camera sweep are not flashes (the R4 1 s pair row gates only a fixed camera); real flashes still fail."""
+    print("[photosensitivity pairs]")
+    base = 0.02
+    r = _photo_run(lambda t, H, W: np.full((H, W), 0.5 if (t // 4) % 2 else base))
+    expect("4 Hz full-screen flash fails G1 and G2", r["G1 flashes"][0] == "FAIL" and r["G2 WCAG general"][0] == "FAIL", str(r["G1 flashes"]))
+
+    def f2(t, H, W):
+        y = np.full((H, W), base)
+        if (t // 7.5) % 2 >= 1:
+            y[:, :int(0.278 * W)] = 0.5
+        return y
+    r = _photo_run(f2)
+    expect("2 Hz flash over 27.8 % fails G1, passes G2", r["G1 flashes"][0] == "FAIL" and r["G2 WCAG general"][0] == "PASS", str(r["G1 flashes"]))
+    r = _photo_run(lambda t, H, W: np.full((H, W), base + min(1.0, t / 30.0) * 0.58))
+    expect("a monotonic full-screen ramp is no flash", r["G1 flashes"][0] == "PASS" and r["G1 slow pairs"][1] == 0.0, str(r["G1 flashes"]))
+
+    def sweep(t, H, W):
+        y = np.full((H, W), base)
+        top = int((-0.3 + 0.6 * t / 30.0) * H)
+        y[max(0, top):max(0, min(H, top + int(0.3 * H))), :] = 0.3
+        return y
+    r = _photo_run(sweep, n=75)
+    expect("a slow band sweep (camera look-up) passes G1, its 1 s pairs are INFO", r["G1 flashes"][0] == "PASS" and r["G1 slow pairs"][0] == "INFO"
+           and r["G1 slow pairs"][1] >= 25.0, "%s %s" % (r["G1 flashes"], r["G1 slow pairs"]))
+    r = _photo_run(sweep, n=75, static=True)
+    expect("the same 1 s pairs on a fixed camera fail", r["G1 slow pairs"][0] == "FAIL", str(r["G1 slow pairs"]))
+
+    def light(t, H, W):
+        tt = t / 30.0
+        a = 0.0 if tt < 1 else (min(1, (tt - 1) / 0.1) if tt < 1.1 else max(0.0, 1 - (tt - 1.1) / 0.3))
+        return np.full((H, W), base + 0.3 * a)
+    r = _photo_run(light)
+    expect("a fast single full-screen flash fails G1", r["G1 flashes"][0] == "FAIL", str(r["G1 flashes"]))
+
+
+def test_blink_sign_rule():
+    """AL's C21 sign rule: a one-frame dip of a block is a blink; a bar stepping through a block (once) is a pop, not a blink."""
+    import seq_extra as sx
+    print("[block blinks, sign rule]")
+    H, W = 128, 256
+    e = sx.Extra("boundary", {}, W, H, 30)
+    e.kp = [32]
+    e.D, e.M = {32: []}, {32: []}
+    prev = None
+    for f in range(10):
+        g = np.full((H, W), 50.0) + np.random.RandomState(f).randn(H, W) * 0.3
+        if f == 5:
+            g[32:64, 64:96] -= 20.0
+        if f >= 4:
+            g[64:96, 160:192] += 15.0
+        e.add(f, np.zeros((H, W, 3), np.uint8), g, np.abs(g - prev) if prev is not None else None)
+        prev = g
+    ev, _ = e.pop_events(32)
+    bl = [x for x in ev if x["type"] == "blink"]
+    pops = [x for x in ev if x["type"] == "pop"]
+    expect("the one-frame dip is a blink (both rules)", len(bl) == 1 and bl[0]["frame"] == 5 and bl[0]["block"] == 10 and "sign" in bl[0]["rule"],
+           str([(x["frame"], x["block"], x.get("rule")) for x in bl]))
+    expect("the step is a pop, not a blink", len(pops) == 1 and pops[0]["block"] == 21, str([(x["frame"], x["block"]) for x in pops]))
+
+
+def test_decode_step_channels():
+    """D-041 (2): the decode gate counts visible steps in Y, Cb, Cr; an R-only 2-code step is reported, not gated."""
+    print("[decode step channels]")
+    p = np.zeros((300, 3)) + 100.0
+    p[150:, 0] += 2.0
+    m = qc.strip_metrics(p, dict(qc.TH))
+    t = dict(qc.TH)
+    t["band_step_channels"] = qc.DECODE_STEP_CHANNELS
+    m2 = qc.strip_metrics(p, t)
+    expect("an R-only step counts in the source gate, not in the decode gate", m["steps"] == 1 and m2["steps"] == 0 and m2["chan"]["R"][0] > 0,
+           "source %d, decode %d" % (m["steps"], m2["steps"]))
+
+
 def test_parity_companions():
     """Q1: X_window.png is dropped only beside X.png; key shots whose own tag ends in _window stay (KS07, KS19)."""
     shots = [{"tag": t, "file": "/c/%s.png" % t} for t in
@@ -293,7 +383,13 @@ def make_capture(root, with_4k):
     sd = qc.ensure_dir(os.path.join(cap, "seq_static_beat01_temporal"))
     for i in range(12):
         qc.save_png(os.path.join(sd, "frame_%05d.png" % i), quantise(base, 2.0))
-    json.dump({"kind": "static", "fps": 30, "freezeClock": True, "freezeDither": False}, open(os.path.join(sd, "sequence.json"), "w"))
+    json.dump({"kind": "static", "fps": 30, "freezeClock": True, "freezeDither": False, "rainOverride": 0},
+              open(os.path.join(sd, "sequence.json"), "w"))
+    # QA fix wave C20: a static clip captured with the clock running and rain on is refused (run conditions FAIL, not analysed)
+    sd = qc.ensure_dir(os.path.join(cap, "seq_static_beat02_wrongcond"))
+    for i in range(4):
+        qc.save_png(os.path.join(sd, "frame_%05d.png" % i), f0)
+    json.dump({"kind": "static", "fps": 30, "freezeClock": False, "rainOverride": None}, open(os.path.join(sd, "sequence.json"), "w"))
     sd = qc.ensure_dir(os.path.join(cap, "seq_b23_pop"))
     for i in range(40):
         k = 1.0 + 0.002 * i + (0.12 if i == 25 else 0.0)
@@ -333,7 +429,7 @@ def make_capture(root, with_4k):
             cov = coverage_line(256, 300, lambda y: 120.2 + 0.1 * i + 0.0 * y, 2.0, aliased)
             lin = bgl * (1 - cov[..., None]) + dec(np.array([40, 40, 50.]) / 255.0) * cov[..., None]
             qc.save_png(os.path.join(sd, "frame_%05d.png" % i), quantise(enc(lin) * 255.0, 1.0))
-        json.dump({"kind": "pan", "fps": 30, "lines": [{"name": "rail", "x": 121, "tol": 16, "y0": 20, "h": 256}],
+        json.dump({"kind": "pan", "fps": 30, "freezeClock": True, "rainOverride": 0, "lines": [{"name": "rail", "x": 121, "tol": 16, "y0": 20, "h": 256}],
                    "stability": [{"name": "vp", "rect": [20, 20, 84, 84]}]}, open(os.path.join(sd, "sequence.json"), "w"))
     sd = qc.ensure_dir(os.path.join(cap, "seq_enc_beat03_abyss"))
     night = gradient(360, 640, (30, 22, 52), (18, 14, 40))
@@ -561,6 +657,9 @@ def main(argv=None):
     test_banding()
     test_line_probe()
     test_parity_companions()
+    test_photo_pairs()
+    test_blink_sign_rule()
+    test_decode_step_channels()
     cap = make_capture(root, not a.no_4k)
     ad = make_audio(root)
 
@@ -633,6 +732,9 @@ def main(argv=None):
     expect("static frozen PASS (change 0 <= 2 levels)", st("static_beat01_frozen", "static change") == "PASS")
     expect("static with a temporal 2-code dither FAIL (change > 2 levels)", st("static_beat01_temporal", "static change") == "FAIL",
            qc.fmt(sj["static_beat01_temporal"]["summary"].get("static_max_change"), 2))
+    expect("wrong run conditions refused (C20)", st("static_beat02_wrongcond", "run conditions") == "FAIL" and
+           sj["static_beat02_wrongcond"].get("refused") is True)
+    expect("pan without the ss2 reference reads SKIP, not PASS", sj["b5_pan_rail"]["status"] == "SKIP", sj["b5_pan_rail"]["status"])
     expect("pop: luma step caught", st("b23_pop", "luma step/frame") == "FAIL")
     expect("pop: diff spike caught", st("b23_pop", "diff spikes") == "FAIL", str(sj["b23_pop"].get("spikes")))
     expect("clean boundary walk: activation PASS", st("b12", "activation-frame diff") == "PASS")

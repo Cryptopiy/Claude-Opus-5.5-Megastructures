@@ -5,7 +5,8 @@
 //   T-H4-STREAK (a lamp 40 m ahead reflects as a vertical streak, h/w >= 2.5 at 1080p); T-H4-KS17 (the goal window's floor
 //   maximum at 0.246 of the distance +-10 %); T-H4-CONT (no jump when the reflection ray passes a segment's ends or turns
 //   away); the puddle mask covers 35 %; the registry keeps at most 32 sources and crossfades them without a step; Look v2: the
-//   wall-plane blend (no seam at a near wall's vanishing line, CRIT0 #8).
+//   wall-plane blend (no seam at a near wall's vanishing line, CRIT0 #8); FX (INT-13, D-032 3): the facade planes' lit windows
+//   (mean 1 at every footprint, bounded, vertical streaks, continuous) and their gain on the floor path only.
 using System;
 using NUnit.Framework;
 using UnityEngine;
@@ -178,6 +179,71 @@ namespace Megastructure.Tests
             double cin = NocMirrorMath.WallReflect(P, new D3(1.0, 0.05, 0.3).Normalized, 0.1, 10, 4e-4, one, 1, sky, out D3 kin);
             Assert.AreEqual(1.0, cin, 1e-9, "inside the wall");
             Assert.IsFalse(double.IsNaN(kin.x));
+        }
+
+        /// <summary>FX (INT-13, D-032 3): the lit windows of a facade wall plane in the wet mirror keep the registered macro as their
+        /// mean at every footprint (so WetMacroTests and the energy of the mirror stay), never go negative or above one lit window
+        /// (1 / (FaLit WinU WinV)), and streak vertically (correlated over 3 m up, anti-correlated half a bay across).</summary>
+        [Test]
+        public void WallWindows_MeanOne_Bounded_StreakVertically()
+        {
+            double lit = NocFacadeConstants.FaLit, wu = NocSurfaceConstants.SurfWallWinU, wv = NocSurfaceConstants.SurfWallWinV;
+            double max = 1.0 / (lit * wu * wv) + 1e-9;
+            var fp = new[] { (0.05, 0.5), (0.3, 3.0), (0.6, 8.0), (2.0, 16.0), (6.0, 40.0) };
+            foreach (var (sU, sV) in fp)
+            {
+                double sum = 0; long n = 0; double hi = 0, lo = 1e9;
+                for (double u = 0; u < 1200; u += 0.61)
+                    for (double y = 0; y < 360; y += 0.47)
+                    {
+                        double v = NocMirrorMath.WallWindows(u, y, sU, sV, 1);
+                        sum += v; n++; hi = Math.Max(hi, v); lo = Math.Min(lo, v);
+                    }
+                double mean = sum / n;
+                Debug.Log(FormattableString.Invariant($"[NOC] wall windows sU {sU} sV {sV}: mean {mean:F4}, min {lo:F3}, max {hi:F3}"));
+                Assert.AreEqual(1.0, mean, 0.04, FormattableString.Invariant($"mean at sU {sU}, sV {sV}"));
+                Assert.GreaterOrEqual(lo, 0.0);
+                Assert.LessOrEqual(hi, max);
+            }
+            var rnd = new System.Random(5);
+            double sa = 0, sb = 0, sc = 0, saa = 0, sbb = 0, scc = 0, sab = 0, sac = 0; int m = 100000;
+            for (int k = 0; k < m; k++)
+            {
+                double u = rnd.NextDouble() * 1200 - 600, y = rnd.NextDouble() * 300;
+                double a = NocMirrorMath.WallWindows(u, y, 0.2, 10, 3), b = NocMirrorMath.WallWindows(u, y + 3.0, 0.2, 10, 3);
+                double c = NocMirrorMath.WallWindows(u + 1.5, y, 0.2, 10, 3);
+                sa += a; sb += b; sc += c; saa += a * a; sbb += b * b; scc += c * c; sab += a * b; sac += a * c;
+            }
+            double Corr(double sx, double sy, double sxx, double syy, double sxy)
+                => (sxy / m - sx / m * sy / m) / Math.Sqrt((sxx / m - sx / m * sx / m) * (syy / m - sy / m * sy / m));
+            double up = Corr(sa, sb, saa, sbb, sab), across = Corr(sa, sc, saa, scc, sac);
+            Debug.Log(FormattableString.Invariant($"[NOC] wall windows streak (sU 0.2, sV 10 m): corr 3 m up {up:F3}, half a bay across {across:F3}"));
+            Assert.Greater(up, 0.9, "a lit column stays lit over 3 m of height");
+            Assert.Less(across, -0.3, "window and pier alternate across");
+            // continuous in the footprint (the window level fades into the column share without a step)
+            double step = 0;
+            foreach (var (u0, y0) in new[] { (10.3, 20.1), (55.7, 40.3), (101.5, 7.7) })
+            {
+                double prev = double.NaN;
+                for (double sv = 0.5; sv <= 2.5; sv += 0.01)
+                {
+                    double v = NocMirrorMath.WallWindows(u0, y0, 0.2, sv, 0);
+                    if (!double.IsNaN(prev)) step = Math.Max(step, Math.Abs(v - prev));
+                    prev = v;
+                }
+            }
+            Assert.Less(step, 0.3, "no step as the vertical footprint grows");
+            // the floor path's gain: the facade plane (kind 0) shows its windows x SurfWallGain, a flat plane (kind 1) is unchanged
+            Assert.LessOrEqual(NocSurfaceConstants.SurfWallGain, 2.5, "D-032 3: the art-directed gain is at most 2.5");
+            var wall = new[] { new NocMirrorMath.WallPlane { cx = 30, cz = 0, nx = -1, nz = 0, halfLength = 400, top = 300, kind = 0, weight = 1, colour = new D3(0.02, 0.02, 0.02) } };
+            var r = new D3(0.95, 0.12, 0.2).Normalized;
+            double a0 = NocMirrorMath.WallReflect(new D3(0, 0, 0), r, 0.05, 0.05, 10, 0, wall, 1, new D3(0, 0, 0), false, out D3 c0);
+            double a1 = NocMirrorMath.WallReflect(new D3(0, 0, 0), r, 0.05, 0.05, 10, 0, wall, 1, new D3(0, 0, 0), true, out D3 c1);
+            Assert.AreEqual(a0, a1, 1e-12, "the coverage does not change");
+            Assert.IsFalse(double.IsNaN(c1.x));
+            wall[0].kind = 1;
+            NocMirrorMath.WallReflect(new D3(0, 0, 0), r, 0.05, 0.05, 10, 0, wall, 1, new D3(0, 0, 0), true, out D3 c2);
+            Assert.AreEqual(0.02, c2.x, 1e-12, "a flat plane keeps its radiance");
         }
 
         [Test]

@@ -37,14 +37,24 @@ namespace Megastructure
         public const double SurfRippleVar = 0.00126;
 
         // ------------------------------------------------------------------ mirror lobe (TEXTURE_PLAN 3.3)
-        /// <summary>GGX alpha in puddles; the dry alpha comes from the absolute mask smoothness, wetted, never under SurfAlphaDryMin.</summary>
-        public const double SurfAlphaPuddle = 0.08, SurfAlphaDryMin = 0.18;
+        /// <summary>GGX alpha in puddles; the dry alpha comes from the absolute mask smoothness, wetted, never under SurfAlphaDryMin.
+        /// FX (C04, fix wave p4_01; LOOK_V2 5.2 "up-facing wet 1.0"): 0.18 -> 0.08 (perceptual roughness 0.42 -> 0.28): at 0.18 the
+        /// film lobe (sigma 0.19 rad) clamped every wetted row, so the street, pier and plazas read as dry paving (p4_01).</summary>
+        public const double SurfAlphaPuddle = 0.08, SurfAlphaDryMin = 0.08;
         /// <summary>Reflectivity in puddles and on the wet film between them (v1 0.95 / 0.5).</summary>
         public const double SurfReflPuddle = 0.95, SurfReflDry = 0.55;
 
         // ------------------------------------------------------------------ the wall planes of the mirror (TEXTURE_PLAN 3.3, 2.7; CRIT0 #8)
         /// <summary>Half-width of the blend of a registered wall's ends and top (2.5 deg: about 5 deg around the vanishing line).</summary>
         public const double SurfWallBlendRad = 0.0436;
+        /// <summary>FX (INT-13, D-032 3): the wet floor's facade wall planes (kind 0) carry the lit windows: bays SurfWallBayU x floors
+        /// SurfWallFloorV, window SurfWallWinU x SurfWallWinV of the cell, lit with p = FaLit x the column's share q (q = SurfWallShareA
+        /// + SurfWallShareB h^3, mean 1, one value per bay and group of SurfWallGroupFloors floors, smoothstep between groups); box
+        /// filtered by the lobe's footprint on the wall (lateral and vertical apart: wet streets streak vertically), the windows fade
+        /// to the column share between 1/4 and 1/2 of a floor of vertical footprint, the share to 1 as 1/sqrt(groups x bays covered).
+        /// Mean 1 x the registered macro (WetMacroTests unchanged) x the art-directed gain SurfWallGain (D-032 3: <= 2.5).</summary>
+        public const double SurfWallBayU = 3.0, SurfWallFloorV = 3.6, SurfWallWinU = 0.55, SurfWallWinV = 0.6;
+        public const double SurfWallGroupFloors = 4.0, SurfWallShareA = 0.4, SurfWallShareB = 2.4, SurfWallGain = 2.5;
 
         // ------------------------------------------------------------------ wetness (LOOK_V2 5.2; TEXTURE_PLAN 3.3)
         /// <summary>wet = saturate(_Wetness (SurfWetBase + SurfWetUp up) + streak SurfWetStreak + up SurfWetPool (0.5 - height)).</summary>
@@ -86,5 +96,20 @@ namespace Megastructure
         public const double SurfGlassRough0 = 0.05, SurfGlassRough1 = 0.20, SurfGlassGrimeAlb = 0.03, SurfGlassRivuletD = 12.0;
         /// <summary>Tube ribs and frames every SurfGlassRibPitch metres along the tube, SurfGlassRibWidth wide.</summary>
         public const double SurfGlassRibPitch = 6.0, SurfGlassRibWidth = 0.08;
+        /// <summary>FX (INT-19, AB's request): the Forward+ lights on the glass x SurfGlassLightK: the specular-AA-filtered GGX lobe of a
+        /// lamp on the KS13 glass strip / floor is a soft 30-60 px glow that reads as a light floating over the void. KS13 (FX_r04 / r05
+        /// / r07 at 0.35 / 0.25 / 1): floor blob mean 70.1 / 65.6 / 86.9, strip glow 114.6 / 108.7 / 143.9 levels. KS12's blob at
+        /// (700, 375) is not this term (unchanged at 0.25). The environment reflection is unchanged.</summary>
+        public const double SurfGlassLightK = 0.35;
+        /// <summary>FX (C06, fix wave p4_01): the horizontal panes seen from above (the KS10 ledge, the KS13 strip) carry the water
+        /// film's impact rings at SurfGlassRingGain x the puddles' slope; their grime scatters 1 + SurfGlassGrimeH times the vertical
+        /// panes' albedo; they mirror the beat's registered sources (NocMirrorSourcesMixR) as cores of half-width SurfGlassSrcRho m
+        /// (the wet glow rho 0.3-0.45 drew a 60 px orb, FX_r10 KS13) through a lobe of variance floor SurfGlassSigmaFloor (the wet
+        /// floor's 0.004 is a 0.063 rad blur), the grime cutting that image by up to SurfGlassGrimeBreak.</summary>
+        public const double SurfGlassRingGain = 1.5, SurfGlassGrimeH = 2.0, SurfGlassGrimeBreak = 0.6, SurfGlassSrcRho = 0.15, SurfGlassSigmaFloor = 1e-5;
+        /// <summary>FX (C04, fix wave p4_01; D-032 3): the art-directed gain of the wet floors' area sources (lamps, blades, screens,
+        /// windows) next to SurfWallGain, at most 2.5. The registry's L_eff cap (3.0) and the closed-form lobe mass stay; the median
+        /// lamps register LampWarm x 1.6 (under the cap), so their streaks scale by the full 2.5.</summary>
+        public const double SurfSrcGain = 2.5;
     }
 }

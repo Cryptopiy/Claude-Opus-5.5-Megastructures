@@ -22,10 +22,18 @@
 #define NC_SurfRippleFadePx1 6.0
 #define NC_SurfRippleVar 0.00126
 #define NC_SurfAlphaPuddle 0.08
-#define NC_SurfAlphaDryMin 0.18
+#define NC_SurfAlphaDryMin 0.08
 #define NC_SurfReflPuddle 0.95
 #define NC_SurfReflDry 0.55
 #define NC_SurfWallBlendRad 0.0436
+#define NC_SurfWallBayU 3.0
+#define NC_SurfWallFloorV 3.6
+#define NC_SurfWallWinU 0.55
+#define NC_SurfWallWinV 0.6
+#define NC_SurfWallGroupFloors 4.0
+#define NC_SurfWallShareA 0.4
+#define NC_SurfWallShareB 2.4
+#define NC_SurfWallGain 2.5
 #define NC_SurfWetBase 0.55
 #define NC_SurfWetUp 0.45
 #define NC_SurfWetStreak 0.5
@@ -64,4 +72,11 @@
 #define NC_SurfGlassRivuletD 12.0
 #define NC_SurfGlassRibPitch 6.0
 #define NC_SurfGlassRibWidth 0.08
+#define NC_SurfGlassLightK 0.35
+#define NC_SurfGlassRingGain 1.5
+#define NC_SurfGlassGrimeH 2.0
+#define NC_SurfGlassGrimeBreak 0.6
+#define NC_SurfGlassSrcRho 0.15
+#define NC_SurfGlassSigmaFloor 0.00001
+#define NC_SurfSrcGain 2.5
 #endif

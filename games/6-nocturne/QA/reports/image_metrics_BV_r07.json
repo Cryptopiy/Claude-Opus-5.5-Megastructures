@@ -1,0 +1,1919 @@
+{
+ "run": "BV_r07",
+ "capture_dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-21T02:18:58.550Z",
+  "finished": "2026-11-21T02:19:09.139Z",
+  "seconds": 10.589678,
+  "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07",
+  "captureSet": "keyshots1080,beats",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "freezeDither": true,
+   "freezeAmbient": false,
+   "args": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\Builds\\BV\\Nocturne.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\Logs\\player-BV-r07.log -report-dir W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\reports -capture W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07 -capture-set keyshots1080,beats -capture-only KS03,KS04,KS05,KS06,beat02"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "supersample": 1,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 1.870944,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "NocturneConstants.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS00_alley_start": [],
+  "KS01_alley_noodle": [],
+  "KS02_alley_slit": [],
+  "KS03_boulevard_mouth": [
+   "1920x1080"
+  ],
+  "KS04_boulevard_axis": [
+   "1920x1080"
+  ],
+  "KS06_tram": [
+   "1920x1080"
+  ],
+  "KS05_boulevard_up": [
+   "1920x1080"
+  ],
+  "KS07_edge_window": [],
+  "KS08_edge_flank": [],
+  "KS09_edge_gulf": [],
+  "KS10_edge_plunge": [],
+  "KS11_bridge_train": [],
+  "KS12_bridge_void": [],
+  "KS13_bridge_glass": [],
+  "KS14_garden_gate": [],
+  "KS15_garden_canopy": [],
+  "KS16_signs_wall": [],
+  "KS17_heart_reveal": [],
+  "KS18_koi_pass": [],
+  "KS19_goal_window": []
+ },
+ "images": [
+  {
+   "tag": "KS03_boulevard_mouth",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\KS03_boulevard_mouth.png",
+   "beat": 1,
+   "s": 117.0,
+   "keyshot": "KS03_boulevard_mouth",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 1, first at [[1669, 755]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 0.889 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0586,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.0995,
+     "threshold": "0.0549..0.1569",
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 756.3,
+     "threshold": null,
+     "note": "sky band not uniform (spread 121.0 codes): objects on the horizon"
+    },
+    {
+     "name": "banding[alley_wall_dark]",
+     "status": "PASS",
+     "value": 0.102,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.15 (run 7 px), - / -, 2 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      1669,
+      755
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.8891782407407407,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.09946030378341675,
+     "p1": 0.058556076139211655,
+     "p50": 0.0820854976773262,
+     "p99": 0.4225427806377411,
+     "std": 0.06658390909433365
+    },
+    "luma_linear": {
+     "mean": 0.014126654714345932,
+     "p1": 0.0047548068687319756,
+     "p50": 0.007469151169061661,
+     "p99": 0.15402933955192566,
+     "std": 0.04238808900117874
+    },
+    "banding": {
+     "alley_wall_dark": {
+      "direction": "v",
+      "n_strips": 2,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 0.1529819769965276,
+      "longest_run_px": 7,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.002056776381690697,
+      "score": 0.10198798466435173,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         594
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.0,
+        "longest_run_px": 0
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         594
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.1529819769965276,
+        "longest_run_px": 7
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.10198798466435173
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS04_boulevard_axis",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\KS04_boulevard_axis.png",
+   "beat": 2,
+   "s": 250.0,
+   "keyshot": "KS04_boulevard_axis",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 32,
+     "threshold": "0",
+     "note": "bright 6 (mode all), dark 26, first at [[904, 569], [882, 619], [572, 711], [556, 902], [1413, 904]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[513, 901], [513, 902], [1787, 945], [1057, 960]]; neon mask 2.761 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0122,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.06,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1435,
+     "threshold": "0.0941..0.2118",
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 963.7,
+     "threshold": null,
+     "note": "sky band not uniform (spread 150.5 codes): objects on the horizon"
+    },
+    {
+     "name": "banding[sky_above_facades]",
+     "status": "PASS",
+     "value": 0.609,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.91 (run 7 px), - / -, 3 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 6,
+    "nan_like_dark": 26,
+    "nan_like_pos": [
+     [
+      904,
+      569
+     ],
+     [
+      882,
+      619
+     ],
+     [
+      572,
+      711
+     ],
+     [
+      556,
+      902
+     ],
+     [
+      1413,
+      904
+     ],
+     [
+      1574,
+      953
+     ],
+     [
+      1532,
+      955
+     ],
+     [
+      1542,
+      956
+     ],
+     [
+      1575,
+      956
+     ],
+     [
+      1603,
+      957
+     ],
+     [
+      1679,
+      958
+     ],
+     [
+      963,
+      959
+     ],
+     [
+      1533,
+      959
+     ],
+     [
+      1566,
+      960
+     ],
+     [
+      1680,
+      961
+     ],
+     [
+      1577,
+      963
+     ],
+     [
+      186,
+      964
+     ],
+     [
+      238,
+      964
+     ],
+     [
+      1681,
+      964
+     ],
+     [
+      1513,
+      966
+     ]
+    ],
+    "clipped_pct": 0.012249228395061729,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.761429398148148,
+    "isolated_px": 4,
+    "isolated_pos": [
+     [
+      513,
+      901
+     ],
+     [
+      513,
+      902
+     ],
+     [
+      1787,
+      945
+     ],
+     [
+      1057,
+      960
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.14347559213638306,
+     "p1": 0.05995607748627663,
+     "p50": 0.10616549849510193,
+     "p99": 0.7043294906616211,
+     "std": 0.10642066597938538
+    },
+    "luma_linear": {
+     "mean": 0.029241809621453285,
+     "p1": 0.004902230110019445,
+     "p50": 0.011007178574800491,
+     "p99": 0.5048754215240479,
+     "std": 0.07647532224655151
+    },
+    "banding": {
+     "sky_above_facades": {
+      "direction": "v",
+      "n_strips": 3,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 0.9133843460648139,
+      "longest_run_px": 7,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.027926587554814697,
+      "score": 0.6089228973765426,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6992161458333341,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6538557812500029,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.9133843460648139,
+        "longest_run_px": 7
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.6089228973765426
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS05_boulevard_up",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\KS05_boulevard_up.png",
+   "beat": 2,
+   "s": 310.0,
+   "keyshot": "KS05_boulevard_up",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 6,
+     "threshold": "0",
+     "note": "bright 5 (mode all), dark 1, first at [[1485, 158], [883, 815], [887, 857], [1431, 1008], [877, 1074]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[862, 977]]; neon mask 2.840 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0011,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0667,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1692,
+     "threshold": "0.0941..0.2118",
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "line not in frame or no pitch/fov"
+    },
+    {
+     "name": "banding[cloud_ceiling]",
+     "status": "PASS",
+     "value": 0.478,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.72 (run 9 px), - / -, 4 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 4.822530864197531e-07,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 5,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      1485,
+      158
+     ],
+     [
+      883,
+      815
+     ],
+     [
+      887,
+      857
+     ],
+     [
+      1431,
+      1008
+     ],
+     [
+      877,
+      1074
+     ],
+     [
+      878,
+      1079
+     ]
+    ],
+    "clipped_pct": 0.0010609567901234567,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.83984375,
+    "isolated_px": 1,
+    "isolated_pos": [
+     [
+      862,
+      977
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.16922712326049805,
+     "p1": 0.0666823536157608,
+     "p50": 0.1346815675497055,
+     "p99": 0.7704035705327992,
+     "std": 0.12026004493236542
+    },
+    "luma_linear": {
+     "mean": 0.038782890886068344,
+     "p1": 0.005615635309368372,
+     "p50": 0.01632566563785076,
+     "p99": 0.5680961012840271,
+     "std": 0.08990200608968735
+    },
+    "banding": {
+     "cloud_ceiling": {
+      "direction": "v",
+      "n_strips": 4,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 0.7164248535156226,
+      "longest_run_px": 9,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.014848607709620846,
+      "score": 0.47761656901041505,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         335
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.4388540581597222,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         335
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.467409993489583,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         335
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.7164248535156226,
+        "longest_run_px": 9
+       },
+       {
+        "strip": [
+         192,
+         256
+        ],
+        "rows": [
+         0,
+         335
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.23239065755208288,
+        "longest_run_px": 7
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.47761656901041505
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS06_tram",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\KS06_tram.png",
+   "beat": 2,
+   "s": 264.0,
+   "keyshot": "KS06_tram",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 12,
+     "threshold": "0",
+     "note": "bright 4 (mode all), dark 8, first at [[1830, 127], [1061, 536], [1409, 725], [541, 738], [630, 746]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[339, 680], [555, 689]]; neon mask 2.443 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0015,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0616,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1382,
+     "threshold": "0.0941..0.2118",
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 747.3,
+     "threshold": null,
+     "note": "sky band not uniform (spread 117.0 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 4,
+    "nan_like_dark": 8,
+    "nan_like_pos": [
+     [
+      1830,
+      127
+     ],
+     [
+      1061,
+      536
+     ],
+     [
+      1409,
+      725
+     ],
+     [
+      541,
+      738
+     ],
+     [
+      630,
+      746
+     ],
+     [
+      540,
+      747
+     ],
+     [
+      404,
+      751
+     ],
+     [
+      1718,
+      751
+     ],
+     [
+      539,
+      755
+     ],
+     [
+      629,
+      756
+     ],
+     [
+      133,
+      757
+     ],
+     [
+      915,
+      898
+     ]
+    ],
+    "clipped_pct": 0.0015432098765432098,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.4427565586419755,
+    "isolated_px": 2,
+    "isolated_pos": [
+     [
+      339,
+      680
+     ],
+     [
+      555,
+      689
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.13819268345832825,
+     "p1": 0.061643920838832855,
+     "p50": 0.11287607997655869,
+     "p99": 0.682204008102417,
+     "std": 0.09698852896690369
+    },
+    "luma_linear": {
+     "mean": 0.02621357887983322,
+     "p1": 0.005076166708022356,
+     "p50": 0.012155515141785145,
+     "p99": 0.4524882733821869,
+     "std": 0.06887434422969818
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_end",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_end.png",
+   "beat": 2,
+   "s": 398.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 9,
+     "threshold": "0",
+     "note": "bright 9 (mode all), dark 0, first at [[1809, 126], [863, 186], [864, 228], [881, 229], [1881, 232]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 7,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[865, 193], [865, 194], [881, 229], [456, 246], [457, 246]]; neon mask 3.994 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0067,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0745,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.129,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 72.0 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 9,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      1809,
+      126
+     ],
+     [
+      863,
+      186
+     ],
+     [
+      864,
+      228
+     ],
+     [
+      881,
+      229
+     ],
+     [
+      1881,
+      232
+     ],
+     [
+      793,
+      547
+     ],
+     [
+      942,
+      549
+     ],
+     [
+      931,
+      553
+     ],
+     [
+      988,
+      553
+     ]
+    ],
+    "clipped_pct": 0.006655092592592593,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 3.9941165123456788,
+    "isolated_px": 7,
+    "isolated_pos": [
+     [
+      865,
+      193
+     ],
+     [
+      865,
+      194
+     ],
+     [
+      881,
+      229
+     ],
+     [
+      456,
+      246
+     ],
+     [
+      457,
+      246
+     ],
+     [
+      526,
+      246
+     ],
+     [
+      527,
+      246
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.12897716462612152,
+     "p1": 0.07452549040317535,
+     "p50": 0.11510982364416122,
+     "p99": 0.4545671045780182,
+     "std": 0.0749989002943039
+    },
+    "luma_linear": {
+     "mean": 0.020518919453024864,
+     "p1": 0.006522703915834427,
+     "p50": 0.012538764625787735,
+     "p99": 0.17743026629090355,
+     "std": 0.055196769535541534
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_look_back",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_look_back.png",
+   "beat": 2,
+   "s": 260.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 5,
+     "threshold": "0",
+     "note": "bright 4 (mode all), dark 1, first at [[1027, 112], [1049, 211], [1058, 219], [1461, 520], [362, 533]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[238, 549]]; neon mask 0.581 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0611,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1319,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 32.0 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 4,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      1027,
+      112
+     ],
+     [
+      1049,
+      211
+     ],
+     [
+      1058,
+      219
+     ],
+     [
+      1461,
+      520
+     ],
+     [
+      362,
+      533
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.5814525462962963,
+    "isolated_px": 1,
+    "isolated_pos": [
+     [
+      238,
+      549
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.131919264793396,
+     "p1": 0.06109333783388138,
+     "p50": 0.13445021212100983,
+     "p99": 0.29969117820262925,
+     "std": 0.055047810077667236
+    },
+    "luma_linear": {
+     "mean": 0.01840965636074543,
+     "p1": 0.0050316485576331615,
+     "p50": 0.01632566563785076,
+     "p99": 0.0739925280213356,
+     "std": 0.029163675382733345
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_look_l",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_look_l.png",
+   "beat": 2,
+   "s": 260.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 2, first at [[1756, 385], [1478, 530]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 0.307 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0597,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1295,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 127.0 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 2,
+    "nan_like_pos": [
+     [
+      1756,
+      385
+     ],
+     [
+      1478,
+      530
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.30733989197530864,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.1295098215341568,
+     "p1": 0.059672944247722626,
+     "p50": 0.10925333946943283,
+     "p99": 0.4833529594540596,
+     "std": 0.07555392384529114
+    },
+    "luma_linear": {
+     "mean": 0.020569536834955215,
+     "p1": 0.004868782591074705,
+     "p50": 0.011565159074962139,
+     "p99": 0.20312303826212885,
+     "std": 0.044143788516521454
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_look_r",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_look_r.png",
+   "beat": 2,
+   "s": 260.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 4, first at [[163, 412], [600, 530], [820, 530], [946, 530]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 0.321 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.056,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1228,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 152.5 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 4,
+    "nan_like_pos": [
+     [
+      163,
+      412
+     ],
+     [
+      600,
+      530
+     ],
+     [
+      820,
+      530
+     ],
+     [
+      946,
+      530
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.3208429783950617,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.1227976381778717,
+     "p1": 0.05603451281785965,
+     "p50": 0.09213098883628845,
+     "p99": 0.4294196665287018,
+     "std": 0.070754274725914
+    },
+    "luma_linear": {
+     "mean": 0.018328431993722916,
+     "p1": 0.004511105362325907,
+     "p50": 0.008865473791956902,
+     "p99": 0.15823420882225037,
+     "std": 0.03188497573137283
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_look_up60",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_look_up60.png",
+   "beat": 2,
+   "s": 260.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 2.006 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0658,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1787,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "line not in frame or no pitch/fov"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "clipped_pct": 4.8225308641975306e-05,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.006124614197531,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.1787419617176056,
+     "p1": 0.06584863364696503,
+     "p50": 0.14428001642227173,
+     "p99": 0.7782110571861267,
+     "std": 0.12515228986740112
+    },
+    "luma_linear": {
+     "mean": 0.042776141315698624,
+     "p1": 0.005529625341296196,
+     "p50": 0.01840243674814701,
+     "p99": 0.6113481521606445,
+     "std": 0.09416354447603226
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "PASS"
+  },
+  {
+   "tag": "beat02_boulevard_mid",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_mid.png",
+   "beat": 2,
+   "s": 260.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0",
+     "note": "bright 3 (mode all), dark 1, first at [[893, 117], [893, 276], [1560, 533], [955, 534]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[866, 197], [444, 523], [1781, 523], [543, 526]]; neon mask 2.474 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0047,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0614,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1376,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 168.5 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 9.645061728395062e-07,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 3,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      893,
+      117
+     ],
+     [
+      893,
+      276
+     ],
+     [
+      1560,
+      533
+     ],
+     [
+      955,
+      534
+     ]
+    ],
+    "clipped_pct": 0.00472608024691358,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.4738136574074074,
+    "isolated_px": 4,
+    "isolated_pos": [
+     [
+      866,
+      197
+     ],
+     [
+      444,
+      523
+     ],
+     [
+      1781,
+      523
+     ],
+     [
+      543,
+      526
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.1375553160905838,
+     "p1": 0.061360783874988556,
+     "p50": 0.12351922690868378,
+     "p99": 0.540877640247345,
+     "std": 0.0832071378827095
+    },
+    "luma_linear": {
+     "mean": 0.02352265827357769,
+     "p1": 0.0050441506318748,
+     "p50": 0.014087626710534096,
+     "p99": 0.2558894753456116,
+     "std": 0.05963755398988724
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "beat02_boulevard_start",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\blvd\\QA\\captures\\BV_r07\\beat02_boulevard_start.png",
+   "beat": 2,
+   "s": 122.0,
+   "keyshot": null,
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 0"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[391, 535], [378, 547]]; neon mask 1.043 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0586,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "INFO",
+     "value": 0.1086,
+     "threshold": null,
+     "note": "display"
+    },
+    {
+     "name": "horizon[default]",
+     "status": "SKIP",
+     "value": 540.0,
+     "threshold": null,
+     "note": "sky band not uniform (spread 125.0 codes): objects on the horizon"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 0,
+    "nan_like_pos": [],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 1.04296875,
+    "isolated_px": 2,
+    "isolated_pos": [
+     [
+      391,
+      535
+     ],
+     [
+      378,
+      547
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.10857828706502914,
+     "p1": 0.058556076139211655,
+     "p50": 0.09943922609090805,
+     "p99": 0.43549180030822754,
+     "std": 0.06610330194234848
+    },
+    "luma_linear": {
+     "mean": 0.015654807910323143,
+     "p1": 0.0047548068687319756,
+     "p50": 0.009940054267644882,
+     "p99": 0.1632927805185318,
+     "std": 0.044094331562519073
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  }
+ ]
+}

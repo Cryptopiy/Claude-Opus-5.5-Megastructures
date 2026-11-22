@@ -170,9 +170,11 @@ namespace Megastructure
 
     public sealed class TubeTrain
     {
-        /// <summary>RMS dBFS of a whole train abeam at 12 m (the bridge tubes), before the X-layer swells.</summary>
-        public const double PeakDb = -21.0, RefDistance = 12.0, FarHz = 700.0, NearHz = 2500.0;
-        public const double WhooshSigmaS = 0.25, WhooshDb = -24.0, ThumpDb = -30.0, ThumpHz = 85.0, ThumpT60 = 0.08;
+        /// <summary>RMS dBFS of a whole train abeam at 12 m (the bridge tubes), before the X-layer swells. Fix wave C08 / AU-06: 3 dB
+        /// down (-21 -> -24, whoosh -24 -> -27, thump -30 -> -33): the passes were the five loudest seconds of the walk, +8.5..+9 dB over
+        /// the beat-4 median, louder than any money shot, burying the dread cues near them and loading the edit's make-up limiter.</summary>
+        public const double PeakDb = -24.0, RefDistance = 12.0, FarHz = 700.0, NearHz = 2500.0;
+        public const double WhooshSigmaS = 0.25, WhooshDb = -27.0, ThumpDb = -33.0, ThumpHz = 85.0, ThumpT60 = 0.08;
         static readonly double[] WhineHz = { 280.0, 560.0, 1120.0 };
         static readonly double[] WhineDb = { 0.0, -6.0, -14.0 };
         public readonly int Index;

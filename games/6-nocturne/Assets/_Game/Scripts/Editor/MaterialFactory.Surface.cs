@@ -134,6 +134,15 @@ namespace Megastructure.EditorTools
             finally { Object.DestroyImmediate(tex); }
         }
 
+        /// <summary>FX (C04, fix wave p4_01; LOOK_V2 5.2 "up-facing 1.0"): the rain film's gloss lift of the open, up-facing wet floors
+        /// (street, alley, pier, plazas): smoothness lerp(photo, SurfWetGloss 0.88, 0.8) = 0.70-0.78, perceptual roughness 0.22-0.30
+        /// (0.4-0.55 left 0.45-0.55, which read as dry paving in p4_01); the steel deck 0.7. The garden path and moss stay (sheltered).</summary>
+        const double WetUpGloss = 0.8, WetUpGlossDeck = 0.7;
+        /// <summary>FX (C04): the alley film's reflectivity (WetReflDry 0.5 elsewhere): with the sharper film (SurfAlphaDryMin 0.08) the
+        /// alley floor rose 32.2 -> 35.1 codes and KS01's mean 39.5 -> 40.6, over beat 1's 14-40 window (FX_r12); 0.38 gave 40.3
+        /// (FX_r13, 0.023 codes per 0.01), 0.18 aims at 39.8; the puddles (0.95) keep the bar's streak.</summary>
+        const double WetAlleyReflDry = 0.18;
+
         /// <summary>A NocWet row's photo set (Photo) plus the threshold of its own heights (_PuddleTh2, the row's puddle fraction) and the
         /// rain film's lift of its absolute dry smoothness (_WetGloss2).</summary>
         static MatSpec PhotoWet(MatSpec m, string key, NocPal token, float factor, double fraction, double wetGloss, bool plates = false, bool wholeCourses = false)
@@ -183,7 +192,7 @@ namespace Megastructure.EditorTools
                 // ---- graybox: the floor slabs are the wet stone floor (NocWet, the analytic mirror on every graybox beat)
                 WetV2(Wet("GrayFloor", NocPal.ConcreteDark, WetStone, NocTexFamily.Paving, 2.4, NocturneConstants.WetPuddleFraction, NocturneConstants.WetAlphaDry, 0.6),
                       NocTexFamily.Paving, NocturneConstants.WetPuddleFraction, 0.45, 0.65)
-                      .With(x => PhotoWet(x, "Pavers", NocPal.ConcreteDark, WetStone, NocturneConstants.WetPuddleFraction, 0.5)),
+                      .With(x => PhotoWet(x, "Pavers", NocPal.ConcreteDark, WetStone, NocturneConstants.WetPuddleFraction, WetUpGloss)),
                 Make("GrayWall", NocPaths.ShaderGraybox).C("_BaseColor", NocPal.ConcreteDark).C("_EmissionColor", NocPal.Floor, 0f)
                     .F("_Smoothness", 0.25).F("_GridStrength", 0).F("_AO", 1).F("_Cull", (float)CullMode.Back).Inst(),
                 Make("GrayMarker", NocPaths.ShaderGraybox).C("_BaseColor", NocPal.WetAsphalt).C("_EmissionColor", NocPal.NeonCyan, NocturnePalette.EmissionSign)
@@ -237,19 +246,20 @@ namespace Megastructure.EditorTools
                 // ---- wet floors (NocWet, one per 14.4 surface)
                 WetV2(Wet("FloorAlley", NocPal.WetAsphalt, 1f, NocTexFamily.Asphalt, 2.0, NocturneConstants.WetPuddleFraction, NocturneConstants.WetAlphaDry, 0.7),
                       NocTexFamily.Asphalt, NocturneConstants.WetPuddleFraction, 0.35, 0.55)
-                      .With(x => PhotoWet(x, "AsphaltAlley", NocPal.WetAsphalt, 1f, NocturneConstants.WetPuddleFraction, 0.4)),
+                      .With(x => PhotoWet(x, "AsphaltAlley", NocPal.WetAsphalt, 1f, NocturneConstants.WetPuddleFraction, WetUpGloss))
+                      .F("_ReflDry", WetAlleyReflDry),
                 WetV2(Wet("FloorStone", NocPal.ConcreteDark, WetStone, NocTexFamily.Paving, 2.4, NocturneConstants.WetPuddleFraction, NocturneConstants.WetAlphaDry, 0.6),
                       NocTexFamily.Paving, NocturneConstants.WetPuddleFraction, 0.45, 0.65)
-                      .With(x => PhotoWet(x, "Pavers", NocPal.ConcreteDark, WetStone, NocturneConstants.WetPuddleFraction, 0.5)),
+                      .With(x => PhotoWet(x, "Pavers", NocPal.ConcreteDark, WetStone, NocturneConstants.WetPuddleFraction, WetUpGloss)),
                 WetV2(Wet("FloorSteelDeck", NocPal.ConcreteDark, MetalDark, NocTexFamily.SteelDeck, 2.4, NocturneConstants.WetPuddleFraction, 0.3, 0.6),
                       NocTexFamily.SteelDeck, NocturneConstants.WetPuddleFraction, 0.55, 0.75, 2.4, 1.2)
-                      .With(x => PhotoWet(x, "DeckPlate", NocPal.MetalPaint, 1f, NocturneConstants.WetPuddleFraction, 0.5, true)).F("_HexRotate", 0),
+                      .With(x => PhotoWet(x, "DeckPlate", NocPal.MetalPaint, 1f, NocturneConstants.WetPuddleFraction, WetUpGlossDeck, true)).F("_HexRotate", 0),
                 WetV2(Wet("FloorGardenPath", NocPal.ConcreteDark, 0.8f, NocTexFamily.Paving, 1.8, 0.25, 0.4, 0.7),
                       NocTexFamily.Paving, 0.25, 0.4, 0.6)
                       .With(x => PhotoWet(x, "GardenTiles", NocPal.ConcreteDark, 0.8f, 0.25, 0.4)),
                 WetV2(Wet("FloorPlaza", NocPal.ConcreteDark, 1f, NocTexFamily.PlazaStone, 4.8, NocturneConstants.WetPuddleFraction, NocturneConstants.WetAlphaDry, 0.5),
                       NocTexFamily.PlazaStone, NocturneConstants.WetPuddleFraction, 0.45, 0.65)
-                      .With(x => PhotoWet(x, "Granite", NocPal.Granite, 1f, NocturneConstants.WetPuddleFraction, 0.55)),
+                      .With(x => PhotoWet(x, "Granite", NocPal.Granite, 1f, NocturneConstants.WetPuddleFraction, WetUpGloss)),
                 // ---- Look v2 (SU, TEXTURE_PLAN 1.3 / 3.5): opaque dark panes (the Old Quarter windows; untextured, smoothness 0.5: at
                 //      0.86-0.92 the panes beside the goal reflected the goal light as warm points, r01 KS17)
                 Make("GlassDark", NocPaths.ShaderGraybox).C("_BaseColor", NocPal.GlassDark).C("_EmissionColor", NocPal.Floor, 0f)

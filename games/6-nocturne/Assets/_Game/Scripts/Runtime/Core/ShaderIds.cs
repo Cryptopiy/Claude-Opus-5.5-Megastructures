@@ -36,6 +36,10 @@ namespace Megastructure
         public static readonly int KoiSpine = Shader.PropertyToID("_NocKoiSpine");
         /// <summary>NocFacade (14.7 H2): x = epoch phase t / 150 (double-wrapped mod 65 536), y = warm fraction, z = scene time.</summary>
         public static readonly int Facade = Shader.PropertyToID("_NocFacade");
+        /// <summary>D-034 5.1 darkness wave (NocDarkWave): A = (cx, cz, cos yaw, sin yaw), B = (hx, hz, front y, ramp m), C.x = amount.</summary>
+        public static readonly int DarkWaveA = Shader.PropertyToID("_NocDarkWaveA");
+        public static readonly int DarkWaveB = Shader.PropertyToID("_NocDarkWaveB");
+        public static readonly int DarkWaveC = Shader.PropertyToID("_NocDarkWaveC");
         /// <summary>NocStreak (14.7 H7): x = traffic time (double-wrapped mod 65 536 s), y = scene time wrapped mod 3 600 s.</summary>
         public static readonly int Traffic = Shader.PropertyToID("_NocTraffic");
         /// <summary>Instanced-batch fade (detail tiers; Abyss _AbFade).</summary>

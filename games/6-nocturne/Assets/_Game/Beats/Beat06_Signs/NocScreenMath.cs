@@ -8,9 +8,10 @@
 //   1/4, 1/2, 3/4, 1 (periodic), each desaturated 35 % toward its luminance and mixed 15 % toward ScreenBase, then
 //   luminance-normalised with k 0.8 (D-010) to a geometric mean of 0.27 (NocturneConstants.ScreenRampY); the amber stop turns to
 //   the ice stop over s 1 230-1 290 (AmberWeight, the twin of _NocAmber.y)
-//   imagery (Full tier): displays of 72.8 m x 3..7 panels, a programme per 40-75 s epoch (8 kinds) and a display level, with a
-//   12 s crossfade, giving a luminance factor m (capped 2.42, mean about 1.09) and an accent weight a:
-//   colour = lerp(ramp(h), lerp(ramp(h + 1/4), ice, 0.35), a) x m
+//   imagery (Full tier, v3): displays of 72.8 m x 3..7 panels, a programme per 40-75 s epoch (10 kinds), a display level and a
+//   hue offset, with a 16 s crossfade, giving a luminance factor m (x 1.18, capped 4.5 / the resolved LED dot's peak gain),
+//   an accent weight a and the hue offset dh:
+//   colour = lerp(ramp(h + dh), sat(ramp(h + dh + 1/4), 1.3), a) x m
 //   emission = colour x 0.45 x 0.55 x (1 + 0.0909 breath) x panel (brightness, white point, age, failures) x modules x LED x seams
 //   x the LED view-angle falloff; breath sin(2 pi (n t / 600 + phase)), n = 30..60 per panel (0.05 - 0.10 Hz)
 // Time arguments are the wrapped phases the driver uploads (frac(t / 58), frac(t / 60), t mod 600), so the shader and this mirror
@@ -29,23 +30,37 @@ namespace Megastructure
         public static double AmberWeight => AtmosphereDriver.FrameScreenAmber;
 
         // ------------------------------------------------------------------ hardware constants (NocScreenWave.hlsl SCR_*)
-        public const double Z0 = 275.0, PitchZ = 36.4, PitchY = 20.4, HalfGap = 0.2, HalfBezel = 0.32, Module = 4.0, Joint = 0.05;
-        public const double LedPitch = 0.25, LedDot = 0.66, DisplayW = 72.8, Crossfade = 12.0;
-        /// <summary>LED dots: faded in from 5 to 10 px of pitch, over a diffuser floor of 15 % (energy kept).</summary>
-        public const double LedFade0 = 5.0, LedFade1 = 10.0, LedFloor = 0.15;
+        public const double Z0 = 275.0, PitchZ = 36.4, PitchY = 20.4, HalfGap = 0.2, HalfBezel = 0.32, Module = 4.0, Joint = 0.03;
+        public const double LedPitch = 0.25, LedDot = 0.66, DisplayW = 72.8, Crossfade = 16.0;
+        /// <summary>LED dots: faded in from 10 to 18 px of pitch, over a diffuser floor of 35 % (energy kept; SG r03 / r04: from 5 or
+        /// 8 px the dot lattice read as a wire mesh).</summary>
+        public const double LedFade0 = 10.0, LedFade1 = 18.0, LedFloor = 0.35;
         /// <summary>Glyph-column scroll speed (m/s; SCR_COLV): its 2.6 m strokes with 2 m soft edges pass a pixel at &lt;= 0.06 Hz.</summary>
         public const double ColumnSpeed = 0.15;
         /// <summary>Light the 0.4 m gap scatters (fraction of the panel's), joint darkening, LED view-angle floor at grazing and its exponent.</summary>
-        public const double GapScatter = 0.10, JointDark = 0.85, AngleFloor = 0.70, AngleExp = 0.4;
+        public const double GapScatter = 0.10, JointDark = 0.40, AngleFloor = 0.70, AngleExp = 0.4;
         /// <summary>Failure rates per panel: dead (1.2 %), dead modules (1.8 %: 8 % of their modules), a stuck module column (1 %); aged 18 %.</summary>
         public const double DeadPanel = 0.012, DeadModulePanels = 0.030, StuckPanels = 0.040, DeadModuleFraction = 0.08, AgedFraction = 0.18;
-        /// <summary>Programme weights (cumulative thresholds: wave, glyph, aurora, sun, glyph column, horizon, tiles, standby) and the
-        /// cap of m (the bloom check).</summary>
-        public static readonly double[] ProgramCum = { 0.14, 0.32, 0.42, 0.58, 0.68, 0.84, 0.92, 1.0 };
-        public const int ProgramCount = 8;
-        public const double ContentMaxM = 2.42;
+        /// <summary>Programme weights (cumulative thresholds: wave, glyph, liquid, sun, glyph column, skyline, glyph matrix, bokeh,
+        /// scan lines, standby).</summary>
+        public static readonly double[] ProgramCum = { 0.06, 0.16, 0.32, 0.42, 0.50, 0.63, 0.76, 0.87, 0.95, 1.0 };
+        public const int ProgramCount = 10;
+        public static readonly string[] ProgramNames = { "wave", "glyph", "liquid", "sun", "column", "skyline", "matrix", "bokeh", "lines", "standby" };
+        /// <summary>The cap of m where the LED dots are unresolved (SCR_MMAX); where they are resolved the cap is divided by
+        /// 1 + DotGain wp, so cap x the dot's peak gain is ContentMaxM everywhere (the bloom check).</summary>
+        public const double ContentMaxM = 4.5;
+        /// <summary>The resolved LED dot's peak gain - 1 (SCR_DOTG): LedFloor + (1 - LedFloor) / LedDot^2 - 1.</summary>
+        public const double DotGain = LedFloor + (1.0 - LedFloor) / (LedDot * LedDot) - 1.0;
+        /// <summary>Imagery normalisation (SCR_MNORM): mean m x the LED hardware mean 1.56 (Beat06SignsTests), the LOOK_V2 KS16 wall
+        /// of 60-85 codes (SG r03: 51.5 codes at 0.97, the bare 14.5.6 mean; r07: 61.4 at 1.70; D-036 (6): 1.85 moves it toward the
+        /// middle of the band, 61.4 x (1.85 / 1.70)^(1 / 2.2) = 64.0 expected); the peak stays capped (ContentMaxM).</summary>
+        public const double ContentNorm = 1.85;
+        /// <summary>The LED wall's design mean relative to the bare 14.5.6 wave (mean m x the hardware mean): 1.43 x 1.85 / 1.70.</summary>
+        public const double WallMeanGain = 1.556;
+        /// <summary>The softest imagery edge (m) and the accent saturation (SCR_EDGE, SCR_SATK).</summary>
+        public const double Edge = 0.12, AccentSat = 1.3;
         /// <summary>Display levels per epoch (25 / 50 / 25 %).</summary>
-        public const double LevelLow = 0.95, LevelMid = 1.2, LevelHigh = 1.5;
+        public const double LevelLow = 0.9, LevelMid = 1.1, LevelHigh = 1.35;
 
         static readonly double[] s_stops = BuildStops();   // teal, ice, amber, cyan x rgb (linear)
 
@@ -99,11 +114,12 @@ namespace Megastructure
         /// <summary>Ramp colour at the current frame's amber weight (AmberWeight).</summary>
         public static D3 Ramp(double h) => Ramp(h, AmberWeight);
 
-        /// <summary>The accent colour of the imagery: the ramp one stop on, mixed 35 % toward the ice stop.</summary>
+        /// <summary>The accent colour of the imagery: the ramp one stop on, pushed away from its luminance x 1.3 (NocScrSat).</summary>
         public static D3 Accent(double h, double amber)
         {
-            D3 c = Ramp(h + 0.25, amber), ice = StopColour(1, amber);
-            return c + (ice - c) * 0.35;
+            D3 c = Ramp(h + 0.25, amber);
+            double y = NocMath.Luma709(c.x, c.y, c.z);
+            return new D3(Math.Max(0.0, y + (c.x - y) * AccentSat), Math.Max(0.0, y + (c.y - y) * AccentSat), Math.Max(0.0, y + (c.z - y) * AccentSat));
         }
 
         /// <summary>The time phases the driver uploads to _NocScreenT: (frac(t / 58), frac(t / 60), t mod 600).</summary>
@@ -182,7 +198,7 @@ namespace Megastructure
         /// <summary>Display period (s): 40, 50, 60 or 75 (each divides 600).</summary>
         public static double Period(uint id) { uint k = (id >> 3) % 4u; return k == 0u ? 40.0 : (k == 1u ? 50.0 : (k == 2u ? 60.0 : 75.0)); }
 
-        /// <summary>Programme of display id in epoch e (0 wave, 1 glyph, 2 aurora, 3 sun, 4 glyph column, 5 horizon, 6 tiles, 7 standby).</summary>
+        /// <summary>Programme of display id in epoch e (ProgramNames).</summary>
         public static uint ProgramOf(uint id, uint e)
         {
             double u = U(P3(id, e, 0x50524F47u, 0));
@@ -225,42 +241,77 @@ namespace Megastructure
         }
 
         static double SmoothStep(double a, double b, double x) => NocMath.Smoothstep(a, b, x);
+        static double Cover(double x, double fw, double x0, double x1) => NocMath.Clamp01((Math.Min(x + 0.5 * fw, x1) - Math.Max(x - 0.5 * fw, x0)) / Math.Max(fw, 1e-6));
+        static double Frac(double x) => x - Math.Floor(x);
+        static uint Iu(double x) => unchecked((uint)(int)x);
 
-        /// <summary>One programme (m, a) (twin of NocScrProgram); panelX / panelY = the panel's lattice index (tiles).</summary>
-        public static void Program(uint p, uint seed, double lx, double ly, double w, double h, double tau, double soft,
-            int panelX, int panelY, out double m, out double a)
+        /// <summary>Hue offset of epoch e on the ramp (NocScrHue): a quarter turn +- 0.04.</summary>
+        public static double HueOffset(uint id, uint e)
+        {
+            uint h = P3(id, e, 0x48554531u, 0);
+            return (h % 4u) * 0.25 + 0.08 * (U(NocMath.Pcg(h)) - 0.5);
+        }
+
+        /// <summary>Value-noise fbm of 2 or 3 octaves, normalised (NocScrFbm).</summary>
+        public static double Fbm(double x, double y, int oct)
+        {
+            double s = 0.0, a = 0.5, f = 1.0, n = 0.0;
+            for (int o = 0; o < oct; o++)
+            {
+                s += a * NocMath.ValueNoise(x * f + 17.3 * o, y * f - 5.1 * o);
+                n += a; a *= 0.5; f *= 2.03;
+            }
+            return s / n;
+        }
+
+        /// <summary>One programme (m, a) (twin of NocScrProgram); soft = the pixel footprint (m).</summary>
+        public static void Program(uint p, uint seed, double lx, double ly, double w, double h, double tau, double soft, out double m, out double a)
         {
             double u1 = U(NocMath.Pcg(seed ^ 0x55310000u)), u2 = U(NocMath.Pcg(seed ^ 0x55320000u)), u3 = U(NocMath.Pcg(seed ^ 0x55330000u));
             m = 1.15; a = 0.0;
             switch (p)
             {
+                case 0u:
+                {
+                    double bb = 0.5 + 0.5 * Math.Sin(Tau * ((ly + (u2 - 0.5) * 0.6 * lx - 0.1 * tau) / (40.0 + 30.0 * u1)));
+                    m = 0.65 + 1.3 * bb * bb;
+                    break;
+                }
                 case 1u:
                 {
                     double cw = 0.62 * w, ch = Math.Min(0.80 * h, cw * (18.0 / 14.0));
-                    double ox = 0.5 * (w - cw), oy = 0.5 * (h - ch) + 0.12 * (tau - 30.0);
-                    double d = GlyphDist(lx - ox, ly - oy, cw, ch, seed);
-                    double r = 0.05 * cw, e = Math.Max(soft, 0.6);
+                    double d = GlyphDist(lx - 0.5 * (w - cw), ly - 0.5 * (h - ch), cw, ch, seed);
+                    double r = 0.05 * cw, e = Math.Max(soft, Edge);
                     double core = 1.0 - SmoothStep(r - e, r + e, d);
-                    double glow = Math.Exp(-(d * d) / Math.Max(9.0 * r * r, 1e-4));
-                    double vg = 1.0 - 0.35 * SmoothStep(0.2, 0.75, Math.Abs(ly / h - 0.5) * 2.0);
-                    m = (0.55 + 0.75 * glow) * vg + 1.7 * core; a = core;
+                    double glow = Math.Exp(-(d * d) / Math.Max(16.0 * r * r, 1e-4)) * (0.75 + 0.25 * Math.Sin(Tau * (tau / 40.0 + u3)));
+                    double vg = 1.0 - 0.5 * SmoothStep(0.2, 0.8, Math.Abs(ly / h - 0.5) * 2.0);
+                    double rx = (lx - 0.5 * w) / w, ry = (ly - 0.5 * h) / h;
+                    double field = 0.125 + 0.30 * Math.Exp(-(rx * rx + ry * ry) / 0.12);
+                    m = (field + 1.3 * glow) * vg + 3.4 * core; a = core;
                     break;
                 }
                 case 2u:
                 {
-                    double lam = 30.0 + 15.0 * Math.Floor(3.0 * u1), v = 0.4 + 0.2 * u2;
-                    double b = 0.5 + 0.5 * Math.Sin(Tau * ((ly + (u3 - 0.5) * 0.4 * lx - v * tau) / lam));
-                    double b2 = 0.5 + 0.5 * Math.Sin(Tau * ((0.7 * ly - (u3 - 0.5) * 0.6 * lx + 0.7 * v * tau) / (0.62 * lam)));
-                    m = 0.45 + 1.1 * b * b + 0.5 * b2 * b; a = b * b2;
+                    double sc = 1.0 / (18.0 + 12.0 * u1);
+                    double qx = lx * sc + 31.0 * u2, qy = (ly - 0.07 * tau) * sc + 57.0 * u3;
+                    double wx = Fbm(qx * 0.7 + 3.1, qy * 0.7, 2) - 0.5, wy = Fbm(qx * 0.7, qy * 0.7 + 7.7, 2) - 0.5;
+                    double n = Fbm(qx + 2.2 * wx, qy + 2.2 * wy, 3);
+                    double pool = SmoothStep(0.38, 0.78, n);
+                    double sw = 0.6 * soft * sc, s2 = 0.0018 + sw * sw;
+                    double ridge = Math.Exp(-((n - 0.62) * (n - 0.62)) / s2) * Math.Sqrt(0.0018 / s2);
+                    m = 0.26 + 2.6 * pool * pool + 1.0 * ridge; a = NocMath.Clamp01(0.4 * pool * pool + 0.8 * ridge);
                     break;
                 }
                 case 3u:
                 {
                     double cx = w * (0.3 + 0.4 * u1) + 0.08 * (tau - 30.0) * (u3 < 0.5 ? 1.0 : -1.0), cy = h * (0.3 + 0.4 * u2);
-                    double R = 0.30 * Math.Min(w, h), rho = Math.Sqrt((lx - cx) * (lx - cx) + (ly - cy) * (ly - cy)), e = 1.5 + soft;
+                    double R = 0.26 * Math.Min(w, h), rho = Math.Sqrt((lx - cx) * (lx - cx) + (ly - cy) * (ly - cy)), e = 1.0 + soft;
                     double sun = 1.0 - SmoothStep(R - e, R + e, rho);
-                    double halo = Math.Exp(-(rho * rho) / (3.24 * R * R));
-                    m = 0.45 + 0.25 * ly / h + 0.9 * halo + 1.0 * sun; a = sun;
+                    double halo = Math.Exp(-(rho * rho) / (2.6 * R * R));
+                    double lam = 7.0, dr = Math.Abs(Frac((rho - 0.15 * tau) / lam) - 0.5) * lam, rr = (rho - R) / (1.6 * R);
+                    double ring = (1.0 - SmoothStep(0.3, 1.0 + soft, dr)) * SmoothStep(R, R + 2.0 + soft, rho) * Math.Exp(-rr * rr);
+                    ring *= SmoothStep(1.0, 3.0, lam / Math.Max(soft, 1e-3));
+                    m = 0.18 + 0.30 * ly / h + 1.1 * halo + 2.6 * sun + 0.9 * ring; a = NocMath.Clamp01(sun + 0.5 * ring);
                     break;
                 }
                 case 4u:
@@ -269,57 +320,172 @@ namespace Megastructure
                     double x0 = w * (0.25 + 0.5 * u1) - 0.5 * cw;
                     double ys = ly - ColumnSpeed * tau, j = Math.Floor(ys / ch);
                     double qx = lx - x0, qy = ys - j * ch;
-                    double d = GlyphDist(qx, qy, cw, ch, P3(seed, unchecked((uint)(int)(j + 4096.0)), 0x434F4C4Du, 0));
+                    double d = GlyphDist(qx, qy, cw, ch, P3(seed, Iu(j + 4096.0), 0x434F4C4Du, 0));
                     double r = 0.075 * cw, e = Math.Max(soft, 1.0);
                     double core = 1.0 - SmoothStep(r - e, r + e, d);
                     double inS = (1.0 - SmoothStep(-1.0, 1.0, -qx)) * (1.0 - SmoothStep(cw - 1.0, cw + 1.0, qx));
-                    m = 1.25 + (0.35 + 2.0 * core - 1.25) * inS; a = core * inS;
+                    m = 1.05 + (0.20 + 3.0 * core - 1.05) * inS; a = core * inS;
                     break;
                 }
                 case 5u:
                 {
-                    double ang = (u1 - 0.5) * 0.5;
-                    double hy = h * (0.3 + 0.4 * u2) + 0.10 * (tau - 30.0) * (u3 < 0.5 ? 1.0 : -1.0);
-                    double dd = (ly - hy) * Math.Cos(ang) - (lx - 0.5 * w) * Math.Sin(ang);
-                    double up = SmoothStep(-2.0 - soft, 2.0 + soft, dd);
-                    double ln = Math.Exp(-(dd * dd) / (3.0 + soft * soft));
-                    m = 0.5 + 0.9 * up + 1.0 * ln; a = NocMath.Clamp01(up + 0.5 * ln);
+                    double hz = h * (0.10 + 0.10 * u1), bw = 3.0 + 3.0 * u2;
+                    double bi = Math.Floor(lx / bw);
+                    double hb = U(P3(Iu(bi + 4096.0), seed, 0x534B594Cu, 0));
+                    double top = hz + h * (0.08 + 0.40 * hb * hb);
+                    double inB = 1.0 - SmoothStep(top - 0.3 - soft, top + 0.3 + soft, ly);
+                    double wi = Math.Floor(lx / 1.2), wj = Math.Floor(ly / 1.2);
+                    uint hw = P3(Iu(wi + 4096.0), Iu(wj + 4096.0), seed, 0);
+                    double lit = U(hw) < 0.32 ? 1.0 : 0.0;
+                    double tw = 40.0 + 40.0 * U(NocMath.Pcg(hw ^ 0x77u));
+                    lit *= 0.6 + 0.4 * Math.Sin(Tau * (tau / tw + U(NocMath.Pcg(hw))));
+                    double win = Cover(lx - (wi + 0.5) * 1.2, soft, -0.336, 0.336) * Cover(ly - (wj + 0.5) * 1.2, soft, -0.264, 0.264) * lit;
+                    double wf = SmoothStep(2.0, 4.0, 1.2 / soft);
+                    win = 0.0473 + (win - 0.0473) * wf;
+                    double sky = 0.35 + 2.4 * Math.Exp(-Math.Max(ly - hz, 0.0) / (0.45 * h)) * SmoothStep(-2.0, 6.0, ly - 0.5 * hz);
+                    m = sky * (1.0 - inB) + inB * (0.10 + 2.2 * win); a = (1.0 - inB) * 0.12 + inB * win;
                     break;
                 }
                 case 6u:
                 {
-                    uint ht = P3(unchecked((uint)(panelX + 4096)), unchecked((uint)(panelY + 4096)), seed, 0);
-                    double tt = 30.0 + 30.0 * U(ht), ph = U(NocMath.Pcg(ht));
+                    double k = u1 < 1.0 / 3.0 ? 6.0 : (u1 < 2.0 / 3.0 ? 8.0 : 10.0);
+                    double cw = w / k, ch = w / k * (18.0 / 14.0);
+                    double ci = Math.Floor(lx / cw), cj = Math.Floor(ly / ch), qx = lx - ci * cw, qy = ly - cj * ch;
+                    uint hc = P3(Iu(ci + 64.0), Iu(cj + 4096.0), seed, 0);
+                    double d = GlyphDist(qx, qy, cw, ch, hc);
+                    double r = 0.07 * cw, e = Math.Max(soft, Edge);
+                    double core = 1.0 - SmoothStep(r - e, r + e, d);
+                    double tt = 36.0 + 36.0 * U(NocMath.Pcg(hc)), ph = U(NocMath.Pcg(hc ^ 0x9E37u));
                     double b = 0.5 + 0.5 * Math.Sin(Tau * (tau / tt + ph));
-                    m = 0.45 + 1.4 * b; a = 0.6 * b;
+                    b *= b;
+                    double on = U(NocMath.Pcg(hc ^ 0x51u)) < 0.8 ? 1.0 : 0.0;
+                    double gut = Cover(qx, soft, 0.18, cw - 0.18) * Cover(qy, soft, 0.18, ch - 0.18);
+                    double plate = (0.35 + 0.95 * U(NocMath.Pcg(hc ^ 0x504Cu))) * (0.8 + 0.2 * Math.Sin(Tau * (tau / (2.0 * tt) + ph))) * (1.0 - 0.35 * qy / ch);
+                    m = 0.16 + gut * (plate + core * on * (0.6 + 3.0 * b)); a = gut * core * on * b;
                     break;
                 }
                 case 7u:
-                    m = 0.30;
+                {
+                    m = 0.30 + 0.45 * ly / h;
+                    for (uint layer = 0u; layer < 2u; layer++)
+                    {
+                        double g = 16.0 - 6.0 * layer;
+                        double gi = Math.Floor(lx / g), gj = Math.Floor(ly / g);
+                        uint hx = Iu(gi + 4096.0), hy = Iu(gj + 4096.0), hz = unchecked(seed + layer);
+                        NocHash.Pcg3d(ref hx, ref hy, ref hz);
+                        double cx = (gi + 0.38 + 0.24 * U(hx)) * g, cy = (gj + 0.38 + 0.24 * U(hy)) * g;
+                        double rr = g * (0.18 + 0.12 * U(hz)), dd = Math.Sqrt((lx - cx) * (lx - cx) + (ly - cy) * (ly - cy)), ew = 0.05 * g;
+                        double disc = 1.0 - SmoothStep(rr - ew, rr + ew, dd);
+                        double rim = Math.Exp(-((dd - rr) * (dd - rr)) / (0.0016 * g * g)) * 0.35;
+                        double fd = SmoothStep(0.02 * g, 0.06 * g, soft);
+                        disc = disc + (3.14159265 * rr * rr / (g * g) - disc) * fd;
+                        rim *= 1.0 - fd;
+                        double tt = 20.0 + 20.0 * U(NocMath.Pcg(hy ^ 0x77u));
+                        double br = (0.8 + 1.6 * U(NocMath.Pcg(hz))) * (U(NocMath.Pcg(hx ^ 5u)) < 0.75 ? 1.0 : 0.0) * (0.55 + 0.45 * Math.Sin(Tau * (tau / tt + U(hz))));
+                        m += br * (disc * (0.7 + 0.3 * U(NocMath.Pcg(hy))) + rim) * (0.9 - 0.3 * layer);
+                        a = Math.Max(a, disc * (U(NocMath.Pcg(hy ^ 3u)) < 0.4 ? 1.0 : 0.0));
+                    }
+                    break;
+                }
+                case 8u:
+                {
+                    double sp = 2.0 + 2.0 * u1;
+                    double li = Math.Floor(ly / sp);
+                    double wl = 0.2 + 0.25 * U(P3(Iu(li + 4096.0), seed, 0x4C494E45u, 0));
+                    double ln = Cover(ly - (li + 0.5) * sp, soft, -wl, wl);
+                    ln = 0.65 / sp + (ln - 0.65 / sp) * SmoothStep(3.0, 6.0, sp / soft);
+                    double b = 0.5 + 0.5 * Math.Sin(Tau * (li * 0.07 - tau / 36.0));
+                    b *= b;
+                    double x0 = w * (0.04 + 0.12 * u2), x1 = w * (0.84 + 0.12 * u3), ew = 0.3 + soft;
+                    double span = SmoothStep(x0 - ew, x0 + ew, lx) * (1.0 - SmoothStep(x1 - ew, x1 + ew, lx));
+                    m = 0.15 + 0.45 * ly / h + ln * span * (1.2 + 2.6 * b); a = ln * span * b;
+                    break;
+                }
+                case 9u:
+                    m = 0.20;
                     break;
             }
         }
 
-        /// <summary>The imagery (m, a) at wall point (zl = z - 275, y) for the wrapped clock t600 (twin of NocScreenContent).</summary>
+        /// <summary>The imagery (m, a) at wall point (zl = z - 275, y) for the wrapped clock t600, far field (wp 0).</summary>
         public static void Content(double zl, double y, double t600, double soft, out double m, out double a)
+            => Content(zl, y, t600, soft, 0.0, out m, out a, out _);
+
+        /// <summary>The imagery (twin of NocScreenContent): m x level x ContentNorm capped at ContentMaxM / (1 + DotGain wp), the accent
+        /// weight a and the hue offset dh, crossfaded over the last 16 s of each epoch.</summary>
+        public static void Content(double zl, double y, double t600, double soft, double wp, out double m, out double a, out double dh)
         {
             Display(zl, y, out uint id, out double lx, out double ly, out double w, out double h);
-            int iz = (int)Math.Floor(zl / PitchZ), iy = (int)Math.Floor(y / PitchY);
             double T = Period(id), N = 600.0 / T;
             double tau = t600 + U(NocMath.Pcg(id ^ 0x50484153u)) * T;
             double ef = Math.Floor(tau / T), x = tau / T - ef;
             uint e0 = (uint)(ef % N), e1 = (uint)((ef + 1.0) % N);
             double wgt = SmoothStep(1.0 - Crossfade / T, 1.0, x);
+            double cap = ContentMaxM / (1.0 + DotGain * wp);
             uint s0 = P3(id, e0, 0x53454544u, 0), s1 = P3(id, e1, 0x53454544u, 0);
-            Program(ProgramOf(id, e0), s0, lx, ly, w, h, x * T, soft, iz, iy, out double m0, out double a0);
-            m0 = Math.Min(m0 * Level(id, e0), ContentMaxM);
+            Program(ProgramOf(id, e0), s0, lx, ly, w, h, x * T, soft, out double m0, out double a0);
+            m0 = Math.Min(m0 * Level(id, e0) * ContentNorm, cap);
             double m1 = m0, a1 = a0;
             if (wgt > 0.0)
             {
-                Program(ProgramOf(id, e1), s1, lx, ly, w, h, (x - 1.0) * T, soft, iz, iy, out m1, out a1);
-                m1 = Math.Min(m1 * Level(id, e1), ContentMaxM);
+                Program(ProgramOf(id, e1), s1, lx, ly, w, h, (x - 1.0) * T, soft, out m1, out a1);
+                m1 = Math.Min(m1 * Level(id, e1) * ContentNorm, cap);
             }
             m = m0 + (m1 - m0) * wgt; a = a0 + (a1 - a0) * wgt;
+            double d0 = HueOffset(id, e0), dd = HueOffset(id, e1) - d0;
+            dh = d0 + (dd - Math.Round(dd, MidpointRounding.AwayFromZero)) * wgt;
+        }
+
+        // ------------------------------------------------------------------ the eye (D-034 5.3, fix wave C28; twin of NocScrEye)
+        /// <summary>The eye's canvas: 4 x 5 panels (z 311.4 - 457.0, y 20.4 - 122.4) and the eye's centre.</summary>
+        public const double EyeZ0 = 311.4, EyeZ1 = 457.0, EyeY0 = 20.4, EyeY1 = 122.4, EyeCz = 384.2, EyeCy = 71.4;
+        /// <summary>Clock (t mod 600) of the event: canvas in from 448, opening from 454, closing from 472, canvas out from 478, each
+        /// over 6 s (smoothstep). KS16's readable window is t 453.6 - 478.4 at 2.5 m/s; the KS16 still is t 460 (fully open).</summary>
+        public const double EyeIn0 = 448.0, EyeOpen0 = 454.0, EyeClose0 = 472.0, EyeOut0 = 478.0, EyeRamp = 6.0;
+
+        static double S01(double t) { t = NocMath.Clamp01(t); return t * t * (3.0 - 2.0 * t); }
+        static D3 Lerp(D3 a, D3 b, double t) => a + (b - a) * t;
+
+        /// <summary>The canvas weight of the eye event at the wrapped clock t600 and the lid opening (0 closed, 1 open).</summary>
+        public static double EyeEnvelope(double t600, out double open)
+        {
+            open = S01((t600 - EyeOpen0) / EyeRamp) * (1.0 - S01((t600 - EyeClose0) / EyeRamp));
+            return S01((t600 - EyeIn0) / EyeRamp) * (1.0 - S01((t600 - EyeOut0) / EyeRamp));
+        }
+
+        /// <summary>The eye canvas at world (z, y): colour x m in the mosaic's units (x LevelMid x ContentNorm, capped at cap) and its
+        /// weight w (0 outside the event or the canvas). soft = the pixel footprint (m).</summary>
+        public static D3 Eye(double z, double y, double t600, double soft, double cap, double amber, out double w)
+        {
+            double env = EyeEnvelope(t600, out double open);
+            w = env * Cover(z, soft, EyeZ0, EyeZ1) * Cover(y, soft, EyeY0, EyeY1);
+            if (w <= 0.0) { w = 0.0; return new D3(0, 0, 0); }
+            double px = z - EyeCz, py = y - EyeCy;
+            double u = NocMath.Clamp01(Math.Abs(px) / 64.0);
+            double bow = Math.Pow(Math.Max(1.0 - u * u, 0.0), 0.85);
+            double e = Math.Max(10.0, soft);
+            double yu = 34.0 * open * bow + 0.8, yl = -0.72 * 34.0 * open * bow - 0.8;
+            double eyeA = SmoothStep(yl - e, yl + e, py) * (1.0 - SmoothStep(yu - e, yu + e, py)) * (1.0 - SmoothStep(64.0 - 2.0 * e, 64.0, Math.Abs(px)));
+            double qx = px + 9.0, qy = py + 4.0;
+            double rr = Math.Sqrt(qx * qx + qy * qy);
+            double irisA = 1.0 - SmoothStep(21.0, 27.0 + soft, rr);
+            double pupilA = 1.0 - SmoothStep(7.0, 12.0 + soft, rr);
+            double ang = Math.Atan2(qy, qx);
+            double fib = 0.5 + 0.3 * Math.Cos(40.0 * ang + 5.0 * Math.Sin(3.0 * ang) + 0.35 * rr) + 0.2 * Math.Cos(73.0 * ang + 3.0 * Math.Cos(5.0 * ang) - 0.21 * rr);
+            fib = 0.5 + (fib - 0.5) * SmoothStep(2.0, 4.0, Tau * rr / 73.0 / Math.Max(soft, 0.1));
+            double cx = qx + 6.0, cy = qy - 8.0;
+            double cl = Math.Exp(-(cx * cx + cy * cy) / 20.0);
+            double ms = 1.6 * (1.0 - 0.45 * u * u) * (1.0 - 0.35 * SmoothStep(yu - 16.0, yu, py));
+            double mi = 1.25 * (0.6 + 0.8 * fib) * (0.55 + 0.45 * SmoothStep(9.5, 24.0, rr)) * (1.0 - 0.55 * SmoothStep(18.0, 24.0, rr));
+            double dc = py - 34.0 * bow - 10.0;
+            double gx = px / 84.0, gy = py / 50.0;
+            double mf = 0.20 + 0.34 * Math.Exp(-(gx * gx + gy * gy)) + 0.45 * Math.Exp(-dc * dc / 18.0) * bow * open;
+            double k = LevelMid * ContentNorm;
+            D3 cS = Ramp(0.25, amber), cI = Accent(0.27, amber), cF = Ramp(0.0, amber);
+            D3 inside = Lerp(cS * Math.Min(ms * k, cap), cI * Math.Min(mi * k, cap), irisA);
+            inside = Lerp(inside, cS * (0.04 * k), pupilA);
+            inside = Lerp(inside, cS * Math.Min(1.6 * k, cap), cl);
+            return Lerp(cF * Math.Min(mf * k, cap), inside, eyeA);
         }
 
         // ------------------------------------------------------------------ hardware (per panel; the far-field means)
@@ -362,10 +528,16 @@ namespace Megastructure
         {
             TimePhases(t, out double p58, out double p60, out double t600);
             double h = Index(z, y, p58, p60, waves);
-            double m = 1.0, a = 0.0;
-            if (content > 0.0) Content(z - Z0, y, t600, 0.5, out m, out a);
+            double m = 1.0, a = 0.0, dh = 0.0;
+            if (content > 0.0) Content(z - Z0, y, t600, 0.5, 0.0, out m, out a, out dh);
+            h += dh * content;
             D3 c1 = Ramp(h, amber), c2 = Accent(h, amber);
             D3 col = (c1 + (c2 - c1) * (a * content)) * (1.0 + (m - 1.0) * content);
+            if (content > 0.0)
+            {
+                D3 ec = Eye(z, y, t600, 0.5, ContentMaxM, amber, out double we);
+                if (we > 0.0) col = col + (ec - col) * (we * content);
+            }
             int iz = (int)Math.Floor((z - Z0) / PitchZ), iy = (int)Math.Floor(y / PitchY);
             Panel(iz, iy, out double kb, out D3 tint, out _, out double dead, out double mm, out _);
             double level = PanelLevel(iz, iy, t600);

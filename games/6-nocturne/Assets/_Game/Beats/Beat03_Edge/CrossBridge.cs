@@ -10,6 +10,10 @@
 //     16 x 8 m opening whose back wall is a WinNeutral glow 0.3 m in front of the face plane, so the deck traffic (AbyssTraffic,
 //     four lanes) drives out of light and its alpha ramps lie behind the face (H7: ramps inside portals);
 //   * the vehicles on the deck (AbyssTraffic.BridgeLanes).
+// ARK (D-043): the abyss layers left the walker's level (none within 200 m of the walk), so the eye-level traffic of the Edge and
+// the bridge (KS07 / KS08 / KS11: D-032 5's highlights) comes from an air crossing instead: four lanes of fliers (AbyssTraffic
+// .AirLanes) crossing the rift along x at AirZ / AirY (305, 385 and 465 m north of the walk), out of one lit portal in each face (the
+// bridge portal with a sill: no deck) - rows of heads and tails across the gulf at the horizon, far enough to stay dots.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +29,10 @@ namespace Megastructure
         /// <summary>Portal (AB): opening width / height, surround member width, depth proud of the face, glow offset (m).</summary>
         public const double PortalW = 16.0, PortalH = 8.0, PortalFrame = 3.0, PortalDepth = 4.0, PortalGlowOffset = 0.3;
 
+        /// <summary>ARK (D-043): air crossings (z, y of the fliers' lamps); the portal's opening runs AirBelow under the lamps.</summary>
+        public static readonly double[] AirZ = { 500.0, 660.0, 580.0 }, AirY = { 46.0, 22.0, 88.0 };   // a02: one crossing left KS08 / KS11 at p99 119.8 / 118.6; a04: KS11 120.7 -> a third
+        public const double AirBelow = 2.5;
+
         /// <summary>Lamp head centres of the last Build (world; Beat03_Edge turns them into one kind-5 batch).</summary>
         public static readonly List<Vector3> Lamps = new List<Vector3>(800);
 
@@ -32,6 +40,24 @@ namespace Megastructure
         {
             Lamps.Clear();
             for (int i = 0; i < EdgeDims.BridgeZ.Length; i++) BuildOne(i, parts);
+            for (int i = 0; i < AirZ.Length; i++) BuildAir(i, parts);
+        }
+
+        /// <summary>Base y of air crossing i's portal opening (the fliers' lamps AirBelow above it).</summary>
+        public static double AirBase(int i) => AirY[i] - AirBelow;
+
+        /// <summary>ARK: the two portals of air crossing i (with a sill: no deck under them).</summary>
+        static void BuildAir(int i, List<EdgePart> parts)
+        {
+            double z = AirZ[i], y = AirBase(i);
+            double fa = EdgeDims.FrontX(0, y, z), fb = EdgeDims.FrontX(1, y, z);
+            var origin = new Vector3((float)Math.Round(0.5 * (fa + fb)), (float)y, (float)z);
+            string nm = FormattableString.Invariant($"AirCrossing_{(int)z}_{(int)AirY[i]}");
+            var portal = new EdgePart(nm + "_portal", EdgeMat.Concrete, origin);
+            var glow = new EdgePart(nm + "_portalGlow", EdgeMat.TunnelMouth, origin);
+            parts.Add(portal); parts.Add(glow);
+            Portal(portal.Mb, glow.Mb, origin, fa, +1.0, y, z, true);
+            Portal(portal.Mb, glow.Mb, origin, fb, -1.0, y, z, true);
         }
 
         static void BuildOne(int i, List<EdgePart> parts)
@@ -102,11 +128,13 @@ namespace Megastructure
         /// <summary>A portal on the face plane x = xf whose rift side is +dir (face A: +1, face B: -1): concrete jambs and lintel
         /// PortalDepth proud round a PortalW x PortalH opening over the deck top, the glow wall PortalGlowOffset in front of the face
         /// (behind it the vehicles' ramps); the jambs stand on the deck slab's top (y) and run 0.5 m into the face.</summary>
-        static void Portal(MeshBuilder conc, MeshBuilder glow, Vector3 origin, double xf, double dir, double y, double z)
+        static void Portal(MeshBuilder conc, MeshBuilder glow, Vector3 origin, double xf, double dir, double y, double z, bool sill = false)
         {
             double hwo = 0.5 * PortalW, f = PortalFrame;
             double x0 = xf - 0.5 * dir, x1 = xf + PortalDepth * dir;                  // the surround runs 0.5 m into the mass
             double xm = 0.5 * (x0 + x1), dx = Math.Abs(x1 - x0);
+            // ARK air crossings: no deck under the opening, so a sill as deep as the surround closes it (jambs to jambs)
+            if (sill) conc.Box(new Vector3((float)xm, (float)(y - 0.5 * f), (float)z) - origin, new Vector3((float)dx, (float)f, (float)(PortalW + 2.0 * f)));
             // jambs (deck top to the lintel), lintel over the opening
             for (int s = -1; s <= 1; s += 2)
                 conc.Box(new Vector3((float)xm, (float)(y + 0.5 * (PortalH + f)), (float)(z + s * (hwo + 0.5 * f))) - origin, new Vector3((float)dx, (float)(PortalH + f), (float)f));

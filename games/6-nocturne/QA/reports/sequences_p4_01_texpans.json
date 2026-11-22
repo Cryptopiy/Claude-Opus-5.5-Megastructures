@@ -1,0 +1,1861 @@
+{
+ "run": "p4_01_texpans",
+ "status": "PASS",
+ "sequences": [
+  {
+   "name": "texpan_ks00",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks00",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.016,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 20 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "2.768",
+     "threshold": null,
+     "note": "mean 0.841 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.252,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.361 px over 33 textured 64 px blocks; pan 14.5 px; worst [640, 384]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.11955,
+     0.1196,
+     0.11964,
+     0.11958,
+     0.11964,
+     0.11962,
+     0.11963,
+     0.11963,
+     0.11961,
+     0.11963,
+     0.11963,
+     0.11961,
+     0.11966,
+     0.11967,
+     0.11968,
+     0.11964,
+     0.11964,
+     0.11964,
+     0.11965,
+     0.11967,
+     0.11973,
+     0.11971,
+     0.11976,
+     0.11971,
+     0.11974,
+     0.11976,
+     0.11979,
+     0.11979,
+     0.11975,
+     0.1198
+    ],
+    "luma_linear": [
+     0.01758,
+     0.01763,
+     0.01764,
+     0.01761,
+     0.01764,
+     0.01764,
+     0.01762,
+     0.01763,
+     0.01761,
+     0.01762,
+     0.01763,
+     0.01761,
+     0.01764,
+     0.01766,
+     0.01765,
+     0.01762,
+     0.0176,
+     0.01762,
+     0.01761,
+     0.01764,
+     0.01768,
+     0.01766,
+     0.01767,
+     0.01764,
+     0.01765,
+     0.01766,
+     0.01768,
+     0.0177,
+     0.01765,
+     0.01769
+    ],
+    "mean_abs_diff": [
+     1.2054,
+     1.1996,
+     1.2069,
+     1.2041,
+     1.2023,
+     1.2057,
+     1.2092,
+     1.2068,
+     1.2113,
+     1.2082,
+     1.2084,
+     1.2085,
+     1.2074,
+     1.2038,
+     1.2095,
+     1.2118,
+     1.2135,
+     1.2131,
+     1.2139,
+     1.2084,
+     1.2123,
+     1.21,
+     1.2158,
+     1.2149,
+     1.2192,
+     1.2108,
+     1.2148,
+     1.2171,
+     1.2166
+    ],
+    "max_abs_diff": [
+     147.52,
+     212.89,
+     199.69,
+     213.1,
+     199.69,
+     213.61,
+     200.41,
+     213.1,
+     199.69,
+     212.82,
+     199.62,
+     212.89,
+     199.62,
+     214.1,
+     200.69,
+     213.1,
+     199.91,
+     214.1,
+     200.69,
+     213.82,
+     200.41,
+     213.1,
+     199.84,
+     213.82,
+     199.91,
+     212.96,
+     199.55,
+     213.96,
+     200.55
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.11954692006111145,
+    "luma_max": 0.11979740113019943,
+    "max_luma_step": 6.187707185745239e-05,
+    "max_luma_step_frame": 20,
+    "mean_diff": 1.2099774212672794,
+    "max_diff": 1.2192453145980835,
+    "max_pixel_diff": 214.10263061523438,
+    "stab_mean": 0.8414509892463684,
+    "stab_block_p99": 2.767961525917052,
+    "swim_blocks": 33,
+    "swim_p95": 0.25210899994678626,
+    "swim_max": 0.36088768477180044,
+    "swim_median": 0.06832983198046402,
+    "pan_px_total": 14.501262540755228
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      640,
+      384
+     ],
+     "shift_px": 0.361,
+     "dxdy": [
+      -0.048,
+      -0.358
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      384
+     ],
+     "shift_px": 0.273,
+     "dxdy": [
+      -0.089,
+      0.258
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      960,
+      384
+     ],
+     "shift_px": 0.238,
+     "dxdy": [
+      0.238,
+      0.005
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      896,
+      256
+     ],
+     "shift_px": 0.183,
+     "dxdy": [
+      -0.172,
+      -0.061
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      896,
+      384
+     ],
+     "shift_px": 0.122,
+     "dxdy": [
+      0.11,
+      0.052
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks04",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks04",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.014,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 11 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "4.164",
+     "threshold": null,
+     "note": "mean 1.098 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.176,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.347 px over 220 textured 64 px blocks; pan 14.5 px; worst [832, 192]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.14036,
+     0.14035,
+     0.14034,
+     0.14031,
+     0.14033,
+     0.14032,
+     0.14034,
+     0.14031,
+     0.1403,
+     0.14032,
+     0.14031,
+     0.14037,
+     0.14034,
+     0.14038,
+     0.14037,
+     0.14041,
+     0.1404,
+     0.14042,
+     0.14041,
+     0.14041,
+     0.14043,
+     0.1404,
+     0.14041,
+     0.1404,
+     0.14042,
+     0.14039,
+     0.14039,
+     0.14039,
+     0.1404,
+     0.14041
+    ],
+    "luma_linear": [
+     0.02681,
+     0.0268,
+     0.02681,
+     0.02679,
+     0.02681,
+     0.0268,
+     0.02681,
+     0.0268,
+     0.0268,
+     0.02681,
+     0.02681,
+     0.02685,
+     0.02684,
+     0.02685,
+     0.02686,
+     0.02688,
+     0.02689,
+     0.02688,
+     0.0269,
+     0.02689,
+     0.02691,
+     0.02689,
+     0.02689,
+     0.02688,
+     0.02688,
+     0.02687,
+     0.02687,
+     0.02687,
+     0.02687,
+     0.02688
+    ],
+    "mean_abs_diff": [
+     1.4534,
+     1.4423,
+     1.4433,
+     1.4479,
+     1.4477,
+     1.4476,
+     1.4477,
+     1.4378,
+     1.4374,
+     1.444,
+     1.4376,
+     1.4393,
+     1.4459,
+     1.444,
+     1.4433,
+     1.4441,
+     1.439,
+     1.4475,
+     1.4487,
+     1.4399,
+     1.4397,
+     1.4371,
+     1.4429,
+     1.4516,
+     1.447,
+     1.4411,
+     1.4428,
+     1.4452,
+     1.4425
+    ],
+    "max_abs_diff": [
+     213.79,
+     216.28,
+     214.9,
+     212.65,
+     214.26,
+     214.86,
+     213.16,
+     214.79,
+     213.58,
+     213.23,
+     212.86,
+     210.26,
+     216.93,
+     203.19,
+     214.97,
+     214.3,
+     212.86,
+     213.79,
+     215.37,
+     215.56,
+     210.97,
+     214.58,
+     201.19,
+     213.65,
+     213.86,
+     214.72,
+     212.58,
+     214.09,
+     210.86
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.14030295610427856,
+    "luma_max": 0.14042626321315765,
+    "max_luma_step": 5.672872066497803e-05,
+    "max_luma_step_frame": 11,
+    "mean_diff": 1.4437384399874458,
+    "max_diff": 1.4533557891845703,
+    "max_pixel_diff": 216.9318084716797,
+    "stab_mean": 1.0977293252944946,
+    "stab_block_p99": 4.163896112442018,
+    "swim_blocks": 220,
+    "swim_p95": 0.17645555513137098,
+    "swim_max": 0.34709334004371123,
+    "swim_median": 0.0431647852819767,
+    "pan_px_total": 14.501467813736468
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      832,
+      192
+     ],
+     "shift_px": 0.347,
+     "dxdy": [
+      0.244,
+      0.247
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      64
+     ],
+     "shift_px": 0.308,
+     "dxdy": [
+      -0.082,
+      0.297
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      704,
+      512
+     ],
+     "shift_px": 0.284,
+     "dxdy": [
+      0.021,
+      0.283
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      768
+     ],
+     "shift_px": 0.255,
+     "dxdy": [
+      -0.185,
+      0.176
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      704,
+      384
+     ],
+     "shift_px": 0.243,
+     "dxdy": [
+      0.228,
+      0.083
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks05",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks05",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.018,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 18 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.691",
+     "threshold": null,
+     "note": "mean 1.119 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.202,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.363 px over 203 textured 64 px blocks; pan 14.5 px; worst [128, 384]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.17035,
+     0.17032,
+     0.17031,
+     0.17025,
+     0.17026,
+     0.17023,
+     0.17024,
+     0.17019,
+     0.17013,
+     0.17009,
+     0.17007,
+     0.17009,
+     0.17006,
+     0.17007,
+     0.17003,
+     0.17009,
+     0.17006,
+     0.17002,
+     0.16995,
+     0.16988,
+     0.16989,
+     0.16993,
+     0.16989,
+     0.16988,
+     0.16981,
+     0.16977,
+     0.16973,
+     0.16968,
+     0.16966,
+     0.16961
+    ],
+    "luma_linear": [
+     0.03919,
+     0.03917,
+     0.03918,
+     0.03915,
+     0.03916,
+     0.03914,
+     0.03916,
+     0.03913,
+     0.03908,
+     0.03906,
+     0.03904,
+     0.03906,
+     0.03904,
+     0.03906,
+     0.03905,
+     0.0391,
+     0.0391,
+     0.03905,
+     0.03901,
+     0.03895,
+     0.03896,
+     0.039,
+     0.03898,
+     0.03898,
+     0.03893,
+     0.03892,
+     0.03888,
+     0.03886,
+     0.03885,
+     0.03881
+    ],
+    "mean_abs_diff": [
+     1.5011,
+     1.4921,
+     1.5029,
+     1.49,
+     1.5053,
+     1.4893,
+     1.4888,
+     1.4946,
+     1.4948,
+     1.4976,
+     1.4894,
+     1.5022,
+     1.4895,
+     1.4976,
+     1.4946,
+     1.4714,
+     1.4823,
+     1.4978,
+     1.4936,
+     1.4873,
+     1.485,
+     1.4821,
+     1.4818,
+     1.4841,
+     1.4845,
+     1.4773,
+     1.4801,
+     1.4725,
+     1.4798
+    ],
+    "max_abs_diff": [
+     208.76,
+     204.05,
+     207.26,
+     203.83,
+     208.97,
+     206.26,
+     203.83,
+     208.05,
+     204.97,
+     207.05,
+     204.83,
+     206.19,
+     207.97,
+     205.05,
+     207.05,
+     206.26,
+     205.05,
+     207.76,
+     202.12,
+     206.76,
+     205.33,
+     207.26,
+     206.05,
+     207.07,
+     207.05,
+     207.28,
+     208.05,
+     209.0,
+     204.26
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.16960535943508148,
+    "luma_max": 0.17035001516342163,
+    "max_luma_step": 7.236003875732422e-05,
+    "max_luma_step_frame": 18,
+    "mean_diff": 1.4892853334032257,
+    "max_diff": 1.505277395248413,
+    "max_pixel_diff": 209.00001525878906,
+    "stab_mean": 1.118722677230835,
+    "stab_block_p99": 3.6908271312713623,
+    "swim_blocks": 203,
+    "swim_p95": 0.20190195535360472,
+    "swim_max": 0.36323112703778654,
+    "swim_median": 0.04834287874942525,
+    "pan_px_total": 14.501467813736468
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      128,
+      384
+     ],
+     "shift_px": 0.363,
+     "dxdy": [
+      -0.12,
+      -0.343
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      512,
+      704
+     ],
+     "shift_px": 0.283,
+     "dxdy": [
+      0.106,
+      -0.262
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1792,
+      768
+     ],
+     "shift_px": 0.261,
+     "dxdy": [
+      0.2,
+      -0.169
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1280,
+      768
+     ],
+     "shift_px": 0.248,
+     "dxdy": [
+      0.02,
+      -0.247
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      832,
+      768
+     ],
+     "shift_px": 0.244,
+     "dxdy": [
+      -0.24,
+      0.044
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks08",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks08",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.012,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 6 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.647",
+     "threshold": null,
+     "note": "mean 1.040 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.184,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.528 px over 183 textured 64 px blocks; pan 14.5 px; worst [1024, 768]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.15321,
+     0.15323,
+     0.15325,
+     0.15326,
+     0.15328,
+     0.15326,
+     0.1533,
+     0.1533,
+     0.15331,
+     0.15332,
+     0.15335,
+     0.15334,
+     0.15335,
+     0.15338,
+     0.15341,
+     0.15341,
+     0.15344,
+     0.15347,
+     0.15348,
+     0.15348,
+     0.15348,
+     0.15346,
+     0.15345,
+     0.15348,
+     0.15345,
+     0.15343,
+     0.15345,
+     0.15348,
+     0.15349,
+     0.15348
+    ],
+    "luma_linear": [
+     0.02745,
+     0.02745,
+     0.02746,
+     0.02746,
+     0.02747,
+     0.02745,
+     0.02748,
+     0.02747,
+     0.02747,
+     0.02747,
+     0.02748,
+     0.02747,
+     0.02748,
+     0.02748,
+     0.02749,
+     0.02748,
+     0.02749,
+     0.0275,
+     0.02749,
+     0.0275,
+     0.02749,
+     0.02748,
+     0.02748,
+     0.02749,
+     0.02747,
+     0.02746,
+     0.02746,
+     0.02747,
+     0.02747,
+     0.02746
+    ],
+    "mean_abs_diff": [
+     1.2936,
+     1.2961,
+     1.2942,
+     1.2951,
+     1.3007,
+     1.2957,
+     1.2952,
+     1.2985,
+     1.2988,
+     1.3006,
+     1.2973,
+     1.3002,
+     1.301,
+     1.3016,
+     1.302,
+     1.3048,
+     1.3007,
+     1.3031,
+     1.3054,
+     1.3032,
+     1.307,
+     1.3062,
+     1.3036,
+     1.3045,
+     1.3073,
+     1.3069,
+     1.3057,
+     1.3073,
+     1.3087
+    ],
+    "max_abs_diff": [
+     210.97,
+     208.26,
+     209.33,
+     208.26,
+     212.12,
+     207.05,
+     210.05,
+     210.19,
+     210.19,
+     207.33,
+     207.37,
+     205.48,
+     210.33,
+     208.97,
+     206.22,
+     206.79,
+     205.69,
+     205.91,
+     210.33,
+     208.33,
+     207.83,
+     210.47,
+     210.26,
+     209.33,
+     210.47,
+     207.3,
+     212.33,
+     209.26,
+     210.97
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.15321235358715057,
+    "luma_max": 0.15348728001117706,
+    "max_luma_step": 4.820525646209717e-05,
+    "max_luma_step_frame": 6,
+    "mean_diff": 1.3015487111847976,
+    "max_diff": 1.3086555004119873,
+    "max_pixel_diff": 212.3318328857422,
+    "stab_mean": 1.0398482084274292,
+    "stab_block_p99": 3.6465861129760744,
+    "swim_blocks": 183,
+    "swim_p95": 0.1836201179379273,
+    "swim_max": 0.5277850932870618,
+    "swim_median": 0.04434032603695258,
+    "pan_px_total": 14.501523842298779
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      1024,
+      768
+     ],
+     "shift_px": 0.528,
+     "dxdy": [
+      0.518,
+      -0.1
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      448,
+      320
+     ],
+     "shift_px": 0.369,
+     "dxdy": [
+      0.296,
+      -0.22
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      960,
+      576
+     ],
+     "shift_px": 0.31,
+     "dxdy": [
+      0.058,
+      -0.304
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1344,
+      64
+     ],
+     "shift_px": 0.291,
+     "dxdy": [
+      -0.266,
+      -0.118
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1536,
+      448
+     ],
+     "shift_px": 0.272,
+     "dxdy": [
+      -0.258,
+      -0.086
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks09",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks09",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.015,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 7 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "4.506",
+     "threshold": null,
+     "note": "mean 1.010 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.181,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.373 px over 82 textured 64 px blocks; pan 14.5 px; worst [256, 64]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.1333,
+     0.13332,
+     0.13334,
+     0.13336,
+     0.13339,
+     0.13343,
+     0.13344,
+     0.1335,
+     0.13351,
+     0.13352,
+     0.13353,
+     0.13355,
+     0.13354,
+     0.13355,
+     0.13356,
+     0.13357,
+     0.1336,
+     0.1336,
+     0.13363,
+     0.13366,
+     0.13369,
+     0.13369,
+     0.13372,
+     0.13371,
+     0.13373,
+     0.13375,
+     0.13374,
+     0.13374,
+     0.13374,
+     0.13376
+    ],
+    "luma_linear": [
+     0.0234,
+     0.02341,
+     0.02342,
+     0.02343,
+     0.02343,
+     0.02345,
+     0.02346,
+     0.02348,
+     0.02348,
+     0.02348,
+     0.02348,
+     0.02348,
+     0.02347,
+     0.02348,
+     0.02348,
+     0.02348,
+     0.02349,
+     0.02349,
+     0.0235,
+     0.02351,
+     0.02352,
+     0.02351,
+     0.02352,
+     0.02351,
+     0.02352,
+     0.02353,
+     0.02352,
+     0.02352,
+     0.02352,
+     0.02352
+    ],
+    "mean_abs_diff": [
+     0.945,
+     0.9435,
+     0.9401,
+     0.9505,
+     0.9433,
+     0.9443,
+     0.9481,
+     0.9443,
+     0.942,
+     0.9466,
+     0.9462,
+     0.9437,
+     0.9452,
+     0.9466,
+     0.9402,
+     0.9504,
+     0.9451,
+     0.947,
+     0.9426,
+     0.9494,
+     0.9482,
+     0.9431,
+     0.9398,
+     0.9503,
+     0.9367,
+     0.9485,
+     0.944,
+     0.9456,
+     0.9409
+    ],
+    "max_abs_diff": [
+     213.58,
+     210.87,
+     214.79,
+     210.87,
+     212.71,
+     212.83,
+     216.8,
+     211.32,
+     217.58,
+     212.86,
+     217.8,
+     212.72,
+     219.58,
+     212.58,
+     219.58,
+     211.96,
+     220.51,
+     211.74,
+     221.58,
+     211.67,
+     221.58,
+     212.46,
+     222.44,
+     213.58,
+     221.51,
+     209.76,
+     215.51,
+     211.0,
+     212.42
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.13330434262752533,
+    "luma_max": 0.13375695049762726,
+    "max_luma_step": 5.8591365814208984e-05,
+    "max_luma_step_frame": 7,
+    "mean_diff": 0.9448706240489565,
+    "max_diff": 0.9504607915878296,
+    "max_pixel_diff": 222.43841552734375,
+    "stab_mean": 1.0095868110656738,
+    "stab_block_p99": 4.50623684883117,
+    "swim_blocks": 82,
+    "swim_p95": 0.18092152873993378,
+    "swim_max": 0.37279341310342995,
+    "swim_median": 0.055926041876916674,
+    "pan_px_total": 14.501587707989524
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      256,
+      64
+     ],
+     "shift_px": 0.373,
+     "dxdy": [
+      0.032,
+      0.371
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1088,
+      448
+     ],
+     "shift_px": 0.202,
+     "dxdy": [
+      0.169,
+      -0.111
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1344,
+      128
+     ],
+     "shift_px": 0.2,
+     "dxdy": [
+      -0.199,
+      -0.024
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1024,
+      128
+     ],
+     "shift_px": 0.187,
+     "dxdy": [
+      -0.131,
+      0.134
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      640,
+      640
+     ],
+     "shift_px": 0.181,
+     "dxdy": [
+      -0.181,
+      0.001
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks15",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks15",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.005,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 18 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.594",
+     "threshold": null,
+     "note": "mean 1.335 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.1,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.253 px over 251 textured 64 px blocks; pan 14.5 px; worst [448, 64]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.12595,
+     0.12597,
+     0.12596,
+     0.12597,
+     0.12597,
+     0.12597,
+     0.12598,
+     0.12597,
+     0.12597,
+     0.12597,
+     0.12597,
+     0.12597,
+     0.12597,
+     0.12595,
+     0.12594,
+     0.12593,
+     0.12595,
+     0.12593,
+     0.12591,
+     0.12593,
+     0.12593,
+     0.12591,
+     0.12591,
+     0.1259,
+     0.12592,
+     0.12591,
+     0.12591,
+     0.12591,
+     0.12592,
+     0.12591
+    ],
+    "luma_linear": [
+     0.02128,
+     0.02129,
+     0.02128,
+     0.02129,
+     0.02128,
+     0.02129,
+     0.02129,
+     0.02129,
+     0.02128,
+     0.02128,
+     0.02128,
+     0.02128,
+     0.02127,
+     0.02127,
+     0.02126,
+     0.02126,
+     0.02127,
+     0.02126,
+     0.02125,
+     0.02126,
+     0.02126,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02126,
+     0.02125
+    ],
+    "mean_abs_diff": [
+     1.8979,
+     1.8922,
+     1.899,
+     1.8929,
+     1.8966,
+     1.8968,
+     1.8958,
+     1.8934,
+     1.8981,
+     1.8931,
+     1.8997,
+     1.8949,
+     1.8947,
+     1.8989,
+     1.8937,
+     1.8936,
+     1.8972,
+     1.8946,
+     1.8956,
+     1.894,
+     1.8951,
+     1.8954,
+     1.8957,
+     1.8926,
+     1.8955,
+     1.8915,
+     1.8993,
+     1.8891,
+     1.8932
+    ],
+    "max_abs_diff": [
+     165.11,
+     168.26,
+     171.27,
+     167.36,
+     166.11,
+     164.9,
+     167.19,
+     165.62,
+     165.11,
+     169.41,
+     166.9,
+     167.35,
+     172.86,
+     170.27,
+     166.9,
+     168.07,
+     167.11,
+     167.47,
+     167.85,
+     165.4,
+     164.39,
+     165.76,
+     165.83,
+     166.85,
+     165.33,
+     165.04,
+     168.41,
+     168.57,
+     167.19
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.1258995085954666,
+    "luma_max": 0.12597505748271942,
+    "max_luma_step": 1.93864107131958e-05,
+    "max_luma_step_frame": 18,
+    "mean_diff": 1.8951743224571491,
+    "max_diff": 1.8996508121490479,
+    "max_pixel_diff": 172.85720825195312,
+    "stab_mean": 1.3351315259933472,
+    "stab_block_p99": 3.594267001152039,
+    "swim_blocks": 251,
+    "swim_p95": 0.09971245998833853,
+    "swim_max": 0.25297054984306117,
+    "swim_median": 0.038723200451107165,
+    "pan_px_total": 14.501262540755295
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      448,
+      64
+     ],
+     "shift_px": 0.253,
+     "dxdy": [
+      -0.246,
+      0.06
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      320,
+      512
+     ],
+     "shift_px": 0.2,
+     "dxdy": [
+      0.087,
+      0.18
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      64,
+      576
+     ],
+     "shift_px": 0.172,
+     "dxdy": [
+      -0.157,
+      -0.069
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1024,
+      448
+     ],
+     "shift_px": 0.165,
+     "dxdy": [
+      0.035,
+      -0.162
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1152,
+      192
+     ],
+     "shift_px": 0.15,
+     "dxdy": [
+      0.029,
+      -0.148
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "name": "texpan_ks17",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\p4_01_texpans\\seq_texpan_ks17",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.014,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 1 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "WARN",
+     "value": "rain None, freezeClock False",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "6.219",
+     "threshold": null,
+     "note": "mean 1.030 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.164,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.455 px over 84 textured 64 px blocks; pan 14.5 px; worst [768, 448]"
+    },
+    {
+     "name": "shimmer vs -capture-ss 2 reference",
+     "status": "SKIP",
+     "value": null,
+     "threshold": null,
+     "note": "no --reference given"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.14839,
+     0.14833,
+     0.14837,
+     0.14832,
+     0.14835,
+     0.14831,
+     0.14832,
+     0.14831,
+     0.14831,
+     0.1483,
+     0.1483,
+     0.14829,
+     0.14828,
+     0.14829,
+     0.14827,
+     0.14828,
+     0.14827,
+     0.14828,
+     0.14825,
+     0.14826,
+     0.14824,
+     0.14824,
+     0.14823,
+     0.14825,
+     0.14822,
+     0.14824,
+     0.14822,
+     0.14822,
+     0.14821,
+     0.14821
+    ],
+    "luma_linear": [
+     0.03233,
+     0.03228,
+     0.03234,
+     0.03228,
+     0.03232,
+     0.0323,
+     0.03231,
+     0.03231,
+     0.0323,
+     0.0323,
+     0.03231,
+     0.0323,
+     0.0323,
+     0.03231,
+     0.0323,
+     0.03231,
+     0.03231,
+     0.03231,
+     0.0323,
+     0.03231,
+     0.0323,
+     0.0323,
+     0.0323,
+     0.03231,
+     0.03231,
+     0.03231,
+     0.03231,
+     0.03231,
+     0.03231,
+     0.03231
+    ],
+    "mean_abs_diff": [
+     1.1398,
+     1.1058,
+     1.1224,
+     1.1238,
+     1.1094,
+     1.1204,
+     1.1128,
+     1.1112,
+     1.1138,
+     1.11,
+     1.1081,
+     1.1108,
+     1.105,
+     1.1068,
+     1.104,
+     1.1028,
+     1.1044,
+     1.0994,
+     1.101,
+     1.1018,
+     1.0959,
+     1.1034,
+     1.0954,
+     1.0965,
+     1.098,
+     1.0955,
+     1.095,
+     1.0965,
+     1.0918
+    ],
+    "max_abs_diff": [
+     193.77,
+     193.77,
+     192.77,
+     193.69,
+     192.77,
+     192.62,
+     193.55,
+     193.77,
+     193.77,
+     192.69,
+     192.69,
+     192.77,
+     192.69,
+     193.55,
+     193.05,
+     193.69,
+     192.69,
+     193.55,
+     191.98,
+     193.77,
+     192.48,
+     193.77,
+     192.69,
+     192.48,
+     193.98,
+     191.98,
+     193.48,
+     194.48,
+     193.77
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.14820727705955505,
+    "luma_max": 0.1483861207962036,
+    "max_luma_step": 5.4389238357543945e-05,
+    "max_luma_step_frame": 1,
+    "mean_diff": 1.1062623426832001,
+    "max_diff": 1.139805793762207,
+    "max_pixel_diff": 194.48062133789062,
+    "stab_mean": 1.0295636653900146,
+    "stab_block_p99": 6.219366424560547,
+    "swim_blocks": 84,
+    "swim_p95": 0.16385677671276272,
+    "swim_max": 0.45454116974445785,
+    "swim_median": 0.05270291066180087,
+    "pan_px_total": 14.501467813736468
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      768,
+      448
+     ],
+     "shift_px": 0.455,
+     "dxdy": [
+      -0.03,
+      0.454
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      256
+     ],
+     "shift_px": 0.191,
+     "dxdy": [
+      0.046,
+      0.185
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      768
+     ],
+     "shift_px": 0.184,
+     "dxdy": [
+      0.182,
+      -0.03
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1664,
+      640
+     ],
+     "shift_px": 0.176,
+     "dxdy": [
+      0.176,
+      0.003
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1408,
+      704
+     ],
+     "shift_px": 0.166,
+     "dxdy": [
+      -0.025,
+      0.164
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN"
+  }
+ ]
+}

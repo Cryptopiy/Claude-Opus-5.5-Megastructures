@@ -1,4 +1,4 @@
-// QaTests: EditMode tests of the pure helpers of the runtime QA harness (MASTER_PROMPT 11.2, 11.8,
+﻿// QaTests: EditMode tests of the pure helpers of the runtime QA harness (MASTER_PROMPT 11.2, 11.8,
 // 14.10): the rectilinear projection used for the framing acceptances, the key-shot subjects against
 // the positions the spec states, the capture plan (every key shot at both resolutions, wide shots with
 // their in-game FOV version, framing variants, tag format beatNN_<name>_<tag>, sequence windows),
@@ -248,19 +248,37 @@ namespace Megastructure.Tests
         public void BeatStills_StartMidEndAndFreeLookOf14_10()
         {
             var st = ShotPlan.BeatStills();
-            // 3 path stills + 3 free-look yaws + pitch +60 per beat, plus pitch -60 in beats 3 and 4
-            Assert.AreEqual(7 * 7 + 2, st.Count);
+            // 3 path stills + 3 free-look yaws + pitch +60 per beat, plus pitch -60 in beats 3 and 4, BV's two DREAD 6 open states
+            // in beat 2 and FX's four D-034 camera-layer poses
+            Assert.AreEqual(7 * 7 + 2 + 2 + ShotPlan.CameraLayerPoses.GetLength(0), st.Count);
             Assert.IsTrue(st.Exists(x => x.tag == "beat03_edge_look_down60"));
             Assert.IsTrue(st.Exists(x => x.tag == "beat04_skybridge_look_down60"));
             Assert.IsFalse(st.Exists(x => x.tag == "beat01_alley_look_down60"));
+            StillShot dwell = st.Find(x => x.tag == "beat02_boulevard_dread_dwell"), lobby = st.Find(x => x.tag == "beat02_boulevard_dread_lobby");
+            Assert.IsNotNull(dwell); Assert.IsNotNull(lobby);
+            Assert.AreEqual(212.0, dwell.s, 0.0); Assert.AreEqual(QaDriveMath.HeadingDeg(212.0) - 10.0, dwell.yaw, 1e-9); Assert.AreEqual(2.0, dwell.pitch, 0.0);
+            Assert.AreEqual(362.0, lobby.s, 0.0); Assert.AreEqual(QaDriveMath.HeadingDeg(362.0) - 36.5, lobby.yaw, 1e-9);
+            // FX (C25): look-ups at the layer's vFOV; the vertigo eye leans 0.35 m along the horizontal gaze
+            StillShot up05 = st.Find(x => x.tag.EndsWith("_cam_lookup_ks05", StringComparison.Ordinal));
+            Assert.IsNotNull(up05); Assert.AreEqual(63.0, up05.pitch, 0.0); Assert.AreEqual(66.0, up05.fov, 0.0); Assert.IsFalse(up05.gameFov);
+            Assert.IsTrue(st.Exists(x => x.tag == "beat03_edge_cam_lookup_ks09"));
+            Assert.IsTrue(st.Exists(x => x.tag.EndsWith("_cam_lookup_ks17", StringComparison.Ordinal)));
+            StillShot vert = st.Find(x => x.tag == "beat03_edge_cam_vertigo_ks10");
+            Assert.IsNotNull(vert); Assert.AreEqual(74.0, vert.fov, 0.0); Assert.AreEqual(-32.0, vert.pitch, 0.0);
+            D3 e = NocMath.CorridorToWorld(547.0, 0, NocturneConstants.EyeHeight);
+            Assert.AreEqual(0.35, Math.Sqrt((vert.x - e.x) * (vert.x - e.x) + (vert.z - e.z) * (vert.z - e.z)), 1e-9, "0.35 m lean");
+            Assert.AreEqual(0.35, (vert.x - e.x) * Math.Sin(vert.yaw * NocMath.Deg) + (vert.z - e.z) * Math.Cos(vert.yaw * NocMath.Deg), 1e-9, "along the gaze");
         }
 
         [Test]
         public void Sequences_WindowsOf14_10AndTheEnding()
         {
             var seqs = ShotPlan.TransitionSequences(1920, 1080);
-            Assert.AreEqual(ShotPlan.TransitionWindows.GetLength(0), seqs.Count);
-            foreach (var q in seqs) Assert.GreaterOrEqual(q.Seconds, ShotPlan.MinWindowSeconds - 0.1, q.name);
+            Assert.AreEqual(ShotPlan.TransitionWindows.GetLength(0) + 1, seqs.Count, "the 14.10 windows + AL's C14 transom clip");
+            foreach (var q in seqs) if (q.name != "seq_al_transom") Assert.GreaterOrEqual(q.Seconds, ShotPlan.MinWindowSeconds - 0.1, q.name);
+            SequenceSpec tr = FindSeq(seqs, "seq_al_transom");
+            Assert.IsNotNull(tr); Assert.AreEqual(ShotPlan.MotionFps, tr.fps); Assert.AreEqual(100.0, tr.s0, 0.0); Assert.AreEqual(110.0, tr.s1, 0.0);
+            Assert.AreEqual(401, tr.frames, "(110 - 100) m / 1.5 m/s x 60 fps + 1");
             var end = ShotPlan.EndSequence(1920, 1080);
             Assert.AreEqual(NocturneConstants.GoalTriggerS - ShotPlan.EndLeadIn, end.s0, 1e-9);
             Assert.AreEqual(NocturneConstants.EndTotal + ShotPlan.EndTail, ShotPlan.EndSecondsAfterTrigger, 1e-9);
@@ -344,14 +362,20 @@ namespace Megastructure.Tests
             var signs = ShotPlan.Build("signs").sequences;
             Assert.AreEqual(1, signs.Count); Assert.AreEqual(1800, signs[0].frames); Assert.AreEqual(30, signs[0].fps);
             Assert.AreEqual(1150.0, signs[0].s0, 0.0, "KS16 pose");
-            var rain = ShotPlan.Build("rain").sequences[0];
+            var rainSet = ShotPlan.Build("rain").sequences;
+            var rain = rainSet[0];
             Assert.AreEqual(120, rain.frames); Assert.AreEqual(60, rain.fps); Assert.AreEqual(SeqMode.Static, rain.mode);
+            // AL (C38): the alley steam clip rides with the rain set (clock running), kind "steam" (the static gate needs a frozen clock)
+            Assert.AreEqual(2, rainSet.Count);
+            SequenceSpec steam = FindSeq(rainSet, "seq_al_steam_s20");
+            Assert.IsNotNull(steam); Assert.AreEqual(120, steam.frames); Assert.AreEqual(60, steam.fps); Assert.IsTrue(steam.advanceAmbient);
+            Assert.AreEqual("steam", steam.kind); Assert.AreEqual(20.0, steam.s0, 0.0); Assert.AreEqual(ShotPlan.AmbientForS(20.0), steam.ambient0, 1e-9);
             foreach (var q in ShotPlan.Build("koi").sequences) { Assert.AreEqual(60, q.fps); Assert.AreEqual(720, q.frames); Assert.AreEqual(2.5, q.speed, 0.0); Assert.IsTrue(q.yawWorld); }
             foreach (var q in ShotPlan.Build("traffic").sequences) { Assert.AreEqual(480, q.frames, q.name); }
             var b12 = FindSeq(ShotPlan.Build("boundaries").sequences, "seq_b12");
             Assert.IsNotNull(b12);
             CollectionAssert.AreEqual(new[] { 120.0 }, b12.boundaryS);
-            Assert.AreEqual(9, ShotPlan.Build("boundaries").sequences.Count);
+            Assert.AreEqual(10, ShotPlan.Build("boundaries").sequences.Count, "9 windows + seq_al_transom (C14)");
             foreach (var q in ShotPlan.Build("encode").sequences) Assert.AreEqual(q.name == "enc_trans_mouth" ? 1800 : 600, q.frames, q.name);
             var goal = FindSeq(ShotPlan.Build("encode").sequences, "enc_beat07_goal");
             Assert.IsNotNull(goal, "LOOK_V2 7: the KS19 wall (PA)");
@@ -531,7 +555,7 @@ namespace Megastructure.Tests
         public void TexClose_PosesAreOnePointFiveMetresFromTheirSurfaces()
         {
             var stills = ShotPlan.Build("texclose").stills;
-            Assert.AreEqual(8, stills.Count);
+            Assert.AreEqual(10, stills.Count, "8 surfaces at 1.5 m + AL's 2 empty rooms");
             var names = new HashSet<string>();
             foreach (StillShot st in stills)
             {
@@ -607,6 +631,19 @@ namespace Megastructure.Tests
                         Assert.Less(p.z, SkybridgeDims.AxisZ - SkybridgeDims.DeckHalfWidth, "outside the deck");
                         Assert.Greater(p.x, SkybridgeDims.TubeX0 + 10.0); Assert.Less(p.x, SkybridgeDims.TubeX1 - 10.0);
                         break;
+                    case "tc_empty_room_e":
+                    case "tc_empty_room_w":
+                    {
+                        // AL's request: in the alley lane, facing the window wall of its side
+                        double hw = AlleyLayout.HalfWidth(p.z);
+                        Assert.Less(Math.Abs(p.x), hw, p.name + " stands in the lane");
+                        double side = p.name.EndsWith("_e", StringComparison.Ordinal) ? 1.0 : -1.0;
+                        Assert.Greater(d.x * side, 0.95, p.name + " faces its window wall");
+                        // dist is AL's horizontal distance from the eye to the window wall (x = +-HalfWidth)
+                        Assert.AreEqual(p.dist, Math.Abs(side * hw - p.x), 0.05, p.name + ": dist to the window wall");
+                        Assert.AreEqual(p.s, p.z, 1e-9, "alley s = z");
+                        continue;
+                    }
                     default: Assert.Fail("unknown texclose pose " + p.name); t = 0; break;
                 }
                 Assert.AreEqual(p.dist, t, 0.05, p.name + " at " + p.dist + " m");
@@ -617,7 +654,7 @@ namespace Megastructure.Tests
         [Test]
         public void TextureSets_UniqueNamesAndPosesMode()
         {
-            var plan = ShotPlan.Build("everything,texpans,dolly,texclose", new CapturePlanOptions { encode4k = true });
+            var plan = ShotPlan.Build("everything,texpans,dolly,texclose,dread,cinematic,cinematic60", new CapturePlanOptions { encode4k = true });
             Assert.IsEmpty(plan.unknownSets);
             var seen = new HashSet<string>();
             foreach (StillShot st in plan.stills) Assert.IsTrue(seen.Add(st.File), "duplicate " + st.File);
@@ -738,6 +775,150 @@ namespace Megastructure.Tests
             Assert.IsFalse(PerfGpu.Consistent(571319705.16, 0.568), "A1's summary");
             Assert.IsFalse(PerfGpu.Consistent(double.NaN, 0.568));
             Assert.IsTrue(PerfGpu.Consistent(10.4, 10.0), "GPU-bound: within 5 % + 0.05 ms of the frame time");
+        }
+
+        /// <summary>QA fix wave C23: the cinematic windows are the runtime WalkPlanner's own camera at 2.5 m/s (from rest at s 0, the
+        /// follower and its rate limits, the sway), one pose per frame at 30 and 60 fps, covering each window, with the boundaries
+        /// they cross; the ending window runs through the stop to s 1500.</summary>
+        [Test]
+        public void Cinematic_WindowsFollowTheRuntimePlanner()
+        {
+            foreach (int fps in new[] { ShotPlan.SeqFps, ShotPlan.MotionFps })
+            {
+                var list = ShotPlan.Build(fps == ShotPlan.SeqFps ? "cinematic" : "cinematic60").sequences;
+                Assert.AreEqual(ShotPlan.CinematicWindows.GetLength(0), list.Count);
+                ShotPlan.CinematicTrace(fps, out double[] ts, out double[] ty, out double[] tp, out double[] tt);
+                Assert.AreEqual(NocturneConstants.GoalS, ts[ts.Length - 1], 1e-3, "the trace ends standing at the goal");
+                // the trace is the planner itself: compare with a fresh run at a few frames
+                var plan = new WalkPlanner(NocLanes.Path, ShotPlan.CinematicSeed);
+                NocLanes.Path.PointAt(0.0, out double px, out double pz);
+                GazeSchedule.Evaluate(0.0, out double y0, out double p0);
+                plan.Begin(WalkMode.Cinematic, px, pz, 0.0, 0.0, 0.0, NocMath.WrapDeg(y0), p0, NocturneConstants.CinematicSpeed);
+                double dt = 1.0 / fps, time = 0.0;
+                for (int k = 1; k <= 30 * fps; k++)
+                {
+                    plan.Step(dt, plan.TargetX, plan.TargetZ, time); time += dt;
+                    if (k % fps == 0) { Assert.AreEqual(plan.D, ts[k], 1e-9); Assert.AreEqual(plan.OutYaw, ty[k], 1e-9); Assert.AreEqual(plan.OutPitch, tp[k], 1e-9); }
+                }
+                for (int i = 0; i < list.Count; i++)
+                {
+                    SequenceSpec q = list[i];
+                    Assert.AreEqual(SeqMode.Cinematic, q.mode); Assert.AreEqual("cinematic", q.kind); Assert.AreEqual(fps, q.fps);
+                    StringAssert.StartsWith(fps == ShotPlan.SeqFps ? "seq_cin_s" : "seq_cin60_s", q.name);
+                    double a = ShotPlan.CinematicWindows[i, 0], b = ShotPlan.CinematicWindows[i, 1];
+                    Assert.AreEqual(a, q.s0, 2.5 / fps + 1e-9, q.name + " starts at its window");
+                    if (b < NocturneConstants.PathLength)
+                    {
+                        Assert.AreEqual(b, q.s1, 2.5 / fps + 1e-9, q.name + " ends at its window");
+                        Assert.AreEqual((b - a) / NocturneConstants.CinematicSpeed * fps, q.frames, 2.0, q.name + ": 2.5 m/s");
+                    }
+                    else Assert.AreEqual(NocturneConstants.GoalS, q.s1, 1e-3, "the ending window stands at the goal");
+                    for (int n = 1; n < q.frames; n++)
+                    {
+                        Assert.Greater(q.poseS[n], q.poseS[n - 1] - 1e-12, "s never runs back");
+                        double ds = q.poseS[n] - q.poseS[n - 1];
+                        Assert.LessOrEqual(ds, NocturneConstants.CinematicSpeed / fps + 1e-9);
+                        Assert.LessOrEqual(Math.Abs(NocMath.DeltaAngle(q.poseYaw[n - 1], q.poseYaw[n])), (WalkPlanner.YawRateMax + 20.0) / fps, "yaw rate (follower + sway)");
+                        Assert.LessOrEqual(Math.Abs(q.posePitch[n] - q.posePitch[n - 1]), (WalkPlanner.PitchRateMax + 20.0) / fps, "pitch rate");
+                    }
+                    Assert.AreEqual(q.ambient0 + (q.frames - 1) / (double)fps, q.AmbientAt(q.frames - 1), 1e-9, "the clock runs with the walk");
+                    foreach (double bs in q.boundaryS) { Assert.Greater(bs, q.s0); Assert.LessOrEqual(bs, q.s1); }
+                    q.FramePose(q.frames / 2, out double s, out double x, out double y, out double z, out double yaw, out double pitch, out double fov);
+                    D3 c = NocMath.CorridorToWorld(s, 0.0, NocturneConstants.EyeHeight);
+                    Assert.AreEqual(c.x, x, 1e-9); Assert.AreEqual(c.z, z, 1e-9); Assert.AreEqual(NocMath.Fov(s), fov, 1e-9);
+                }
+            }
+        }
+
+        /// <summary>D-043 (THE ARK, FX): the ark set has the Ark stills (set "ark", path poses with yaw relative to the heading) and
+        /// its sequences: three cinematic windows and two walks of kind "dread" (the photosensitivity gate) and AB's four 60 fps
+        /// bridge walks of kind "traffic" over s 560-880; it is a heavy set in ShotPlan and in run-player.</summary>
+        [Test]
+        public void Ark_SetHasTheStillsTheCinematicWindowsAndTheBridgeWalks()
+        {
+            var plan = ShotPlan.Build("ark");
+            Assert.AreEqual(ShotPlan.ArkPoses.GetLength(0), plan.stills.Count);
+            foreach (StillShot st in plan.stills)
+            {
+                Assert.AreEqual("ark", st.set); StringAssert.StartsWith("ark_s", st.tag);
+                Assert.AreEqual(1.7, st.y, 1e-9, st.tag + " eye height");
+            }
+            StillShot bow = plan.stills.Find(x => x.tag == "ark_s0494_bow_gaze");
+            Assert.IsNotNull(bow); Assert.AreEqual(QaDriveMath.HeadingDeg(494.0) - 80.0, bow.yaw, 1e-9); Assert.AreEqual(16.0, bow.pitch, 0.0);
+            var seqs = plan.sequences;
+            Assert.AreEqual(9, seqs.Count);
+            foreach (SequenceSpec q in seqs) { Assert.AreEqual("ark", q.set); StringAssert.StartsWith("seq_ark_", q.name); }
+            Assert.AreEqual(5, seqs.FindAll(q => q.kind == "dread").Count);
+            var bridge = seqs.FindAll(q => q.kind == "traffic");
+            Assert.AreEqual(4, bridge.Count);
+            Assert.AreEqual(560.0, bridge[0].s0, 1e-9); Assert.AreEqual(880.0, bridge[3].s1, 1e-9);
+            foreach (SequenceSpec q in bridge) { Assert.AreEqual(ShotPlan.MotionFps, q.fps); Assert.AreEqual(1921, q.frames, q.name); }
+            SequenceSpec belly = seqs.Find(q => q.name == "seq_ark_cin_belly");
+            Assert.IsNotNull(belly); Assert.AreEqual(SeqMode.Cinematic, belly.mode); Assert.AreEqual(ShotPlan.SeqFps, belly.fps);
+            Assert.AreEqual(740.0, belly.s0, 0.1); Assert.AreEqual(846.0, belly.s1, 0.1);
+            CollectionAssert.Contains(ShotPlan.HeavySets, "ark");
+            string ps = System.IO.Path.Combine(System.IO.Directory.GetParent(Application.dataPath).FullName, "Tools", "run-player.ps1");
+            CollectionAssert.Contains(PsArray(System.IO.File.ReadAllText(ps), "$heavySets"), "ark");
+        }
+
+        /// <summary>DR's dread set (QA fix wave C22): the hull, shadow and panel walks plus a cinematic window over every sheet lightning
+        /// and darkness wave, kind "dread" (the photosensitivity gate of Tools/qa/sequences.py).</summary>
+        [Test]
+        public void Dread_SetHasTheWalksAndTheLightEvents()
+        {
+            var list = ShotPlan.Build("dread").sequences;
+            Assert.AreEqual(5 + ShotPlan.SheetLightningS.Length + ShotPlan.DarknessWaveS.Length, list.Count);
+            foreach (SequenceSpec q in list) { Assert.AreEqual("dread", q.kind); Assert.AreEqual("dread", q.set); StringAssert.StartsWith("seq_dread_", q.name); }
+            SequenceSpec panel = list.Find(q => q.name == "seq_dread_panel");
+            Assert.AreEqual(468.0, panel.s0, 1e-9); Assert.AreEqual(NocturneConstants.CinematicSpeed, panel.speed, 1e-9); Assert.AreEqual(ShotPlan.MotionFps, panel.fps);
+            SequenceSpec pass = list.Find(q => q.name == "seq_dread_hull_pass");
+            Assert.AreEqual(544.0, pass.s0, 1e-9); Assert.AreEqual(30.0, pass.yaw, 0.0); Assert.AreEqual(40.0, pass.pitch, 0.0); Assert.IsTrue(pass.yawWorld);
+            Assert.AreEqual(289, pass.frames, "(556 - 544) m / 2.5 m/s x 60 fps + 1");
+            Assert.AreEqual(ShotPlan.SignsAmbient0, ShotPlan.SignsSequence(1920, 1080).ambient0, 0.0, "SG: the KS16 hold starts at t 445");
+            foreach (double s in ShotPlan.SheetLightningS)
+            {
+                SequenceSpec q = list.Find(x => x.name == "seq_dread_lightning_s" + ((int)s).ToString("D4"));
+                Assert.IsNotNull(q, "lightning at s " + s); Assert.AreEqual(SeqMode.Cinematic, q.mode);
+                Assert.Less(q.s0, s); Assert.Greater(q.s1, s);
+            }
+            foreach (double s in ShotPlan.DarknessWaveS)
+            {
+                SequenceSpec q = list.Find(x => x.name == "seq_dread_darkwave_s" + ((int)s).ToString("D4"));
+                Assert.IsNotNull(q); Assert.GreaterOrEqual(q.frames / (double)q.fps, 29.0, "30 s of the wave");
+            }
+            CollectionAssert.Contains(ShotPlan.HeavySets, "dread"); CollectionAssert.Contains(ShotPlan.HeavySets, "cinematic");
+        }
+
+        /// <summary>HT's request: -autotest-until at or past the path end is no until (the end-of-walk checks apply).</summary>
+        [Test]
+        public void AutoTestUntil_PastThePathEndIsNoUntil()
+        {
+            Assert.IsTrue(double.IsNaN(AutoTestRunner.EffectiveUntil(double.NaN)));
+            Assert.IsTrue(double.IsNaN(AutoTestRunner.EffectiveUntil(NocturneConstants.PathLength)));
+            Assert.IsTrue(double.IsNaN(AutoTestRunner.EffectiveUntil(2000.0)));
+            Assert.AreEqual(880.0, AutoTestRunner.EffectiveUntil(880.0), 0.0);
+            Assert.AreEqual(1499.0, AutoTestRunner.EffectiveUntil(1499.0), 0.0);
+            // AT's request: an until at or past the goal trigger is reached in the stop ramp: the window runs trigger..stop
+            double trig = AutoTestRunner.ExpectedTrigger(NocturneConstants.CinematicSpeed, true, 0.0), stop = trig + 2.4;
+            AutoTestRunner.ExpectedUntil(1499.0, 0.0, NocturneConstants.CinematicSpeed, true, trig, stop, out double lo, out double hi);
+            Assert.AreEqual(trig, lo, 1e-9); Assert.AreEqual(stop, hi, 1e-9);
+            AutoTestRunner.ExpectedUntil(880.0, 0.0, NocturneConstants.CinematicSpeed, true, trig, stop, out lo, out hi);
+            Assert.AreEqual(880.0 / NocturneConstants.CinematicSpeed + 0.5 * NocturneConstants.CineAccelTime, lo, 1e-9); Assert.AreEqual(lo, hi, 0.0);
+        }
+
+        /// <summary>run-player (QA fix wave): a comma list of sets is classified per set (HT's request), the disk guard refuses a start
+        /// under 5 GB free (C24), and the facadesheet set gets -facade-sheet (C20).</summary>
+        [Test]
+        public void RunPlayer_SplitsSetListsAndGuardsTheDisk()
+        {
+            string ps = System.IO.Path.Combine(System.IO.Directory.GetParent(Application.dataPath).FullName, "Tools", "run-player.ps1");
+            string text = System.IO.File.ReadAllText(ps);
+            StringAssert.Contains("@($val.Split(',') | Where-Object { $heavySets -contains $_ }).Count -gt 0", text);
+            StringAssert.Contains("@($val.Split(',') | Where-Object { $fourKSets -contains $_ }).Count -gt 0", text);
+            Assert.IsTrue(Regex.IsMatch(text, @"\[double\]\$MinFreeGB = 5\.0"), "refuse under 5 GB free");
+            StringAssert.Contains("exit 94", text);
+            StringAssert.Contains("-facade-sheet", text);
+            Assert.IsNull(ShotPlan.GuardNote(new[] { "x.exe", "-capture", "d", "-capture-set", "statics,boundaries" }, "statics,boundaries", 1));
         }
     }
 }

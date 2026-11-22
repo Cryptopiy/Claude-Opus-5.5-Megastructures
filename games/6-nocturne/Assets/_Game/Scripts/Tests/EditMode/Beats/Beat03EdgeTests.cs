@@ -5,7 +5,8 @@
 //   MeshValidation; <= 520 k triangles; deck top exactly at y 0 from x 215.3 to 375.3 (5.0 m at the tip); nothing of the beat
 //   stands inside the lane + 0.2 m camera sphere; face A has nothing above y 0 inside the canyon z 120..270, face B nothing above
 //   y -0.5 inside the garden notch and nothing on the promenade x 874..914; x >= 372 above the deck is free for gate block A;
-//   24 realtime lights and 28 wet sources (<= 32 active), 4 wet walls; the portal panel hole meets the collar.
+//   24 realtime lights and 28 wet sources plus the handrail's 4 segment sources (<= 32 active), 4 wet walls; the portal panel hole
+//   meets the collar.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -188,17 +189,46 @@ namespace Megastructure.Tests
             Assert.AreEqual(EdgeDims.LampCount + EdgeDims.BalustradeLights, s_lights.Count);
             NocWetRegistry.Clear();
             foreach (var l in s_lights) NocWetRegistry.AddSource(l.Pos, l.Pos, l.Rho, l.Linear * l.Radiance);
+            int rail = Beat03_Edge.RegisterRailSources();
             Beat03_Edge.RegisterWalls(null);
             int maxActive = NocWetRegistry.MaxActive();
+            int total = NocWetRegistry.TotalSources;
             NocWetRegistry.Collect(480.0);
             int walls = NocWetRegistry.ActiveWalls;
             NocWetRegistry.Collect(405.0);
             int wallsAtBoundary = NocWetRegistry.ActiveWalls;
             NocWetRegistry.Clear();
-            Debug.Log(FormattableString.Invariant($"beat 3 wet sources {s_lights.Count}, max active {maxActive}, walls at s 480 {walls}, at s 405 {wallsAtBoundary}"));
+            Debug.Log(FormattableString.Invariant($"beat 3 wet sources {s_lights.Count} + {rail} rail segments, max active {maxActive}, walls at s 480 {walls}, at s 405 {wallsAtBoundary}"));
+            Assert.AreEqual(4, rail, "the lit handrail: two straight runs a side (FX C04, KS09's rail streak)");
+            Assert.AreEqual(s_lights.Count + rail, total);
             Assert.LessOrEqual(maxActive, 32);
             Assert.AreEqual(4, walls);
             Assert.LessOrEqual(wallsAtBoundary, 2, "face B walls start after G1's boulevard walls have faded (<= 4 in all)");
+        }
+
+        [Test]
+        public void RailSources_FollowTheLitHandrail()
+        {
+            // each run is straight, <= 60 m, at the LED channel's height, and its chord stays within 4 cm of the rail line
+            float y = (float)(EdgeDims.RailHeight - EdgeDims.RailTube);
+            for (int s = -1; s <= 1; s += 2)
+            {
+                var line = TonguePier.RailLine(s, y);
+                for (int k = 0; k + 1 < Beat03_Edge.RailSourceX.Length; k++)
+                {
+                    Vector3 a = Beat03_Edge.RailPoint(s, Beat03_Edge.RailSourceX[k], y), b = Beat03_Edge.RailPoint(s, Beat03_Edge.RailSourceX[k + 1], y);
+                    Assert.LessOrEqual(Vector3.Distance(a, b), 60f, "segment <= 60 m");
+                    double worst = 0.0;
+                    foreach (var p in line)
+                    {
+                        if (p.x < a.x || p.x > b.x) continue;
+                        float t = (p.x - a.x) / (b.x - a.x);
+                        worst = Math.Max(worst, Math.Abs(p.z - Mathf.Lerp(a.z, b.z, t)));
+                    }
+                    Assert.Less(worst, 0.04, "chord within 4 cm of the rail (side " + s + ", run " + k + ")");
+                }
+            }
+            Assert.AreEqual(EdgeDims.RailEndX, Beat03_Edge.RailSourceX[Beat03_Edge.RailSourceX.Length - 1], 1e-9, "the runs end where the rail ends");
         }
 
         [Test]
@@ -255,6 +285,119 @@ namespace Megastructure.Tests
             Assert.AreEqual(26, s9, 2.0); Assert.AreEqual(39, p9, 3.0); Assert.AreEqual(36, d9, 3.0);
             Assert.AreEqual(7, s10, 2.0); Assert.AreEqual(50, p10, 3.0);
             Assert.GreaterOrEqual(d10, 40.0, "14.5.3 Acceptance (2): KS10 drop >= 40 %");
+        }
+        // ------------------------------------------------------------------ fix wave (panel p4_01)
+        /// <summary>C13: the 14 balustrade lights are spots thrown inward and down; the balustrade glass (lateral w - 0.05, y 0.08 ..
+        /// 1.075), the shoe and the step-light housing (inner face w - 0.14, top y 0.105) lie outside the outer cone, so no light
+        /// reaches the surfaces whose millimetre-sized lit spots popped at distance; the floor straight under the light is lit.</summary>
+        [Test]
+        public void StepLights_AreSpots_TheGlassShoeAndHousingLieOutsideTheCone()
+        {
+            Parts();
+            int spots = 0;
+            int lampSpots = 0;
+            foreach (var l in s_lights)
+            {
+                if (l.Pos.y > 2f)
+                {
+                    // plaza lamps: spots straight down; the head (bottom 7 cm above the light, 0.26 x 0.5 m) lies outside the cone
+                    Assert.Greater(l.SpotDir.sqrMagnitude, 0.5f, "plaza lamp is a spot");
+                    Assert.Less(l.SpotDir.y, -0.99f, "aimed down");
+                    foreach (var c in new[] { new Vector3(0.13f, 0.07f, 0.25f), new Vector3(-0.13f, 0.07f, -0.25f), new Vector3(0f, 0.07f, 0f) })
+                        Assert.Greater(Angle(l.SpotDir, c), 0.5 * l.SpotAngle - 1e-3, "the lamp head inside its own cone");
+                    lampSpots++;
+                    continue;
+                }
+                if (l.SpotDir.sqrMagnitude < 0.5f) continue;
+                spots++;
+                Vector3 pos = l.Pos + l.LightOffset;
+                double lat = Math.Abs(pos.z - EdgeDims.TongueZ), w = EdgeDims.TongueHalfWidth(pos.x);
+                int s = pos.z > EdgeDims.TongueZ ? 1 : -1;
+                double half = 0.5 * l.SpotAngle;
+                Assert.Less(l.SpotInner, l.SpotAngle);
+                Assert.Less(l.SpotDir.y, -0.1f, "aimed down");
+                Assert.Less(l.SpotDir.z * s, -0.1f, "aimed inward, away from the balustrade");
+                foreach (double dx in new[] { -0.6, 0.0, 0.6 })
+                {
+                    foreach (double y in new[] { EdgeDims.GlassBottom, 0.3, 0.6, EdgeDims.GlassTop })
+                        Assert.Greater(Angle(l.SpotDir, new Vector3((float)dx, (float)(y - pos.y), (float)(s * (w - EdgeDims.RailInset - lat)))), half, "balustrade glass inside the cone");
+                    foreach (double y in new[] { 0.0, 0.035, 0.105 })      // housing (inner face) and the shoe below it
+                        Assert.Greater(Angle(l.SpotDir, new Vector3((float)dx, (float)(y - pos.y), (float)(s * (w - 0.14 - lat)))), half, "housing / shoe inside the cone");
+                }
+                Assert.Less(Angle(l.SpotDir, Vector3.down), half, "the floor under the light is lit");
+                Assert.Greater(l.Pos.y, 0.1f, "the light stands clear of the floor");
+            }
+            Assert.AreEqual(EdgeDims.BalustradeLights, spots, "every balustrade light is a spot");
+            Assert.AreEqual(EdgeDims.LampCount, lampSpots, "every plaza lamp is a spot");
+        }
+
+        static double Angle(Vector3 a, Vector3 b) => Vector3.Angle(a, b);
+
+        /// <summary>C05: the glass edge is frameless: no "ledgeFrame" part; the balustrade's base channel reaches at most 0.12 m under the
+        /// walk plane; the fins under the pane are glass (transparent, not occluders) and at most 0.08 m thick.</summary>
+        [Test]
+        public void GlassEdge_IsFrameless_ChannelShallow_FinsGlass()
+        {
+            bool channel = false, fins = false;
+            foreach (var p in Parts())
+            {
+                Assert.AreNotEqual("Tongue_ledgeFrame", p.Name, "the girder / rib frame is gone");
+                if (p.Name == "Tongue_railChannel")
+                {
+                    channel = true;
+                    float yMin = float.MaxValue;
+                    foreach (var v in World(p)) yMin = Math.Min(yMin, v.y);
+                    Assert.GreaterOrEqual(yMin, -0.12f, "channel depth <= 0.12 m");
+                }
+                if (p.Name == "Tongue_glassFins")
+                {
+                    fins = true;
+                    Assert.AreEqual(EdgeMat.Glass, p.Mat, "fins are glass");
+                }
+            }
+            Assert.IsTrue(channel && fins, "channel and fins built");
+            Assert.LessOrEqual(EdgeDims.LedgeFinW, 0.08);
+            Assert.LessOrEqual(EdgeDims.LedgeChannelD, 0.12);
+        }
+
+        /// <summary>C03: the lower tube portals' light ring is GulfPortal.LampCount separate lamps (one lip segment each), none on the
+        /// vertical or horizontal axis (no crosshair), at LampGain <= 0.6 of EmissionTube.</summary>
+        [Test]
+        public void PortalLamps_Segmented_NoContinuousRing()
+        {
+            int rings = 0;
+            foreach (var p in Parts())
+            {
+                if (p.Mat != EdgeMat.PortalRing) continue;
+                rings++;
+                Assert.AreEqual(2 * GulfPortal.LampCount, p.Mb.Indices.Count / 3, p.Name + ": one quad per lamp");
+            }
+            Assert.AreEqual(2, rings, "two lower portals");
+            Assert.Greater(GulfPortal.LampCount, 5); Assert.Less(GulfPortal.LampCount, 13);
+            Assert.LessOrEqual(GulfPortal.LampGain, 0.6f);
+            int n = EdgeDims.PortalSegments;
+            for (int j = 0; j < n; j++)
+            {
+                if (!GulfPortal.IsLamp(j)) continue;
+                foreach (int axis in new[] { 0, n / 4, n / 2, 3 * n / 4 })
+                    Assert.IsFalse(j == axis || (j + 1) % n == axis, "no lamp touches an axis angle");
+            }
+        }
+
+        /// <summary>C43: the beat's wall planes and G1's two boulevard walls (s 120-400) never exceed the cap of 4 with a non-zero weight
+        /// anywhere in s 380-460, and face B's mirror is fully on at KS07 (s 402).</summary>
+        [Test]
+        public void WetWalls_FaceBFromThePlaza_NeverOverTheCap()
+        {
+            for (double s = 380.0; s <= 460.0; s += 0.25)
+            {
+                int n = 0;
+                if (NocWetRegistry.WallWeight(BoulevardLayout.WetS0, BoulevardLayout.WetS1, s) > 0.0) n += 2;
+                if (NocWetRegistry.WallWeight(Beat03_Edge.WallsAS0, 880.0, s) > 0.0) n += 2;
+                if (NocWetRegistry.WallWeight(Beat03_Edge.WallsBS0, 880.0, s) > 0.0) n += 2;
+                Assert.LessOrEqual(n, 4, FormattableString.Invariant($"walls at s {s}"));
+            }
+            Assert.AreEqual(1.0, NocWetRegistry.WallWeight(Beat03_Edge.WallsBS0, 880.0, 402.0), 1e-9, "face B mirrored at KS07");
         }
     }
 }

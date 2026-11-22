@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="42" result="Failed(Child)" total="42" passed="39" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:57:54Z" duration="382,9959133">
+  <test-suite type="TestSuite" id="1000" name="Nocturne" fullname="Nocturne" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:57:54Z" duration="382.995913" total="42" passed="39" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1491" name="Megastructure.Tests.EditMode.dll" fullname="W:/YouTube/Megastructures/6 Megastructures/6 Megastructures/.worktrees/waveb/Library/ScriptAssemblies/Megastructure.Tests.EditMode.dll" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:57:54Z" duration="382.979559" total="42" passed="39" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15684" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1492" name="Megastructure" fullname="Megastructure" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:57:54Z" duration="382.972008" total="42" passed="39" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1493" name="Tests" fullname="Megastructure.Tests" runstate="Runnable" testcasecount="447" result="Failed" site="Child" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:57:54Z" duration="382.968357" total="42" passed="39" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1026" name="AudioDreadTests" fullname="Megastructure.Tests.AudioDreadTests" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:51:50Z" duration="19.372889" total="12" passed="9" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1034" name="Cues_AreKeyedToTheirSAndTimes" fullname="Megastructure.Tests.AudioDreadTests.Cues_AreKeyedToTheirSAndTimes" methodname="Cues_AreKeyedToTheirSAndTimes" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1368459881" result="Passed" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:51:31Z" duration="0.035279" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="DreadLayer_CallbackSizeInvariantAndAllocationFree" fullname="Megastructure.Tests.AudioDreadTests.DreadLayer_CallbackSizeInvariantAndAllocationFree" methodname="DreadLayer_CallbackSizeInvariantAndAllocationFree" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="981930892" result="Passed" start-time="2026-11-20 20:51:31Z" end-time="2026-11-20 20:51:33Z" duration="2.319899" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[GC.GetAllocatedBytesForCurrentThread is not live here; Tools/audio/harness alloc measures 0 bytes on .NET]]></message>
+              </reason>
+            </test-case>
+            <test-case id="1029" name="EchoBus_GlidesWithTheWalkerWithoutClicks" fullname="Megastructure.Tests.AudioDreadTests.EchoBus_GlidesWithTheWalkerWithoutClicks" methodname="EchoBus_GlidesWithTheWalkerWithoutClicks" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1353938045" result="Failed" start-time="2026-11-20 20:51:33Z" end-time="2026-11-20 20:51:33Z" duration="0.064313" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  a 200 m jump fades the taps instead of snapping
+  Expected: less than 0.00024879627761079429d
+  But was:  0.00028836744843500905d
+]]></message>
+                <stack-trace><![CDATA[at Megastructure.Tests.AudioDreadTests.EchoBus_GlidesWithTheWalkerWithoutClicks () [0x001ee] in W:\YouTube\Megastructures\6 Megastructures\6 Megastructures\.worktrees\waveb\Assets\_Game\Scripts\Tests\EditMode\AudioDreadTests.cs:111
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1028" name="EchoBus_ImpulseArrivesAtTheTapDelays" fullname="Megastructure.Tests.AudioDreadTests.EchoBus_ImpulseArrivesAtTheTapDelays" methodname="EchoBus_ImpulseArrivesAtTheTapDelays" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1508108167" result="Passed" start-time="2026-11-20 20:51:33Z" end-time="2026-11-20 20:51:33Z" duration="0.085138" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1027" name="EchoTaps_MatchTheDreadTable" fullname="Megastructure.Tests.AudioDreadTests.EchoTaps_MatchTheDreadTable" methodname="EchoTaps_MatchTheDreadTable" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1555456848" result="Failed" start-time="2026-11-20 20:51:33Z" end-time="2026-11-20 20:51:33Z" duration="0.005858" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  face B gain at x 790
+  Expected: 0.85567598402738188d +/- 1.0000000000000001E-09d
+  But was:  0.85560293929248932d
+]]></message>
+                <stack-trace><![CDATA[at Megastructure.Tests.AudioDreadTests.EchoTaps_MatchTheDreadTable () [0x001ce] in W:\YouTube\Megastructures\6 Megastructures\6 Megastructures\.worktrees\waveb\Assets\_Game\Scripts\Tests\EditMode\AudioDreadTests.cs:56
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1037" name="Gates_ThroughTheCuesAtBothSpeeds" fullname="Megastructure.Tests.AudioDreadTests.Gates_ThroughTheCuesAtBothSpeeds" methodname="Gates_ThroughTheCuesAtBothSpeeds" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1404740488" result="Passed" start-time="2026-11-20 20:51:33Z" end-time="2026-11-20 20:51:45Z" duration="11.797886" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="Hull_CrossesAlongZAtEighteenMetresPerSecondWithASlowDoppler" fullname="Megastructure.Tests.AudioDreadTests.Hull_CrossesAlongZAtEighteenMetresPerSecondWithASlowDoppler" methodname="Hull_CrossesAlongZAtEighteenMetresPerSecondWithASlowDoppler" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="785457167" result="Passed" start-time="2026-11-20 20:51:45Z" end-time="2026-11-20 20:51:46Z" duration="1.279974" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="SilenceDrop_DucksRainAndTheCityBedOnlyWithoutClicks" fullname="Megastructure.Tests.AudioDreadTests.SilenceDrop_DucksRainAndTheCityBedOnlyWithoutClicks" methodname="SilenceDrop_DucksRainAndTheCityBedOnlyWithoutClicks" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1912343886" result="Passed" start-time="2026-11-20 20:51:46Z" end-time="2026-11-20 20:51:48Z" duration="1.563771" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="SilenceDrops_TwoSecondsBeforeKS09AndKS17" fullname="Megastructure.Tests.AudioDreadTests.SilenceDrops_TwoSecondsBeforeKS09AndKS17" methodname="SilenceDrops_TwoSecondsBeforeKS09AndKS17" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1219743143" result="Passed" start-time="2026-11-20 20:51:48Z" end-time="2026-11-20 20:51:48Z" duration="0.004627" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="Swell_RenderedLevelFollowsItsEnvelope" fullname="Megastructure.Tests.AudioDreadTests.Swell_RenderedLevelFollowsItsEnvelope" methodname="Swell_RenderedLevelFollowsItsEnvelope" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1671183546" result="Passed" start-time="2026-11-20 20:51:48Z" end-time="2026-11-20 20:51:50Z" duration="1.932897" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1030" name="Swells_RiseAndDecayUnderTheKeyShots" fullname="Megastructure.Tests.AudioDreadTests.Swells_RiseAndDecayUnderTheKeyShots" methodname="Swells_RiseAndDecayUnderTheKeyShots" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="355699443" result="Failed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.005277" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: less than or equal to 0.99999875935725002d
+  But was:  1.0d
+]]></message>
+                <stack-trace><![CDATA[at Megastructure.Tests.AudioDreadTests.Swells_RiseAndDecayUnderTheKeyShots () [0x001fd] in W:\YouTube\Megastructures\6 Megastructures\6 Megastructures\.worktrees\waveb\Assets\_Game\Scripts\Tests\EditMode\AudioDreadTests.cs:132
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1035" name="Voices_AreUnitLoudnessAtGainOne" fullname="Megastructure.Tests.AudioDreadTests.Voices_AreUnitLoudnessAtGainOne" methodname="Voices_AreUnitLoudnessAtGainOne" classname="Megastructure.Tests.AudioDreadTests" runstate="Runnable" seed="1063319852" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.253747" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1039" name="AudioScoreTests" fullname="Megastructure.Tests.AudioScoreTests" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:57:40Z" duration="349.961863" total="22" passed="22" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1041" name="AudioTrimsJson_MatchesTheScore" fullname="Megastructure.Tests.AudioScoreTests.AudioTrimsJson_MatchesTheScore" methodname="AudioTrimsJson_MatchesTheScore" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="579283629" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.001780" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1046" name="ChordGains_SumToOneWithSmootherstepWindows" fullname="Megastructure.Tests.AudioScoreTests.ChordGains_SumToOneWithSmootherstepWindows" methodname="ChordGains_SumToOneWithSmootherstepWindows" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1013042387" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.183131" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="ChordTable_MatchesTheBibleAndMidiHz" fullname="Megastructure.Tests.AudioScoreTests.ChordTable_MatchesTheBibleAndMidiHz" methodname="ChordTable_MatchesTheBibleAndMidiHz" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1891789119" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.001159" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="Footsteps_CadenceVariationAndPeak" fullname="Megastructure.Tests.AudioScoreTests.Footsteps_CadenceVariationAndPeak" methodname="Footsteps_CadenceVariationAndPeak" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="313398748" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:51:50Z" duration="0.125838" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1050" name="FullMix_ChordChangesWithoutEnvelopeSteps" fullname="Megastructure.Tests.AudioScoreTests.FullMix_ChordChangesWithoutEnvelopeSteps" methodname="FullMix_ChordChangesWithoutEnvelopeSteps" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="591474691" result="Passed" start-time="2026-11-20 20:51:50Z" end-time="2026-11-20 20:52:01Z" duration="10.275835" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1052" name="KoiLaw_PeaksInsideS7AndRisesFaintlyFrom1200" fullname="Megastructure.Tests.AudioScoreTests.KoiLaw_PeaksInsideS7AndRisesFaintlyFrom1200" methodname="KoiLaw_PeaksInsideS7AndRisesFaintlyFrom1200" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="381772735" result="Passed" start-time="2026-11-20 20:52:01Z" end-time="2026-11-20 20:52:01Z" duration="0.001336" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="LayerTable_SumColumnIsThePowerSumAndTrimsAreSmall" fullname="Megastructure.Tests.AudioScoreTests.LayerTable_SumColumnIsThePowerSumAndTrimsAreSmall" methodname="LayerTable_SumColumnIsThePowerSumAndTrimsAreSmall" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="153925275" result="Passed" start-time="2026-11-20 20:52:01Z" end-time="2026-11-20 20:52:01Z" duration="0.001429" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="LevelGate_DeviceRate44_1kHzMatches48kHz" fullname="Megastructure.Tests.AudioScoreTests.LevelGate_DeviceRate44_1kHzMatches48kHz" methodname="LevelGate_DeviceRate44_1kHzMatches48kHz" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1489462408" result="Passed" start-time="2026-11-20 20:52:01Z" end-time="2026-11-20 20:52:07Z" duration="6.391588" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1043" name="LevelGate_PerBeatMedianWithin1_5dB_At1_5" fullname="Megastructure.Tests.AudioScoreTests.LevelGate_PerBeatMedianWithin1_5dB_At1_5" methodname="LevelGate_PerBeatMedianWithin1_5dB_At1_5" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1691021803" result="Passed" start-time="2026-11-20 20:52:07Z" end-time="2026-11-20 20:52:56Z" duration="49.377146" asserts="0">
+              <properties>
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NOC] AudioScoreTests level gate at 1,5 m/s
+beat 1: median -35.25 dBFS, target -34.9, dev -0.35, 8 windows, TP -16.96 dBTP, DC -0.0000083, step 0.095
+beat 2: median -30.60 dBFS, target -30.4, dev -0.20, 8 windows, TP -15.45 dBTP, DC -0.0000103, step 0.073
+beat 3: median -31.08 dBFS, target -31.3, dev +0.22, 8 windows, TP -16.70 dBTP, DC -0.0000085, step 0.065
+beat 4: median -29.62 dBFS, target -29.6, dev -0.02, 8 windows, TP -6.24 dBTP, DC -0.0000113, step 0.110
+beat 5: median -33.43 dBFS, target -33.3, dev -0.13, 8 windows, TP -14.84 dBTP, DC -0.0000046, step 0.090
+beat 6: median -30.10 dBFS, target -30.1, dev +0.00, 8 windows, TP -15.20 dBTP, DC -0.0000187, step 0.073
+beat 7: median -29.07 dBFS, target -28.9, dev -0.17, 8 windows, TP -14.04 dBTP, DC -0.0000105, step 0.067
+
+]]></output>
+            </test-case>
+            <test-case id="1042" name="LevelGate_PerBeatMedianWithin1_5dB_At2_5" fullname="Megastructure.Tests.AudioScoreTests.LevelGate_PerBeatMedianWithin1_5dB_At2_5" methodname="LevelGate_PerBeatMedianWithin1_5dB_At2_5" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1189026727" result="Passed" start-time="2026-11-20 20:52:56Z" end-time="2026-11-20 20:53:36Z" duration="40.042889" asserts="0">
+              <properties>
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NOC] AudioScoreTests level gate at 2,5 m/s
+beat 1: median -35.10 dBFS, target -34.9, dev -0.20, 8 windows, TP -16.45 dBTP, DC -0.0000082, step 0.095
+beat 2: median -30.21 dBFS, target -30.4, dev +0.19, 8 windows, TP -14.52 dBTP, DC -0.0000094, step 0.073
+beat 3: median -30.83 dBFS, target -31.3, dev +0.47, 8 windows, TP -15.54 dBTP, DC -0.0000086, step 0.065
+beat 4: median -28.79 dBFS, target -29.6, dev +0.81, 8 windows, TP -6.23 dBTP, DC -0.0000135, step 0.109
+beat 5: median -33.42 dBFS, target -33.3, dev -0.12, 8 windows, TP -13.11 dBTP, DC -0.0000041, step 0.090
+beat 6: median -30.10 dBFS, target -30.1, dev +0.00, 8 windows, TP -15.85 dBTP, DC -0.0000187, step 0.074
+beat 7: median -29.26 dBFS, target -28.9, dev -0.36, 8 windows, TP -14.13 dBTP, DC -0.0000103, step 0.067
+
+]]></output>
+            </test-case>
+            <test-case id="1060" name="Mixer_OutputIndependentOfTheCallbackSize" fullname="Megastructure.Tests.AudioScoreTests.Mixer_OutputIndependentOfTheCallbackSize" methodname="Mixer_OutputIndependentOfTheCallbackSize" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="628450230" result="Passed" start-time="2026-11-20 20:53:36Z" end-time="2026-11-20 20:53:41Z" duration="4.979251" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1061" name="Mixer_ProcessAllocatesNothing" fullname="Megastructure.Tests.AudioScoreTests.Mixer_ProcessAllocatesNothing" methodname="Mixer_ProcessAllocatesNothing" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="243691281" result="Passed" start-time="2026-11-20 20:53:41Z" end-time="2026-11-20 20:53:45Z" duration="3.736207" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[GC.GetAllocatedBytesForCurrentThread is not live here; Tools/audio/harness alloc measures 0 bytes on .NET]]></message>
+              </reason>
+            </test-case>
+            <test-case id="1048" name="PadEngine_ChangesOnlyInSilenceWithBoundedSlewAndEqualPower" fullname="Megastructure.Tests.AudioScoreTests.PadEngine_ChangesOnlyInSilenceWithBoundedSlewAndEqualPower" methodname="PadEngine_ChangesOnlyInSilenceWithBoundedSlewAndEqualPower" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="819936915" result="Passed" start-time="2026-11-20 20:53:45Z" end-time="2026-11-20 20:55:40Z" duration="115.330249" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1049" name="PadSolo_NoClickAtTheChordChanges" fullname="Megastructure.Tests.AudioScoreTests.PadSolo_NoClickAtTheChordChanges" methodname="PadSolo_NoClickAtTheChordChanges" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="999200833" result="Passed" start-time="2026-11-20 20:55:40Z" end-time="2026-11-20 20:57:10Z" duration="89.443057" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NOC] AudioScoreTests pad changes
+v 2.5 C0->C1: env step 0.00397, sample step 0.00164, d2 in 0.000194 out 0.000248
+v 2.5 C1->C2: env step 0.00685, sample step 0.00249, d2 in 0.000310 out 0.000369
+v 2.5 C2->C3: env step 0.00808, sample step 0.00261, d2 in 0.000440 out 0.000645
+v 2.5 C3->C4: env step 0.01273, sample step 0.00472, d2 in 0.000951 out 0.001140
+v 2.5 C4->C5: env step 0.00553, sample step 0.00410, d2 in 0.000722 out 0.000915
+v 2.5 C5->C6: env step 0.00590, sample step 0.00303, d2 in 0.000488 out 0.000544
+v 2.5 C6->C7: env step 0.00565, sample step 0.00253, d2 in 0.000277 out 0.000361
+v 2.5 C7->C8: env step 0.01389, sample step 0.00556, d2 in 0.000812 out 0.001137
+v 2.5 C8->C9: env step 0.01216, sample step 0.00502, d2 in 0.000815 out 0.001137
+v 2.5 C9->C10: env step 0.01543, sample step 0.00598, d2 in 0.000722 out 0.000972
+v 1.5 C0->C1: env step 0.00843, sample step 0.00248, d2 in 0.000302 out 0.000187
+v 1.5 C7->C8: env step 0.01362, sample step 0.00627, d2 in 0.001336 out 0.000612
+v 1.5 C9->C10: env step 0.01580, sample step 0.00450, d2 in 0.000499 out 0.000977
+
+]]></output>
+            </test-case>
+            <test-case id="1056" name="PassGeometry_DopplerAndPan" fullname="Megastructure.Tests.AudioScoreTests.PassGeometry_DopplerAndPan" methodname="PassGeometry_DopplerAndPan" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1990063398" result="Passed" start-time="2026-11-20 20:57:10Z" end-time="2026-11-20 20:57:10Z" duration="0.000724" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="PlayerPath_ContinuousAtAnySpeedStandingWalkingBackAndSprinting" fullname="Megastructure.Tests.AudioScoreTests.PlayerPath_ContinuousAtAnySpeedStandingWalkingBackAndSprinting" methodname="PlayerPath_ContinuousAtAnySpeedStandingWalkingBackAndSprinting" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="843888341" result="Passed" start-time="2026-11-20 20:57:10Z" end-time="2026-11-20 20:57:20Z" duration="10.462260" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1058" name="PlayerPath_MatchesTheOfflineRender" fullname="Megastructure.Tests.AudioScoreTests.PlayerPath_MatchesTheOfflineRender" methodname="PlayerPath_MatchesTheOfflineRender" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="16092884" result="Passed" start-time="2026-11-20 20:57:20Z" end-time="2026-11-20 20:57:38Z" duration="18.081499" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="RainCoupling_EqualsThePicture" fullname="Megastructure.Tests.AudioScoreTests.RainCoupling_EqualsThePicture" methodname="RainCoupling_EqualsThePicture" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1072403388" result="Passed" start-time="2026-11-20 20:57:38Z" end-time="2026-11-20 20:57:38Z" duration="0.013434" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="Reverb_PlacesAndTheirWindows" fullname="Megastructure.Tests.AudioScoreTests.Reverb_PlacesAndTheirWindows" methodname="Reverb_PlacesAndTheirWindows" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="488337705" result="Passed" start-time="2026-11-20 20:57:38Z" end-time="2026-11-20 20:57:39Z" duration="0.975328" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1051" name="Swells_S1ToS8" fullname="Megastructure.Tests.AudioScoreTests.Swells_S1ToS8" methodname="Swells_S1ToS8" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="1943778964" result="Passed" start-time="2026-11-20 20:57:39Z" end-time="2026-11-20 20:57:40Z" duration="0.513074" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="Vehicles_LaunchAtTheirSAndPassesDifferLittleBetweenSpeeds" fullname="Megastructure.Tests.AudioScoreTests.Vehicles_LaunchAtTheirSAndPassesDifferLittleBetweenSpeeds" methodname="Vehicles_LaunchAtTheirSAndPassesDifferLittleBetweenSpeeds" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="2057235088" result="Passed" start-time="2026-11-20 20:57:40Z" end-time="2026-11-20 20:57:40Z" duration="0.004086" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1047" name="VoicePlan_CommonTonesStayOnTheirVoice" fullname="Megastructure.Tests.AudioScoreTests.VoicePlan_CommonTonesStayOnTheirVoice" methodname="VoicePlan_CommonTonesStayOnTheirVoice" classname="Megastructure.Tests.AudioScoreTests" runstate="Runnable" seed="65735881" result="Passed" start-time="2026-11-20 20:57:40Z" end-time="2026-11-20 20:57:40Z" duration="0.002815" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1062" name="AudioTests" fullname="Megastructure.Tests.AudioTests" classname="Megastructure.Tests.AudioTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-11-20 20:57:40Z" end-time="2026-11-20 20:57:54Z" duration="13.623593" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1065" name="DcBlocker_RemovesOffset" fullname="Megastructure.Tests.AudioTests.DcBlocker_RemovesOffset" methodname="DcBlocker_RemovesOffset" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="1338708515" result="Passed" start-time="2026-11-20 20:57:40Z" end-time="2026-11-20 20:57:40Z" duration="0.002606" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1064" name="Fdn_ImpulseDecays" fullname="Megastructure.Tests.AudioTests.Fdn_ImpulseDecays" methodname="Fdn_ImpulseDecays" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="191164558" result="Passed" start-time="2026-11-20 20:57:40Z" end-time="2026-11-20 20:57:41Z" duration="0.888751" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1067" name="Limiter_CeilingMinus1_5dBFS" fullname="Megastructure.Tests.AudioTests.Limiter_CeilingMinus1_5dBFS" methodname="Limiter_CeilingMinus1_5dBFS" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="1300926985" result="Passed" start-time="2026-11-20 20:57:41Z" end-time="2026-11-20 20:57:41Z" duration="0.028540" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1069" name="OfflineRender_IsDeterministic" fullname="Megastructure.Tests.AudioTests.OfflineRender_IsDeterministic" methodname="OfflineRender_IsDeterministic" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="564682636" result="Passed" start-time="2026-11-20 20:57:41Z" end-time="2026-11-20 20:57:44Z" duration="3.421441" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1068" name="OfflineRender_PeakBelowCeilingNoDcAtBothSpeeds" fullname="Megastructure.Tests.AudioTests.OfflineRender_PeakBelowCeilingNoDcAtBothSpeeds" methodname="OfflineRender_PeakBelowCeilingNoDcAtBothSpeeds" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="929708117" result="Passed" start-time="2026-11-20 20:57:44Z" end-time="2026-11-20 20:57:52Z" duration="7.753301" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1070" name="OfflineRender_StandingWindowAndPerBeatRms" fullname="Megastructure.Tests.AudioTests.OfflineRender_StandingWindowAndPerBeatRms" methodname="OfflineRender_StandingWindowAndPerBeatRms" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="2109398450" result="Passed" start-time="2026-11-20 20:57:52Z" end-time="2026-11-20 20:57:53Z" duration="1.116347" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1063" name="Svf_StableUpTo20kHzWithModulation" fullname="Megastructure.Tests.AudioTests.Svf_StableUpTo20kHzWithModulation" methodname="Svf_StableUpTo20kHzWithModulation" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="1033635485" result="Passed" start-time="2026-11-20 20:57:53Z" end-time="2026-11-20 20:57:54Z" duration="0.309853" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1066" name="Wav_RoundTrip" fullname="Megastructure.Tests.AudioTests.Wav_RoundTrip" methodname="Wav_RoundTrip" classname="Megastructure.Tests.AudioTests" runstate="Runnable" seed="866188433" result="Passed" start-time="2026-11-20 20:57:54Z" end-time="2026-11-20 20:57:54Z" duration="0.067604" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/<user>/AppData/LocalLow/Megastructures/Nocturne\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

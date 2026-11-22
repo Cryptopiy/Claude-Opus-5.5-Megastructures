@@ -3,8 +3,9 @@
 //   * the floor: a 1 m wet-concrete slab (lib.FloorFor(s): FloorAlley, NocWet) x -4..4 over z -2.5..116 and x -4.5..4.5 over
 //     z 116..120 (the mouth, up to the arcade piers), top at y 0 (agreement 1: lane + 1 m everywhere, the walls stand in it);
 //   * AlleyBlocks (walls on the lane profile, podia 22 / 31 m, dead-end wall and door, the towers above the podia),
-//     NoodleBar, VendingMachines, AlleyFixtures (catwalk, fire escapes, cables, blade signs, AC units, mouth light), AlleyWindows
-//     (lit windows in the podium walls), AlleyDoors (18 side doors with lit transoms);
+//     NoodleBar (AL: a modelled noodle bar), VendingMachines, AlleyFixtures (catwalk, fire escapes, 140 cables, blade signs in
+//     housings, 40 AC units, pipes, awnings, bins, steam vents, lamp fixtures, light pools, mouth light and haze), AlleyWindows (AL:
+//     framed recessed windows with rooms), AlleyDoors (18 side doors with lit transoms), AlleyRooms (AL: the two empty rooms, DREAD 6);
 //   * the wet-floor registry entries (14.7 H4, D-003): wall planes x -2.2 / +2.2 (s 0-120, flat dark concrete macro, tops at the
 //     podia) and the sources of the bar window and sign, the vending screens, the blade signs and the mouth glow.
 // The GrayboxKit floor and markers of the Phase-2 smoke builder are replaced (this floor covers the whole lane).
@@ -36,6 +37,7 @@ namespace Megastructure
             AlleyFixtures.Build(parts);
             AlleyWindows.Build(parts);
             AlleyDoors.Build(parts);
+            AlleyRooms.Build(parts);
             return parts;
         }
 
@@ -51,8 +53,19 @@ namespace Megastructure
             G1Mesh.Box(side, new Vector3(-MouthFloorHalf, -t, zm), new Vector3(MouthFloorHalf, 0f, z1), G1Mesh.PX | G1Mesh.NX | G1Mesh.NY);
         }
 
-        /// <summary>The beat's NocWetRegistry entries (load time; also called by the tests after NocWetRegistry.Clear()).</summary>
+        /// <summary>The beat's NocWetRegistry entries (tests, after NocWetRegistry.Clear()): the alley's two walls and its sources.</summary>
         public static void RegisterWet()
+        {
+            RegisterWalls();
+            RegisterSources();
+        }
+
+        /// <summary>The alley's two wall planes (kind 1, flat). At load they are registered by Beat02_Boulevard.Build AFTER the
+        /// boulevard's two kind-0 walls (integration round, QA-F02): NocWetRegistry packs the active walls into slots in registration
+        /// order and NocMirror.hlsl seeds a kind-0 wall's window pattern with its slot, so when the alley walls (registered first)
+        /// faded out at s 132 the boulevard walls moved from slots 2-3 to 0-1 and their mirrored windows re-rolled in one frame
+        /// (b12 f540, s 132.0). A kind-1 wall has no windows, so its own slot never shows (WetRegistryWalkTests).</summary>
+        public static void RegisterWalls()
         {
             float half = 0.5f * (float)(AlleyLayout.MouthZ - AlleyLayout.DeadEndZ), cz = (float)AlleyLayout.DeadEndZ + half;
             // Look v2 (-surf-v 2, TEXTURE_PLAN 2.11): the walls' radiance under PA's rig at the middle of the alley, per facing side
@@ -61,6 +74,11 @@ namespace Megastructure
             Color west = v2 ? NocSurfaceMath.AlleyWallMacro(sm, 1.0) : WallMacro, east = v2 ? NocSurfaceMath.AlleyWallMacro(sm, -1.0) : WallMacro;
             NocWetRegistry.AddWall(AlleyLayout.S0, AlleyLayout.S1, -AlleyLayout.WetWallX, cz, 1f, 0f, half, (float)AlleyLayout.WestPodiumH, west, 1);
             NocWetRegistry.AddWall(AlleyLayout.S0, AlleyLayout.S1, AlleyLayout.WetWallX, cz, -1f, 0f, half, (float)AlleyLayout.EastPodiumH, east, 1);
+        }
+
+        /// <summary>The alley's wet sources (noodle bar, vending machines, fixtures).</summary>
+        public static void RegisterSources()
+        {
             NoodleBar.RegisterSources();
             VendingMachines.RegisterSources();
             AlleyFixtures.RegisterSources();
@@ -73,11 +91,12 @@ namespace Megastructure
             var parts = BuildParts();
             int failed = parts.Commit(ctx, root, "Beat01");
             int src0 = NocWetRegistry.TotalSources;
-            RegisterWet();
+            RegisterSources();          // the walls: Beat02_Boulevard.Build, after its own (QA-F02, see RegisterWalls)
             ctx.Log(
                 FormattableString.Invariant($"beat 1 alley: {parts.Parts.Count} parts, {ctx.Triangles - t0} triangles (budget 480 000), {parts.Signs.Count} signs, {parts.Lights.Count} lights, ") +
                 FormattableString.Invariant($"{NocWetRegistry.TotalSources - src0} wet sources + 2 walls, widths {AlleyLayout.ClearWidth(10):F2}/{AlleyLayout.ClearWidth(46):F2}/{AlleyLayout.ClearWidth(68):F2}/{AlleyLayout.ClearWidth(120):F2} m, ") +
-                FormattableString.Invariant($"vending fronts x {VendingMachines.FrontX(0):F3}/{VendingMachines.FrontX(1):F3}/{VendingMachines.FrontX(2):F3}, {failed} invalid meshes"));
+                FormattableString.Invariant($"vending fronts x {VendingMachines.FrontX(0):F3}/{VendingMachines.FrontX(1):F3}/{VendingMachines.FrontX(2):F3}, ") +
+                FormattableString.Invariant($"{AlleyWindows.Built} windows ({AlleyWindows.Lit} lit), {failed} invalid meshes"));
         }
     }
 }

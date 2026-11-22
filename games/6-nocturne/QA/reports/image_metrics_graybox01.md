@@ -48,7 +48,7 @@ Images: 20, failing images: 17. Checks: 174 PASS, 23 FAIL, 0 WARN, 7 SKIP, 0 INF
 | KS10_edge_plunge | 1920x1080 | INFO |
 | KS11_bridge_train | 1920x1080 | INFO |
 | KS12_bridge_void | 1920x1080 | INFO |
-| KS13_bridge_glass | 1920x1080 | INFO |
+| KS13_bridge_glass | - | INFO |
 | KS14_garden_gate | 1920x1080 | INFO |
 | KS15_garden_canopy | 1920x1080 | INFO |
 | KS16_signs_wall | 1920x1080 | INFO |

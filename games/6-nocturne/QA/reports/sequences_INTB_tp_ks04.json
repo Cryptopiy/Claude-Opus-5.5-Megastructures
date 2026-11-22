@@ -1,0 +1,297 @@
+{
+ "run": "INTB_tp_ks04",
+ "status": "FAIL",
+ "sequences": [
+  {
+   "name": "texpan_ks04",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\INTB_tp_ss1\\seq_texpan_ks04",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.014,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 18 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "4.047",
+     "threshold": null,
+     "note": "mean 1.140 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.178,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.327 px over 260 textured 64 px blocks; pan 14.5 px; worst [576, 384]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 14.29,
+     "threshold": "% of blocks",
+     "note": "frame mean delta -0.037 levels (ref - normal); worst block 23.62 levels at (1280, 256) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 6.759,
+     "threshold": "<= 2 levels",
+     "note": "block at (224, 480) px; p99 2.340, mean -0.246 (14.10, TEXTURE_PLAN 10 R1); 22.3 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.85,
+     "threshold": "<= 2 levels",
+     "note": "block at (608, 480) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.14297,
+     0.14301,
+     0.14302,
+     0.14305,
+     0.14305,
+     0.14308,
+     0.14306,
+     0.14305,
+     0.14304,
+     0.14305,
+     0.14304,
+     0.14302,
+     0.14304,
+     0.14306,
+     0.14307,
+     0.1431,
+     0.14313,
+     0.14315,
+     0.14309,
+     0.14308,
+     0.14306,
+     0.14305,
+     0.14303,
+     0.14302,
+     0.14303,
+     0.14301,
+     0.14303,
+     0.14299,
+     0.143,
+     0.14296
+    ],
+    "luma_linear": [
+     0.02904,
+     0.02907,
+     0.02907,
+     0.0291,
+     0.0291,
+     0.02912,
+     0.02912,
+     0.02912,
+     0.02912,
+     0.02912,
+     0.02912,
+     0.0291,
+     0.02912,
+     0.02913,
+     0.02914,
+     0.02916,
+     0.02918,
+     0.02919,
+     0.02916,
+     0.02915,
+     0.02915,
+     0.02915,
+     0.02914,
+     0.02911,
+     0.02913,
+     0.02911,
+     0.02913,
+     0.0291,
+     0.02911,
+     0.02909
+    ],
+    "mean_abs_diff": [
+     1.6224,
+     1.6307,
+     1.6246,
+     1.6284,
+     1.6172,
+     1.6276,
+     1.6186,
+     1.6196,
+     1.6239,
+     1.624,
+     1.618,
+     1.6207,
+     1.6191,
+     1.6225,
+     1.6244,
+     1.6324,
+     1.6188,
+     1.6214,
+     1.6223,
+     1.6186,
+     1.6234,
+     1.6172,
+     1.6244,
+     1.6234,
+     1.6191,
+     1.621,
+     1.6177,
+     1.6174,
+     1.6218
+    ],
+    "max_abs_diff": [
+     213.97,
+     211.58,
+     213.47,
+     211.08,
+     209.08,
+     211.44,
+     214.47,
+     203.37,
+     212.44,
+     210.79,
+     210.97,
+     212.47,
+     212.97,
+     213.0,
+     214.19,
+     214.12,
+     212.97,
+     212.9,
+     214.36,
+     214.12,
+     211.66,
+     211.05,
+     211.51,
+     212.44,
+     206.83,
+     207.58,
+     210.44,
+     210.86,
+     209.79
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.1429561972618103,
+    "luma_max": 0.14314723014831543,
+    "max_luma_step": 5.397200584411621e-05,
+    "max_luma_step_frame": 18,
+    "mean_diff": 1.622089040690455,
+    "max_diff": 1.6324149370193481,
+    "max_pixel_diff": 214.47222900390625,
+    "stab_mean": 1.1400105953216553,
+    "stab_block_p99": 4.047418174743652,
+    "swim_blocks": 260,
+    "swim_p95": 0.17807193337469787,
+    "swim_max": 0.3268105921870535,
+    "swim_median": 0.0521116296531339,
+    "pan_px_total": 14.501467813736468,
+    "ref_mean_delta": -0.036968231201171875,
+    "ref_mismatch_block_share": 0.14292929292929293,
+    "ref_mismatch_block_max": 23.62267303466797,
+    "line_block_share": 0.22323232323232323,
+    "shimmer_excess_block_max": 6.759242057800293,
+    "shimmer_excess_block_p99": 2.3397329068183894,
+    "shimmer_excess_mean": -0.24612823128700256,
+    "stab_excess_block_max": 1.8502006530761719
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      576,
+      384
+     ],
+     "shift_px": 0.327,
+     "dxdy": [
+      0.124,
+      0.303
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1088,
+      768
+     ],
+     "shift_px": 0.319,
+     "dxdy": [
+      -0.054,
+      0.314
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      768
+     ],
+     "shift_px": 0.319,
+     "dxdy": [
+      0.001,
+      -0.319
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      512,
+      768
+     ],
+     "shift_px": 0.269,
+     "dxdy": [
+      -0.053,
+      -0.264
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      512
+     ],
+     "shift_px": 0.252,
+     "dxdy": [
+      -0.242,
+      0.071
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\INTB_tp_ss1\\seq_texpan_ks04\\montage_01.png"
+   ],
+   "crops": []
+  }
+ ]
+}

@@ -97,12 +97,20 @@ namespace Megastructure
         /// one glazed atrium FaSecAtriumW x FaSecAtriumH per district, lit on FaSecAtriumLit of them at FaSecAtriumGain x Y_med,
         /// mullions FaSecAtriumMull every FaSecAtriumMullU m and every floor.</summary>
         public const double FaSecDistU = 252.0, FaSecDistV = 300.0, FaSecDistSigma = 0.8, FaSecMechH = 12.0, FaSecSlitH = 0.6, FaSecSlitLit = 0.6;
-        public const double FaSecAtriumW = 27.0, FaSecAtriumH = 48.0, FaSecAtriumLit = 0.7, FaSecAtriumGain = 0.8, FaSecAtriumMull = 0.25, FaSecAtriumMullU = 4.5;
+        public const double FaSecAtriumW = 27.0, FaSecAtriumH = 48.0, FaSecAtriumLit = 0.7, FaSecAtriumGain = 0.6, FaSecAtriumMull = 0.25, FaSecAtriumMullU = 4.5;
         /// <summary>Atrium hall profile: per floor a lit balcony edge FaSecAtriumEdge tall (x (FaSecHallBase + FaSecHallEdge x line)),
         /// brighter toward the hall floor (x (1.3 - 0.6 t), t = height in the hall 0..1); mean factor (0.25 + 1.6 x 0.2) x 1.0 = 0.57
         /// (the halls read as stacked lit balconies, not as a lit board: gain 0.8).
         /// Slits: the mechanical bands' slits are cut into 9 m bay segments (FaSecSlitGap at the columns), each lit by its own hash.</summary>
-        public const double FaSecAtriumEdge = 0.8, FaSecHallBase = 0.25, FaSecHallEdge = 1.6, FaSecSlitGap = 1.0;
+        // FX (INT-14, fifth start): base 0.25 -> 0.12, edge 1.6 -> 2.2 (mean (0.12 + 2.2 x 0.2) = 0.56, was 0.57) and gain 0.8 -> 0.6: the
+        // halls read as stacked lit balcony lines in a dark void, not as beige cards (FX_r04 KS07).
+        public const double FaSecAtriumEdge = 0.8, FaSecHallBase = 0.12, FaSecHallEdge = 2.2, FaSecSlitGap = 1.0;
+        /// <summary>FX (INT-14): section floors light in runs, not single cells. Each floor (global row) has one run length of
+        /// FaSecRunMin..FaSecRunMax cells (13.5-40.5 m) and a phase; a run is on with p / q and each of its cells with q = max(FaSecRunFill, p),
+        /// so E[lit] = p per cell (every mean unchanged) but the lit cells line up as lit floor runs instead of a star field.
+        /// Districts: a share FaSecVoidP are dark voids (x FaSecVoidMul), the rest carry (1 - P x M) / (1 - P) x the log-normal (mean 1:
+        /// 0.3 x 0.15 + 0.7 x 1.3643 = 1.0).</summary>
+        public const double FaSecRunMin = 3.0, FaSecRunMax = 9.0, FaSecRunFill = 0.85, FaSecVoidP = 0.3, FaSecVoidMul = 0.15;
         /// <summary>Louvre walls (mechanical stripes and section mechanical bands): MetalPaint x FaLouvreAlb under blades of FaLouvreW
         /// every FaLouvreP (each blade darkens by half; mean factor 0.75), AO FaAoLouvre.</summary>
         public const double FaLouvreAlb = 2.0, FaAoLouvre = 0.85;

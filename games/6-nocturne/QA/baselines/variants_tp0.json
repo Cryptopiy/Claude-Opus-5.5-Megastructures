@@ -1,7 +1,7 @@
 {
     "version": 1,
     "unity": "6000.6.0f1",
-    "note": "TEXTURE_PLAN 8.3 TP-0: forward-variant baseline of every Megastructure/* shader before any Look v2 shader change; Validate gates the forward passes against it.",
+    "note": "TEXTURE_PLAN 8.3 TP-0: forward-variant baseline of every Megastructure/* shader before any Look v2 shader change; Validate gates the forward passes against it. | 2026-11-21 lead: NocKoi Ghost pass (HT, C02, SRPDefaultUnlit, 1 variant) added to the baseline after review (no keyword or variant growth).",
     "shaders": [
         {
             "name": "Megastructure/NocFacade",
@@ -340,6 +340,20 @@
                     "index": 0,
                     "name": "Koi",
                     "lightMode": "UniversalForward",
+                    "forward": true,
+                    "variants": 1,
+                    "pragmas": [],
+                    "keywords": [
+                        "STEREO_CUBEMAP_RENDER_ON",
+                        "STEREO_INSTANCING_ON",
+                        "STEREO_MULTIVIEW_ON",
+                        "UNITY_SINGLE_PASS_STEREO"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "name": "Ghost",
+                    "lightMode": "SRPDefaultUnlit",
                     "forward": true,
                     "variants": 1,
                     "pragmas": [],

@@ -41,6 +41,11 @@ namespace Megastructure.AudioHarness
                 case "gates": return Gates(args);
                 case "alloc": return Alloc();
                 case "probe": return Probe();
+                case "dread": return Dread(args);
+                case "dreadcost": return DreadCost(args);
+                case "stems": return Stems(args);
+                case "echojump": return EchoJump();
+                case "arkcheck": return ArkCheck(args);
                 default: Console.WriteLine("unknown command " + cmd); return 2;
             }
         }
@@ -56,13 +61,213 @@ namespace Megastructure.AudioHarness
             };
         }
 
-        /// <summary>--solo RDHTWPKXF letters -> NocMixer.SoloMask (null = everything).</summary>
+        /// <summary>--solo RDHTWPKXFE letters -> NocMixer.SoloMask (null = everything).</summary>
         static int SoloOf(string letters)
         {
             if (string.IsNullOrEmpty(letters)) return -1;
             int m = 0;
-            foreach (char ch in letters) { int k = "RDHTWPKXF".IndexOf(char.ToUpperInvariant(ch)); if (k >= 0) m |= 1 << k; }
+            foreach (char ch in letters) { int k = "RDHTWPKXFE".IndexOf(char.ToUpperInvariant(ch)); if (k >= 0) m |= 1 << k; }
             return m;
+        }
+
+        /// <summary>The D-034 dread layer: the event table, the echo taps along the walk, the unit RMS of each voice at gain 1.</summary>
+        static int Dread(string[] a)
+        {
+            Console.WriteLine("events (s, kind, Hz, dBFS, onset delay s, length s, position):");
+            foreach (var e in DreadScore.Events)
+                Console.WriteLine(FormattableString.Invariant($"  {e.S,7:0.0} {e.Kind,-6} {e.Hz,7:0.0} {e.Db,6:0.0} {e.Delay,5:0.00} {e.Seconds,4:0.0}  ({e.X:0}, {e.Y:0}, {e.Z:0})"));
+            Console.WriteLine(FormattableString.Invariant($"ark (D-043 mirror): launch s {DreadScore.ArkLaunchS}, cruise {DreadScore.ArkCruise} m/s (speed at the bow pass {DreadScore.ArkVelocity(DreadScore.ArkBowOverTau):0.0}), bow over z 195 at tau {DreadScore.ArkBowOverTau:0.00} (s {DreadScore.ArkBowOverS:0.0}), stern over at tau {DreadScore.ArkSternOverTau:0.00} (s {DreadScore.ArkSternOverS:0.0}); bow z at tau 0 / 40 / 86.4 / 150: {DreadScore.ArkBowZ(0):0} / {DreadScore.ArkBowZ(40):0} / {DreadScore.ArkBowZ(86.4):0} / {DreadScore.ArkBowZ(150):0}"));
+            {
+                var gb = new StringBuilder("ark groans (tau / s at 2.5 / Hz / length):");
+                for (int k = 0; k < DreadScore.ArkGroanTau.Length; k++) gb.Append(FormattableString.Invariant($" {DreadScore.ArkGroanTau[k]:0.0}/{DreadScore.ArkLaunchS + 2.5 * DreadScore.ArkGroanTau[k]:0.0}/{DreadScore.ArkGroanHz(k):0.0}/{DreadScore.ArkGroanSeconds(k):0.0}"));
+                Console.WriteLine(gb.ToString());
+            }
+            Console.WriteLine(FormattableString.Invariant($"panel (PanelCourse): s {DreadScore.PanelS} at ({DreadScore.PanelX}, {DreadScore.PanelY}, {DreadScore.PanelZ})"));
+            {
+                var mb = new StringBuilder("vehicle meets at 2.5 m/s:");
+                for (int i = 0; i < NocturneScore.Vehicles.Length; i++) mb.Append(FormattableString.Invariant($" {NocturneScore.Vehicles[i].Name} {NocturneScore.MeetS(i, 2.5):0.0}"));
+                Console.WriteLine(mb.ToString());
+                double worst = 1e9; string wk = "";
+                foreach (var e in DreadScore.Events)
+                {
+                    if (e.Kind != DreadKind.Horn && e.Kind != DreadKind.Strike && e.Kind != DreadKind.Groan) continue;
+                    for (int i = 0; i < NocturneScore.Vehicles.Length; i++) { double d = Math.Abs(e.S - NocturneScore.MeetS(i, 2.5)); if (d < worst) { worst = d; wk = FormattableString.Invariant($"{e.Kind} s {e.S:0.0} vs {NocturneScore.Vehicles[i].Name}"); } }
+                }
+                Console.WriteLine(FormattableString.Invariant($"closest horn / strike / groan to a meet: {worst:0.0} m ({wk})"));
+            }
+            Console.WriteLine("echo taps (x: A1 / B1 / AB2 delay s, gain dB, LP Hz; Gulf weight):");
+            foreach (double x in new[] { 215.3, 230.0, 255.3, 375.0, 535.0, 695.0, 795.0, 815.3 })
+            {
+                var sb = new StringBuilder(FormattableString.Invariant($"  x {x,6:0.0}:"));
+                for (int k = 0; k < DreadScore.EchoTapCount; k++)
+                {
+                    DreadScore.EchoTap(k, x, out double d, out double g, out double lp, out _);
+                    sb.Append(FormattableString.Invariant($"  {d,5:0.000} s {20 * Math.Log10(Math.Max(g, 1e-9)),6:0.0} dB {lp,5:0} Hz"));
+                }
+                sb.Append(FormattableString.Invariant($"  w {DreadScore.EchoWeight(x):0.00}"));
+                Console.WriteLine(sb.ToString());
+            }
+            string cues = Arg(a, "--cues", null);
+            if (cues != null)
+            {
+                // onset times of every cue for a constant-speed walk from s 0 (Tools/audio/dread_analysis.py)
+                double v = D(a, "--speed", 2.5);
+                var sj = new StringBuilder("{\"speed\":" + v.ToString("R", Inv) + ",\"events\":[");
+                bool first = true;
+                foreach (var e in DreadScore.Events)
+                {
+                    double delay = e.Delay;
+                    if (e.Kind == DreadKind.Groan) delay += DreadScore.NearestMass(e.S, e.Seq, out _, out _, out _) / DreadScore.SoundSpeed;
+                    if (e.Ark != 0)
+                    {
+                        // the Ark's call: on the Ark's clock (tau = ArkCallTau), from the ship where it is then, the walker at speed v
+                        // at s_L + v tau (skipped beyond its range); its onset time is s_L / v + tau + the flight
+                        double ct = DreadScore.ArkCallTau(e.S);
+                        D3 pp = NocMath.PathPoint(DreadScore.ArkLaunchS + v * ct);
+                        DreadScore.ArkHornSource(e.Ark, ct, pp.x, pp.z, out _, out _, out _, out double hd, out _);
+                        if (hd > DreadScore.ArkHornMaxDist) continue;
+                        delay = hd / DreadScore.SoundSpeed + (DreadScore.ArkLaunchS / v + ct) - e.S / v;
+                    }
+                    if (!first) sj.Append(','); first = false;
+                    sj.Append(FormattableString.Invariant($"{{\"kind\":\"{e.Kind}\",\"s\":{e.S:0.###},\"t\":{e.S / v + delay:0.###},\"len\":{e.Seconds:0.###},\"db\":{e.Db:0.##},\"hz\":{e.Hz:0.###}}}"));
+                }
+                sj.Append("],\"swells\":[");
+                for (int k = 0; k < DreadScore.SwellS.Length; k++)
+                {
+                    if (k > 0) sj.Append(',');
+                    sj.Append(FormattableString.Invariant($"{{\"name\":\"{DreadScore.SwellNames[k]}\",\"s\":{DreadScore.SwellS[k]:0.###},\"t\":{DreadScore.SwellS[k] / v:0.###},\"hz\":{DreadScore.SwellHz[k]:0.###},\"db\":{DreadScore.SwellPeakDb[k]:0.##}}}"));
+                }
+                sj.Append("],\"drops\":[");
+                for (int k = 0; k < DreadScore.DropS.Length; k++) { if (k > 0) sj.Append(','); sj.Append(FormattableString.Invariant($"{{\"s\":{DreadScore.DropS[k]:0.###},\"t\":{DreadScore.DropS[k] / v:0.###}}}")); }
+                sj.Append("],\"meets\":[");
+                for (int i = 0; i < NocturneScore.Vehicles.Length; i++) { if (i > 0) sj.Append(','); sj.Append(FormattableString.Invariant($"{{\"name\":\"{NocturneScore.Vehicles[i].Name}\",\"s\":{NocturneScore.MeetS(i, 2.5):0.###}}}")); }
+                sj.Append("],\"arkgroans\":[");
+                for (int k = 0; k < DreadScore.ArkGroanTau.Length; k++)
+                {
+                    if (k > 0) sj.Append(',');
+                    double tg = DreadScore.ArkLaunchS / v + DreadScore.ArkGroanTau[k] + (DreadScore.ArkBellyY - 1.7) / DreadScore.SoundSpeed;
+                    sj.Append(FormattableString.Invariant($"{{\"t\":{tg:0.###},\"len\":{DreadScore.ArkGroanSeconds(k):0.###},\"hz\":{DreadScore.ArkGroanHz(k):0.###}}}"));
+                }
+                double tb = DreadScore.ArkLaunchS / v + DreadScore.ArkBowOverTau;
+                sj.Append(FormattableString.Invariant($"],\"hull\":{{\"t0\":{tb - 20.0:0.###},\"t1\":{tb + 40.0:0.###}}},\"ark\":{{\"bow\":{tb:0.###},\"drop0\":{tb + DreadScore.ArkDropFall1:0.###},\"drop1\":{tb + DreadScore.ArkDropRet0:0.###},\"stern\":{DreadScore.ArkLaunchS / v + DreadScore.ArkSternOverTau:0.###}}}}}"));
+                File.WriteAllText(cues, sj.ToString());
+                Console.WriteLine("cues -> " + cues);
+                return 0;
+            }
+            double fs = 48000.0;
+            Console.WriteLine("unit (peak 1 s RMS at gain 1, dB; 0 = normalised):");
+            foreach (DreadKind k in Enum.GetValues(typeof(DreadKind)))
+                Console.WriteLine(FormattableString.Invariant($"  {k,-6} {20 * Math.Log10(Math.Max(DreadProbe.UnitRms(k, fs), 1e-12)),7:0.00} dB"));
+            Console.WriteLine("per event (peak 1 s RMS at its DreadScore level, dBFS):");
+            foreach (var e in DreadScore.Events)
+            {
+                var y = DreadProbe.RenderVoice(in e, fs);
+                Console.WriteLine(FormattableString.Invariant($"  {e.S,7:0.0} {e.Kind,-6} unit {20 * Math.Log10(Math.Max(DreadProbe.PeakWindowRms(y, fs), 1e-12)),6:0.00} dB -> {e.Db + 20 * Math.Log10(Math.Max(DreadProbe.PeakWindowRms(y, fs), 1e-12)),6:0.0} dBFS"));
+            }
+            foreach (double x in new[] { 375.0, 535.0, 230.0 })
+            {
+                var ir = DreadProbe.EchoImpulse(x, fs, 4.0);
+                var sb = new StringBuilder(FormattableString.Invariant($"  echo impulse x {x:0}:"));
+                for (int k = 0; k < DreadScore.EchoTapCount; k++)
+                {
+                    DreadScore.EchoTap(k, x, out double d, out double g, out _, out _);
+                    DreadProbe.Arrival(ir, fs, d, out double t, out double en);
+                    sb.Append(FormattableString.Invariant($"  {t:0.0000} s ({d:0.0000}) {10 * Math.Log10(Math.Max(en, 1e-20)):0.0} dB"));
+                }
+                Console.WriteLine(sb.ToString());
+            }
+            return 0;
+        }
+
+        /// <summary>Cost of the dread layer's parts: seconds of CPU per second of audio, standing at --s (default 600).</summary>
+        static int DreadCost(string[] a)
+        {
+            double fs = 48000.0, s0 = D(a, "--s", 600.0);
+            foreach (int pm in new[] { 0, 1, 2, 4, 8, 16, 32, -1 })
+            {
+                var dl = new DreadLayer(fs, fs / NocMixer.Block, 1u) { PartMask = pm };
+                D3 p = NocMath.PathPoint(s0);
+                var f = new ScoreFrame { Fs = fs, InvFs = 1.0 / fs, Block = NocMixer.Block, S = s0, X = p.x, Z = p.z, Yaw = 90.0 };
+                int n = (int)(10.0 * fs);
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                double acc = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    if (i % NocMixer.Block == 0) { f.N = i; f.T = i / fs; f.SceneT = f.T; f.S = s0 + 2.5 * f.T; NocMath.PathPoint(f.S); dl.Control(in f, 1.0); }
+                    dl.Tick((i % NocMixer.Block) / 32.0, i, out double l, out double r, out _, out _); acc += l * l + r * r;
+                }
+                Console.WriteLine(FormattableString.Invariant($"  part mask {pm,3}: {sw.Elapsed.TotalSeconds / 10.0 * 100.0:0.00} % of a core  (ms {10 * Math.Log10(acc / n + 1e-30):0.0} dB)"));
+            }
+            return 0;
+        }
+
+        /// <summary>Stem levels in --bin second bins (default 0.5) over [s0, s1]: the dread cues in context.</summary>
+        static int Stems(string[] a)
+        {
+            var st = Settings(a, true);
+            st.PrerollSeconds = D(a, "--preroll", 4.0);
+            var an = new WalkAnalysis();
+            OfflineAudioRenderer.Render(st, an);
+            int per = Math.Max(1, (int)Math.Round(D(a, "--bin", 0.5) / WalkAnalysis.BinSeconds));
+            Console.WriteLine("   s     mix  |  R     D     H     T     W     P     K     X     F     E");
+            for (int i = 0; i + per <= an.BinMs.Count; i += per)
+            {
+                double ms = 0; var acc = new double[NocturneScore.StemCount];
+                for (int j = i; j < i + per; j++) { ms += an.BinMs[j]; var bs = an.BinStems[j]; for (int k = 0; k < acc.Length; k++) acc[k] += bs[k]; }
+                var line = new StringBuilder(FormattableString.Invariant($"{an.BinS[i],7:0.0} {WalkAnalysis.Db(ms / per),6:0.0} |"));
+                for (int k = 0; k < acc.Length; k++) line.Append(FormattableString.Invariant($" {Math.Max(-99, WalkAnalysis.Db(acc[k] / per)),5:0.0}"));
+                Console.WriteLine(line.ToString());
+            }
+            return 0;
+        }
+
+        /// <summary>AudioDreadTests.EchoBus_GlidesWithTheWalkerWithoutClicks in the harness: second differences of a 220 Hz tone.</summary>
+        static int EchoJump()
+        {
+            int Fs = 48000;
+            var bus = new EchoBus(Fs, Fs / NocMixer.Block);
+            var f = new ScoreFrame { Fs = Fs, InvFs = 1.0 / Fs, Block = NocMixer.Block, X = 450.0, Z = 195.0, Yaw = 90.0 };
+            int n = 12 * Fs;
+            double pl = 0, pl2 = 0, maxD2 = 0, maxD2Jump = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (i % NocMixer.Block == 0) { f.N = i; f.X = 450.0 + 2.5 * i / (double)Fs + (i >= 9 * Fs ? 200.0 : 0.0); bus.Control(in f); }
+                double u = (i % NocMixer.Block) / (double)NocMixer.Block;
+                double x = 0.1 * Math.Sin(2.0 * Math.PI * 220.0 * i / Fs);
+                bus.Tick(u, x, out double l, out _);
+                if (i > 4 * Fs) { double d2 = Math.Abs(l - 2.0 * pl + pl2); if (i < 9 * Fs) maxD2 = Math.Max(maxD2, d2); else maxD2Jump = Math.Max(maxD2Jump, d2); }
+                pl2 = pl; pl = l;
+            }
+            double sine = 0.1 * Math.Pow(2.0 * Math.PI * 220.0 / Fs, 2);
+            Console.WriteLine(FormattableString.Invariant($"echo jump: walking {maxD2:0.000000} jump {maxD2Jump:0.000000} limit {3 * sine:0.000000}"));
+            return 0;
+        }
+
+        /// <summary>The Ark along the walk at --speed (default 2.5): per --step m (default 10) from s 380 to 1 200 the bow's seconds,
+        /// the bow / pod Dopplers, the drop and the cover, the drone's part gains, and the drone-only level (E, part mask 4) in 1 s.</summary>
+        static int ArkCheck(string[] a)
+        {
+            double v = D(a, "--speed", 2.5), step = D(a, "--step", 10.0), s0 = D(a, "--s0", 380.0), s1 = D(a, "--s1", 1200.0);
+            var st = new OfflineRenderSettings { S0 = s0, Speed = v, Seconds = (s1 - s0) / v, Seed = 1, Footsteps = false };
+            var mixer = OfflineAudioRenderer.CreateMixer(st, out _);
+            mixer.MeterStems = true; mixer.SoloMask = 1 << NocturneScore.E; mixer.Dread.PartMask = 4;
+            int bin = 48000; var buf = new float[bin * 2];
+            Console.WriteLine("   s     tau  bow_s   dopW   pod0  pod1  pod2  pod3  drop  cover  gBody gBow  gPod   E dBFS");
+            double next = s0, worst = -300; int nb = (int)Math.Floor((s1 - s0) / v);
+            for (int k = 0; k < nb; k++)
+            {
+                Array.Clear(mixer.StemSumSq, 0, mixer.StemSumSq.Length);
+                mixer.Process(buf, 2);
+                double db = 10.0 * Math.Log10(Math.Max(1e-30, mixer.StemSumSq[NocturneScore.E] / bin));
+                worst = Math.Max(worst, db);
+                double s = s0 + (k + 1) * v;
+                if (s + 1e-9 < next) continue;
+                next += step;
+                var ark = mixer.Dread.Ark;
+                Console.WriteLine(FormattableString.Invariant($"{s,7:0.0} {ark.Tau,6:0.0} {DreadScore.ArkBowSeconds(ark.Tau, NocMath.PathPoint(s).z),6:0.0} {ark.BowDoppler,6:0.000} {ark.PodDoppler[0],5:0.000} {ark.PodDoppler[1],5:0.000} {ark.PodDoppler[2],5:0.000} {ark.PodDoppler[3],5:0.000} {ark.Drop,5:0.00} {ark.Cover,5:0.00}  {ark.BodyGain,5:0.000} {ark.BowGain,5:0.000} {ark.PodGainMax,5:0.000}  {db,6:0.0}"));
+            }
+            Console.WriteLine(FormattableString.Invariant($"loudest 1 s of the drone {worst:0.0} dBFS (ArkPeakDb {DreadScore.ArkPeakDb}); groans fired {mixer.Dread.ArkGroansFired}"));
+            return 0;
         }
 
         static int Walk(string[] a)

@@ -44,7 +44,8 @@ Regions file (default Tools/qa/regions_default.json):
                      "ref": [1920, 1080], "banding": [BAND...], "lines": [LINE...], "horizon": [HZ...],
                      "stats": [STAT...], "exclude": [EXCL...] }, ... ] }
   Coordinates are pixels at "ref" (default 1920 x 1080) and are scaled per axis to the image size; a region with
-  "units": "frac" uses 0..1 fractions, "units": "px" uses the image's own pixels.
+  "units": "frac" uses 0..1 fractions, "units": "px" uses the image's own pixels, "units": "frac169" fractions of the 16:9
+  frame projected to the image's aspect at the same vertical FOV (one rect serves 16:9, 16:10 and 21:9).
   BAND  {"name", "rect": [x0, y0, x1, y1], "dir": "v|h|auto|radial", "center": [x, y], "r0", "r1", "a0", "a1", "gate": "steps"}
         dir "v": the gradient runs along y (strips are 64 px wide columns); "radial": polar resampling (nearest)
         gate "steps" (textured surfaces, QA-6): the 14.7 H1 visible-step gate alone decides, and a step counts only when it
@@ -580,6 +581,10 @@ def aspect_ok(entry, W, H):
 def scale_xy(x, y, W, H, ref=None, units=None):
     if units == "frac":
         return x * W, y * H
+    if units == "frac169":
+        # QA fix wave C47: a fraction of the 16:9 frame, projected to this aspect at the same vertical FOV (the key shots keep
+        # their vFOV at 16:10 and 21:9): the same world point sits at x = 0.5 + (x169 - 0.5) * (16 / 9) * H / W, y unchanged
+        return (0.5 + (x - 0.5) * (16.0 / 9.0) * H / float(W)) * W, y * H
     if units == "px" or ref is None:
         return x, y
     return x * W / float(ref[0]), y * H / float(ref[1])
@@ -655,6 +660,10 @@ def _longest_run(mask):
     return int((e - s).max()) if s.size else 0
 
 
+CHANNELS = ("R", "G", "B", "Y", "Cb", "Cr")
+DECODE_STEP_CHANNELS = ("Y", "Cb", "Cr")     # D-041 (2): the CRF 23 decode gate counts visible steps in Y, Cb and Cr
+
+
 def ycbcr(p):
     """BT.709 full-range Y, Cb, Cr of an ... x 3 array of codes (the channels of the 14.7 H1 gate)."""
     r, g, b = p[..., 0], p[..., 1], p[..., 2]
@@ -691,18 +700,24 @@ def visible_steps(p1, th=TH, where=None):
 
 def strip_metrics(p, th=TH, luma8=None):
     """p: L x 3 profile in 8-bit code units (RGB mean across the strip width); luma8: L x w integer luma of the strip
-    (for the 11.3 BandScore).  Returns the H1 step counts (worst of R, G, B, Y, Cb, Cr: an 8-bit RGB capture is quantised
-    per RGB channel, a decoded video per Y'CbCr channel, so a 1-code step shows in one family or the other) and the
-    BandScore."""
+    (for the 11.3 BandScore).  Returns the H1 step counts (worst of the channels th["band_step_channels"], default R, G, B, Y,
+    Cb, Cr: an 8-bit RGB capture is quantised per RGB channel, a decoded video per Y'CbCr channel, so a 1-code step shows in
+    one family or the other; the decode gate counts Y, Cb, Cr only, D-041 (2): an R / G / B-only step of a decode is the
+    conversion's rounding, not a visible band) and the BandScore; "chan" reports all six channels."""
     L = p.shape[0]
     ycc = ycbcr(p)
     s9 = _box(np.concatenate([p, ycc], axis=1), th["band_box"])
     off9 = (L - s9.shape[0]) // 2
     steps, step_max = 0, 0.0
     pos = []
+    chan = {}
+    gated = th.get("band_step_channels") or CHANNELS
     for c in range(6):
         where = []
         n, mx = visible_steps(s9[:, c], th, where)
+        chan[CHANNELS[c]] = (int(n), float(mx))
+        if CHANNELS[c] not in gated:
+            continue
         steps = max(steps, n)
         step_max = max(step_max, mx)
         pos += [(float(w + off9), sg, c) for (w, sg) in where]
@@ -736,7 +751,7 @@ def strip_metrics(p, th=TH, luma8=None):
                     if sc > bs:
                         bs, run_px = float(sc), int(run)
     return {"len": int(L), "steps": int(steps), "steps_per_1000": float(per1000), "step_max_code": float(step_max),
-            "step_pos": pos,
+            "step_pos": pos, "chan": {k: (v[0] * 1000.0 / max(1, L), v[1]) for k, v in chan.items()},
             "bandscore": float(bs), "longest_run_px": int(run_px), "run_applicable": bool(applicable),
             "resid_rms": None, "resid_pp": None,
             "slope_code_per_px": [float(v) for v in slope]}
@@ -821,6 +836,9 @@ def band_score(img, rect=None, direction="v", mask=None, th=TH, band=None):
         "longest_run_px": max(m["longest_run_px"] for m in strips),
         "resid_rms": None, "resid_pp": None,
         "slope_abs_max": max(max(abs(v) for v in m["slope_code_per_px"]) for m in strips),
+        # QA fix wave C19: the worst visible steps / 1000 and max step code per channel (Y, Cb, Cr of the decode; R, G, B)
+        "chan": {k: [max(m["chan"][k][0] for m in strips), max(m["chan"][k][1] for m in strips)]
+                 for k in ("Y", "Cb", "Cr", "R", "G", "B")} if all("chan" in m for m in strips) else None,
     }
     lim = float(th["band_steps_per_1000_max"])
     if lim > 0:
@@ -882,7 +900,7 @@ def band_regions_resolved(bands, W, H, cam=None):
             cx, cy = scale_xy(float(b["center"][0]), float(b["center"][1]), W, H, b.get("_ref"), b.get("_units"))
             units, ref = b.get("_units"), b.get("_ref")
             # radii scale with the image height (frac: fraction of H; px: as given; ref: H / ref height)
-            sr = float(H) if units == "frac" else (1.0 if (units == "px" or not ref) else H / float(ref[1]))
+            sr = float(H) if units in ("frac", "frac169") else (1.0 if (units == "px" or not ref) else H / float(ref[1]))
             it = dict(b)
             it["_center_px"] = (cx, cy)
             it["_r0"], it["_r1"] = float(b["r0"]) * sr, float(b["r1"]) * sr

@@ -456,6 +456,44 @@ namespace Megastructure.Tests
             }
         }
 
+        /// <summary>FX (INT-14): section floors light in runs (E[lit] = p per cell, lit cells line up along the floor) and a share of
+        /// the districts are dark voids (district multiplier mean 1).</summary>
+        [Test]
+        public void V2_SectionRuns_KeepTheLitMean_LineUpAlongTheFloor_DistrictVoids()
+        {
+            uint K = NocFacadeMath.SkinOf(0, 1).key;
+            int type = NocFacadeMath.StratumSection;
+            double sumLit = 0, sumP = 0, litL = 0, litLR = 0, litD = 0, litDU = 0; long n = 0;
+            for (int f = 0; f < 4; f++)
+                for (int band = 0; band < 4; band++)
+                    for (int jl = 0; jl < 22; jl++)
+                        for (int i = 0; i < 300; i++)
+                        {
+                            uint face = 0x5EC0u + (uint)f;
+                            double a = NocFacadeMath.WindowV2(i, jl, band, face, K, type, 3.3, 0.32, 0.30).lit;
+                            double b = NocFacadeMath.WindowV2(i + 1, jl, band, face, K, type, 3.3, 0.32, 0.30).lit;
+                            double c = NocFacadeMath.WindowV2(i, jl + 1, band, face, K, type, 3.3, 0.32, 0.30).lit;
+                            sumLit += a; sumP += NocFacadeMath.PCell(K, face, band, type, i, jl); n++;
+                            litL += a; litLR += a * b; litD += a; litDU += a * c;
+                        }
+            double meanLit = sumLit / n, meanP = sumP / n, right = litLR / Math.Max(litL, 1e-9), up = litDU / Math.Max(litD, 1e-9);
+            Debug.Log(FormattableString.Invariant($"[FX] section runs: mean lit {meanLit:F4} vs mean p {meanP:F4} ({n} cells); P(right lit | lit) {right:F3}, P(floor above lit | lit) {up:F3}"));
+            Assert.AreEqual(meanP, meanLit, 0.06 * meanP, "E[lit] = p (the runs keep every mean)");
+            Assert.Greater(right, 0.6, "lit cells line up along the floor (a single-cell field gives about p)");
+            Assert.Less(up, 0.4, "the runs are per floor, not columns");
+            double sm = 0; int nd = 0, voids = 0;
+            for (int ub = 0; ub < 200; ub++)
+                for (int vb = 0; vb < 100; vb++)
+                {
+                    double m = NocFacadeMath.SecDistMul(0x77u, ub, vb);
+                    sm += m; nd++;
+                    if (Math.Abs(m - NocFacadeConstants.FaSecVoidMul) < 1e-12) voids++;
+                }
+            Debug.Log(FormattableString.Invariant($"[FX] section districts: mean multiplier {sm / nd:F4}, void share {(double)voids / nd:F3}"));
+            Assert.AreEqual(1.0, sm / nd, 0.05, "district multiplier mean 1");
+            Assert.AreEqual(NocFacadeConstants.FaSecVoidP, (double)voids / nd, 0.02, "void share");
+        }
+
         [Test]
         public void V2_RegionBudgets_LookV2FacadeMean()
         {

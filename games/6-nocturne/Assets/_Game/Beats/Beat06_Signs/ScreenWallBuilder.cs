@@ -83,6 +83,129 @@ namespace Megastructure
             return mb;
         }
 
+        // ------------------------------------------------------------------ scale markers (fix wave C17)
+        /// <summary>The two service ledges (painted steel, flush: x 873.95 - 874.45) and their lamp lenses (0.3 x 0.2 m, facing down,
+        /// every 6 m); the lamp heads (world) go to NocHalos. Positions relative to Origin.</summary>
+        public static MeshBuilder Ledges(MeshBuilder lenses, List<Vector3> heads)
+        {
+            var mb = new MeshBuilder();
+            foreach (double y in SignsLayout.LedgeY)
+            {
+                double y0 = y - 0.5 * SignsLayout.LedgeT, y1 = y + 0.5 * SignsLayout.LedgeT;
+                foreach (var seg in LedgeSegments(y))
+                {
+                    ArcadeBuilder.Box(mb, Origin, SignsLayout.WallX1 - 0.05, SignsLayout.LedgeX1, y0, y1, seg.a, seg.b);
+                    // a 0.12 m upstand at the lip (the edge reads as a walkway, not a flat strip)
+                    ArcadeBuilder.Box(mb, Origin, SignsLayout.LedgeX1 - 0.05, SignsLayout.LedgeX1, y1, y1 + 0.12, seg.a, seg.b);
+                }
+                if (lenses == null) continue;
+                for (double z = SignsLayout.LedgeLampZ0; z <= SignsLayout.WallZ1 - 2.0; z += SignsLayout.LedgeLampPitch)
+                {
+                    if (!OnLedge(y, z, 0.5)) continue;
+                    var c = new Vector3((float)(SignsLayout.WallX1 + 0.24), (float)(y0 - 0.005), (float)z);
+                    G4Kit.OrientedQuad(lenses, c + new Vector3(-0.1f, 0f, -0.15f) - Origin, c + new Vector3(0.1f, 0f, -0.15f) - Origin,
+                        c + new Vector3(0.1f, 0f, 0.15f) - Origin, c + new Vector3(-0.1f, 0f, 0.15f) - Origin, Vector3.down);
+                    heads?.Add(c + new Vector3(0f, -0.05f, 0f));
+                }
+            }
+            return mb;
+        }
+
+        /// <summary>The ledge at height y runs z 275.3 - 519.7, interrupted 0.3 m clear of every glyph-sign housing (and blade strut)
+        /// it would cross (the flush boards, the z 292 blade at y 204).</summary>
+        public static List<(double a, double b)> LedgeSegments(double y)
+        {
+            var cuts = new List<(double a, double b)>();
+            double ya = y - 0.5 * SignsLayout.LedgeT - 0.2, yb = y + 0.5 * SignsLayout.LedgeT + 0.32;
+            foreach (var g in SignsLayout.GlyphSigns)
+            {
+                double r = g.blade ? SignsLayout.BladeRim : SignsLayout.BoardRim;
+                double gy0 = g.y0 - r, gy1 = g.y0 + g.h + r + (g.blade ? 14.0 : 0.0);
+                if (gy1 < ya || gy0 > yb) continue;
+                double za = g.blade ? g.z - 0.5 * SignsLayout.BladeT : g.z - 0.5 * g.w - r, zb = g.blade ? g.z + 0.5 * SignsLayout.BladeT : g.z + 0.5 * g.w + r;
+                cuts.Add((za - 0.3, zb + 0.3));
+            }
+            cuts.Sort((p, q) => p.a.CompareTo(q.a));
+            var segs = new List<(double a, double b)>();
+            double z0 = SignsLayout.WallZ0 + 0.3;
+            foreach (var c in cuts)
+            {
+                if (c.a - z0 > 1.0) segs.Add((z0, c.a));
+                z0 = System.Math.Max(z0, c.b);
+            }
+            if (SignsLayout.WallZ1 - 0.3 - z0 > 1.0) segs.Add((z0, SignsLayout.WallZ1 - 0.3));
+            return segs;
+        }
+
+        /// <summary>True when z lies on a ledge segment at height y with `margin` m to spare.</summary>
+        public static bool OnLedge(double y, double z, double margin)
+        {
+            foreach (var s in LedgeSegments(y)) if (z >= s.a + margin && z <= s.b - margin) return true;
+            return false;
+        }
+
+        /// <summary>One window-cleaning cradle in its own frame (origin: the deck's centre bottom; x toward the walk): a steel deck,
+        /// a lit cabin 0.9 x 1.23 x 2.9 m, corner and mid posts, a roof and two hoists that grip the cables at z +-1.2.</summary>
+        public static void Cradle(MeshBuilder steel, MeshBuilder cabin)
+        {
+            float w = (float)SignsLayout.CradleW, d = (float)SignsLayout.CradleD;
+            MeshKit.ChamferBox(steel, new Vector3(0f, 0.06f, 0f), new Vector3(d, 0.12f, w), 0.02f);                  // deck
+            MeshKit.ChamferBox(cabin, new Vector3(0f, 0.735f, 0f), new Vector3(d - 0.1f, 1.23f, w - 0.1f), 0.01f);    // lit cabin
+            MeshKit.ChamferBox(steel, new Vector3(0f, 1.40f, 0f), new Vector3(d, 0.10f, w), 0.02f);                   // roof
+            foreach (float px in new[] { -0.46f, 0.46f })
+                foreach (float pz in new[] { -1.46f, 0f, 1.46f })
+                    MeshKit.ChamferBox(steel, new Vector3(px, 0.735f, pz), new Vector3(0.08f, 1.23f, 0.08f), 0.01f);    // posts
+            MeshKit.ChamferBox(steel, new Vector3(0.47f, 0.80f, 0f), new Vector3(0.05f, 0.07f, w - 0.1f), 0.01f);     // guard rail
+            foreach (float pz in new[] { -1.2f, 1.2f })
+                MeshKit.ChamferBox(steel, new Vector3(0f, 1.70f, pz), new Vector3(0.40f, 0.50f, 0.40f), 0.03f);       // hoists
+        }
+
+        /// <summary>The cradles' fixed cables (two per cradle at z +-1.2, x of the cradle centre) from the wall top down to 2 m
+        /// below the lowest cradle position; positions relative to Origin.</summary>
+        public static MeshBuilder Cables()
+        {
+            var mb = new MeshBuilder();
+            float x = (float)(SignsLayout.CradleX0 + 0.5 * SignsLayout.CradleD);
+            for (int i = 0; i < SignsLayout.CradleZ.Length; i++)
+                foreach (double dz in new[] { -1.2, 1.2 })
+                {
+                    float z = (float)(SignsLayout.CradleZ[i] + dz), yLow = (float)(SignsLayout.CradleYc[i] - SignsLayout.CradleA[i] - 2.0);
+                    MeshKit.Cylinder(mb, new Vector3(x, (float)SignsLayout.WallY1, z) - Origin, new Vector3(x, yLow, z) - Origin, (float)SignsLayout.CableR, 6, false);
+                }
+            return mb;
+        }
+
+        /// <summary>Builds the ledges, lamp lenses (+ halos), cables and the four cradles; returns the cradle roots (SignsDriver moves
+        /// them: y = SignsLayout.CradleY(i, t600)).</summary>
+        public static Transform[] BuildService(WorldContext ctx, Transform root)
+        {
+            var lib = ctx.Materials;
+            var lenses = new MeshBuilder();
+            var heads = new List<Vector3>(96);
+            G4Kit.Add(ctx, root, "serviceLedges", Ledges(lenses, heads), lib != null ? lib.SteelPainted : null, Origin);
+            Color white = G4Kit.Lin(NocPal.SignWhite);
+            G4Kit.Add(ctx, root, "serviceLedgeLamps", lenses, lib != null ? G4Kit.Emissive(lib.SteelPainted, white, SignsLayout.LedgeLensGain, "Beat06_LedgeLamp") : null, Origin);
+            NocHalos.Queue("SignsLedge", heads, G4Kit.Scale(white, SignsLayout.LedgeLampGain * 0.85), 8.0);
+            G4Kit.Add(ctx, root, "cradleCables", Cables(), lib != null ? G4Kit.Line(lib.Line, 2.0 * SignsLayout.CableR, G4Kit.Lin(NocPal.MetalPaint), Color.black, "Beat06_CradleCable") : null, Origin);
+            Material steel = lib != null ? lib.SteelPainted : null;
+            Material cabinM = lib != null ? G4Kit.Emissive(lib.SteelPainted, G4Kit.Lin(NocPal.WinCold), SignsLayout.CradleGain, "Beat06_CradleCabin") : null;
+            var roots = new Transform[SignsLayout.CradleZ.Length];
+            for (int i = 0; i < roots.Length; i++)
+            {
+                var go = new GameObject("cradle" + i);
+                go.transform.SetParent(root, false);
+                var p = new Vector3((float)(SignsLayout.CradleX0 + 0.5 * SignsLayout.CradleD), (float)SignsLayout.CradleY(i, 0.0), (float)SignsLayout.CradleZ[i]);
+                go.transform.position = p;
+                var sm = new MeshBuilder(); var cm = new MeshBuilder();
+                Cradle(sm, cm);
+                G4Kit.Add(ctx, go.transform, "cradle" + i + "_steel", sm, steel, p);
+                G4Kit.Add(ctx, go.transform, "cradle" + i + "_cabin", cm, cabinM, p);
+                roots[i] = go.transform;
+            }
+            ctx.Log(System.FormattableString.Invariant($"Beat06 scale markers: {SignsLayout.LedgeY.Length} ledges, {heads.Count} ledge lamps, {roots.Length} cradles"));
+            return roots;
+        }
+
         /// <summary>World position of wall light i (0..11).</summary>
         public static Vector3 WallLightPosition(int i)
             => new Vector3((float)SignsLayout.WallLightX, (float)SignsLayout.WallLightY, (float)(SignsLayout.WallLightZ0 + SignsLayout.WallLightStep * i));
@@ -128,6 +251,9 @@ namespace Megastructure
 
             // H4 wall plane: the face as the screen wave scaled to the LED wall's mean, active while the face is beside the walk
             D3 mean = NocScreenMath.MirrorMacro(waves, content);
+            // integration round (QA-F02's cause, WetRegistryWalkTests): the Heart's two kind-0 plaza walls (s 1 250-1 515) are registered
+            // BEFORE this kind-1 plane, so they keep their mirror slots (the seed of their mirrored windows) when it fades out at s 1 277
+            OldQuarterBuilder.RegisterPlazaWalls();
             NocWetRegistry.AddWall(1095.0, 1265.0, (float)SignsLayout.WallX1, (float)(0.5 * (SignsLayout.WallZ0 + SignsLayout.WallZ1)), 1f, 0f,
                 (float)(0.5 * (SignsLayout.WallZ1 - SignsLayout.WallZ0)), (float)SignsLayout.WallY1, new Color((float)mean.x, (float)mean.y, (float)mean.z, 1f), MirrorKind);
             ctx.Log(System.FormattableString.Invariant($"Beat06 screen wall: slab x {SignsLayout.WallX0}-{SignsLayout.WallX1}, z {SignsLayout.WallZ0}-{SignsLayout.WallZ1}, y {SignsLayout.WallY0}..{SignsLayout.WallY1}; NocScreen {(screen != null ? "ok" : "MISSING (fallback)")}, tier {tier}, waves {waves}, imagery {content:F1}; {signs} glyph-sign faces; {lights.Length} wall lights; mirror macro kind {MirrorKind} ({mean.x:F4}, {mean.y:F4}, {mean.z:F4})"));

@@ -1,0 +1,2050 @@
+{
+ "run": "QA_tp",
+ "status": "FAIL",
+ "sequences": [
+  {
+   "name": "texpan_ks00",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks00",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.016,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 20 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "2.789",
+     "threshold": null,
+     "note": "mean 0.844 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.247,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.353 px over 34 textured 64 px blocks; pan 14.5 px; worst [640, 384]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 0.76,
+     "threshold": "% of blocks",
+     "note": "frame mean delta 0.173 levels (ref - normal); worst block 5.01 levels at (832, 192) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.912,
+     "threshold": "<= 2 levels",
+     "note": "block at (608, 384) px; p99 0.607, mean -0.100 (14.10, TEXTURE_PLAN 10 R1); 1.2 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.535,
+     "threshold": "<= 2 levels",
+     "note": "block at (608, 384) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.11881,
+     0.11887,
+     0.1189,
+     0.11885,
+     0.1189,
+     0.11889,
+     0.11889,
+     0.11889,
+     0.11888,
+     0.11889,
+     0.1189,
+     0.11888,
+     0.11893,
+     0.11894,
+     0.11894,
+     0.11891,
+     0.11891,
+     0.1189,
+     0.11892,
+     0.11894,
+     0.119,
+     0.11898,
+     0.11902,
+     0.11898,
+     0.119,
+     0.11903,
+     0.11906,
+     0.11906,
+     0.11902,
+     0.11907
+    ],
+    "luma_linear": [
+     0.01723,
+     0.01728,
+     0.01729,
+     0.01726,
+     0.01729,
+     0.01729,
+     0.01727,
+     0.01728,
+     0.01726,
+     0.01726,
+     0.01728,
+     0.01726,
+     0.01728,
+     0.0173,
+     0.0173,
+     0.01726,
+     0.01724,
+     0.01726,
+     0.01726,
+     0.01729,
+     0.01732,
+     0.01731,
+     0.01732,
+     0.01729,
+     0.01729,
+     0.0173,
+     0.01733,
+     0.01734,
+     0.01729,
+     0.01734
+    ],
+    "mean_abs_diff": [
+     1.2106,
+     1.2046,
+     1.2119,
+     1.209,
+     1.2071,
+     1.2107,
+     1.2144,
+     1.2118,
+     1.2163,
+     1.2132,
+     1.2133,
+     1.2134,
+     1.2123,
+     1.2085,
+     1.2146,
+     1.2169,
+     1.2186,
+     1.2184,
+     1.2188,
+     1.2135,
+     1.2172,
+     1.2149,
+     1.2209,
+     1.2201,
+     1.2244,
+     1.216,
+     1.2197,
+     1.2222,
+     1.2216
+    ],
+    "max_abs_diff": [
+     147.52,
+     212.89,
+     199.69,
+     213.1,
+     199.69,
+     213.61,
+     200.41,
+     213.1,
+     199.69,
+     212.82,
+     199.62,
+     212.89,
+     199.62,
+     214.1,
+     200.69,
+     213.1,
+     199.91,
+     214.1,
+     200.69,
+     213.82,
+     200.41,
+     213.1,
+     199.84,
+     213.82,
+     199.91,
+     212.96,
+     199.55,
+     213.96,
+     200.55
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.1188104972243309,
+    "luma_max": 0.11906664073467255,
+    "max_luma_step": 6.4067542552948e-05,
+    "max_luma_step_frame": 20,
+    "mean_diff": 1.2150025655483376,
+    "max_diff": 1.2244224548339844,
+    "max_pixel_diff": 214.10263061523438,
+    "stab_mean": 0.843834400177002,
+    "stab_block_p99": 2.789249515533447,
+    "swim_blocks": 34,
+    "swim_p95": 0.24677544084012545,
+    "swim_max": 0.35345687211349297,
+    "swim_median": 0.0679243544612689,
+    "pan_px_total": 14.501262540755228,
+    "ref_mean_delta": 0.17295455932617188,
+    "ref_mismatch_block_share": 0.007575757575757576,
+    "ref_mismatch_block_max": 5.005973815917969,
+    "line_block_share": 0.011616161616161616,
+    "shimmer_excess_block_max": 1.912326455116272,
+    "shimmer_excess_block_p99": 0.6074579572677583,
+    "shimmer_excess_mean": -0.10002412647008896,
+    "stab_excess_block_max": 1.5351802110671997
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      640,
+      384
+     ],
+     "shift_px": 0.353,
+     "dxdy": [
+      -0.046,
+      -0.35
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      384
+     ],
+     "shift_px": 0.261,
+     "dxdy": [
+      -0.118,
+      0.233
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      960,
+      384
+     ],
+     "shift_px": 0.239,
+     "dxdy": [
+      0.239,
+      0.006
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      896,
+      256
+     ],
+     "shift_px": 0.183,
+     "dxdy": [
+      -0.172,
+      -0.061
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      896,
+      384
+     ],
+     "shift_px": 0.122,
+     "dxdy": [
+      0.11,
+      0.052
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks00\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks04",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks04",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.015,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 11 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "4.182",
+     "threshold": null,
+     "note": "mean 1.098 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.176,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.347 px over 220 textured 64 px blocks; pan 14.5 px; worst [832, 192]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 12.93,
+     "threshold": "% of blocks",
+     "note": "frame mean delta 0.008 levels (ref - normal); worst block 35.10 levels at (1280, 64) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 6.063,
+     "threshold": "<= 2 levels",
+     "note": "block at (352, 32) px; p99 2.313, mean -0.154 (14.10, TEXTURE_PLAN 10 R1); 19.5 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.941,
+     "threshold": "<= 2 levels",
+     "note": "block at (800, 416) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.13988,
+     0.13986,
+     0.13986,
+     0.13982,
+     0.13984,
+     0.13983,
+     0.13985,
+     0.13982,
+     0.13982,
+     0.13983,
+     0.13983,
+     0.13989,
+     0.13986,
+     0.13989,
+     0.13989,
+     0.13992,
+     0.13992,
+     0.13993,
+     0.13992,
+     0.13993,
+     0.13994,
+     0.13992,
+     0.13993,
+     0.13991,
+     0.13993,
+     0.13991,
+     0.13991,
+     0.13991,
+     0.13992,
+     0.13993
+    ],
+    "luma_linear": [
+     0.02664,
+     0.02664,
+     0.02664,
+     0.02662,
+     0.02664,
+     0.02663,
+     0.02664,
+     0.02663,
+     0.02663,
+     0.02664,
+     0.02665,
+     0.02668,
+     0.02667,
+     0.02668,
+     0.0267,
+     0.02672,
+     0.02673,
+     0.02672,
+     0.02673,
+     0.02672,
+     0.02674,
+     0.02672,
+     0.02672,
+     0.02671,
+     0.02671,
+     0.02671,
+     0.0267,
+     0.0267,
+     0.02671,
+     0.02672
+    ],
+    "mean_abs_diff": [
+     1.4497,
+     1.4383,
+     1.4397,
+     1.4437,
+     1.4438,
+     1.4437,
+     1.4439,
+     1.4338,
+     1.4332,
+     1.4403,
+     1.4336,
+     1.4356,
+     1.4422,
+     1.4407,
+     1.4395,
+     1.4404,
+     1.4355,
+     1.4439,
+     1.445,
+     1.436,
+     1.4357,
+     1.4333,
+     1.4393,
+     1.448,
+     1.4433,
+     1.4374,
+     1.439,
+     1.4413,
+     1.4393
+    ],
+    "max_abs_diff": [
+     213.79,
+     216.28,
+     214.9,
+     212.65,
+     214.26,
+     214.86,
+     213.16,
+     214.79,
+     213.58,
+     213.23,
+     212.86,
+     210.26,
+     216.93,
+     203.19,
+     214.97,
+     214.3,
+     212.86,
+     213.79,
+     215.37,
+     215.56,
+     210.97,
+     214.58,
+     201.19,
+     213.65,
+     213.86,
+     214.72,
+     212.58,
+     214.09,
+     210.86
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.13981622457504272,
+    "luma_max": 0.13994066417217255,
+    "max_luma_step": 5.772709846496582e-05,
+    "max_luma_step_frame": 11,
+    "mean_diff": 1.4399677884989772,
+    "max_diff": 1.4496865272521973,
+    "max_pixel_diff": 216.9318084716797,
+    "stab_mean": 1.0982586145401,
+    "stab_block_p99": 4.181872472763062,
+    "swim_blocks": 220,
+    "swim_p95": 0.17645555513137098,
+    "swim_max": 0.3470982105176494,
+    "swim_median": 0.04268006137398923,
+    "pan_px_total": 14.501467813736468,
+    "ref_mean_delta": 0.007984161376953125,
+    "ref_mismatch_block_share": 0.1292929292929293,
+    "ref_mismatch_block_max": 35.096839904785156,
+    "line_block_share": 0.19545454545454546,
+    "shimmer_excess_block_max": 6.0631208419799805,
+    "shimmer_excess_block_p99": 2.312847032546994,
+    "shimmer_excess_mean": -0.15358807146549225,
+    "stab_excess_block_max": 1.94083833694458
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      832,
+      192
+     ],
+     "shift_px": 0.347,
+     "dxdy": [
+      0.244,
+      0.247
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      64
+     ],
+     "shift_px": 0.289,
+     "dxdy": [
+      -0.106,
+      0.269
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      704,
+      512
+     ],
+     "shift_px": 0.284,
+     "dxdy": [
+      0.021,
+      0.283
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      576,
+      768
+     ],
+     "shift_px": 0.255,
+     "dxdy": [
+      -0.185,
+      0.176
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      704,
+      384
+     ],
+     "shift_px": 0.243,
+     "dxdy": [
+      0.228,
+      0.083
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks04\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks05",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks05",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.019,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 24 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.690",
+     "threshold": null,
+     "note": "mean 1.117 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.202,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.371 px over 202 textured 64 px blocks; pan 14.5 px; worst [128, 384]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 13.03,
+     "threshold": "% of blocks",
+     "note": "frame mean delta -0.067 levels (ref - normal); worst block 33.29 levels at (1312, 32) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 5.255,
+     "threshold": "<= 2 levels",
+     "note": "block at (224, 448) px; p99 2.906, mean -0.255 (14.10, TEXTURE_PLAN 10 R1); 20.2 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.71,
+     "threshold": "<= 2 levels",
+     "note": "block at (608, 832) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.16993,
+     0.1699,
+     0.16989,
+     0.16982,
+     0.16984,
+     0.16981,
+     0.16982,
+     0.16977,
+     0.16971,
+     0.16967,
+     0.16965,
+     0.16967,
+     0.16964,
+     0.16965,
+     0.16961,
+     0.16966,
+     0.16964,
+     0.1696,
+     0.16953,
+     0.16946,
+     0.16946,
+     0.1695,
+     0.16947,
+     0.16946,
+     0.16939,
+     0.16935,
+     0.1693,
+     0.16926,
+     0.16924,
+     0.16919
+    ],
+    "luma_linear": [
+     0.03904,
+     0.03902,
+     0.03902,
+     0.03899,
+     0.03901,
+     0.03899,
+     0.039,
+     0.03897,
+     0.03893,
+     0.0389,
+     0.03889,
+     0.0389,
+     0.03889,
+     0.03891,
+     0.03889,
+     0.03895,
+     0.03895,
+     0.03889,
+     0.03886,
+     0.03879,
+     0.0388,
+     0.03884,
+     0.03883,
+     0.03883,
+     0.03878,
+     0.03876,
+     0.03873,
+     0.03871,
+     0.0387,
+     0.03866
+    ],
+    "mean_abs_diff": [
+     1.4908,
+     1.4816,
+     1.4923,
+     1.4795,
+     1.4945,
+     1.4786,
+     1.4781,
+     1.4841,
+     1.484,
+     1.4869,
+     1.4786,
+     1.4918,
+     1.4787,
+     1.4868,
+     1.4839,
+     1.4606,
+     1.4715,
+     1.4871,
+     1.4828,
+     1.4766,
+     1.4743,
+     1.4715,
+     1.4713,
+     1.4738,
+     1.4738,
+     1.4664,
+     1.4695,
+     1.4619,
+     1.4696
+    ],
+    "max_abs_diff": [
+     208.76,
+     204.05,
+     207.26,
+     203.83,
+     208.97,
+     206.26,
+     203.83,
+     208.05,
+     204.97,
+     207.05,
+     204.83,
+     206.19,
+     207.97,
+     205.05,
+     207.05,
+     206.26,
+     205.05,
+     207.76,
+     202.12,
+     206.76,
+     205.33,
+     207.26,
+     206.05,
+     207.07,
+     207.05,
+     207.28,
+     208.05,
+     209.0,
+     204.26
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.16918566823005676,
+    "luma_max": 0.1699260175228119,
+    "max_luma_step": 7.292628288269043e-05,
+    "max_luma_step_frame": 24,
+    "mean_diff": 1.4786515112580925,
+    "max_diff": 1.4945358037948608,
+    "max_pixel_diff": 209.00001525878906,
+    "stab_mean": 1.1170190572738647,
+    "stab_block_p99": 3.6901573538780212,
+    "swim_blocks": 202,
+    "swim_p95": 0.20164079640957996,
+    "swim_max": 0.37051263313941984,
+    "swim_median": 0.04851170125029452,
+    "pan_px_total": 14.501467813736468,
+    "ref_mean_delta": -0.06696701049804688,
+    "ref_mismatch_block_share": 0.1303030303030303,
+    "ref_mismatch_block_max": 33.29081344604492,
+    "line_block_share": 0.20202020202020202,
+    "shimmer_excess_block_max": 5.255056858062744,
+    "shimmer_excess_block_p99": 2.905867118835453,
+    "shimmer_excess_mean": -0.255096971988678,
+    "stab_excess_block_max": 1.7101683616638184
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      128,
+      384
+     ],
+     "shift_px": 0.371,
+     "dxdy": [
+      0.034,
+      -0.369
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1792,
+      768
+     ],
+     "shift_px": 0.261,
+     "dxdy": [
+      0.2,
+      -0.169
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1280,
+      768
+     ],
+     "shift_px": 0.248,
+     "dxdy": [
+      0.02,
+      -0.247
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      832,
+      768
+     ],
+     "shift_px": 0.244,
+     "dxdy": [
+      -0.24,
+      0.044
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1216,
+      576
+     ],
+     "shift_px": 0.231,
+     "dxdy": [
+      -0.03,
+      -0.229
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks05\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks08",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks08",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.012,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 6 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.646",
+     "threshold": null,
+     "note": "mean 1.039 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.183,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.529 px over 183 textured 64 px blocks; pan 14.5 px; worst [1024, 768]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 7.58,
+     "threshold": "% of blocks",
+     "note": "frame mean delta 0.039 levels (ref - normal); worst block 8.04 levels at (1184, 800) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.431,
+     "threshold": "<= 2 levels",
+     "note": "block at (1088, 224) px; p99 1.194, mean -0.300 (14.10, TEXTURE_PLAN 10 R1); 26.5 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.3,
+     "threshold": "<= 2 levels",
+     "note": "block at (1056, 832) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.15222,
+     0.15223,
+     0.15225,
+     0.15227,
+     0.15228,
+     0.15226,
+     0.15231,
+     0.1523,
+     0.15231,
+     0.15232,
+     0.15236,
+     0.15235,
+     0.15236,
+     0.15238,
+     0.15242,
+     0.15241,
+     0.15244,
+     0.15248,
+     0.15249,
+     0.15249,
+     0.15249,
+     0.15247,
+     0.15245,
+     0.15248,
+     0.15245,
+     0.15243,
+     0.15245,
+     0.15248,
+     0.15249,
+     0.15249
+    ],
+    "luma_linear": [
+     0.0271,
+     0.02711,
+     0.02712,
+     0.02711,
+     0.02712,
+     0.0271,
+     0.02713,
+     0.02712,
+     0.02712,
+     0.02712,
+     0.02713,
+     0.02713,
+     0.02713,
+     0.02713,
+     0.02714,
+     0.02713,
+     0.02715,
+     0.02715,
+     0.02715,
+     0.02715,
+     0.02715,
+     0.02714,
+     0.02713,
+     0.02714,
+     0.02712,
+     0.02712,
+     0.02711,
+     0.02712,
+     0.02712,
+     0.02711
+    ],
+    "mean_abs_diff": [
+     1.2839,
+     1.2863,
+     1.2844,
+     1.2856,
+     1.291,
+     1.2856,
+     1.2853,
+     1.2884,
+     1.2887,
+     1.2906,
+     1.2876,
+     1.2903,
+     1.2913,
+     1.2918,
+     1.2922,
+     1.2951,
+     1.2915,
+     1.2934,
+     1.2957,
+     1.2938,
+     1.2974,
+     1.2968,
+     1.2939,
+     1.2944,
+     1.2976,
+     1.2969,
+     1.2957,
+     1.2974,
+     1.2988
+    ],
+    "max_abs_diff": [
+     210.97,
+     208.26,
+     209.33,
+     208.26,
+     212.12,
+     207.05,
+     210.05,
+     210.19,
+     210.19,
+     207.33,
+     207.37,
+     205.48,
+     210.33,
+     208.97,
+     206.22,
+     206.79,
+     205.69,
+     205.91,
+     210.33,
+     208.33,
+     207.83,
+     210.47,
+     210.26,
+     209.33,
+     210.47,
+     207.3,
+     212.33,
+     209.26,
+     210.97
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.1522188037633896,
+    "luma_max": 0.15249349176883698,
+    "max_luma_step": 4.7460198402404785e-05,
+    "max_luma_step_frame": 6,
+    "mean_diff": 1.2917700841509063,
+    "max_diff": 1.2987741231918335,
+    "max_pixel_diff": 212.3318328857422,
+    "stab_mean": 1.0392301082611084,
+    "stab_block_p99": 3.646130084991455,
+    "swim_blocks": 183,
+    "swim_p95": 0.18298095064881717,
+    "swim_max": 0.5286748417423264,
+    "swim_median": 0.04434032603695258,
+    "pan_px_total": 14.501523842298779,
+    "ref_mean_delta": 0.038692474365234375,
+    "ref_mismatch_block_share": 0.07575757575757576,
+    "ref_mismatch_block_max": 8.04361343383789,
+    "line_block_share": 0.26515151515151514,
+    "shimmer_excess_block_max": 2.431148052215576,
+    "shimmer_excess_block_p99": 1.1944420337677002,
+    "shimmer_excess_mean": -0.29956138134002686,
+    "stab_excess_block_max": 2.300168752670288
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      1024,
+      768
+     ],
+     "shift_px": 0.529,
+     "dxdy": [
+      0.519,
+      -0.101
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      448,
+      320
+     ],
+     "shift_px": 0.369,
+     "dxdy": [
+      0.296,
+      -0.22
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      960,
+      576
+     ],
+     "shift_px": 0.312,
+     "dxdy": [
+      0.058,
+      -0.306
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1344,
+      64
+     ],
+     "shift_px": 0.28,
+     "dxdy": [
+      -0.255,
+      -0.116
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1536,
+      448
+     ],
+     "shift_px": 0.272,
+     "dxdy": [
+      -0.258,
+      -0.086
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks08\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks09",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks09",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.015,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 7 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "4.506",
+     "threshold": null,
+     "note": "mean 1.009 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.181,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.373 px over 82 textured 64 px blocks; pan 14.5 px; worst [256, 64]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 5.71,
+     "threshold": "% of blocks",
+     "note": "frame mean delta 0.308 levels (ref - normal); worst block 8.23 levels at (1216, 512) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.013,
+     "threshold": "<= 2 levels",
+     "note": "block at (672, 640) px; p99 0.881, mean -0.138 (14.10, TEXTURE_PLAN 10 R1); 18.0 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.549,
+     "threshold": "<= 2 levels",
+     "note": "block at (1088, 64) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.13324,
+     0.13326,
+     0.13328,
+     0.1333,
+     0.13332,
+     0.13336,
+     0.13338,
+     0.13343,
+     0.13344,
+     0.13345,
+     0.13347,
+     0.13348,
+     0.13347,
+     0.13349,
+     0.1335,
+     0.1335,
+     0.13354,
+     0.13354,
+     0.13356,
+     0.13359,
+     0.13362,
+     0.13362,
+     0.13365,
+     0.13364,
+     0.13366,
+     0.13368,
+     0.13368,
+     0.13368,
+     0.13367,
+     0.13369
+    ],
+    "luma_linear": [
+     0.02338,
+     0.02338,
+     0.0234,
+     0.02341,
+     0.02341,
+     0.02343,
+     0.02343,
+     0.02345,
+     0.02346,
+     0.02345,
+     0.02346,
+     0.02346,
+     0.02345,
+     0.02345,
+     0.02346,
+     0.02346,
+     0.02347,
+     0.02347,
+     0.02347,
+     0.02349,
+     0.0235,
+     0.02349,
+     0.0235,
+     0.02349,
+     0.0235,
+     0.0235,
+     0.0235,
+     0.0235,
+     0.0235,
+     0.0235
+    ],
+    "mean_abs_diff": [
+     0.9399,
+     0.9384,
+     0.935,
+     0.9454,
+     0.9381,
+     0.9391,
+     0.9429,
+     0.9391,
+     0.9369,
+     0.9414,
+     0.941,
+     0.9386,
+     0.9401,
+     0.9415,
+     0.9351,
+     0.9454,
+     0.9399,
+     0.9417,
+     0.9374,
+     0.9442,
+     0.943,
+     0.938,
+     0.9347,
+     0.9451,
+     0.9314,
+     0.9432,
+     0.9388,
+     0.9403,
+     0.9357
+    ],
+    "max_abs_diff": [
+     213.58,
+     210.87,
+     214.79,
+     210.87,
+     212.71,
+     212.83,
+     216.8,
+     211.32,
+     217.58,
+     212.86,
+     217.8,
+     212.72,
+     219.58,
+     212.58,
+     219.58,
+     211.96,
+     220.51,
+     211.74,
+     221.58,
+     211.67,
+     221.58,
+     212.46,
+     222.44,
+     213.58,
+     221.51,
+     209.76,
+     215.51,
+     211.0,
+     212.42
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.13324040174484253,
+    "luma_max": 0.1336924284696579,
+    "max_luma_step": 5.748867988586426e-05,
+    "max_luma_step_frame": 7,
+    "mean_diff": 0.9396902446089119,
+    "max_diff": 0.9453674554824829,
+    "max_pixel_diff": 222.43841552734375,
+    "stab_mean": 1.008858323097229,
+    "stab_block_p99": 4.506296305656426,
+    "swim_blocks": 82,
+    "swim_p95": 0.18092124045198593,
+    "swim_max": 0.37291607252812836,
+    "swim_median": 0.05580070351163466,
+    "pan_px_total": 14.501587707989524,
+    "ref_mean_delta": 0.3076133728027344,
+    "ref_mismatch_block_share": 0.05707070707070707,
+    "ref_mismatch_block_max": 8.229429244995117,
+    "line_block_share": 0.1797979797979798,
+    "shimmer_excess_block_max": 2.0129714012145996,
+    "shimmer_excess_block_p99": 0.8810711932182319,
+    "shimmer_excess_mean": -0.13843585550785065,
+    "stab_excess_block_max": 2.54856276512146
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      256,
+      64
+     ],
+     "shift_px": 0.373,
+     "dxdy": [
+      0.032,
+      0.372
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1088,
+      448
+     ],
+     "shift_px": 0.202,
+     "dxdy": [
+      0.169,
+      -0.111
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1344,
+      128
+     ],
+     "shift_px": 0.2,
+     "dxdy": [
+      -0.199,
+      -0.024
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1024,
+      128
+     ],
+     "shift_px": 0.188,
+     "dxdy": [
+      -0.131,
+      0.135
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      640,
+      640
+     ],
+     "shift_px": 0.181,
+     "dxdy": [
+      -0.181,
+      0.001
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks09\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks15",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks15",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.005,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 24 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "3.594",
+     "threshold": null,
+     "note": "mean 1.335 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.1,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.253 px over 251 textured 64 px blocks; pan 14.5 px; worst [448, 64]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 2.83,
+     "threshold": "% of blocks",
+     "note": "frame mean delta 0.539 levels (ref - normal); worst block 4.78 levels at (1792, 544) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "PASS",
+     "value": 0.865,
+     "threshold": "<= 2 levels",
+     "note": "block at (1440, 448) px; p99 0.489, mean 0.037 (14.10, TEXTURE_PLAN 10 R1); 20.9 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "PASS",
+     "value": 1.864,
+     "threshold": "<= 2 levels",
+     "note": "block at (1696, 544) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.12591,
+     0.12592,
+     0.12592,
+     0.12592,
+     0.12592,
+     0.12593,
+     0.12593,
+     0.12593,
+     0.12593,
+     0.12592,
+     0.12592,
+     0.12593,
+     0.12592,
+     0.1259,
+     0.1259,
+     0.12588,
+     0.1259,
+     0.12589,
+     0.12587,
+     0.12588,
+     0.12588,
+     0.12586,
+     0.12586,
+     0.12585,
+     0.12587,
+     0.12587,
+     0.12587,
+     0.12586,
+     0.12588,
+     0.12586
+    ],
+    "luma_linear": [
+     0.02126,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02127,
+     0.02126,
+     0.02126,
+     0.02127,
+     0.02126,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02125,
+     0.02124,
+     0.02124,
+     0.02124,
+     0.02123,
+     0.02123,
+     0.02123,
+     0.02124,
+     0.02124,
+     0.02124,
+     0.02124,
+     0.02125,
+     0.02124
+    ],
+    "mean_abs_diff": [
+     1.8969,
+     1.8911,
+     1.898,
+     1.8917,
+     1.8955,
+     1.8957,
+     1.8948,
+     1.8922,
+     1.897,
+     1.8921,
+     1.8986,
+     1.8938,
+     1.8935,
+     1.8978,
+     1.8925,
+     1.8925,
+     1.8961,
+     1.8935,
+     1.8946,
+     1.8929,
+     1.8941,
+     1.8943,
+     1.8946,
+     1.8914,
+     1.8943,
+     1.8903,
+     1.8981,
+     1.8879,
+     1.8921
+    ],
+    "max_abs_diff": [
+     165.11,
+     168.26,
+     171.27,
+     167.36,
+     166.11,
+     164.9,
+     167.19,
+     165.62,
+     165.11,
+     169.41,
+     166.9,
+     167.35,
+     172.86,
+     170.27,
+     166.9,
+     168.07,
+     167.11,
+     167.47,
+     167.85,
+     165.4,
+     164.39,
+     165.76,
+     165.83,
+     166.85,
+     165.33,
+     165.04,
+     168.41,
+     168.57,
+     167.19
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.12585359811782837,
+    "luma_max": 0.12592893838882446,
+    "max_luma_step": 1.9282102584838867e-05,
+    "max_luma_step_frame": 24,
+    "mean_diff": 1.8940634110878254,
+    "max_diff": 1.8985579013824463,
+    "max_pixel_diff": 172.85720825195312,
+    "stab_mean": 1.3349173069000244,
+    "stab_block_p99": 3.594267001152039,
+    "swim_blocks": 251,
+    "swim_p95": 0.09971167064582556,
+    "swim_max": 0.25268545486003147,
+    "swim_median": 0.038723200451107165,
+    "pan_px_total": 14.501262540755295,
+    "ref_mean_delta": 0.5390510559082031,
+    "ref_mismatch_block_share": 0.028282828282828285,
+    "ref_mismatch_block_max": 4.776073455810547,
+    "line_block_share": 0.20909090909090908,
+    "shimmer_excess_block_max": 0.8652870655059814,
+    "shimmer_excess_block_p99": 0.4893690645694738,
+    "shimmer_excess_mean": 0.036698587238788605,
+    "stab_excess_block_max": 1.863904356956482
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      448,
+      64
+     ],
+     "shift_px": 0.253,
+     "dxdy": [
+      -0.245,
+      0.06
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      320,
+      512
+     ],
+     "shift_px": 0.2,
+     "dxdy": [
+      0.087,
+      0.18
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      64,
+      576
+     ],
+     "shift_px": 0.172,
+     "dxdy": [
+      -0.157,
+      -0.069
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1024,
+      448
+     ],
+     "shift_px": 0.165,
+     "dxdy": [
+      0.035,
+      -0.162
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1152,
+      192
+     ],
+     "shift_px": 0.15,
+     "dxdy": [
+      0.029,
+      -0.148
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "WARN",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks15\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  },
+  {
+   "name": "texpan_ks17",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks17",
+   "kind": "texpan",
+   "fps": 30.0,
+   "n_frames": 30,
+   "checks": [
+    {
+     "name": "luma step/frame",
+     "status": "PASS",
+     "value": 0.014,
+     "threshold": "<= 1.2 levels",
+     "note": "at frame 1 (14.10)"
+    },
+    {
+     "name": "diff spikes",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 above 3x running median",
+     "note": "floor 0.25 grey levels"
+    },
+    {
+     "name": "texpan run conditions",
+     "status": "PASS",
+     "value": "rain 0, freezeClock True",
+     "threshold": "-rain 0 -freeze-clock",
+     "note": "the pan must be the only change"
+    },
+    {
+     "name": "stabilised residual std (32 px block p99)",
+     "status": "INFO",
+     "value": "6.219",
+     "threshold": null,
+     "note": "mean 1.030 levels: content shimmer + cubic resampling (compare with the -capture-ss 2 run)"
+    },
+    {
+     "name": "swimming (block shift first vs last, p95)",
+     "status": "PASS",
+     "value": 0.164,
+     "threshold": "<= 0.5 px (max <= 1)",
+     "note": "max 0.455 px over 84 textured 64 px blocks; pan 14.5 px; worst [768, 448]"
+    },
+    {
+     "name": "picture vs the -capture-ss 2 reference (32 px blocks off by > 2 levels / 5 %)",
+     "status": "WARN",
+     "value": 3.69,
+     "threshold": "% of blocks",
+     "note": "frame mean delta -0.090 levels (ref - normal); worst block 6.64 levels at (1024, 736) px: a footprint regime that switches with resolution or HDR highlights averaged after the tonemap; left out of the shimmer gates"
+    },
+    {
+     "name": "shimmer: temporal std above the -capture-ss 2 reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.437,
+     "threshold": "<= 2 levels",
+     "note": "block at (96, 544) px; p99 1.025, mean -0.603 (14.10, TEXTURE_PLAN 10 R1); 13.4 % line blocks gated on the stabilised residual instead (D-037 14)"
+    },
+    {
+     "name": "stabilised residual above the reference (32 px block max)",
+     "status": "FAIL",
+     "value": 2.738,
+     "threshold": "<= 2 levels",
+     "note": "block at (832, 224) px: the shimmer of world-locked content (the screen-space std above also carries the pan's own motion, which masks it)"
+    }
+   ],
+   "series": {
+    "luma": [
+     0.14807,
+     0.14801,
+     0.14805,
+     0.148,
+     0.14803,
+     0.14799,
+     0.148,
+     0.14799,
+     0.14799,
+     0.14798,
+     0.14798,
+     0.14797,
+     0.14796,
+     0.14797,
+     0.14795,
+     0.14796,
+     0.14796,
+     0.14796,
+     0.14793,
+     0.14795,
+     0.14792,
+     0.14792,
+     0.14791,
+     0.14793,
+     0.14791,
+     0.14792,
+     0.1479,
+     0.1479,
+     0.14789,
+     0.14789
+    ],
+    "luma_linear": [
+     0.03223,
+     0.03218,
+     0.03224,
+     0.03218,
+     0.03222,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.03221,
+     0.0322,
+     0.0322,
+     0.03221,
+     0.0322,
+     0.0322,
+     0.03221,
+     0.03221,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.0322,
+     0.03221,
+     0.03221,
+     0.03221,
+     0.03221,
+     0.03221,
+     0.03221,
+     0.03221
+    ],
+    "mean_abs_diff": [
+     1.1363,
+     1.1024,
+     1.1188,
+     1.1204,
+     1.1058,
+     1.1169,
+     1.1092,
+     1.1076,
+     1.1101,
+     1.1063,
+     1.1047,
+     1.1071,
+     1.1014,
+     1.1033,
+     1.1003,
+     1.0993,
+     1.1009,
+     1.0957,
+     1.0975,
+     1.0983,
+     1.0924,
+     1.0998,
+     1.0919,
+     1.0929,
+     1.0946,
+     1.0918,
+     1.0914,
+     1.093,
+     1.0882
+    ],
+    "max_abs_diff": [
+     193.77,
+     193.77,
+     192.77,
+     193.69,
+     192.77,
+     192.62,
+     193.55,
+     193.77,
+     193.77,
+     192.69,
+     192.69,
+     192.77,
+     192.69,
+     193.55,
+     193.05,
+     193.69,
+     192.69,
+     193.55,
+     191.98,
+     193.77,
+     192.48,
+     193.77,
+     192.69,
+     192.48,
+     193.98,
+     191.98,
+     193.48,
+     194.48,
+     193.77
+    ]
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "summary": {
+    "luma_min": 0.14788773655891418,
+    "luma_max": 0.14806614816188812,
+    "max_luma_step": 5.370378494262695e-05,
+    "max_luma_step_frame": 1,
+    "mean_diff": 1.1027046236498603,
+    "max_diff": 1.1363131999969482,
+    "max_pixel_diff": 194.48062133789062,
+    "stab_mean": 1.029753565788269,
+    "stab_block_p99": 6.219308078765868,
+    "swim_blocks": 84,
+    "swim_p95": 0.16415066611435297,
+    "swim_max": 0.45454116974445785,
+    "swim_median": 0.05192813523964457,
+    "pan_px_total": 14.501467813736468,
+    "ref_mean_delta": -0.0900421142578125,
+    "ref_mismatch_block_share": 0.03686868686868687,
+    "ref_mismatch_block_max": 6.638431549072266,
+    "line_block_share": 0.13383838383838384,
+    "shimmer_excess_block_max": 2.436659812927246,
+    "shimmer_excess_block_p99": 1.0247835850715656,
+    "shimmer_excess_mean": -0.6032677888870239,
+    "stab_excess_block_max": 2.7375307083129883
+   },
+   "spikes": [],
+   "lines": {},
+   "stability": {},
+   "swim_worst": [
+    {
+     "block_px": [
+      768,
+      448
+     ],
+     "shift_px": 0.455,
+     "dxdy": [
+      -0.03,
+      0.454
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      256
+     ],
+     "shift_px": 0.191,
+     "dxdy": [
+      0.046,
+      0.185
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      768,
+      768
+     ],
+     "shift_px": 0.187,
+     "dxdy": [
+      0.185,
+      -0.03
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1664,
+      640
+     ],
+     "shift_px": 0.176,
+     "dxdy": [
+      0.176,
+      0.003
+     ],
+     "peak": 1.0
+    },
+    {
+     "block_px": [
+      1408,
+      704
+     ],
+     "shift_px": 0.166,
+     "dxdy": [
+      -0.025,
+      0.164
+     ],
+     "peak": 1.0
+    }
+   ],
+   "status": "FAIL",
+   "montage": [
+    "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_tp\\seq_texpan_ks17\\montage_01.png"
+   ],
+   "crops": [],
+   "frames_deleted": 30
+  }
+ ]
+}

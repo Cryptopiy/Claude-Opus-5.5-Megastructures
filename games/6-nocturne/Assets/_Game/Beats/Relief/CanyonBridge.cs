@@ -7,6 +7,7 @@
 //   concrete: the soffit, chamfered fascia bands along both long faces (2.4 m at the soffit, 1.0 m at the roof, 0.5 m proud), a
 //   parapet, soffit ribs every 8 m between the fascias;
 //   the tube portal: a 14 m panel with the r 6.3 hole on the east face, collar 1 m proud, NeonCyan ring, tunnel 16 m into the body.
+//   BV (Phase 4): linear soffit luminaires between the ribs, three rows across the deck (SoffitLamps; housing + LipLight lens).
 // Every lane passes 6.5 m or more above the parapet (lowest lane y 140; parapet top 133.2). Nothing reaches below y 105.6.
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,33 @@ namespace Megastructure
 
             // the upper tube's west portal (collar out of the east face, tunnel 16 m into the body)
             ReliefKit.TubePortal(cb, ring.Mb, o, x1, 1.0, yc, zc, EdgeDims.PortalLip, GateDims.CbTunnelDepth);
+
+            // BV (Phase 4, KS04 / KS05: the soffit read as one flat dark slab across the money shots): linear soffit luminaires in
+            // every bay between the ribs, three rows across the deck: a painted-steel housing hung on the soffit and a neutral lens
+            // under it (LipLight, AB's lip-light level). From the boulevard they recede as three dotted lines toward the Gulf,
+            // a scale cue 108 m up (no realtime light: the 14.2.3 budget is untouched).
+            var steel = new ReliefPart("CanyonBridge_soffitHousings", ReliefMat.Steel, origin, Beat);
+            var lens = new ReliefPart("CanyonBridge_soffitLights", ReliefMat.LipLight, origin, Beat);
+            parts.Add(steel); parts.Add(lens);
+            foreach (var (x, z) in SoffitLamps())
+            {
+                ReliefKit.Band(steel.Mb, o, x - 0.5 * LampL - 0.1, x + 0.5 * LampL + 0.1, y0 - LampDrop, y0 + 0.01, z - 0.5 * LampW - 0.1, z + 0.5 * LampW + 0.1);
+                ReliefKit.Band(lens.Mb, o, x - 0.5 * LampL, x + 0.5 * LampL, y0 - LampDrop - 0.03, y0 - LampDrop + 0.03, z - 0.5 * LampW, z + 0.5 * LampW);
+            }
+        }
+
+        /// <summary>Soffit luminaire lens size (x across the deck, z along it) and the housing depth under the soffit.</summary>
+        public const double LampL = 1.0, LampW = 0.32, LampDrop = 0.2;
+        public static readonly double[] LampRowsX = { 216.0, 222.25, 228.5 };
+
+        /// <summary>The soffit luminaires (x, z): midway between the ribs (z = 8 k + 4) over z 104..288, three rows across.</summary>
+        public static List<(double x, double z)> SoffitLamps()
+        {
+            var l = new List<(double, double)>(72);
+            double p = GateDims.CbRibPitch;
+            for (double zr = Math.Ceiling(GateDims.CbZ0 / p) * p; zr + p <= GateDims.CbZ1 - 2.0; zr += p)
+                foreach (double x in LampRowsX) l.Add((x, zr + 0.5 * p));
+            return l;
         }
     }
 }

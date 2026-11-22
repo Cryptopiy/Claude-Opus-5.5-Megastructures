@@ -21,6 +21,11 @@
 // Reset (H7: "if s falls 12 m below s_launch the vehicle resets"): the reset is armed when s < 218 and applied at the first
 // moment the tram is invisible (still at the terminus, or done inside the depot), so a walker who turns back never sees the
 // tram jump; the next crossing of s 230 launches it again (proposed decision BV-D1).
+//
+// Dwell (DREAD 6, BV fix wave): before the launch the tram waits at the stop with its south doors open on the lit empty saloon
+// (DoorOpen: fully open from s 196.25, 12 s at 2.5 m/s before the chime), closes them with AU's chime at DreadScore.ChimeS 226.25
+// and leaves at s 230 (unchanged). The platform side faces the terminus hall's south half; from the median the open doors are
+// inside the hall (the walker sees the stop through the 5.2 m portal only, at 150-200 m).
 using System;
 using UnityEngine;
 
@@ -159,6 +164,34 @@ namespace Megastructure
         /// <summary>The headlight's strength (1 on the street, fading to 0 over the last 12 m before the depot portal: a light
         /// inside the podium would shine through its walls, there are no shadow maps).</summary>
         public static double HeadlightFade(double pHead) => 1.0 - NocMath.Smootherstep(PortalP - 14.0, PortalP - 2.0, pHead);
+
+
+        // ---- DREAD 6 (D-034; lead ruling 2026-11-21, panel p4_01 C29): the empty tram's dwell at the boulevard stop. T_A stands
+        // at the terminus platform (p 0, the platform on its south side, z 212-225) with its south doors open on the lit empty
+        // saloon; the doors are fully open DwellSeconds (12 s at the reference 2.5 m/s) before the chime, close with AU's door chime
+        // at s DreadScore.ChimeS (226.25 = 230 - 1.5 s x 2.5 m/s; AU's request: doorsClosing = s >= DreadScore.ChimeS) and are shut
+        // 1.2 s later (s 229.25), before the launch at s 230: the 14.5.2 schedule, the abeam s and KS06 are unchanged.
+        public const double DwellSeconds = 12.0, DoorOpenSeconds = 1.6, DoorCloseSeconds = 1.2, DoorRateSeconds = 0.8;
+        /// <summary>The leaves' travel (each of the two leaves of a door slides this far along the body, plug-sliding).</summary>
+        public const double DoorTravel = 0.64;
+        /// <summary>s where the doors start closing (the chime) and where they start opening (fully open 12 s before the chime).</summary>
+        public static double DoorsCloseS => DreadScore.ChimeS;
+        public static double DoorsOpenS => DoorsCloseS - DreadScore.M(DwellSeconds + DoorOpenSeconds);
+        /// <summary>The doors' opening (0 shut .. 1 open) as a function of s: capture mode uses it directly, play mode follows it
+        /// at most 1 / DoorRateSeconds (0.8 s) per second (a teleport never snaps a leaf; shut by s 229.7 at 2.5 m/s). Shut from s 229.25 on.</summary>
+        public static double DoorOpen(double s)
+            => NocMath.Smootherstep(DoorsOpenS, DoorsOpenS + DreadScore.M(DoorOpenSeconds), s)
+             * (1.0 - NocMath.Smootherstep(DoorsCloseS, DoorsCloseS + DreadScore.M(DoorCloseSeconds), s));
+        /// <summary>True when the doors are closing or shut for good at s (AU's chime rule).</summary>
+        public static bool DoorsClosing(double s) => s >= DreadScore.ChimeS;
+        /// <summary>One play-mode step of the doors toward DoorOpen(s); only while the tram waits at the stop (else shut).</summary>
+        public static double StepDoors(double current, double s, double dt, bool waiting)
+        {
+            double target = waiting ? DoorOpen(s) : 0.0;
+            double rate = Math.Max(0.0, dt) / DoorRateSeconds;
+            if (target > current) return Math.Min(target, current + rate);
+            return Math.Max(target, current - rate);
+        }
 
         /// <summary>A light riding at arc position p: 0 inside the terminus (p below -4) or the depot, 1 on the street.</summary>
         public static double RideLightFade(double p)

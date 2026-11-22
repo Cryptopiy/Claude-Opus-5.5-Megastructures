@@ -1,12 +1,15 @@
 // AtmosphereAbyssTests (AT, Phase 4 wave A): EditMode tests of the abyss of H3 and the deck form of INT-11 on the double mirror NocFogMath
 // (NocAtmosphere.hlsl's NocAbyss / NocSheetNoise / NocDeckForm / NocCloudMix are line-by-line twins):
 //   the "#define NA_" constants of the shader equal NocAbyss's (one source of truth in two languages); the three haze sheets layer
-//   the KS10 drop (each sheet's band rises >= 3 codes over the gap above it, the drop e -5..-30 reads 48-60: LOOK_V2 8.1 drop 50-66);
+//   the KS10 drop (each sheet's band differs by >= 3 codes from the drop 2-5 deg above or 4-8 deg below it: since the fifth start
+//   the sheets are dark veils over glowing depths, so a band can be darker than its neighbours; the drop e -5..-30 reads 48-60:
+//   LOOK_V2 8.1 drop 50-66);
 //   the nadir seen from KS13 is warm and structured (p95 - p5 >= 5 codes, mean 58-68, hue 18-35, saturation <= 0.45); no surface
 //   below y -2 500 can show in KS10 or KS13 (T <= 1e-3 there, H3); the abyss scroll wraps exactly; the deck form is odd, bounded
 //   and never flat, gives +-17 % or more of luminance std where v1 gave 13 % / 11 %, and its cloud-mix wisps reach 70 m.
-// Reference numbers (KS10 rises 7.9 / 6.4 / 4.2 codes, drop 51.0; KS13 range 8.5, mean 64.8, hue 25.7, sat 0.36) come from a numpy
-// twin of the same model (AT log, 2026-11-16); the thresholds keep a margin for the float / double difference.
+// Reference numbers (2026-11-16 bright-veil model: KS10 rises 7.9 / 6.4 / 4.2 codes, drop 51.0; KS13 range 8.5, mean 64.8) came from
+// a numpy twin; the fifth-start dark-veil numbers are in the AT log (AT-t03). D-034 hooks: zero occluders are the identity, a set
+// occluder only darkens (DREAD 2.1 / 3.1).
 using System;
 using System.IO;
 using System.Reflection;
@@ -102,17 +105,24 @@ namespace Megastructure.Tests
             for (int i = 0; i < H; i++) if (el[i] <= -5 && el[i] >= -30) { dropSum += prof[i]; dropN++; }
             double drop = dropSum / dropN;
             var msg = FormattableString.Invariant($"KS10 drop e -5..-30 mean {drop:F2}");
+            var contrast = new double[3];
             for (int s = 0; s < 3; s++)
             {
-                double ek = st.SheetE[s], bandMax = double.MinValue, gapMin = double.MaxValue;
+                double ek = st.SheetE[s], bandMax = double.MinValue, bandMin = double.MaxValue;
+                var above = new System.Collections.Generic.List<double>(); var below = new System.Collections.Generic.List<double>();
                 for (int i = 0; i < H; i++)
                 {
-                    if (el[i] <= ek && el[i] >= ek - 3) bandMax = Math.Max(bandMax, prof[i]);
-                    if (el[i] >= ek + 1 && el[i] <= ek + 4) gapMin = Math.Min(gapMin, prof[i]);
+                    if (el[i] <= ek && el[i] >= ek - 3) { bandMax = Math.Max(bandMax, prof[i]); bandMin = Math.Min(bandMin, prof[i]); }
+                    if (el[i] >= ek + 2 && el[i] <= ek + 5) above.Add(prof[i]);
+                    if (el[i] <= ek - 4 && el[i] >= ek - 8) below.Add(prof[i]);
                 }
-                msg += FormattableString.Invariant($"; sheet {s} (e {ek:F1}) band {bandMax:F1} over gap {gapMin:F1}: +{bandMax - gapMin:F2}");
-                Assert.GreaterOrEqual(bandMax - gapMin, 3.0, "sheet " + s + " does not layer the drop: " + msg);
+                above.Sort(); below.Sort();
+                double ma = above[above.Count / 2], mb = below[below.Count / 2];
+                contrast[s] = Math.Max(Math.Max(Math.Abs(bandMax - ma), Math.Abs(bandMin - ma)), Math.Max(Math.Abs(bandMax - mb), Math.Abs(bandMin - mb)));
+                msg += FormattableString.Invariant($"; sheet {s} (e {ek:F1}) band {bandMin:F1}..{bandMax:F1}, above {ma:F1}, below {mb:F1}: {contrast[s]:F2}");
             }
+            UnityEngine.Debug.Log("[NOC] " + msg);
+            for (int s = 0; s < 3; s++) Assert.GreaterOrEqual(contrast[s], 3.0, "sheet " + s + " does not layer the drop: " + msg);
             UnityEngine.Debug.Log("[NOC] " + msg);
             Assert.That(drop, Is.InRange(48.0, 60.0), msg);
         }
@@ -221,8 +231,36 @@ namespace Megastructure.Tests
             // sampled by 20 000 random scroll offsets) (v1: 13 % and 11 %)
             Assert.GreaterOrEqual(DeckSpread(575.0, -2500.0, 20000.0, 1), 0.17, "base deck");
             Assert.LessOrEqual(DeckSpread(575.0, -2500.0, 20000.0, 1), 0.30, "base deck: billows, not blotches");
-            Assert.GreaterOrEqual(DeckSpread(115.0, 195.0, 0.0, 2), 0.17, "hot lid over the east leg");
-            Assert.LessOrEqual(DeckSpread(115.0, 195.0, 0.0, 2), 0.30, "hot lid: billows, not blotches");
+            // fifth start (INT-11, AT_r01: the KS05 / KS04 lids showed +-2-3 codes at tint amplitude 0.5): the glows carry 0.7, the
+            // lid spread rises to about 0.30 (0.8: 0.339, 0.95: 0.402; the base deck keeps 0.5); 0.45 bounds it below blotches
+            Assert.GreaterOrEqual(DeckSpread(115.0, 195.0, 0.0, 2), 0.25, "hot lid over the east leg: visible billows under the glow");
+            Assert.LessOrEqual(DeckSpread(115.0, 195.0, 0.0, 2), 0.45, "hot lid: billows, not blotches");
+        }
+
+        // ---------------------------------------------------------------- D-034 hooks (DREAD 2.1 / 3.1): identity until wave B
+        [Test]
+        public void Dread_OccludersAreIdentityAtZeroAndOnlyDarken()
+        {
+            var st = ShotState("KS10_edge_plunge");
+            KeyShot k = Array.Find(NocturneConstants.KeyShots, q => q.tag == "KS10_edge_plunge");
+            Ray(960, 300, 1920, 1080, k.yaw, k.pitch, k.fov, out double dx, out double dy, out double dz);
+            var a = NocFogMath.SkyColor(st, dx, dy, dz);
+            var deck0 = NocFogMath.CloudColor(st, 115.0, 195.0, 0.5);
+            Assert.AreEqual(0.0, NocFogMath.Occluder(115.0, 195.0, 115.0, 195.0, 900.0, 0.0), 0.0, "strength 0: no occlusion");
+            // the shadow straight under the ray's crossing of y -650 and the hull over the lid
+            double to = (st.CamY - NocAbyss.HazeOccY) / -dy;
+            st.HazeOccX = st.CamX + dx * to; st.HazeOccZ = st.CamZ + dz * to; st.HazeOccHalf = 450.0; st.HazeOccW = 0.85;
+            var b = NocFogMath.SkyColor(st, dx, dy, dz);
+            Assert.Less(b.Luma, 0.5 * a.Luma, "the shadow darkens the haze glow and the sheets");
+            st.DeckOccX = 115.0; st.DeckOccZ = 195.0; st.DeckOccHalf = 900.0; st.DeckOccW = 1.0;
+            var deck1 = NocFogMath.CloudColor(st, 115.0, 195.0, 0.5);
+            Assert.Less(deck1.Luma, deck0.Luma, "the hull darkens the city-lit lid");
+            Assert.AreEqual(1.0, NocFogMath.Occluder(115.0, 195.0, 115.0, 195.0, 900.0, 1.0), 1e-12);
+            Assert.AreEqual(0.0, NocFogMath.Occluder(115.0 + 200.0, 195.0, 115.0, 195.0, 900.0, 1.0), 1e-12, "beam 0.15 x 900 = 135 m");
+            // the shader carries both hooks
+            string src = File.ReadAllText(Path.Combine(UnityEngine.Application.dataPath, "_Game/Shaders/Include/NocAtmosphere.hlsl"));
+            StringAssert.Contains("[branch] if (_NocDeckOcc.w > 0.0)", src);
+            StringAssert.Contains("[branch] if (_NocHazeOcc.w > 0.0)", src);
         }
 
         /// <summary>Luminance std / mean of CloudColor over 20 000 samples: points spread over +-span/2 around (x0, z0), or (span 0)

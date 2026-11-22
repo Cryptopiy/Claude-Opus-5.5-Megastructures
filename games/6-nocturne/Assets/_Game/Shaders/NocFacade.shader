@@ -71,6 +71,29 @@ Shader "Megastructure/NocFacade"
         float _FaStreakOn;
     CBUFFER_END
 
+    // D-034 5.1 darkness wave (FX, fix wave p4_01; C# twin NocDarkWave.Factor): one tower's windows go dark behind a front that
+    // runs down from the shaft top; every point fades over the facade's 1.2 s toggle (a ramp of 180 m behind the front), so no
+    // window ever flickers; the footprint test is in the tower's own frame with a 0.5 m margin (the next shaft is >= 6 m away).
+    // A uniform C.x of 0 (no wave) skips it in one uniform branch.
+    float4 _NocDarkWaveA;   // tower footprint centre (x, z), cos / sin of its yaw
+    float4 _NocDarkWaveB;   // half sizes + margin (x, z), front y (m), ramp (m)
+    float4 _NocDarkWaveC;   // x = dark amount 0..1 (0 = no wave)
+    float NocDarkWaveK(float3 P)
+    {
+        // one exit (no return inside the uniform branch: FXC X4000 "potentially uninitialized" otherwise, R14)
+        float r = 1.0;
+        float k = _NocDarkWaveC.x;
+        [branch] if (k > 0.0)
+        {
+            float2 d = P.xz - _NocDarkWaveA.xy;
+            float lx = d.x * _NocDarkWaveA.z - d.y * _NocDarkWaveA.w, lz = d.x * _NocDarkWaveA.w + d.y * _NocDarkWaveA.z;
+            float inside = (abs(lx) <= _NocDarkWaveB.x && abs(lz) <= _NocDarkWaveB.y) ? 1.0 : 0.0;
+            float a = saturate((P.y - _NocDarkWaveB.z) / max(_NocDarkWaveB.w, 1e-3));
+            r = 1.0 - inside * k * a * a * (3.0 - 2.0 * a);
+        }
+        return r;
+    }
+
     // one sampler for the three skin arrays (aniso 16 from the albedo's import settings): 1 of the 8 per stage
     TEXTURE2D_ARRAY(_FacadeAlb); SAMPLER(sampler_FacadeAlb);
     TEXTURE2D_ARRAY(_FacadeNrm);
@@ -163,6 +186,7 @@ Shader "Megastructure/NocFacade"
         o.cell = NocCellOfV2(o.skin, 0);
         o.tone = 1.0;
         [branch] if (q.mode != 2) o = NocFacadeEvalV2(q);
+        o.emission *= NocDarkWaveK(f.positionWS);   // D-034 5.1: the lit windows only (room light, spill and halo included)
         NocSkinV2 sk = o.skin;
         NocCellV2 c = o.cell;
         float3 wallTok = NocWallTokenV2(sk, o.type);
@@ -222,7 +246,10 @@ Shader "Megastructure/NocFacade"
         float3 albW = wallTok * texAlb * o.tone * (1.0 - (1.0 - NC_FaJointDark) * joint) * (1.0 - NC_FaStreakDark * streak);
         albW = lerp(albW, wallTok * texAlb * 1.1, fSlab);
         albW = lerp(albW, PAL_MetalPaint * (NC_FaLouvreAlb * (1.0 - 0.5 * blades)), louv);
-        albW = lerp(albW, PAL_Granite, baseB * ((sk.stoneBase || sk.id == NOC_SK_S1) ? 1.0 : 0.6));
+        // FX (C39, fix wave p4_01): the stone base band keeps the skin's photo variation (texAlb, mean 1) under the granite token;
+        // a flat PAL_Granite read as an untextured field at 1.5 m (tc_podium_panel: std 0.9 codes over the frame)
+        // (x 1.6 contrast about the mean: LOOK_V2 5.1's stone std; FX_b10 meso 0.93 at x 1)
+        albW = lerp(albW, PAL_Granite * max(lerp(1.0, texAlb, 1.6), 0.05) * o.tone, baseB * ((sk.stoneBase || sk.id == NOC_SK_S1) ? 1.0 : 0.6));
         albW = lerp(albW, PAL_MetalPaint, saturate(trim));
         albW = lerp(albW, wallTok * 1.15, coping);
         // skin details (TEXTURE_PLAN 2.3): S2 ribbed panels (zero-mean albedo ribs), S3 stone sills and lintels around the windows

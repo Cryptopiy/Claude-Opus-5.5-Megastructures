@@ -1,0 +1,846 @@
+{
+ "run": "p4_01tc",
+ "status": "PASS",
+ "images": [
+  {
+   "file": "tc_alley_wall.png",
+   "tag": "tc_alley_wall",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 3,
+      "lags": 366826,
+      "peak": 0.0896,
+      "peak_lag": [
+       0,
+       299
+      ],
+      "dither_peak": 0.2272,
+      "top": [
+       {
+        "lag": [
+         0,
+         299
+        ],
+        "period_px": 299.0,
+        "r": 0.09,
+        "bump": 0.1
+       },
+       {
+        "lag": [
+         599,
+         0
+        ],
+        "period_px": 599.0,
+        "r": 0.086,
+        "bump": 0.132
+       },
+       {
+        "lag": [
+         -300,
+         300
+        ],
+        "period_px": 424.3,
+        "r": 0.086,
+        "bump": 0.121
+       },
+       {
+        "lag": [
+         300,
+         0
+        ],
+        "period_px": 300.0,
+        "r": 0.084,
+        "bump": 0.142
+       },
+       {
+        "lag": [
+         300,
+         300
+        ],
+        "period_px": 424.3,
+        "r": 0.079,
+        "bump": 0.106
+       }
+      ]
+     },
+     "micro": 1.4,
+     "meso": 0.586,
+     "valid_tiles": 1.0,
+     "mean_luma": 21.45
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.09,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [0, 299]:0.09, [599, 0]:0.086, [-300, 300]:0.086"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 1.4,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 0.59,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "tc_bridge_deck.png",
+   "tag": "tc_bridge_deck",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 4,
+      "lags": 366816,
+      "peak": 0.2847,
+      "peak_lag": [
+       37,
+       0
+      ],
+      "dither_peak": 0.32,
+      "top": [
+       {
+        "lag": [
+         37,
+         0
+        ],
+        "period_px": 37.0,
+        "r": 0.285,
+        "bump": 0.238
+       },
+       {
+        "lag": [
+         -18,
+         16
+        ],
+        "period_px": 24.1,
+        "r": 0.199,
+        "bump": 0.281
+       },
+       {
+        "lag": [
+         18,
+         16
+        ],
+        "period_px": 24.1,
+        "r": 0.192,
+        "bump": 0.288
+       },
+       {
+        "lag": [
+         18,
+         0
+        ],
+        "period_px": 18.0,
+        "r": 0.153,
+        "bump": 0.056
+       },
+       {
+        "lag": [
+         17,
+         7
+        ],
+        "period_px": 18.4,
+        "r": 0.152,
+        "bump": 0.237
+       }
+      ]
+     },
+     "micro": 1.32,
+     "meso": 0.6,
+     "valid_tiles": 1.0,
+     "mean_luma": 19.74
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "WARN",
+     "value": 0.285,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [37, 0]:0.285, [-18, 16]:0.199, [18, 16]:0.192"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 1.32,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 0.6,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "file": "tc_glass_tube.png",
+   "tag": "tc_glass_tube",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 13,
+      "lags": 366580,
+      "peak": 0.2148,
+      "peak_lag": [
+       296,
+       0
+      ],
+      "dither_peak": 0.2209,
+      "top": [
+       {
+        "lag": [
+         296,
+         0
+        ],
+        "period_px": 296.0,
+        "r": 0.215,
+        "bump": 0.133
+       },
+       {
+        "lag": [
+         273,
+         0
+        ],
+        "period_px": 273.0,
+        "r": 0.204,
+        "bump": 0.124
+       },
+       {
+        "lag": [
+         300,
+         0
+        ],
+        "period_px": 300.0,
+        "r": 0.201,
+        "bump": 0.112
+       },
+       {
+        "lag": [
+         269,
+         0
+        ],
+        "period_px": 269.0,
+        "r": 0.184,
+        "bump": 0.099
+       },
+       {
+        "lag": [
+         109,
+         0
+        ],
+        "period_px": 109.0,
+        "r": 0.173,
+        "bump": 0.129
+       }
+      ]
+     },
+     "micro": 1.521,
+     "meso": 6.902,
+     "valid_tiles": 0.853,
+     "mean_luma": 36.53
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.215,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [296, 0]:0.215, [273, 0]:0.204, [300, 0]:0.201"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 1.52,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 6.9,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "tc_noodle_bar.png",
+   "tag": "tc_noodle_bar",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 27,
+      "lags": 365696,
+      "peak": 0.201,
+      "peak_lag": [
+       254,
+       93
+      ],
+      "dither_peak": 0.0784,
+      "top": [
+       {
+        "lag": [
+         254,
+         93
+        ],
+        "period_px": 270.5,
+        "r": 0.201,
+        "bump": 0.459
+       },
+       {
+        "lag": [
+         249,
+         93
+        ],
+        "period_px": 265.8,
+        "r": 0.2,
+        "bump": 0.46
+       },
+       {
+        "lag": [
+         266,
+         93
+        ],
+        "period_px": 281.8,
+        "r": 0.2,
+        "bump": 0.458
+       },
+       {
+        "lag": [
+         241,
+         93
+        ],
+        "period_px": 258.3,
+        "r": 0.197,
+        "bump": 0.457
+       },
+       {
+        "lag": [
+         441,
+         93
+        ],
+        "period_px": 450.7,
+        "r": 0.197,
+        "bump": 0.46
+       }
+      ]
+     },
+     "micro": 2.966,
+     "meso": 6.127,
+     "valid_tiles": 0.946,
+     "mean_luma": 64.16
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.201,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [254, 93]:0.201, [249, 93]:0.2, [266, 93]:0.2"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 2.97,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 6.13,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "tc_plaza.png",
+   "tag": "tc_plaza",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 7,
+      "lags": 366766,
+      "peak": 0.0495,
+      "peak_lag": [
+       114,
+       0
+      ],
+      "dither_peak": 0.0946,
+      "top": [
+       {
+        "lag": [
+         114,
+         0
+        ],
+        "period_px": 114.0,
+        "r": 0.049,
+        "bump": 0.056
+       },
+       {
+        "lag": [
+         255,
+         204
+        ],
+        "period_px": 326.6,
+        "r": 0.049,
+        "bump": 0.085
+       },
+       {
+        "lag": [
+         109,
+         0
+        ],
+        "period_px": 109.0,
+        "r": 0.048,
+        "bump": 0.055
+       },
+       {
+        "lag": [
+         245,
+         206
+        ],
+        "period_px": 320.1,
+        "r": 0.043,
+        "bump": 0.076
+       },
+       {
+        "lag": [
+         263,
+         212
+        ],
+        "period_px": 337.8,
+        "r": 0.041,
+        "bump": 0.082
+       }
+      ]
+     },
+     "micro": 2.637,
+     "meso": 1.221,
+     "valid_tiles": 1.0,
+     "mean_luma": 35.85
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.05,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [114, 0]:0.049, [255, 204]:0.049, [109, 0]:0.048"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 2.64,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 1.22,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "tc_podium_panel.png",
+   "tag": "tc_podium_panel",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 3,
+      "lags": 366826,
+      "peak": 0.0567,
+      "peak_lag": [
+       -603,
+       29
+      ],
+      "dither_peak": 0.9581,
+      "top": [
+       {
+        "lag": [
+         -603,
+         29
+        ],
+        "period_px": 603.7,
+        "r": 0.057,
+        "bump": 0.09
+       },
+       {
+        "lag": [
+         539,
+         35
+        ],
+        "period_px": 540.1,
+        "r": 0.057,
+        "bump": 0.089
+       },
+       {
+        "lag": [
+         603,
+         99
+        ],
+        "period_px": 611.1,
+        "r": 0.057,
+        "bump": 0.084
+       },
+       {
+        "lag": [
+         -539,
+         93
+        ],
+        "period_px": 547.0,
+        "r": 0.056,
+        "bump": 0.088
+       },
+       {
+        "lag": [
+         613,
+         93
+        ],
+        "period_px": 620.0,
+        "r": 0.056,
+        "bump": 0.085
+       }
+      ]
+     },
+     "micro": 0.833,
+     "meso": 0.05,
+     "valid_tiles": 1.0,
+     "mean_luma": 20.88
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.057,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [-603, 29]:0.057, [539, 35]:0.057, [603, 99]:0.057"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 0.83,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 0.05,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  },
+  {
+   "file": "tc_tenement_brick.png",
+   "tag": "tc_tenement_brick",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 13,
+      "lags": 366580,
+      "peak": 0.4188,
+      "peak_lag": [
+       0,
+       57
+      ],
+      "dither_peak": 0.3942,
+      "top": [
+       {
+        "lag": [
+         0,
+         57
+        ],
+        "period_px": 57.0,
+        "r": 0.419,
+        "bump": 0.075
+       },
+       {
+        "lag": [
+         0,
+         114
+        ],
+        "period_px": 114.0,
+        "r": 0.405,
+        "bump": 0.069
+       },
+       {
+        "lag": [
+         0,
+         171
+        ],
+        "period_px": 171.0,
+        "r": 0.379,
+        "bump": 0.068
+       },
+       {
+        "lag": [
+         0,
+         228
+        ],
+        "period_px": 228.0,
+        "r": 0.35,
+        "bump": 0.058
+       },
+       {
+        "lag": [
+         0,
+         284
+        ],
+        "period_px": 284.0,
+        "r": 0.329,
+        "bump": 0.051
+       }
+      ]
+     },
+     "micro": 2.757,
+     "meso": 2.02,
+     "valid_tiles": 1.0,
+     "mean_luma": 20.51
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "WARN",
+     "value": 0.419,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [0, 57]:0.419, [0, 114]:0.405, [0, 171]:0.379"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 2.76,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 2.02,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "WARN"
+  },
+  {
+   "file": "tc_trunk.png",
+   "tag": "tc_trunk",
+   "size": [
+    1920,
+    1080
+   ],
+   "regions": [
+    {
+     "name": "centre",
+     "rect_px": [
+      192,
+      108,
+      1728,
+      972
+     ],
+     "repetition": {
+      "hp_px": 145,
+      "main_lobe_px": 4,
+      "lags": 366816,
+      "peak": 0.0474,
+      "peak_lag": [
+       482,
+       121
+      ],
+      "dither_peak": 0.5195,
+      "top": [
+       {
+        "lag": [
+         482,
+         121
+        ],
+        "period_px": 497.0,
+        "r": 0.047,
+        "bump": 0.063
+       },
+       {
+        "lag": [
+         -478,
+         57
+        ],
+        "period_px": 481.4,
+        "r": 0.046,
+        "bump": 0.063
+       },
+       {
+        "lag": [
+         570,
+         5
+        ],
+        "period_px": 570.0,
+        "r": 0.046,
+        "bump": 0.075
+       },
+       {
+        "lag": [
+         -482,
+         71
+        ],
+        "period_px": 487.2,
+        "r": 0.045,
+        "bump": 0.058
+       },
+       {
+        "lag": [
+         485,
+         93
+        ],
+        "period_px": 493.8,
+        "r": 0.044,
+        "bump": 0.05
+       }
+      ]
+     },
+     "micro": 1.077,
+     "meso": 0.626,
+     "valid_tiles": 1.0,
+     "mean_luma": 16.09
+    }
+   ],
+   "checks": [
+    {
+     "name": "centre repetition (any lag)",
+     "status": "INFO",
+     "value": 0.047,
+     "threshold": "<= 0.25 (no period given: structure is periodic too)",
+     "note": "top [482, 121]:0.047, [-478, 57]:0.046, [570, 5]:0.046"
+    },
+    {
+     "name": "centre micro",
+     "status": "INFO",
+     "value": 1.08,
+     "threshold": ">= 1.4 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    },
+    {
+     "name": "centre meso",
+     "status": "INFO",
+     "value": 0.63,
+     "threshold": ">= 1 codes (LOOK_V2 8.2: gate in lookv2_check)",
+     "note": null
+    }
+   ],
+   "status": "SKIP"
+  }
+ ]
+}

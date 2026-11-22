@@ -121,26 +121,177 @@ namespace Megastructure
     public static class NocAbyss
     {
         public const double SheetFogStrength = 1.5;
-        public const double BandA0 = 0.75, BandA1 = 0.75, BandA2 = 0.75, BandUp = 1.6, BandDn = 5.5;
+        public const double BandA0 = 0.75, BandA1 = 0.85, BandA2 = 0.95, BandUp = 1.6, BandDn = 5.5;
         public const double TopK0 = 0.5, TopK1 = 0.5, TopK2 = 0.5, TopRamp = 12.0;
         /// <summary>Coverage half-width max(0.10, 10 g) around n 0.5 (g = the noise change per pixel); octaves faded below 6..12 px.</summary>
-        public const double CovHalf = 0.10, CovAA = 10.0, SheetFadePx0 = 6.0, SheetFadePx1 = 12.0, SheetMaxA = 0.95, SheetDetail = 0.10, SheetThick = 0.30;
+        public const double CovHalf = 0.10, CovAA = 10.0, SheetFadePx0 = 6.0, SheetFadePx1 = 12.0, SheetMaxA = 0.95, SheetDetail = 0.20, SheetThick = 0.35;
         public const double SheetL0 = 1200.0, SheetL1 = 400.0, SheetL2 = 133.333333, SheetL3 = 44.444444;
         public const double SheetW0 = 0.30, SheetW1 = 0.30, SheetW2 = 0.25, SheetW3 = 0.15;
-        /// <summary>Sheet colours (linear): the upper sheet a warm grey (luma ~ 56 at EV 0), the deeper ones warmer and brighter (62, the glowing deepest layer 76).</summary>
-        public const double SheetCol0R = 0.046, SheetCol0G = 0.039, SheetCol0B = 0.032;
-        public const double SheetCol1R = 0.060, SheetCol1G = 0.048, SheetCol1B = 0.037;
-        public const double SheetCol2R = 0.090, SheetCol2G = 0.066, SheetCol2B = 0.044;
+        /// <summary>Sheet veils (fifth start, AT_r01 / r02): each sheet multiplies what lies under it, c = lerp(c, c x veil_k x shade,
+        /// a_k): dark veils over glowing depths (0.66 / 0.55 / 0.55; the near one lighter and a little cooler: it lies along the
+        /// horizon band), so holes show the brighter deep.</summary>
+        public const double Veil0R = 0.65, Veil0G = 0.66, Veil0B = 0.68;
+        public const double Veil1R = 0.54, Veil1G = 0.55, Veil1B = 0.56;
+        public const double Veil2R = 0.54, Veil2G = 0.55, Veil2B = 0.55;
+        /// <summary>Lift of the depths under the sheets: c x (1 + 0.7 L(e)), L = smoothstep(3, 30, -e) (1 - smoothstep(30, 80, -e)).</summary>
+        public const double DeepLift = 0.7, LiftE0 = 3.0, LiftE1 = 30.0, LiftE2 = 80.0, LiftNadir = 1.0;
+        /// <summary>D-034 occluders (DREAD 2.1 hull in the deck, 3.1 shadow in the haze plane y -650): soft ellipse, beam 0.15 x length,
+        /// edge from 0.6 of the radius; identity while the strength is 0.</summary>
+        public const double OccBeam = 0.15, OccEdge = 0.6, HazeOccY = -650.0;
         /// <summary>Base gradient below the horizon: lerp(AbyssNear, AbyssGlow, 1 - (1 - |e| / 90)^1.3) (monotone, flat at the nadir).</summary>
         public const double AbyssExp = 1.3;
-        public const double DeepY = -2000.0, DeepAmp = 0.35, DeepL0 = 675.0, DeepL1 = 225.0, DeepW0 = 0.55, DeepW1 = 0.45, DeepE0 = 10.0, DeepE1 = 70.0;
+        public const double DeepY = -2000.0, DeepAmp = 0.5, DeepL0 = 675.0, DeepL1 = 225.0, DeepW0 = 0.55, DeepW1 = 0.45, DeepE0 = 10.0, DeepE1 = 70.0;
         /// <summary>Scroll periods (m): 64 cells of the largest octave, an integer number of every smaller octave's period.</summary>
         public const double SheetScrollPeriod = 76800.0, DeepScrollPeriod = 43200.0;
-        /// <summary>Deck form f = x / sqrt(1 + x^2), x = 4.5 (n - 0.5); base x (1 + 0.5 f), tint x (1 + 0.5 f); cloud-mix wisps 70 m x f.</summary>
-        public const double DeckK = 4.5, DeckBaseAmp = 0.5, DeckTintAmp = 0.5, CloudWisp = 70.0;
+        /// <summary>Deck form f = x / sqrt(1 + x^2), x = 4.5 (n - 0.5); base x (1 + 0.5 f), tint x (1 + 0.7 f) (fifth start: 0.5 left
+        /// +-2-3 codes of billows in the KS05 / KS04 lids; 0.8 / 0.95 darkened KS02's slit below its window); cloud-mix wisps 70 m x f.</summary>
+        public const double DeckK = 4.5, DeckBaseAmp = 0.5, DeckTintAmp = 0.7, CloudWisp = 70.0;
         /// <summary>Wind of the sheet billows (m/s along (0.8, 0.6)) and of the deep glow (m/s along (-0.6, 0.8)) (C# only: the
         /// driver uploads the wrapped offsets as _NocAbyss).</summary>
         public const double SheetWind = 1.2, DeepWind = 0.5;
+
+        // ---------------------------------------------------------------- fix wave (panel p4_01, 2026-11-21; NocAtmosphere.hlsl)
+        /// <summary>C11 under-city glow pools on the plane y -2 100: value noise 337.5 / 112.5 m (weights 0.7 / 0.3, rotations 1 / 3,
+        /// seeds 905 / 906), pool = smoothstep(0.45, 0.85, n), amber (1.20, 0.98, 0.70) or neutral by a 337.5 m lattice (rotation 4,
+        /// seed 907); c x (1 + A f0 (pool tint - 0.24)), weight smoothstep(12, 22, -e) x A (A = NocAir.PoolAmp).</summary>
+        public const double PoolY = -2100.0, PoolL0 = 337.5, PoolL1 = 112.5, PoolW0 = 0.7, PoolW1 = 0.3;
+        public const double PoolLo = 0.45, PoolHi = 0.85, PoolMean = 0.24, PoolE0 = 12.0, PoolE1 = 22.0;
+        /// <summary>C11: the pools' weight falls by 0.8 over -e 45..80 (the nadir keeps the deep glow; AT-t01 KS13 twin mean 69.4).</summary>
+        public const double PoolNadir = 0.8, PoolE2 = 45.0, PoolE3 = 80.0;
+        public const double PoolAmbR = 1.20, PoolAmbG = 0.98, PoolAmbB = 0.70;
+        /// <summary>C11 sink veil ramp: NocFog's T x (1 - V S01((-40 - y) / 360)) (V = NocAir.SinkV).</summary>
+        public const double SinkY0 = -40.0, SinkH = 360.0;
+        /// <summary>C02-air: Gaussian glow radius (m) of each of the koi's 12 spine points in the air.</summary>
+        public const double KoiAirR = 70.0;
+        /// <summary>C02-air: no glow on fragments within 60 m of a spine point (smoothstep 60..110 m: the body keeps HT's colour);
+        /// the air colour lerp(luma(KoiGlow), KoiGlow, 0.55) (AT_r01f: patch hue / sat and the KS18 dark cast failed with KoiGlow).</summary>
+        public const double KoiAirIn = 60.0, KoiAirOut = 110.0, KoiAirSat = 0.55;
+        /// <summary>C02-air: a point's glow x smoothstep(30, 70, h), h its distance from the ray (AT_r02f / r03f: the additive body
+        /// showed the glowing air behind it on its orange patches).</summary>
+        public const double KoiAirH0 = 30.0, KoiAirH1 = 70.0;
+        /// <summary>C26: the hull's ellipse keeps 1 - 0.9 of the flash (it outlines the hull).</summary>
+        public const double FlashHull = 0.9;
+        /// <summary>C44: the alley's light on the deck over the KS02 slit: x (1 + lift exp(-r^2 / (2 70^2))) around (0, 80).</summary>
+        public const double SlitX = 0.0, SlitZ = 80.0, SlitSigma = 70.0;
+    }
+
+    /// <summary>
+    /// Fix-wave (AT, panel p4_01) values that reach the shader only through the AtmosphereDriver (_NocAir, _NocFlash), so they tune
+    /// without a shader recompile (no "#define NA_" twin; QA overrides -abyss-pool / -abyss-sink / -koi-air / -slit-lift / -flash).
+    /// </summary>
+    public static class NocAir
+    {
+        /// <summary>C11: pool amplitude A (lobes x up to about 2, gaps x 0.76); sink veil V (half the contrast below y -400).</summary>
+        public const double PoolAmp = 1.0, SinkV = 0.5;
+        /// <summary>C02-air: radiance added by one spine point on a ray through its centre (x KoiGlow x KoiK). AT_r01f / r02f at 0.03:
+        /// KS17 sky 50-80 px above the body +14..+18 codes over the far sky at the head and mid-body, +28 over the back, KS18 inside
+        /// the arc +23 (critic's window 12-20): 0.025; AT_r04f (hollow 30..70 m) KS18 patch sat 0.59 (HT's floor 0.60): 0.022.</summary>
+        public const double KoiAirGain = 0.022;
+        /// <summary>C44: the alley lift (AT_r01f at 0.25: KS02 slit 51.7 -> 55.9, KS04 / KS05 lids -0.3 / -0.1; AT_r04f: the 21:9
+        /// rect (the same 6 % of a wider frame) takes in the slit's walls, 52.5 with the sky inside it 54-57): 0.30.</summary>
+        public const double SlitLift = 0.30;
+        /// <summary>C26 sheet lightning (DREAD 5.4): peak +15 % of the deck, sigma 450 m, rise 0.4 s, decay 1.5 s, 550 m ahead of the
+        /// walker, or on the launched hull within 900 m.</summary>
+        public const double FlashAmp = 0.15, FlashSigma = 450.0, FlashRise = 0.4, FlashDecay = 1.5, FlashAhead = 550.0, FlashHullReach = 900.0;
+    }
+
+    /// <summary>
+    /// D-043 (AT): the Ark in the haze. Every value reaches the shader through the AtmosphereDriver (_NocArk, _NocArkB, _NocArkG,
+    /// _NocArkL, _NocArkBeamP / D), so it tunes without a shader recompile (no "#define NA_" twin). The Ark's pose comes from DR's
+    /// course (HullCourse: axis x, centre z of tau, half-length, half-beam, belly y; the same tau rule as DreadDriver); Update fills
+    /// the state from it (a pure function: tests and the driver share it).
+    /// </summary>
+    public static class NocArkAir
+    {
+        /// <summary>Deck occluder (the Ark shadows the city glow on the cloud base; its back is in the deck): strength (ramped in over
+        /// OccRampTau s after the launch, x DR's Emerge), penumbra and soft-end lengths (m), the base deck's darkening share.</summary>
+        public const double OccW = 0.85, OccPen = 160.0, OccEnd = 700.0, OccBase = 0.6, OccRampTau = 20.0;
+        /// <summary>The glow of its lights in the haze: a tube of radius GlowR about the axis GlowUp m over the belly (inside the
+        /// hull: the walker, 330 m under the belly, sees only its tail), I = GlowGain (radiance across it), ramped in over GlowRampTau.</summary>
+        public const double GlowUp = 60.0, GlowR = 180.0, GlowGain = 0.025, GlowRampTau = 15.0;
+        /// <summary>Searchlights (analytic cones in the haze): DR's six emitters (HullCourse.Searchlight: origin on the keel, a slow
+        /// outward sweep, period 28-40 s, its own fade near the walk line) drawn here; each lamp lights BeamOnTau s after the launch
+        /// over BeamOnRamp s, from the bow aft (s 470-545 at 2.5 m/s: the beams wake once the dark mass has read), at most Beams.</summary>
+        public const int Beams = 6;
+        public static readonly double[] BeamOnTau = { 36.0, 42.0, 48.0, 54.0, 60.0, 66.0 };
+        public const double BeamOnRamp = 9.0;
+        /// <summary>Cone: apex radius r0 (m), fall-off length along the beam (m), radiance across the beam at the apex (I = gain (r0 / r)
+        /// exp(-u / L)), pool gain on the haze sheets, the lit spot where a beam meets a surface (NocFog: + gain x SpotGain x min(1,
+        /// (SpotR / r)^2) exp(-u / L) exp(-d^2 / r^2) of SignWhite, before the fog: the faces it sweeps).</summary>
+        public const double BeamR0 = 6.0, BeamFall = 1600.0, BeamGain = 0.40, PoolGain = 0.0, SpotGain = 0.0, SpotR = 40.0;
+        // AT_ark perf A/B (21:05, 1080p beat 4): the pools (in the fog colour of every fogged fragment below the horizon) and the spots
+        // (every fragment) showed in no capture (the beams fade before they reach a sheet or a face): both off (gain 0 skips their
+        // uniform branches); the beams and the glow carry the scene.
+        /// <summary>Never at the walker: a beam fades out while its axis lies within 3 r + ClearWalker m of the eye (over ClearRamp m).</summary>
+        public const double ClearWalker = 150.0, ClearRamp = 200.0;
+        /// <summary>Never on the bridge or the pier: a beam fades while its axis at y BridgeY lies within BridgeClear0..1 m of the walk
+        /// line z 195 over x BridgeX0..BridgeX1 (+-50 m soft; DR's own lamp fade acts on top).</summary>
+        public const double BridgeZ = 195.0, BridgeX0 = 200.0, BridgeX1 = 720.0, BridgeY = 60.0, BridgeClear0 = 140.0, BridgeClear1 = 300.0;
+        /// <summary>Sheet lightning on the Ark: the glow (sigma FlashSigma across) is stretched x FlashStretch along it, centred on
+        /// its axis at the walker's z, clamped to the hull (FlashBowBack m behind the bow, a quarter length ahead of the stern), when that
+        /// centre lies within FlashReach m of the walker (s 553: behind the bow 0.9 km south; s 790: overhead).</summary>
+        public const double FlashStretch = 2.2, FlashReach = 1000.0, FlashBowBack = 250.0;
+
+        /// <summary>Fill st's Ark fields from DR's pose: axis x, centre z, half-length, half-beam, belly y, tau since the launch (0 =
+        /// parked: all zero), DR's emerge weight (0..1), vis (0 = hidden: all zero). The beams are set by SetBeam (all off here).</summary>
+        public static void Update(NocAtmoState st, double axisX, double centreZ, double half, double halfBeam, double bellyY,
+                                  double tau, double emerge, double vis)
+        {
+            bool on = tau > 0.0 && vis > 0.0;
+            st.ArkX = axisX; st.ArkZ = centreZ; st.ArkHalf = half;
+            st.ArkW = on ? OccW * NocFogMath.S01(tau / OccRampTau) * NocMath.Clamp01(emerge) * vis : 0.0;
+            st.ArkHalfBeam = halfBeam; st.ArkPen = OccPen; st.ArkEnd = Math.Min(OccEnd, 0.3 * half); st.ArkBase = OccBase;
+            st.ArkGlowY = bellyY + GlowUp; st.ArkGlowR = GlowR;
+            st.ArkGlow = on ? GlowGain * NocFogMath.S01(tau / GlowRampTau) * vis : 0.0;
+            st.ArkPool = PoolGain; st.ArkFall = BeamFall; st.ArkR0 = BeamR0; st.ArkSpot = SpotGain;
+            st.ArkBeamsOn = 0.0;
+            for (int i = 0; i < 4 * Beams; i++) { st.ArkBeamP[i] = 0.0; st.ArkBeamD[i] = 0.0; }
+        }
+
+        /// <summary>Beam i from DR's emitter (origin, unit direction down, DR's gain 0..1, tan of the half-angle): its gain x BeamGain x
+        /// the lamp's ignition (BeamOnTau, BeamOnRamp) x vis x the walker and bridge clearances.</summary>
+        public static void SetBeam(NocAtmoState st, int i, double ax, double ay, double az, double dx, double dy, double dz, double drGain,
+                                   double tanHalf, double tau, double vis, double eyeX, double eyeY, double eyeZ)
+        {
+            if (i < 0 || i >= Beams) return;
+            double n = 1.0 / Math.Max(Math.Sqrt(dx * dx + dy * dy + dz * dz), 1e-9);
+            dx *= n; dy *= n; dz *= n;
+            double g = tau > 0.0 && vis > 0.0 && dy < -0.2 ? BeamGain * NocMath.Clamp01(drGain) * NocFogMath.S01((tau - BeamOnTau[i]) / BeamOnRamp) * vis : 0.0;
+            if (g > 0.0) g *= ClearOfWalker(ax, ay, az, dx, dy, dz, tanHalf, eyeX, eyeY, eyeZ) * ClearOfBridge(ax, ay, az, dx, dy, dz);
+            st.ArkBeamP[4 * i] = ax; st.ArkBeamP[4 * i + 1] = ay; st.ArkBeamP[4 * i + 2] = az; st.ArkBeamP[4 * i + 3] = g;
+            st.ArkBeamD[4 * i] = dx; st.ArkBeamD[4 * i + 1] = dy; st.ArkBeamD[4 * i + 2] = dz; st.ArkBeamD[4 * i + 3] = tanHalf;
+            if (g > 0.0) st.ArkBeamsOn = 1.0;
+        }
+
+        /// <summary>0..1: the beam's distance from the eye (to its axis half-line) against 3 r + ClearWalker (r at that point).</summary>
+        public static double ClearOfWalker(double ax, double ay, double az, double dx, double dy, double dz, double tanHalf, double ex, double ey, double ez)
+        {
+            double wx = ex - ax, wy = ey - ay, wz = ez - az;
+            double u = Math.Max(0.0, wx * dx + wy * dy + wz * dz);
+            double qx = wx - u * dx, qy = wy - u * dy, qz = wz - u * dz;
+            double d = Math.Sqrt(qx * qx + qy * qy + qz * qz), r = BeamR0 + u * tanHalf;
+            return NocFogMath.S01((d - 3.0 * r - ClearWalker) / ClearRamp);
+        }
+
+        /// <summary>0..1: the beam's axis at y BridgeY against the walk line z 195 over the pier and the bridge (x 200..720).</summary>
+        public static double ClearOfBridge(double ax, double ay, double az, double dx, double dy, double dz)
+        {
+            if (dy > -0.2 || ay <= BridgeY) return 1.0;
+            double u = (ay - BridgeY) / -dy, x = ax + dx * u, z = az + dz * u;
+            double wx = NocFogMath.S01((x - BridgeX0 + 50.0) / 100.0) * NocFogMath.S01((BridgeX1 + 50.0 - x) / 100.0);
+            return 1.0 - wx * (1.0 - NocFogMath.S01((Math.Abs(z - BridgeZ) - BridgeClear0) / (BridgeClear1 - BridgeClear0)));
+        }
+
+        /// <summary>Sheet-lightning centre on the Ark (see FlashReach): true when the Ark is the target; x on its axis, z at the walker's
+        /// z clamped to the hull (FlashBowBack behind the bow .. a quarter length short of the stern; either direction of travel).</summary>
+        public static bool FlashCentre(double walkerX, double walkerZ, double axisX, double bowZ, double sternZ, out double x, out double z)
+        {
+            double len = Math.Abs(sternZ - bowZ), sg = sternZ >= bowZ ? 1.0 : -1.0;
+            double a = Math.Max(FlashBowBack, Math.Min(0.75 * len, (walkerZ - bowZ) * sg));   // from the bow aft, a quarter length short of the stern
+            x = axisX; z = bowZ + sg * a;
+            double ddx = x - walkerX, ddz = z - walkerZ;
+            return ddx * ddx + ddz * ddz <= FlashReach * FlashReach;
+        }
     }
 
     /// <summary>The atmosphere globals of one frame (what the AtmosphereDriver uploads; the mirror evaluates the same numbers).</summary>
@@ -154,6 +305,22 @@ namespace Megastructure
         public double SheetAmp = 1.0;
         /// <summary>Abyss scroll (m): sheet billows (wrapped to NocAbyss.SheetScrollPeriod) and deep glow (DeepScrollPeriod) (_NocAbyss).</summary>
         public double SheetScrollX, SheetScrollZ, DeepScrollX, DeepScrollZ;
+        /// <summary>D-034 hooks (_NocDeckOcc / _NocHazeOcc: centre x, centre z, half-length along z, strength); zero = identity.</summary>
+        public double DeckOccX, DeckOccZ, DeckOccHalf, DeckOccW, HazeOccX, HazeOccZ, HazeOccHalf, HazeOccW;
+        /// <summary>Fix wave (_NocAir): pool amplitude, sink density K_s (0 when the sheets are cut), koi air gain x KoiK (0 outside
+        /// beat 7; set by the driver), alley lift.</summary>
+        public double PoolAmp = NocAir.PoolAmp, SinkV = NocAir.SinkV, KoiAir, SlitLift = NocAir.SlitLift;
+        /// <summary>The koi's 12 spine points (x, y, z) for the air glow (_NocKoiAir), used when KoiAir &gt; 0.</summary>
+        public readonly double[] KoiPts = new double[3 * NocturneConstants.KoiSpinePoints];
+        /// <summary>Sheet lightning (_NocFlash): centre in the deck (m), sigma (m), amplitude (0 = off).</summary>
+        public double FlashX, FlashZ, FlashSigma = NocAir.FlashSigma, FlashAmp;
+        /// <summary>D-043 the Ark (NocArkAir.Update): _NocArk (axis x, centre z, half-length, occluder strength), _NocArkB (half-beam,
+        /// penumbra, soft ends, base share), _NocArkG (glow axis y, radius, gain, flash stretch), _NocArkL (beams on, pool gain,
+        /// fall-off, r0), the six beams (apex xyz + gain, unit axis xyz + tan of the half-angle). Zero strength / gains = identity.</summary>
+        public double ArkX, ArkZ, ArkHalf, ArkW, ArkHalfBeam, ArkPen = NocArkAir.OccPen, ArkEnd = NocArkAir.OccEnd, ArkBase = NocArkAir.OccBase;
+        public double ArkGlowY, ArkGlowR = NocArkAir.GlowR, ArkGlow, ArkFlashStretch = 1.0, ArkBeamsOn, ArkPool = NocArkAir.PoolGain, ArkFall = NocArkAir.BeamFall, ArkR0 = NocArkAir.BeamR0, ArkSpot = NocArkAir.SpotGain, ArkSpotR = NocArkAir.SpotR;
+        public readonly double[] ArkBeamP = new double[4 * NocArkAir.Beams];
+        public readonly double[] ArkBeamD = new double[4 * NocArkAir.Beams];
         /// <summary>Cloud scroll of the four octaves in their rotated frames (m), each wrapped to its own 64-cell period.</summary>
         public double Cloud1X, Cloud1Z, Cloud2X, Cloud2Z, Cloud3X, Cloud3Z, Cloud4X, Cloud4Z;
         public double CamX, CamY = NocturneConstants.EyeHeight, CamZ;
@@ -200,6 +367,12 @@ namespace Megastructure
             if (Math.Abs(dy) < 1.0) { double m = (0.5 * (y0 + y1) - yk) / w; return Math.Exp(-m * m); }
             return 0.88622692545 * w * (ErfAS((y1 - yk) / w) - ErfAS((y0 - yk) / w)) / dy;
         }
+
+        /// <summary>C11 sink veil of a surface at height y (twin of NocFog's factor): V S01((-40 - y) / 360); T' = T (1 - veil).</summary>
+        public static double SinkVeil(NocAtmoState st, double y) => st.SinkV * S01((NocAbyss.SinkY0 - y) / NocAbyss.SinkH);
+
+        /// <summary>NocFog's transmittance with the C11 sink veil: FogT x (1 - SinkVeil).</summary>
+        public static double FogTV(NocAtmoState st, double x, double y, double z) => FogT(st, x, y, z) * (1.0 - SinkVeil(st, y));
 
         public static double CapQ(double y)
         {
@@ -334,9 +507,162 @@ namespace Megastructure
             f = DeckForm(CloudNoise(st, x, z, blurM));
             double W = CloudGlow(x, z, out C3 tint, out double gulf);
             var bas = Pal(NocPal.CloudBase) * ((1.0 + NocAbyss.DeckBaseAmp * f) * (1.0 - NocturneConstants.CloudGulfShade * gulf));
-            return C3.Lerp(bas, tint * (1.0 + NocAbyss.DeckTintAmp * f), W);
+            double noArk = st.ArkW > 0 ? 0.0 : 1.0;
+            if (st.DeckOccW > 0)                                                   // D-034 hull (identity at 0; the Ark replaces it)
+            {
+                double occ = Occluder(x, z, st.DeckOccX, st.DeckOccZ, st.DeckOccHalf, st.DeckOccW) * noArk;
+                W *= 1.0 - occ;
+                bas = bas * (1.0 - 0.5 * occ);
+            }
+            double ark = 0.0;
+            if (st.ArkW > 0)                                                       // D-043 the Ark shadows the city glow
+            {
+                ark = ArkShape(st, x, z);
+                double occ = NocMath.Clamp01(st.ArkW) * ark;
+                W *= 1.0 - occ;
+                bas = bas * (1.0 - st.ArkBase * occ);
+            }
+            var col = C3.Lerp(bas, tint * (1.0 + NocAbyss.DeckTintAmp * f), W);
+            if (st.SlitLift > 0) col = col * (1.0 + st.SlitLift * SlitShape(x, z));              // C44 alley lift
+            if (st.FlashAmp > 0)                                                                  // C26 sheet lightning
+            {
+                double qx = (x - st.FlashX) / Math.Max(st.FlashSigma, 1.0), qz = (z - st.FlashZ) / (Math.Max(st.FlashSigma, 1.0) * Math.Max(st.ArkFlashStretch, 1.0));
+                double fl = st.FlashAmp * Math.Exp(-0.5 * (qx * qx + qz * qz)) * (0.75 + 0.25 * f);
+                if (st.DeckOccW > 0) fl *= 1.0 - NocAbyss.FlashHull * Occluder(x, z, st.DeckOccX, st.DeckOccZ, st.DeckOccHalf, 1.0) * noArk;
+                fl *= 1.0 - NocAbyss.FlashHull * ark;
+                col = col * (1.0 + fl);
+            }
+            return col;
+        }
+
+        /// <summary>D-043 twin of NocArkShape: a soft stadium along z (unit strength), the half-beam narrowing to 0.35 over the soft
+        /// ends, penumbra st.ArkPen.</summary>
+        public static double ArkShape(NocAtmoState st, double x, double z)
+        {
+            double along = S01((st.ArkHalf - Math.Abs(z - st.ArkZ)) / Math.Max(st.ArkEnd, 1.0));
+            double hb = st.ArkHalfBeam * (0.35 + 0.65 * Math.Sqrt(along));
+            return along * (1.0 - NocMath.Smoothstep(hb - 0.5 * st.ArkPen, hb + st.ArkPen, Math.Abs(x - st.ArkX)));
+        }
+
+        /// <summary>D-043 twin of NocTubeIn x the Ark's two terms (NocArkAir): the in-scatter (linear) along the unit ray (dx, dy, dz)
+        /// from st.Cam over 0..len of the glow tube (cold window light) and the six searchlight cones (SignWhite).</summary>
+        public static C3 ArkAir(NocAtmoState st, double dx, double dy, double dz, double len)
+        {
+            var acc = new C3(0, 0, 0);
+            if (st.ArkGlow > 0)
+            {
+                LineApproach(st.CamX - st.ArkX, st.CamY - st.ArkGlowY, st.CamZ - st.ArkZ, dx, dy, dz, 0, 0, 1, out double t0, out double u0, out double h2, out double sn);
+                double r = Math.Max(st.ArkGlowR, 1.0);
+                if (h2 < 6.0 * r * r)
+                {
+                    double win = S01((st.ArkHalf - Math.Abs(u0)) / Math.Max(st.ArkEnd, 1.0));
+                    acc = acc + C3.Lerp(Pal(NocPal.WinNeutral), Pal(NocPal.WinCold), 0.6) * TubeIn(st, st.ArkGlow * win, r, h2, t0, sn, len, dy);
+                }
+            }
+            if (st.ArkBeamsOn > 0)
+            {
+                double r0 = Math.Max(st.ArkR0, 1.0), sum = 0;
+                for (int i = 0; i < NocArkAir.Beams; i++)
+                {
+                    double g = st.ArkBeamP[4 * i + 3];
+                    if (g <= 0) continue;
+                    LineApproach(st.CamX - st.ArkBeamP[4 * i], st.CamY - st.ArkBeamP[4 * i + 1], st.CamZ - st.ArkBeamP[4 * i + 2], dx, dy, dz,
+                                 st.ArkBeamD[4 * i], st.ArkBeamD[4 * i + 1], st.ArkBeamD[4 * i + 2], out double t0, out double u0, out double h2, out double sn);
+                    double r = r0 + Math.Max(u0, 0.0) * st.ArkBeamD[4 * i + 3];
+                    if (h2 >= 6.0 * r * r) continue;
+                    double I = g * (r0 / r) * Math.Exp(-Math.Max(u0, 0.0) / Math.Max(st.ArkFall, 1.0)) * NocMath.Smoothstep(-r0, 2.0 * r0, u0);
+                    sum += TubeIn(st, I, r, h2, t0, sn, len, dy);
+                }
+                acc = acc + Pal(NocPal.SignWhite) * sum;
+            }
+            return acc;
+        }
+
+        /// <summary>D-043 twin of NocArkSpot: the searchlights' lit spot (linear SignWhite) on a surface at (x, y, z).</summary>
+        public static C3 ArkSpot(NocAtmoState st, double x, double y, double z)
+        {
+            double sum = 0.0, r0 = Math.Max(st.ArkR0, 1.0), R2 = st.ArkSpotR * st.ArkSpotR;
+            for (int i = 0; i < NocArkAir.Beams; i++)
+            {
+                double g = st.ArkBeamP[4 * i + 3];
+                if (g <= 0) continue;
+                double wx = x - st.ArkBeamP[4 * i], wy = y - st.ArkBeamP[4 * i + 1], wz = z - st.ArkBeamP[4 * i + 2];
+                double u = wx * st.ArkBeamD[4 * i] + wy * st.ArkBeamD[4 * i + 1] + wz * st.ArkBeamD[4 * i + 2];
+                double r = r0 + Math.Max(u, 0.0) * st.ArkBeamD[4 * i + 3];
+                double qx = wx - u * st.ArkBeamD[4 * i], qy = wy - u * st.ArkBeamD[4 * i + 1], qz = wz - u * st.ArkBeamD[4 * i + 2];
+                double d2 = qx * qx + qy * qy + qz * qz;
+                if (u > 0.0 && d2 < 9.0 * r * r) sum += g * Math.Min(1.0, R2 / (r * r)) * Math.Exp(-u / Math.Max(st.ArkFall, 1.0)) * Math.Exp(-d2 / (r * r));
+            }
+            return Pal(NocPal.SignWhite) * (st.ArkSpot * sum);
+        }
+
+        /// <summary>Twin of NocLineApproach: the ray (unit d) from the eye at w = eye - a against the line (point a, unit b).</summary>
+        public static void LineApproach(double wx, double wy, double wz, double dx, double dy, double dz, double bx, double by, double bz,
+                                        out double t0, out double u0, out double h2, out double sn)
+        {
+            double c = dx * bx + dy * by + dz * bz, s2 = Math.Max(1.0 - c * c, 1e-4);
+            double dd = dx * wx + dy * wy + dz * wz, e = bx * wx + by * wy + bz * wz;
+            t0 = (e * c - dd) / s2;
+            u0 = e + t0 * c;
+            double qx = wx + t0 * dx - u0 * bx, qy = wy + t0 * dy - u0 * by, qz = wz + t0 * dz - u0 * bz;
+            h2 = qx * qx + qy * qy + qz * qz;
+            sn = Math.Sqrt(s2);
+        }
+
+        /// <summary>Twin of NocTubeIn (fog at the closest approach with the eye's sigma x Down).</summary>
+        public static double TubeIn(NocAtmoState st, double I, double r, double h2, double t0, double sn, double len, double dy)
+        {
+            double k = sn / r, tf = Math.Max(t0, 0.0), ft = st.SigmaR * Down(st.CamY + tf * dy) * tf, q = h2 / (r * r);
+            double x0 = t0 * k, x1 = (len - t0) * k, seg = Math.Min(x0, x1) < 2.5 ? ErfAS(x1) + ErfAS(x0) : 2.0;
+            return I * Math.Exp(-q - ft * ft) * (1.0 - NocMath.Smoothstep(4.0, 6.0, q)) * seg / (2.0 * Math.Max(sn, 0.1));
         }
         public static C3 CloudColor(NocAtmoState st, double x, double z, double blurM) => CloudColor(st, x, z, blurM, out _);
+
+        /// <summary>C44 shape: exp(-r^2 / (2 SlitSigma^2)) around (SlitX, SlitZ).</summary>
+        public static double SlitShape(double x, double z)
+        {
+            double qx = (x - NocAbyss.SlitX) / NocAbyss.SlitSigma, qz = (z - NocAbyss.SlitZ) / NocAbyss.SlitSigma;
+            return Math.Exp(-0.5 * (qx * qx + qz * qz));
+        }
+
+        /// <summary>C26 envelope of one glow tau seconds after its start (DREAD 5.4): smoothstep rise over 0.4 s, smoothstep decay over
+        /// 1.5 s; 0 outside (0, 1.9).</summary>
+        public static double FlashEnvelope(double tau)
+        {
+            if (tau <= 0 || tau >= NocAir.FlashRise + NocAir.FlashDecay) return 0.0;
+            return tau < NocAir.FlashRise ? S01(tau / NocAir.FlashRise) : 1.0 - S01((tau - NocAir.FlashRise) / NocAir.FlashDecay);
+        }
+
+        /// <summary>C02-air (twin of NocKoiAir): the koi's in-scatter (linear, x KoiGlow) along the unit ray (dx, dy, dz) from st.Cam over
+        /// 0..len: sum over the spine points of exp(-h^2 / (2 R^2)) (erf((len - t0) / (sqrt 2 R)) + erf(t0 / (sqrt 2 R))), x KoiAir / 2.</summary>
+        public static C3 KoiAir(NocAtmoState st, double dx, double dy, double dz, double len)
+        {
+            if (st.KoiAir <= 0) return new C3(0, 0, 0);
+            double k = 0.70710678118654752 / NocAbyss.KoiAirR, g = 0;
+            for (int i = 0; i < NocturneConstants.KoiSpinePoints; i++)
+            {
+                double px = st.KoiPts[3 * i] - st.CamX, py = st.KoiPts[3 * i + 1] - st.CamY, pz = st.KoiPts[3 * i + 2] - st.CamZ;
+                double t0 = px * dx + py * dy + pz * dz, h2 = Math.Max(px * px + py * py + pz * pz - t0 * t0, 0.0);
+                g += KoiAirOwn(px, py, pz, dx * len, dy * len, dz * len) * NocMath.Smoothstep(NocAbyss.KoiAirH0, NocAbyss.KoiAirH1, Math.Sqrt(h2))
+                   * Math.Exp(-h2 * k * k) * (ErfAS((len - t0) * k) + ErfAS(t0 * k));
+            }
+            return KoiAirColour() * (0.5 * st.KoiAir * g);
+        }
+
+        /// <summary>C02-air: smoothstep(60, 110, |p - f|), p the spine point and f the fragment (both relative to the eye).</summary>
+        public static double KoiAirOwn(double px, double py, double pz, double fx, double fy, double fz)
+        {
+            double ax = px - fx, ay = py - fy, az = pz - fz;
+            return NocMath.Smoothstep(NocAbyss.KoiAirIn, NocAbyss.KoiAirOut, Math.Sqrt(ax * ax + ay * ay + az * az));
+        }
+
+        /// <summary>C02-air colour: lerp(luma(KoiGlow), KoiGlow, 0.55).</summary>
+        public static C3 KoiAirColour()
+        {
+            var kg = Pal(NocPal.KoiGlow);
+            double l = 0.2126 * kg.r + 0.7152 * kg.g + 0.0722 * kg.b;
+            return new C3(l + (kg.r - l) * NocAbyss.KoiAirSat, l + (kg.g - l) * NocAbyss.KoiAirSat, l + (kg.b - l) * NocAbyss.KoiAirSat);
+        }
 
         // ---------------------------------------------------------------- the abyss (H3, AT; twins of NocAtmosphere.hlsl)
         /// <summary>Periodic value noise with an integer seed added after the wrap (twin of NocValueNoisePS).</summary>
@@ -394,8 +720,21 @@ namespace Megastructure
 
         static readonly double[] s_bandA = { NocAbyss.BandA0, NocAbyss.BandA1, NocAbyss.BandA2 };
         static readonly double[] s_topK = { NocAbyss.TopK0, NocAbyss.TopK1, NocAbyss.TopK2 };
-        static readonly C3[] s_sheetCol = { new C3(NocAbyss.SheetCol0R, NocAbyss.SheetCol0G, NocAbyss.SheetCol0B),
-            new C3(NocAbyss.SheetCol1R, NocAbyss.SheetCol1G, NocAbyss.SheetCol1B), new C3(NocAbyss.SheetCol2R, NocAbyss.SheetCol2G, NocAbyss.SheetCol2B) };
+        static readonly C3[] s_veil = { new C3(NocAbyss.Veil0R, NocAbyss.Veil0G, NocAbyss.Veil0B),
+            new C3(NocAbyss.Veil1R, NocAbyss.Veil1G, NocAbyss.Veil1B), new C3(NocAbyss.Veil2R, NocAbyss.Veil2G, NocAbyss.Veil2B) };
+
+        /// <summary>D-034 analytic occluder (twin of NocOccluder): w (1 - smoothstep(0.6, 1, r)), r = the radius of the ellipse centred at
+        /// (cx, cz) with half-axes (0.15 half, half) (at least 1 m); w clamped to 0..1.</summary>
+        public static double Occluder(double x, double z, double cx, double cz, double half, double w)
+        {
+            double hx = Math.Max(NocAbyss.OccBeam * half, 1.0), hz = Math.Max(half, 1.0);
+            double qx = (x - cx) / hx, qz = (z - cz) / hz;
+            return NocMath.Clamp01(w) * (1.0 - NocMath.Smoothstep(NocAbyss.OccEdge, 1.0, Math.Sqrt(qx * qx + qz * qz)));
+        }
+
+        /// <summary>Lift of the depths under the sheets (twin of NocAbyssLift): smoothstep(3, 30, -e) (1 - 0.8 smoothstep(30, 80, -e)).</summary>
+        public static double AbyssLift(double e) =>
+            NocMath.Smoothstep(NocAbyss.LiftE0, NocAbyss.LiftE1, -e) * (1.0 - NocAbyss.LiftNadir * NocMath.Smoothstep(NocAbyss.LiftE1, NocAbyss.LiftE2, -e));
 
         /// <summary>Elevation-only opacity of sheet k for a downward unit ray with y component dy (&lt; 0) at elevation e (deg), before
         /// the billow coverage: (A_k band(e - e_k) + (1 - exp(-K_k / sin|e|)) V_k smoothstep over e_k .. e_k - 12) x the sheet scale.</summary>
@@ -409,10 +748,12 @@ namespace Megastructure
         }
 
         /// <summary>The abyss (twin of NocAbyss): c = the base gradient of the unit ray (dx, dy, dz), dy &lt; 0, at elevation e (deg);
-        /// deep glow of the lit city (plane y -2000, +-35 % where e &lt; -10), then sheets 2, 1, 0: c = lerp(c, colour x shade, a_k).</summary>
+        /// the lift (1 + 1.2 L(e)), the deep glow of the lit city (plane y -2000, +-50 % where e &lt; -10), the D-034 shadow, then sheets
+        /// 2, 1, 0 as dark veils: c = lerp(c, c x veil_k x shade, a_k).</summary>
         public static C3 Abyss(NocAtmoState st, C3 c, double dx, double dy, double dz, double e, double blurRad)
         {
             double sy = Math.Max(-dy, 1e-4);
+            c = c * (1.0 + NocAbyss.DeepLift * AbyssLift(e));
             double dw = NocMath.Smoothstep(NocAbyss.DeepE0, NocAbyss.DeepE1, -e);
             if (dw > 0)
             {
@@ -428,6 +769,34 @@ namespace Megastructure
                          + NocAbyss.DeepW1 * NocMath.Lerp(0.5, ValueNoisePS(bx / NocAbyss.DeepL1, bz / NocAbyss.DeepL1, p, 901, 301), f1);
                 c = c * (1.0 + NocAbyss.DeepAmp * 2.0 * (n - 0.5) * dw);
             }
+            double pw = NocMath.Smoothstep(NocAbyss.PoolE0, NocAbyss.PoolE1, -e) * (1.0 - NocAbyss.PoolNadir * NocMath.Smoothstep(NocAbyss.PoolE2, NocAbyss.PoolE3, -e)) * st.PoolAmp;   // C11 pools
+            if (pw > 0)
+            {
+                double t = (st.CamY - NocAbyss.PoolY) / sy;
+                double hx = st.CamX + dx * t, hz = st.CamZ + dz * t;
+                double blurM = blurRad * t / Math.Max(sy, 0.05);
+                double f0 = OctaveFade(NocAbyss.PoolL0, blurM), f1 = OctaveFade(NocAbyss.PoolL1, blurM);
+                if (f0 > 0)
+                {
+                    int p = NocturneConstants.CloudNoisePeriod;
+                    Rot6(hx, hz, 1, out double ax, out double az);
+                    Rot6(hx, hz, 3, out double bx, out double bz);
+                    Rot6(hx, hz, 4, out double cx, out double cz);
+                    ax += st.DeepScrollX; az += st.DeepScrollZ; bx += st.DeepScrollX; bz += st.DeepScrollZ; cx += st.DeepScrollX; cz += st.DeepScrollZ;
+                    double n = NocAbyss.PoolW0 * ValueNoisePS(ax / NocAbyss.PoolL0, az / NocAbyss.PoolL0, p, 905, 305)
+                             + NocAbyss.PoolW1 * NocMath.Lerp(0.5, ValueNoisePS(bx / NocAbyss.PoolL1, bz / NocAbyss.PoolL1, p, 906, 306), f1);
+                    double sel = NocMath.Smoothstep(0.35, 0.65, ValueNoisePS(cx / NocAbyss.PoolL0, cz / NocAbyss.PoolL0, p, 907, 307));
+                    double pool = NocMath.Smoothstep(NocAbyss.PoolLo, NocAbyss.PoolHi, n), k = pw * f0;
+                    c = new C3(c.r * (1.0 + k * (pool * (1.0 + (NocAbyss.PoolAmbR - 1.0) * sel) - NocAbyss.PoolMean)),
+                               c.g * (1.0 + k * (pool * (1.0 + (NocAbyss.PoolAmbG - 1.0) * sel) - NocAbyss.PoolMean)),
+                               c.b * (1.0 + k * (pool * (1.0 + (NocAbyss.PoolAmbB - 1.0) * sel) - NocAbyss.PoolMean)));
+                }
+            }
+            if (st.HazeOccW > 0)                                                   // D-034 shadow (identity at 0)
+            {
+                double to = (st.CamY - NocAbyss.HazeOccY) / sy;
+                c = c * (1.0 - Occluder(st.CamX + dx * to, st.CamZ + dz * to, st.HazeOccX, st.HazeOccZ, st.HazeOccHalf, st.HazeOccW));
+            }
             for (int k = 2; k >= 0; k--)
             {
                 double aE = SheetOpacityE(st, k, dy, e, out double t);
@@ -437,7 +806,8 @@ namespace Megastructure
                 double hw = Math.Max(NocAbyss.CovHalf, NocAbyss.CovAA * g);
                 double a = Math.Min(NocMath.Smoothstep(0.5 - hw, 0.5 + hw, n) * aE, NocAbyss.SheetMaxA);
                 double shade = 1.0 + NocAbyss.SheetDetail * 2.0 * (nFine - 0.5) - NocAbyss.SheetThick * NocMath.Clamp01((n - 0.5 - hw) * 4.0);
-                c = C3.Lerp(c, s_sheetCol[k] * shade, a);
+                var v = s_veil[k];
+                c = C3.Lerp(c, new C3(c.r * v.r * shade, c.g * v.g * shade, c.b * v.b * shade), a);
             }
             return c;
         }
@@ -527,9 +897,14 @@ namespace Megastructure
         public static C3 Fog(NocAtmoState st, C3 col, double x, double y, double z)
         {
             col = CloudMix(st, col, x, y, z);
-            double T = FogT(st, x, y, z);
-            if (T >= 0.99995) return col;
-            return C3.Lerp(SkyColor(st, x - st.CamX, y - st.CamY, z - st.CamZ), col, T);
+            double T = FogTV(st, x, y, z);                                                       // + C11 sink veil
+            if (T < 0.99995) col = C3.Lerp(SkyColor(st, x - st.CamX, y - st.CamY, z - st.CamZ), col, T);
+            if (st.KoiAir > 0)                                                                    // C02-air
+            {
+                double dx = x - st.CamX, dy = y - st.CamY, dz = z - st.CamZ, l = Math.Sqrt(dx * dx + dy * dy + dz * dz), il = 1.0 / Math.Max(l, 1e-3);
+                col = col + KoiAir(st, dx * il, dy * il, dz * il, l);
+            }
+            return col;
         }
 
         /// <summary>NocFloor(col) = FloorLin + col (1 - FloorLin): the last operation of every shader (14.2.2).</summary>
@@ -554,6 +929,9 @@ namespace Megastructure
             st.AlleyExtra = NocSchedule.AlleyHaze(s);
             st.SheetStrength = sheets ? NocAbyss.SheetFogStrength : 0.0;
             st.SheetAmp = sheets ? 1.0 : 0.0;
+            st.SinkV = sheets ? NocAir.SinkV : 0.0;                   // C11 sink veil rides with the sheets (14.8 item 9 cuts both)
+            st.PoolAmp = NocAir.PoolAmp;
+            st.SlitLift = NocAir.SlitLift;
             st.Rho = NocSchedule.RainRho(s) * rainMul;
             double[] y = SheetBaseY;   // static: StateAt runs every frame (AtmosphereDriver), no allocation
             double ph = 2.0 * Math.PI * (t / NocturneConstants.SheetDriftPeriod - Math.Floor(t / NocturneConstants.SheetDriftPeriod));

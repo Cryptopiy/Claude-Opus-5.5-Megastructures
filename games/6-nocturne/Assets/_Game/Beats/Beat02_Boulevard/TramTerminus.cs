@@ -9,6 +9,8 @@
 // plinth, pilasters every 7.25 m, tall hall windows recessed 0.35 m in every bay with steel mullions and the lit hall behind them
 // (BV, INT-35: a lit concrete hall with trusses, linear lamps and three dim lights instead of the EmitShopCold panes), a service
 // door (with a steel leaf) to the tongue plaza, a 0.4 m cornice on all three free faces.
+// BV fix wave (DREAD 6, C29): an elevator lobby in the west face's southern bay (LobbyDoors: a 2.8 x 3.1 m opening with stone
+// reveals through the 1.6 m wall, the lit empty room behind it in the hall's south-west corner, two steel leaves in pockets).
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,10 +27,12 @@ namespace Megastructure
             float pz0 = (float)(BoulevardLayout.TrackNorthZ - 0.5 * BoulevardLayout.PortalW), pz1 = (float)(BoulevardLayout.TrackNorthZ + 0.5 * BoulevardLayout.PortalW);
             float ph = (float)BoulevardLayout.PortalH, yb = -1f;
             float xin = x1 - EastRecess - Reveal, xw = x0 + WestWall, zs = z0 + Reveal, zn = z1 - 0.4f, yIn0 = 0.05f, yIn1 = h - 1.2f;
-            // west face with the portal opening (BV: 5.2 x 6.4 m, the tram and its contact wire pass)
-            G1Mesh.Quad(mb, new Vector3(x0, yb, z0), new Vector3(x0, h, z0), new Vector3(x0, h, pz0), new Vector3(x0, yb, pz0), Vector3.left);
-            G1Mesh.Quad(mb, new Vector3(x0, yb, pz1), new Vector3(x0, h, pz1), new Vector3(x0, h, z1), new Vector3(x0, yb, z1), Vector3.left);
-            G1Mesh.Quad(mb, new Vector3(x0, ph, pz0), new Vector3(x0, h, pz0), new Vector3(x0, h, pz1), new Vector3(x0, ph, pz1), Vector3.left);
+            // west face with the portal opening (BV: 5.2 x 6.4 m, the tram and its contact wire pass) and (fifth start, BV_r01 KS04:
+            // the face was one flat dark block at the end of the canyon) a clerestory window in every bay into the lit hall
+            var westHoles = WestOpenings(z0, z1, pz0, pz1, ph, yb);
+            // the elevator lobby's opening (DREAD 6) is cut through both faces of the west wall, after the portal and the clerestory
+            var cutHoles = new List<Vector4>(westHoles) { new Vector4(LobbyDoors.Z0, LobbyDoors.Z1, 0f, LobbyDoors.Y1) };
+            CutWall(mb, x0, Vector3.left, z0, z1, yb, h, cutHoles);
             // portal reveals through the whole west wall into the hall (x 205..206.6)
             G1Mesh.Quad(mb, new Vector3(x0, yb, pz0), new Vector3(x0, ph, pz0), new Vector3(xw, ph, pz0), new Vector3(xw, yb, pz0), Vector3.forward);
             G1Mesh.Quad(mb, new Vector3(x0, yb, pz1), new Vector3(x0, ph, pz1), new Vector3(xw, ph, pz1), new Vector3(xw, yb, pz1), Vector3.back);
@@ -40,10 +44,15 @@ namespace Megastructure
             var inner = parts.Get("terminusInner", G1Mat.Concrete, origin);
             var trim = parts.Get("terminusTrim", G1Mat.SteelPainted, origin);
             var lamps = parts.Get("terminusLamps", G1Mat.EmitLamp, origin);
-            // west interior wall with the portal hole, north wall, floor, ceiling
-            G1Mesh.Quad(inner, new Vector3(xw, yIn0, zs), new Vector3(xw, yIn1, zs), new Vector3(xw, yIn1, pz0), new Vector3(xw, yIn0, pz0), Vector3.right);
-            G1Mesh.Quad(inner, new Vector3(xw, yIn0, pz1), new Vector3(xw, yIn1, pz1), new Vector3(xw, yIn1, zn), new Vector3(xw, yIn0, zn), Vector3.right);
-            G1Mesh.Quad(inner, new Vector3(xw, ph, pz0), new Vector3(xw, yIn1, pz0), new Vector3(xw, yIn1, pz1), new Vector3(xw, ph, pz1), Vector3.right);
+            // west interior wall with the portal and clerestory holes, north wall, floor, ceiling
+            CutWall(inner, xw, Vector3.right, zs, zn, yIn0, yIn1, cutHoles);
+            // the lobby opening's reveals through the wall (stone) and the lobby (room, light, leaves, sign, spill)
+            G1Mesh.Quad(mb, new Vector3(x0, 0f, LobbyDoors.Z0), new Vector3(x0, LobbyDoors.Y1, LobbyDoors.Z0), new Vector3(xw, LobbyDoors.Y1, LobbyDoors.Z0), new Vector3(xw, 0f, LobbyDoors.Z0), Vector3.forward);
+            G1Mesh.Quad(mb, new Vector3(x0, 0f, LobbyDoors.Z1), new Vector3(x0, LobbyDoors.Y1, LobbyDoors.Z1), new Vector3(xw, LobbyDoors.Y1, LobbyDoors.Z1), new Vector3(xw, 0f, LobbyDoors.Z1), Vector3.back);
+            G1Mesh.Quad(mb, new Vector3(x0, LobbyDoors.Y1, LobbyDoors.Z0), new Vector3(xw, LobbyDoors.Y1, LobbyDoors.Z0), new Vector3(xw, LobbyDoors.Y1, LobbyDoors.Z1), new Vector3(x0, LobbyDoors.Y1, LobbyDoors.Z1), Vector3.down);
+            G1Mesh.Quad(mb, new Vector3(x0, 0.02f, LobbyDoors.Z0), new Vector3(x0, 0.02f, LobbyDoors.Z1), new Vector3(xw, 0.02f, LobbyDoors.Z1), new Vector3(xw, 0.02f, LobbyDoors.Z0), Vector3.up);
+            LobbyDoors.Build(parts, xw, yIn0);
+            WestClerestory(mb, trim, x0, xw, westHoles, h, pz0, pz1);
             G1Mesh.Quad(inner, new Vector3(xw, yIn0, zn), new Vector3(xw, yIn1, zn), new Vector3(xin, yIn1, zn), new Vector3(xin, yIn0, zn), Vector3.back);
             G1Mesh.Quad(mb, new Vector3(xw, yIn0, zs), new Vector3(xin, yIn0, zs), new Vector3(xin, yIn0, zn), new Vector3(xw, yIn0, zn), Vector3.up);
             G1Mesh.Quad(inner, new Vector3(xw, yIn1, zs), new Vector3(xin, yIn1, zs), new Vector3(xin, yIn1, zn), new Vector3(xw, yIn1, zn), Vector3.down);
@@ -88,8 +97,9 @@ namespace Megastructure
 
         /// <summary>The west wall's thickness (the portal reveals run x 205..206.6) and the hall lights' range.</summary>
         public const float WestWall = 1.6f, HallLightRange = 9f;
-        /// <summary>The hall lights' window in camera x (BoulevardLights): seen down the canyon from x 40, from the Edge behind it.</summary>
-        public const double LightX0 = 40.0, LightX1 = 380.0;
+        /// <summary>The hall lights' window in camera x (BoulevardLights): seen down the canyon from x 50 (faded in over x 34..50, 155 m
+        /// away), from the Edge behind it.</summary>
+        public const double LightX0 = 50.0, LightX1 = 380.0;
 
         /// <summary>The three dim hall lights (cool neutral) at different strengths, so the hall's walls are lit unevenly (INT-35).</summary>
         public static List<G1Light> HallLights()
@@ -100,10 +110,88 @@ namespace Megastructure
             Color hallC = Color.Lerp(G1Materials.Lin(NocPal.WinNeutral, 1f), G1Materials.Lin(NocPal.WinCold, 1f), 0.4f);
             return new List<G1Light>
             {
-                new G1Light { name = "terminusHall0", position = new Vector3(xm, 8.5f, z0 + 9f), colour = hallC, range = HallLightRange, intensity = 1.4f },
-                new G1Light { name = "terminusHall1", position = new Vector3(xm, 8.5f, 0.5f * (z0 + z1)), colour = hallC, range = HallLightRange, intensity = 0.8f },
-                new G1Light { name = "terminusHall2", position = new Vector3(xm, 8.5f, z1 - 9f), colour = hallC, range = HallLightRange, intensity = 1.1f },
+                // fifth start: x 1.9 (BV_r02 KS04: through the new west clerestory the hall read as dark holes)
+                new G1Light { name = "terminusHall0", position = new Vector3(xm, 8.5f, z0 + 9f), colour = hallC, range = HallLightRange, intensity = 2.6f },
+                new G1Light { name = "terminusHall1", position = new Vector3(xm, 8.5f, 0.5f * (z0 + z1)), colour = hallC, range = HallLightRange, intensity = 1.5f },
+                new G1Light { name = "terminusHall2", position = new Vector3(xm, 8.5f, z1 - 9f), colour = hallC, range = HallLightRange, intensity = 2.1f },
             };
+        }
+
+        /// <summary>West face clerestory (fifth start): sill / head of the windows over the portal sign (y 7.2..8.4).</summary>
+        public const float ClereSill = 8.9f, ClereHead = 12.2f;
+
+        /// <summary>The holes of the west face (z0, z1, y0, y1): the portal first, then one clerestory window per 7.25 m bay.</summary>
+        public static List<Vector4> WestOpenings(float z0, float z1, float pz0, float pz1, float ph, float yb)
+        {
+            var l = new List<Vector4> { new Vector4(pz0, pz1, yb, ph) };
+            int bays = Mathf.Max(1, Mathf.RoundToInt((z1 - z0) / BayPitch));
+            float pitch = (z1 - z0) / bays;
+            for (int k = 0; k < bays; k++)
+            {
+                float c0 = z0 + pitch * k, c1 = c0 + pitch;
+                if (k == bays - 1) c1 -= 0.6f;                       // the north end meets the north podium face
+                l.Add(new Vector4(c0 + WinMargin, c1 - WinMargin, ClereSill, ClereHead));
+            }
+            return l;
+        }
+
+        /// <summary>An x-plane wall at x over z0..z1, y0..y1 facing n, cut on the conformal grid of the holes (clipped to the wall).</summary>
+        static void CutWall(MeshBuilder mb, float x, Vector3 n, float z0, float z1, float y0, float y1, List<Vector4> holes)
+        {
+            var zv = new List<float> { z0, z1 }; var yv = new List<float> { y0, y1 };
+            foreach (var o in holes)
+            {
+                if (o.x > z0 && o.x < z1) zv.Add(o.x);
+                if (o.y > z0 && o.y < z1) zv.Add(o.y);
+                if (o.z > y0 && o.z < y1) yv.Add(o.z);
+                if (o.w > y0 && o.w < y1) yv.Add(o.w);
+            }
+            zv.Sort(); yv.Sort();
+            bool flip = n.x > 0f;
+            for (int i = 0; i + 1 < zv.Count; i++)
+            {
+                if (zv[i + 1] - zv[i] < 1e-4f) continue;
+                for (int j = 0; j + 1 < yv.Count; j++)
+                {
+                    if (yv[j + 1] - yv[j] < 1e-4f) continue;
+                    float zc = 0.5f * (zv[i] + zv[i + 1]), yc = 0.5f * (yv[j] + yv[j + 1]);
+                    bool open = false;
+                    foreach (var o in holes) if (zc > o.x && zc < o.y && yc > o.z && yc < o.w) { open = true; break; }
+                    if (open) continue;
+                    float za = flip ? zv[i + 1] : zv[i], zb = flip ? zv[i] : zv[i + 1];
+                    G1Mesh.Quad(mb, new Vector3(x, yv[j], za), new Vector3(x, yv[j + 1], za), new Vector3(x, yv[j + 1], zb), new Vector3(x, yv[j], zb), n);
+                }
+            }
+        }
+
+        /// <summary>The west clerestory windows' reveals through the 1.6 m wall, their steel mullions and transom, and pilasters at the
+        /// bay lines (not across the portal) from the ground to the cornice.</summary>
+        static void WestClerestory(MeshBuilder wall, MeshBuilder trim, float x0, float xw, List<Vector4> holes, float h, float pz0, float pz1)
+        {
+            for (int i = 1; i < holes.Count; i++)
+            {
+                var o = holes[i];
+                G1Mesh.Quad(wall, new Vector3(x0, o.z, o.x), new Vector3(xw, o.z, o.x), new Vector3(xw, o.w, o.x), new Vector3(x0, o.w, o.x), Vector3.forward);
+                G1Mesh.Quad(wall, new Vector3(x0, o.z, o.y), new Vector3(x0, o.w, o.y), new Vector3(xw, o.w, o.y), new Vector3(xw, o.z, o.y), Vector3.back);
+                G1Mesh.Quad(wall, new Vector3(x0, o.w, o.x), new Vector3(xw, o.w, o.x), new Vector3(xw, o.w, o.y), new Vector3(x0, o.w, o.y), Vector3.down);
+                G1Mesh.Quad(wall, new Vector3(x0, o.z, o.x), new Vector3(x0, o.z, o.y), new Vector3(xw, o.z, o.y), new Vector3(xw, o.z, o.x), Vector3.up);
+                // two mullions and a transom 0.25 m inside the face (the hall shows between them)
+                float w3 = (o.y - o.x) / 3f, xm0 = x0 + 0.25f, xm1 = x0 + 0.37f;
+                for (int m = 1; m <= 2; m++)
+                {
+                    float zm = o.x + w3 * m;
+                    Box(trim, new Vector3(xm0, o.z + 0.01f, zm - 0.5f * MullionW), new Vector3(xm1, o.w - 0.01f, zm + 0.5f * MullionW));
+                }
+                float yt = o.z + 0.68f * (o.w - o.z);
+                Box(trim, new Vector3(xm0 + 0.01f, yt - 0.5f * MullionW, o.x + 0.01f), new Vector3(xm1 - 0.01f, yt + 0.5f * MullionW, o.y - 0.01f));
+            }
+            // pilasters at the bay lines between the windows (none on the portal, none at the north end)
+            for (int i = 1; i + 1 < holes.Count; i++)
+            {
+                float zp = 0.5f * (holes[i].y + holes[i + 1].x);
+                if (zp + 0.5f * PilasterW > pz0 - 0.4f && zp - 0.5f * PilasterW < pz1 + 0.4f) continue;
+                Box(wall, new Vector3(x0 - PilasterProud, PlinthH - 0.02f, zp - 0.5f * PilasterW), new Vector3(x0 + 0.1f, h - 0.78f, zp + 0.5f * PilasterW));
+            }
         }
 
         /// <summary>The openings of a facade plane (a0..a1): one window per bay, plus the service door on the east face (last).</summary>

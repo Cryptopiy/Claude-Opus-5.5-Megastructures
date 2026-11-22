@@ -16,6 +16,13 @@ spaced decoded frames and of the same source frames, and write side-by-side crop
 200 % (nearest) and with x8 local contrast for visual review.  Regions: sequence.json "banding" (image pixels unless
 "ref"/"units"), --region, or a regions-file entry whose "match" fits "seq_<name>".  Without any ffmpeg the source
 frames are scored with the 8-bit thresholds tightened by the safety factor 2 of 11.12 step 4.
+QA fix wave C19: the H1 gate is x264 CRF 23 (CRF 30 and VP9 are regression rows: INFO, never the verdict) on the decoded VISIBLE
+STEPS (<= 2 / 1000, none > 1.5 codes: the 14.7 H1 (6) decode rule; the BandScore of 11.3 is a source metric, reported); every region row lists
+the visible steps / 1000 and the max step code in Y, Cb and Cr; a clip without a measured region reads FAIL for the four 14.7 H1 (6)
+clips (enc_beat02_axis, enc_beat03_abyss, enc_beat06_wall, enc_beat07_plaza, also _4k) and SKIP for the others, never PASS; the
+report's Result is PASS only when nothing FAILed and every clip measured. Clips that end on a LOOK_V2 texture key shot (KS00:
+enc_beat01_wall, KS19: enc_beat07_goal) leave their last decoded CRF-23 frame (scaled to 1080p) as KSxx_*.png in
+<work>/lookv2_encoded, and lookv2_check.py --encoded runs on that folder (meso >= 0.75 after the encode).
 Writes QA/reports/encode_test_<run>.json and .md; crops and decoded frames under the work folder (gitignored).
 Exit code 1 if a decoded (or, without an encoder, a source) region fails.
 """
@@ -35,6 +42,35 @@ import numpy as np  # noqa: E402
 
 import qa_common as qc  # noqa: E402
 from qa_common import PASS, FAIL, SKIP, INFO, WARN, TH, check  # noqa: E402
+
+# 14.7 H1 (6): the four clips the encode gate names; the x264 CRF of the gate (other variants are regression rows)
+H1_CLIPS = ("enc_beat02_axis", "enc_beat03_abyss", "enc_beat06_wall", "enc_beat07_plaza")
+GATE_CODEC, GATE_CRF = "x264", 23
+# clips whose last frame is a LOOK_V2 texture key shot (lookv2_check --encoded, C19)
+LOOKV2_SHOT = {"enc_beat01_wall": "KS00_alley_start", "enc_beat07_goal": "KS19_goal_window"}
+
+
+def is_h1(name):
+    n = name[4:] if name.startswith("seq_") else name
+    return any(n == c or n == c + "_4k" for c in H1_CLIPS)
+
+
+def _chan_cols(sc):
+    """AT's request: the steps / 1000 (max code) of luma Y and chroma Cb, Cr apart, and the R / G / B maximum (decode: not gated)."""
+    ch = sc.get("chan") if sc else None
+    if not ch:
+        return ["-", "-", "-", "-"]
+    return ["%.2f (%.2f)" % (ch[k][0], ch[k][1]) for k in ("Y", "Cb", "Cr")] + ["%.2f" % max(ch[k][0] for k in ("R", "G", "B"))]
+
+
+def _chan_note(sc):
+    ch = sc.get("chan") if sc else None
+    if not ch:
+        return ""
+    return ("; luma Y %.2f / %.2f; chroma Cb %.2f / %.2f, Cr %.2f / %.2f (steps/1000 / max code, gated); R %.2f, G %.2f, B %.2f "
+            "steps/1000 (reported, not gated on a decode, D-041 2)") % (
+        ch["Y"][0], ch["Y"][1], ch["Cb"][0], ch["Cb"][1], ch["Cr"][0], ch["Cr"][1], ch["R"][0], ch["G"][0], ch["B"][0])
+
 
 VF_ENC = "scale=out_color_matrix=bt709:out_range=tv:flags=accurate_rnd+full_chroma_int,format=yuv420p"
 VF_DEC = "scale=in_color_matrix=bt709:in_range=tv:out_range=pc:flags=accurate_rnd+full_chroma_int,format=rgb24"
@@ -143,6 +179,9 @@ def _scaled_th(factor, decoded=False):
     t = dict(TH)
     if decoded:
         t["band_steps_per_1000_max"] = TH["band_steps_per_1000_encoded_max"]
+        # D-041 (2): the decode gate counts visible steps in Y, Cb and Cr (a decode is quantised per Y'CbCr channel); steps that
+        # exist only in R, G or B (KS10's 2.56) are the RGB conversion's rounding and do not fail; R, G, B stay in the report
+        t["band_step_channels"] = qc.DECODE_STEP_CHANNELS
     if factor != 1.0:
         for k in ("band_steps_per_1000_max", "bandscore_max", "band_step_max_code"):
             t[k] = t[k] / factor
@@ -176,7 +215,8 @@ def seq_regions(seq, cli_regions, file_entries, W, H):
     for i, r in enumerate(cli_regions):
         items.append({"name": "cli%d" % i, "rect": r[:4], "dir": r[4] if len(r) > 4 else "v", "_units": "px"})
     reg = qc.regions_for("seq_" + seq["name"], W, H, file_entries, None)
-    items += reg["banding"]
+    have = set(it.get("name") for it in items)
+    items += [it for it in reg["banding"] if it.get("name") not in have]   # the sequence's own region of a name wins
     return qc.band_regions_resolved(items, W, H)
 
 
@@ -215,7 +255,8 @@ def analyse(seq, args, ffmpeg, have, file_entries, work):
     for j in sel:
         src[j], _ = qc.load_rgb8(frames[j][1])
     if not regions:
-        C.append(check("regions", WARN, 0, ">= 1", "no gradient region declared: fidelity and crops only"))
+        C.append(check("regions", FAIL if is_h1(seq["name"]) else SKIP, 0, ">= 1",
+                       "no gradient region declared: nothing measured (an H1 (6) clip FAILs, any other reads SKIP; never PASS)"))
     factor = 1.0 if ffmpeg and have else 2.0
     th = _scaled_th(factor)
     src_scores = score_frames(src, regions, th)
@@ -280,17 +321,59 @@ def analyse(seq, args, ffmpeg, have, file_entries, work):
             if sc is None:
                 C.append(check("%s[%s]" % (tag, name), SKIP, None, None, "region too small"))
                 continue
-            note = "visible steps/1000 %.2f (max %.2f code), BandScore %.2f (run %d px) (source score %s), frame %d" % (
+            gate = codec == GATE_CODEC and crf == GATE_CRF
+            note = "visible steps/1000 %.2f (max %.2f code), BandScore %.2f (run %d px) (source score %s), frame %d%s%s" % (
                 sc["steps_per_1000"], sc["step_max_code"], sc["bandscore"], sc["longest_run_px"],
-                qc.fmt(s0["score"] if s0 else None), sc["frame"])
-            C.append(check("%s[%s]" % (tag, name), PASS if sc["pass"] else FAIL, round(sc["score"], 3),
-                           "score <= 1", note))
+                qc.fmt(s0["score"] if s0 else None), sc["frame"], _chan_note(sc),
+                "" if gate else "; regression row (the gate is x264 CRF %d)" % GATE_CRF)
+            # 14.7 H1 (6) on the decode: confirmed visible steps in Y, Cb, Cr <= 2 per 1000 px and none > 1.5 codes. The 11.3
+            # BandScore (runs of equal 8-bit luma) is a source metric: on a decode it measures the encoder's flattening of grain
+            # (AT's C46), so it is reported, not gated
+            ok = sc["steps_per_1000"] <= TH["band_steps_per_1000_encoded_max"] and (sc.get("steps", 0) == 0 or sc["step_max_code"] <= TH["band_step_max_code"])
+            C.append(check("%s[%s]" % (tag, name), (PASS if ok else FAIL) if gate else INFO, round(sc["steps_per_1000"], 3),
+                           "<= %g steps / 1000, max <= %g code" % (TH["band_steps_per_1000_encoded_max"], TH["band_step_max_code"]), note))
+        if gate_ok_frame(codec, crf, seq["name"], dec, sel, work, W, H):
+            res["lookv2_frame"] = True
         res["variants"].append(v)
         if not args.keep_video and os.path.isfile(video):
             v["video_kept"] = False
             os.remove(video)
     res["status"] = qc.worst_status(C)
+    measured = [c for c in C if c["status"] in (PASS, FAIL) and "[" in c["name"]]
+    if res["status"] != FAIL and not measured:
+        res["status"] = SKIP
+        res["skip_reason"] = "no region measured on the x264 CRF %d decode" % GATE_CRF
     return res
+
+
+def gate_ok_frame(codec, crf, name, dec, sel, work, W, H):
+    """Saves the last decoded gate frame of a LOOK_V2 texture clip as <work>/lookv2_encoded/KSxx_*.png (1080p) for
+    lookv2_check --encoded; True when written."""
+    n = name[4:] if name.startswith("seq_") else name
+    base = n[:-3] if n.endswith("_4k") else n
+    shot = LOOKV2_SHOT.get(base)
+    if not shot or codec != GATE_CODEC or crf != GATE_CRF or not sel or sel[-1] not in dec:
+        return False
+    img = dec[sel[-1]]
+    if (W, H) != (1920, 1080):
+        from PIL import Image
+        img = np.asarray(Image.fromarray(img).resize((1920, 1080), Image.LANCZOS))
+    qc.save_png(os.path.join(qc.ensure_dir(os.path.join(work, "..", "lookv2_encoded")), shot + ".png"), img)
+    return True
+
+
+def lookv2_encoded(work_root, run_name, out_dir):
+    """Runs lookv2_check.py --encoded on <work_root>/lookv2_encoded (C19); a result dict or None when no frame is there."""
+    d = os.path.join(work_root, "lookv2_encoded")
+    if not os.path.isdir(d) or not any(f.startswith("KS") and f.endswith(".png") for f in os.listdir(d)):
+        return None
+    js = os.path.join(out_dir, "lookv2_encoded_%s.json" % run_name)
+    p = subprocess.run([sys.executable, "-I", os.path.join(os.path.dirname(os.path.abspath(__file__)), "lookv2_check.py"), d,
+                        "--encoded", "--json", js], capture_output=True, text=True, timeout=600)
+    out = (p.stdout or "") + (p.stderr or "")
+    return {"status": PASS if p.returncode == 0 else FAIL, "json": js, "dir": d,
+            "fails": [ln.strip() for ln in out.splitlines() if "FAIL" in ln][:40],
+            "note": out.strip().splitlines()[-1][:200] if out.strip() else ""}
 
 
 def build_markdown(run, results, ffmpeg, have):
@@ -300,7 +383,9 @@ def build_markdown(run, results, ffmpeg, have):
          "ffmpeg: `%s`, encoders: %s" % (ffmpeg or "not found", ", ".join(sorted(have)) or "none"), "",
          "Sequences: %d. Checks: %d PASS, %d FAIL, %d WARN, %d SKIP." % (len(results), cnt[PASS], cnt[FAIL], cnt[WARN],
                                                                        cnt[SKIP]), "",
-         "**Result: %s**" % (FAIL if cnt[FAIL] else (PASS if results else SKIP)), ""]
+         "**Result: %s**" % overall_status(results), "",
+         "(Gate: x264 CRF %d decode, 14.7 H1 (6); CRF 30 / VP9 rows are regression rows (INFO). PASS only when nothing FAILed and "
+         "every clip measured a region; an H1 (6) clip without a region FAILs, any other reads SKIP.)" % GATE_CRF, ""]
     if not ffmpeg or not have:
         L += ["No encoder could be obtained: source frames scored with the 8-bit BandScore thresholds halved "
               "(safety factor 2, MASTER_PROMPT 11.12 step 4). Record this in DEVELOPMENT.md.", ""]
@@ -309,27 +394,37 @@ def build_markdown(run, results, ffmpeg, have):
             r["dir"], "x".join(str(v) for v in r.get("size", [])), qc.fmt(r.get("fps"), 0), r.get("frames_encoded")), ""]
         rows = []
         for name, sc in (r.get("source") or {}).items():
-            rows.append(["source", name, qc.fmt(sc and sc["score"]), qc.fmt(sc and sc["steps_per_1000"], 2),
+            rows.append(["source", name, qc.fmt(sc and sc["score"]), qc.fmt(sc and sc["steps_per_1000"], 2)] + _chan_cols(sc) + [
                          sc and sc["longest_run_px"], qc.fmt(sc and sc["resid_rms"]), qc.fmt(sc and sc["resid_pp"]),
                          "-", "-", "PASS" if sc and sc["pass"] else ("FAIL" if sc else "-")])
         for v in r.get("variants", []):
             for name, sc in (v.get("decoded") or {}).items():
                 rows.append(["%s crf %d" % (v["codec"], v["crf"]), name, qc.fmt(sc and sc["score"]),
-                             qc.fmt(sc and sc["steps_per_1000"], 2), sc and sc["longest_run_px"],
+                             qc.fmt(sc and sc["steps_per_1000"], 2)] + _chan_cols(sc) + [sc and sc["longest_run_px"],
                              qc.fmt(sc and sc["resid_rms"]), qc.fmt(sc and sc["resid_pp"]), qc.fmt(v.get("kbps"), 0),
                              qc.fmt(v.get("mean_abs_error")), "PASS" if sc and sc["pass"] else ("FAIL" if sc else "-")])
         if rows:
-            L.append(qc.md_table(["Stream", "Region", "Score", "Steps/1000", "Run px", "Resid RMS", "Resid p-p",
+            L.append(qc.md_table(["Stream", "Region", "Score", "Steps/1000", "Y", "Cb", "Cr", "R/G/B max", "Run px", "Resid RMS", "Resid p-p",
                                   "kbit/s", "MAE codes", "Result"], rows))
         L.append(qc.md_table(["Check", "Status", "Value", "Threshold", "Note"],
                              [[c["name"], c["status"], qc.fmt(c["value"], 4), c["threshold"] or "", c["note"] or ""]
                               for c in r["checks"]]))
+        if r.get("skip_reason"):
+            L += ["", "SKIP: %s" % r["skip_reason"], ""]
         crops = [p for v in r.get("variants", []) for p in v.get("crops", [])]
         if crops:
             L += ["Review crops (source | decoded; _100, _200 nearest, _x8 local contrast):", ""]
             L += ["- `%s`" % p for p in crops]
             L.append("")
     return "\n".join(L)
+
+
+def overall_status(results):
+    if any(r.get("status") == FAIL for r in results) or any(c["status"] == FAIL for r in results for c in r["checks"]):
+        return FAIL
+    if not results or any(r.get("status") == SKIP for r in results):
+        return SKIP
+    return PASS
 
 
 def _csv_ints(s):
@@ -371,16 +466,25 @@ def run(paths, args):
             results.append({"name": seq["name"], "dir": d, "status": FAIL, "variants": [],
                             "checks": [check("analysis", FAIL, None, None, "%s: %s" % (type(e).__name__, e))]})
     allc = [c for r in results for c in r["checks"]]
-    status = FAIL if any(c["status"] == FAIL for c in allc) else (PASS if results else SKIP)
+    status = overall_status(results)
+    lv = lookv2_encoded(os.path.dirname(work), run_name, args.out_dir) if not args.no_lookv2 else None
+    if lv is not None and lv["status"] == FAIL:
+        status = FAIL
     js = os.path.join(args.out_dir, "encode_test_%s.json" % run_name)
     md = os.path.join(args.out_dir, "encode_test_%s.md" % run_name)
     qc.write_json(js, {"run": run_name, "status": status, "ffmpeg": ffmpeg, "encoders": sorted(have),
-                       "safety_factor": 1.0 if (ffmpeg and have) else 2.0, "sequences": results})
-    qc.write_text(md, build_markdown(run_name, results, ffmpeg, have))
+                       "safety_factor": 1.0 if (ffmpeg and have) else 2.0, "sequences": results, "lookv2_encoded": lv})
+    mdt = build_markdown(run_name, results, ffmpeg, have)
+    if lv is not None:
+        mdt += "\n\n## lookv2_check --encoded (C19)\n\n%s: `%s` on `%s`%s\n" % (
+            lv["status"], lv["json"], lv["dir"], ("\n\n" + "\n".join("- " + f for f in lv["fails"])) if lv["fails"] else "")
+    qc.write_text(md, mdt)
     fails = ["%s: %s (%s)" % (r["name"], c["name"], qc.fmt(c["value"], 4)) for r in results for c in r["checks"]
              if c["status"] == FAIL]
+    if lv is not None:
+        fails += ["lookv2 --encoded: " + f for f in lv["fails"]]
     return {"tool": "encode_test", "status": status, "json": js, "md": md, "fails": fails,
-            "counts": qc.count_status(allc), "n": len(results)}
+            "counts": qc.count_status(allc), "n": len(results), "lookv2_encoded": lv}
 
 
 def parser():
@@ -401,6 +505,7 @@ def parser():
     ap.add_argument("--out-dir", default=qc.REPORTS_DIR)
     ap.add_argument("--work-dir", help="videos, decoded frames and crops (default QA/encode/<run>)")
     ap.add_argument("--keep-video", action="store_true", help="keep the encoded files")
+    ap.add_argument("--no-lookv2", action="store_true", help="skip lookv2_check --encoded on the decoded texture frames")
     ap.add_argument("--quiet", action="store_true")
     return ap
 

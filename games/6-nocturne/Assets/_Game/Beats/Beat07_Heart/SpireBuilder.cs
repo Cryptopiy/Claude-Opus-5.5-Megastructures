@@ -11,6 +11,13 @@
 // four fins at y 184, 276, 368 and 440 (below the cloud base, 460). The silhouette stays inside the 14.5.7 envelope R(y) + 4 m
 // (fins), so the koi lint (KS17 / KS18 spire occlusion) is unchanged; the top stays in the cloud deck (no crown: decision 3).
 // Belts, lines and beacons are built with the v2 relief only (ReliefBuilder.ReliefOn: -relief-v, default = -facade-v; D-030).
+// HT (CRIT0 #21, Phase 4 wave A: "an engineered colossus, not a lined box"): GE's five 92 m belts become eleven ring girders
+// (hoops) every 40 m (y 40 - 440, R(y) - 0.3 .. R(y) + 3.6: the fins pass through them and stand 0.4 m proud) carrying the
+// 14.5.7 ring lights, which breathe at 0.1 Hz with a phase lag of 0.5 rad per ring (a slow pulse rising up the spire;
+// SpireDriver, one NocLine material per ring); the 12 fins flare into buttresses below 96 m (outer edge R(y) + 4 + 9.5 at y 6,
+// landing on the lowest drum) with their strips following the edge down; a podium of three granite steps (R 56 / 53 / 50.5,
+// 0.16 m each) meets the plaza around the drums. Hoops, lights, flare and steps stay inside the 14.5.7 envelope R(y) + 4 above
+// 96 m, so the koi's clearances and the KS17 / KS18 lint are unchanged.
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -59,68 +66,91 @@ namespace Megastructure
             return mb;
         }
 
-        /// <summary>Fin j (0..11) on corner 2 j: two prisms (top drum .. 460, 460 .. 560) between the radii R(y) - 0.4 and R(y) + 4.</summary>
+        /// <summary>Heights of the fin's pieces: the flare (y FlareY0 - DrumSink .. FlareY1 in FlarePieces), then FlareY1 .. 460 in
+        /// pieces of at most 40 m (NocLine widens per vertex: the strips need short pieces), then 460 .. 560.</summary>
+        public static List<double> FinHeights()
+        {
+            var ys = new List<double>(32);
+            double y0 = HeartLayout.FlareY0 - HeartLayout.DrumSink, y1 = HeartLayout.FlareY1;
+            for (int i = 0; i < HeartLayout.FlarePieces; i++) ys.Add(y0 + (y1 - y0) * i / HeartLayout.FlarePieces);
+            int n = (int)System.Math.Ceiling((HeartLayout.SpireTaperY - y1) / 40.0);
+            for (int i = 0; i < n; i++) ys.Add(y1 + (HeartLayout.SpireTaperY - y1) * i / n);
+            ys.Add(HeartLayout.SpireTaperY);
+            ys.Add(HeartLayout.SpireY1);
+            return ys;
+        }
+
+        /// <summary>Fin j (0..11) on corner 2 j: a prism between the radii R(y) - 0.4 and HeartLayout.FinOuter(y) (the buttress flare
+        /// below 96 m, R(y) + 4 above), its pieces at FinHeights, closed at the bottom (on the lowest drum) and the top.</summary>
         public static void Fin(MeshBuilder mb, int j)
         {
             double a = 2.0 * System.Math.PI * (2 * j) / HeartLayout.SpireSides;
             var radial = new Vector3((float)System.Math.Cos(a), 0f, (float)System.Math.Sin(a));
             var tangent = new Vector3(-radial.z, 0f, radial.x);
-            double[] ys = { HeartLayout.DrumH * HeartLayout.DrumR.Length - HeartLayout.DrumSink, HeartLayout.SpireTaperY, HeartLayout.SpireY1 };
+            var ys = FinHeights();
             float ht = 0.5f * (float)HeartLayout.FinThick;
-            for (int b = 0; b < 2; b++)
+            Vector3 l = -tangent * ht, r = tangent * ht;
+            for (int b = 0; b + 1 < ys.Count; b++)
             {
                 double ya = ys[b], yb = ys[b + 1];
                 Vector3 ia = radial * (float)(HeartLayout.SpireRadius(ya) - HeartLayout.FinInset) + Vector3.up * (float)ya;
-                Vector3 oa = radial * (float)(HeartLayout.SpireRadius(ya) + HeartLayout.FinDepth) + Vector3.up * (float)ya;
+                Vector3 oa = radial * (float)HeartLayout.FinOuter(ya) + Vector3.up * (float)ya;
                 Vector3 ib = radial * (float)(HeartLayout.SpireRadius(yb) - HeartLayout.FinInset) + Vector3.up * (float)yb;
-                Vector3 ob = radial * (float)(HeartLayout.SpireRadius(yb) + HeartLayout.FinDepth) + Vector3.up * (float)yb;
-                Vector3 l = -tangent * ht, r = tangent * ht;
-                // the two side faces, the outer edge face, the bottom and the top
+                Vector3 ob = radial * (float)HeartLayout.FinOuter(yb) + Vector3.up * (float)yb;
+                // the two side faces and the outer edge face; the bottom of the first piece and the top of the last
                 G4Kit.OrientedQuad(mb, ia + l, oa + l, ob + l, ib + l, -tangent);
                 G4Kit.OrientedQuad(mb, ia + r, oa + r, ob + r, ib + r, tangent);
                 G4Kit.OrientedQuad(mb, oa + l, oa + r, ob + r, ob + l, Vector3.Cross(ob - oa, tangent).normalized);
-                G4Kit.OrientedQuad(mb, ia + l, ia + r, oa + r, oa + l, Vector3.down);
-                G4Kit.OrientedQuad(mb, ib + l, ib + r, ob + r, ob + l, Vector3.up);
+                if (b == 0) G4Kit.OrientedQuad(mb, ia + l, ia + r, oa + r, oa + l, Vector3.down);
+                if (b + 2 == ys.Count) G4Kit.OrientedQuad(mb, ib + l, ib + r, ob + r, ob + l, Vector3.up);
             }
         }
 
-        /// <summary>The strip tube of fin j: open cylinders of radius StripWidth / 2 along the fin's outer edge (radial normals for NocLine).</summary>
+        /// <summary>The strip tube of fin j: open cylinders of radius StripWidth / 2 along the fin's outer edge from the lowest drum to
+        /// the top, one per fin piece (radial offset; NocLine).</summary>
         public static void Strip(MeshBuilder mb, int j)
         {
             double a = 2.0 * System.Math.PI * (2 * j) / HeartLayout.SpireSides;
             var radial = new Vector3((float)System.Math.Cos(a), 0f, (float)System.Math.Sin(a));
-            double[] ys = { HeartLayout.DrumH * HeartLayout.DrumR.Length, HeartLayout.SpireTaperY, HeartLayout.SpireY1 };
+            var ys = FinHeights();
+            ys[0] = HeartLayout.FlareY0 + 0.3;      // starts just above the drum's top
             float rr = 0.5f * (float)HeartLayout.StripWidth;
-            for (int b = 0; b < 2; b++)
+            for (int p = 0; p + 1 < ys.Count; p++)
             {
-                // pieces of at most 40 m: NocLine widens per vertex, so long pieces would interpolate the widening linearly
-                int pieces = (int)System.Math.Ceiling((ys[b + 1] - ys[b]) / 40.0);
-                for (int p = 0; p < pieces; p++)
-                {
-                    double y0 = ys[b] + (ys[b + 1] - ys[b]) * p / pieces, y1 = ys[b] + (ys[b + 1] - ys[b]) * (p + 1) / pieces;
-                    Vector3 pa = radial * (float)(HeartLayout.SpireRadius(y0) + HeartLayout.FinDepth + rr) + Vector3.up * (float)y0;
-                    Vector3 pb = radial * (float)(HeartLayout.SpireRadius(y1) + HeartLayout.FinDepth + rr) + Vector3.up * (float)y1;
-                    MeshKit.Cylinder(mb, pa, pb, rr, 8, false);
-                }
+                double y0 = ys[p], y1 = ys[p + 1];
+                Vector3 pa = radial * (float)(HeartLayout.FinOuter(y0) + rr) + Vector3.up * (float)y0;
+                Vector3 pb = radial * (float)(HeartLayout.FinOuter(y1) + rr) + Vector3.up * (float)y1;
+                MeshKit.Cylinder(mb, pa, pb, rr, 8, false);
             }
         }
 
-        /// <summary>Belt heights (every 92 m to the taper end), belt size, ring-line radius, beacon fins and heights (GE).</summary>
-        public static readonly double[] BeltY = { 92.0, 184.0, 276.0, 368.0, 460.0 };
-        public const double BeltProud = 0.8, BeltH = 1.6, BeltInset = 0.3;
-        public static readonly int[] BeaconFins = { 0, 3, 6, 9 };
-        public static readonly double[] BeaconY = { 184.0, 276.0, 368.0, 440.0 };
+        /// <summary>The podium: three granite steps (open cylinders with top caps) from y -1 to PlinthStep (i + 1), radii PlinthR.</summary>
+        public static MeshBuilder Plinth()
+        {
+            var mb = new MeshBuilder();
+            for (int i = 0; i < HeartLayout.PlinthR.Length; i++)
+                MeshKit.Cylinder(mb, new Vector3(0f, -1f, 0f), new Vector3(0f, (float)(HeartLayout.PlinthStep * (i + 1)), 0f), (float)HeartLayout.PlinthR[i], 128, true);
+            return mb;
+        }
 
-        /// <summary>The belts: a 24-gon prism ring per height (outer face, top and bottom), from R(y) - 0.3 to R(y) + 0.8 at its mid
-        /// height (the taper is 0.04 m over 1.6 m: the ring is cylindrical), its faces wound outward / up / down.</summary>
-        public static MeshBuilder Belts()
+        /// <summary>Hoop heights: every HoopPitch from HoopPitch to HoopTop (11).</summary>
+        public static List<double> HoopHeights()
+        {
+            var l = new List<double>(12);
+            for (double y = HeartLayout.HoopPitch; y <= HeartLayout.HoopTop + 1e-6; y += HeartLayout.HoopPitch) l.Add(y);
+            return l;
+        }
+
+        /// <summary>The ring girders: a 24-gon prism ring per hoop height (outer face, top and bottom), R(y) - 0.3 .. R(y) + HoopOut at
+        /// its mid height (the taper is 0.04 m over 1.6 m: cylindrical), faces wound outward / up / down.</summary>
+        public static MeshBuilder Hoops()
         {
             var mb = new MeshBuilder();
             int N = HeartLayout.SpireSides;
-            foreach (double yc in BeltY)
+            foreach (double yc in HoopHeights())
             {
-                double ya = yc - 0.5 * BeltH, yb = yc + 0.5 * BeltH, r = HeartLayout.SpireRadius(yc);
-                double ri = r - BeltInset, ro = r + BeltProud;
+                double ya = yc - 0.5 * HeartLayout.HoopH, yb = yc + 0.5 * HeartLayout.HoopH, rs = HeartLayout.SpireRadius(yc);
+                double ri = rs - BeltInset, ro = rs + HeartLayout.HoopOut;
                 for (int k = 0; k < N; k++)
                 {
                     double a0 = 2.0 * System.Math.PI * k / N, a1 = 2.0 * System.Math.PI * (k + 1) / N, am = 0.5 * (a0 + a1);
@@ -135,26 +165,56 @@ namespace Megastructure
             return mb;
         }
 
-        /// <summary>The ring lines: one NocLine tube (radius StripWidth / 2) around each belt's outer face at its mid height, 24
+        /// <summary>The ring light of hoop k: a NocLine tube (radius StripWidth / 2) around the hoop's outer face at its mid height, 24
         /// straight pieces (radial normals).</summary>
-        public static MeshBuilder BeltLines()
+        public static MeshBuilder RingLight(double yc)
         {
             var mb = new MeshBuilder();
             int N = HeartLayout.SpireSides;
             float rr = 0.5f * (float)HeartLayout.StripWidth;
-            foreach (double yc in BeltY)
+            double r = HeartLayout.SpireRadius(yc) + HeartLayout.HoopOut + rr - 0.15;      // outermost R(y) + 3.95: inside the envelope
+            for (int k = 0; k < N; k++)
             {
-                double r = HeartLayout.SpireRadius(yc) + BeltProud + rr - 0.05;
-                for (int k = 0; k < N; k++)
-                {
-                    double a0 = 2.0 * System.Math.PI * k / N, a1 = 2.0 * System.Math.PI * (k + 1) / N;
-                    var pa = new Vector3((float)(r * System.Math.Cos(a0)), (float)yc, (float)(r * System.Math.Sin(a0)));
-                    var pb = new Vector3((float)(r * System.Math.Cos(a1)), (float)yc, (float)(r * System.Math.Sin(a1)));
-                    MeshKit.Cylinder(mb, pa, pb, rr, 8, false);
-                }
+                double a0 = 2.0 * System.Math.PI * k / N, a1 = 2.0 * System.Math.PI * (k + 1) / N;
+                var pa = new Vector3((float)(r * System.Math.Cos(a0)), (float)yc, (float)(r * System.Math.Sin(a0)));
+                var pb = new Vector3((float)(r * System.Math.Cos(a1)), (float)yc, (float)(r * System.Math.Sin(a1)));
+                MeshKit.Cylinder(mb, pa, pb, rr, 8, false);
             }
             return mb;
         }
+
+        /// <summary>HT (INT-12 "the wet mirror of the spire", fifth start): the fins whose strips face the walk (120 - 240 deg; the
+        /// walk runs west of the spire), the path positions of the three copies of their H4 sources, and the chords' top. The floor in
+        /// KS17's frame mirrors elevations 0 - 15 deg (pitch +18, vFOV 66: the frame's bottom is 15 deg down, 6.3 m out), i.e. the
+        /// spire up to 100 m at 380 m, so one chord per fin from the drum to MirrorTop (at most 5 m off the flared strip at y 96: 0.65 deg
+        /// at 380 m, inside the streak's lateral lobe of about 0.75 deg). The koi (y >= 184 m, 25 - 66 deg up from KS17's eye) is
+        /// mirrored only by floor under the frame. Copies 92 m apart: a source's window rises over s_i - 72 .. s_i - 60 and falls over
+        /// s_i + 20 .. s_i + 32 (smoothsteps, NocWetRegistry.SourceWeight), so neighbouring copies sum to exactly 1 and the streaks are
+        /// steady from s 1 240 to 1 504 (fade-in from 1 228); at most 2 x 5 sources are active.</summary>
+        public static readonly int[] MirrorFins = { 4, 5, 6, 7, 8 };
+        public static readonly double[] MirrorS = { 1300.0, 1392.0, 1484.0 };
+        public const double MirrorTop = 200.0;
+
+        /// <summary>Registers the mirror sources of the strips (see MirrorFins): radiance = the strip's emission.</summary>
+        public static void AddStripSources(Color radiance)
+        {
+            float rr = 0.5f * (float)HeartLayout.StripWidth;
+            double y0 = HeartLayout.FlareY0 + 0.3, y1 = MirrorTop;
+            foreach (double si in MirrorS)
+                foreach (int j in MirrorFins)
+                {
+                    double a = 2.0 * System.Math.PI * (2 * j) / HeartLayout.SpireSides;
+                    var radial = new Vector3((float)System.Math.Cos(a), 0f, (float)System.Math.Sin(a));
+                    Vector3 p0 = Origin + radial * (float)(HeartLayout.FinOuter(y0) + rr) + Vector3.up * (float)y0;
+                    Vector3 p1 = Origin + radial * (float)(HeartLayout.FinOuter(y1) + rr) + Vector3.up * (float)y1;
+                    NocWetRegistry.AddSource(p0, p1, rr, radiance, si);
+                }
+        }
+
+        /// <summary>The hoops' inset into the shaft (GE's belt inset), beacon fins and heights (GE).</summary>
+        public const double BeltInset = 0.3;
+        public static readonly int[] BeaconFins = { 0, 3, 6, 9 };
+        public static readonly double[] BeaconY = { 184.0, 276.0, 368.0, 440.0 };
 
         /// <summary>World positions of the spire's aviation beacons (0.6 m outside the fins' outer edges).</summary>
         public static List<Vector3> BeaconPositions()
@@ -177,6 +237,7 @@ namespace Megastructure
             var lib = ctx.Materials;
             G4Kit.Add(ctx, root, "spireShaft", Shaft(), lib != null ? lib.Facade : null, Origin);
             G4Kit.Add(ctx, root, "spireDrums", Drums(), lib != null ? lib.StoneWall : null, Origin);
+            G4Kit.Add(ctx, root, "spirePlinth", Plinth(), lib != null ? lib.StoneWall : null, Origin);
             var fins = new MeshBuilder();
             var strips = new MeshBuilder();
             for (int j = 0; j < HeartLayout.FinCount; j++) { Fin(fins, j); Strip(strips, j); }
@@ -185,10 +246,20 @@ namespace Megastructure
             Color strip = G4Kit.Mix(G4Kit.Lin(NocPal.NeonCyan), G4Kit.Lin(NocPal.SignWhite), 0.5);
             Material stripMat = lib != null ? G4Kit.Line(lib.Line, HeartLayout.StripWidth, G4Kit.Lin(NocPal.MetalPaint), G4Kit.Scale(strip, HeartLayout.StripGain), "Beat07_SpireStrip") : null;
             G4Kit.Add(ctx, root, "spireStrips", strips, stripMat, Origin);
-            // GE: belts, ring lines, beacons (TEXTURE_PLAN 5 relief: with the v2 facade, ReliefBuilder.ReliefOn)
+            if (lib != null) AddStripSources(G4Kit.Scale(strip, HeartLayout.StripGain));   // HT (INT-12): the strips in the wet plaza
+            // HT: the hoops and their breathing ring lights (one NocLine material per ring, driven by SpireDriver)
+            G4Kit.Add(ctx, root, "spireHoops", Hoops(), lib != null ? lib.SteelPainted : null, Origin);
+            var hoopY = HoopHeights();
+            var ringMats = new Material[hoopY.Count];
+            Color ringBase = G4Kit.Scale(G4Kit.Lin(NocPal.NeonCyan), HeartLayout.RingLightGain);   // HT-06: subordinate to the strips
+            for (int k = 0; k < hoopY.Count; k++)
+            {
+                ringMats[k] = lib != null ? G4Kit.Line(lib.Line, HeartLayout.StripWidth, G4Kit.Lin(NocPal.MetalPaint), ringBase, "Beat07_SpireRing" + k) : null;
+                G4Kit.Add(ctx, root, "spireRingLight" + k, RingLight(hoopY[k]), ringMats[k], Origin);
+            }
+            if (lib != null) ctx.Register(new SpireDriver(ringMats, ringBase));
+            // GE: beacons (TEXTURE_PLAN 5 relief: with the v2 facade, ReliefBuilder.ReliefOn)
             if (!ReliefBuilder.ReliefOn) return;
-            G4Kit.Add(ctx, root, "spireBelts", Belts(), lib != null ? lib.SteelPainted : null, Origin);
-            G4Kit.Add(ctx, root, "spireBeltLines", BeltLines(), stripMat, Origin);
             if (lib != null && lib.Beacon != null)
             {
                 var b = new InstancedBatch("SpireBeacons", NocTraffic.PointQuad(), lib.Beacon, chunkSize: 600f);

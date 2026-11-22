@@ -47,6 +47,10 @@ namespace Megastructure
 
             var body = parts.Get("vendBody", G1Mat.SteelPainted, origin);
             var screen = parts.Get("vendScreen", G1Mat.EmitScreen, origin);
+            // AL (wave B): a glyph header light-box, the dispenser flap and the coin panel, flat on the front 1 cm proud (the capsule
+            // keeps 6 mm, see above): the machines stop reading as plain boxes
+            var header = parts.Get("vendHeader", G1Mat.AlleySign, origin);
+            var dark = parts.Get("vendFittings", G1Mat.SteelBare, origin);
             for (int i = 0; i < AlleyLayout.VendingCount; i++)
             {
                 float za = (float)MachineZ0(i), zb = za + (float)AlleyLayout.VendW, xf = (float)FrontX(i);
@@ -56,6 +60,13 @@ namespace Megastructure
                 G1Mesh.Quad(screen, new Vector3(xf - 0.01f, (float)AlleyLayout.VendScreenY0, zm - hw), new Vector3(xf - 0.01f, (float)AlleyLayout.VendScreenY1, zm - hw),
                     new Vector3(xf - 0.01f, (float)AlleyLayout.VendScreenY1, zm + hw), new Vector3(xf - 0.01f, (float)AlleyLayout.VendScreenY0, zm + hw), Vector3.left);
                 parts.Light("vendLight" + i, new Vector3(xf - 0.6f, 1.3f, zm), LightColour(1f), LightRange, LightIntensity);
+                float xq = xf - 0.01f;
+                var savedH = header.Color;
+                header.Color = new Color32(92, 96, 96, 4 * 32);
+                G1Mesh.Quad(header, new Vector3(xq, 1.68f, za + 0.06f), new Vector3(xq, 1.76f, za + 0.06f), new Vector3(xq, 1.76f, zb - 0.06f), new Vector3(xq, 1.68f, zb - 0.06f), Vector3.left);
+                header.Color = savedH;
+                G1Mesh.Quad(dark, new Vector3(xq, 0.14f, za + 0.12f), new Vector3(xq, 0.40f, za + 0.12f), new Vector3(xq, 0.40f, zb - 0.22f), new Vector3(xq, 0.14f, zb - 0.22f), Vector3.left);
+                G1Mesh.Quad(dark, new Vector3(xq, 0.98f, zb - 0.16f), new Vector3(xq, 1.30f, zb - 0.16f), new Vector3(xq, 1.30f, zb - 0.06f), new Vector3(xq, 0.98f, zb - 0.16f + 0.10f), Vector3.left);
             }
         }
 

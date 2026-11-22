@@ -176,13 +176,14 @@ namespace Megastructure.Tests
             Assert.AreEqual(-0.42, yb, 0.02);
             G1TestGeo.Inside(Blade(v3, 3, 70), 0.28, 0.41, 0.0, 0.66, 0.06, "KS03 blade x 54 (lower 70 m)");
             G1TestGeo.Inside(Blade(v3, 5, 70), 0.46, 0.62, 0.0, 0.66, 0.06, "KS03 blade x 90 (lower 70 m)");
-            // KS04 (s 250): north blade x 198 (y 40-140), south blade x 186 (y 60-160); canyon end (floor end x 215.3) at y -0.64
+            // KS04 (s 250): north blade x 198 (y 40-140), south blade x 186 (y 60-160); canyon end (floor end x 215.3). D-040 (C10):
+            // the KS04 pitch 22 -> 27 moves them down (14.10's -0.20..0.69 / 0.04..0.91 / -0.64 at pitch 22 become the values below)
             var v4 = G1TestGeo.View(G1TestGeo.Shot("KS04_boulevard_axis"));
-            G1TestGeo.Inside(Blade(v4, 11, 100), -0.47, -0.31, -0.20, 0.69, 0.07, "KS04 north blade x 198");
-            G1TestGeo.Inside(Blade(v4, 10, 100), 0.32, 0.49, 0.04, 0.91, 0.07, "KS04 south blade x 186");
+            G1TestGeo.Inside(Blade(v4, 11, 100), -0.48, -0.30, -0.34, 0.54, 0.07, "KS04 north blade x 198");
+            G1TestGeo.Inside(Blade(v4, 10, 100), 0.31, 0.49, -0.10, 0.74, 0.07, "KS04 south blade x 186");
             QaProjection.ProjectPoint(v4, new D3(BoulevardLayout.FacadeX1, 0, BoulevardLayout.AxisZ), out _, out double yc);
-            Debug.Log(FormattableString.Invariant($"[NOC] KS04 canyon end y {yc:F3} (spec -0.64)"));
-            Assert.AreEqual(-0.64, yc, 0.02);
+            Debug.Log(FormattableString.Invariant($"[NOC] KS04 canyon end y {yc:F3} (D-040 pitch 27: -0.81; 14.10 at pitch 22: -0.64)"));
+            Assert.AreEqual(-0.81, yc, 0.02);
             // KS05 (s 310): blade tops (north x 198, south x 186), blade x 162 mid, facade-cloud lines at y 460 near x -+0.12
             var v5 = G1TestGeo.View(G1TestGeo.Shot("KS05_boulevard_up"));
             G1TestGeo.Inside(Top(v5, 11), -0.27, -0.23, 0.50, 0.59, 0.06, "KS05 north blade x 198 top");

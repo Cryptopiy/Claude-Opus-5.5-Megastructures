@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- AU's offline audio harness (docs/AUDIO.md): compiles the score DSP (Scripts/Runtime/Audio) with the few pure Core / Player /
+       KoiMath files it needs against UnityEngine.CoreModule (managed structs only; nothing native is touched) into a .NET console
+       app, so the whole walk renders and is analysed in seconds without the Unity queue. Build output goes to %TEMP%. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <NoWarn>0169;0414;0649;CS8632;CS0618;CS1701;CS1702;MSB3277</NoWarn>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <TieredPGO>true</TieredPGO>
+    <RootGame>$(MSBuildProjectDirectory)\..\..\..\Assets\_Game</RootGame>
+    <UnityManaged>C:\Program Files\Unity\Hub\Editor\6000.6.0f1\Editor\Data\Managed\UnityEngine</UnityManaged>
+    <BaseIntermediateOutputPath>$(TEMP)\nocturne_audio_harness_waveb\obj\</BaseIntermediateOutputPath>
+    <OutputPath>$(TEMP)\nocturne_audio_harness_waveb\bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- DR's DreadCourse (the hull and panel courses DreadScore reads); -p:DreadCourseSrc=<file> previews another course -->
+    <DreadCourseSrc Condition="'$(DreadCourseSrc)' == ''">$(RootGame)\Beats\Dread\DreadCourse.cs</DreadCourseSrc>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="HarnessShims.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Audio\*.cs" Exclude="$(RootGame)\Scripts\Runtime\Audio\AudioDirector.cs;$(RootGame)\Scripts\Runtime\Audio\NocSynth.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Core\NocturneConstants.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Core\NocMath.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Core\NocServices.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Core\NocRig.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Player\NocLanes.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Player\FilletPath.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Player\GazeSchedule.cs" />
+    <Compile Include="$(RootGame)\Scripts\Runtime\Player\PlayerMath.cs" />
+    <Compile Include="$(RootGame)\Beats\Beat07_Heart\KoiMath.cs" />
+    <Compile Include="$(DreadCourseSrc)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(UnityManaged)\UnityEngine.CoreModule.dll</HintPath><Private>true</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(UnityManaged)\UnityEngine.PhysicsModule.dll</HintPath><Private>true</Private></Reference>
+  </ItemGroup>
+</Project>

@@ -5,7 +5,7 @@
 // 7 destination band), G = edge wear (ChamferBox), B = a per-car seed. UV0 = metres on the car (u along it from its rear end, v up)
 // on the side faces, planar metres elsewhere.
 //   * paint: MetalPaint (TP's processed CC0 set) as an albedo variation around the token, its normal and smoothness, faded to the
-//     mean below 2-4 px of the 2 m tile (NocTexturing); livery = a darker skirt, a light pinstripe at 1.0 m, a lighter roof
+//     mean below 2-4 px of the 2 m tile (NocTexturing); livery = a darker skirt, an 18 cm light stripe over it, a light
 //     shoulder; panel seams and door outlines as filtered 12 mm grooves (NocFilteredGrid1); grime toward the sill, rain streaks
 //     under the window band, wet gloss (rain everywhere: LOOK_V2 5.2);
 //   * window band: dark glass (sky sheen through the lit template) over the lit saloon: a ceiling light strip, a handrail line,
@@ -131,9 +131,15 @@ Shader "Megastructure/NocTram"
             float v = uv.y, u = uv.x;
             float3 a = _BaseColor.rgb * lerp(1.0, 2.0 * alb.rgb, 0.45);
             a *= lerp(1.0, 0.72, side * (1.0 - smoothstep(0.96, 1.0, v)));         // darker skirt below 1.0 m
-            a *= lerp(1.0, 1.35, side * smoothstep(2.86, 2.92, v));                // lighter roof shoulder above the window band
-            float stripe = side * NocFilteredGrid1(v - 0.985, 100.0, 0.05, fp, 2.0);
-            a = lerp(a, _StripeColor.rgb, stripe);
+            // two-tone livery (fifth start, BV_r01 KS06: the graphite body vanished into the dark podium and the 60 m tram read as a
+            // floating window strip): a light warm-grey shoulder between the window head and the roof (v 2.86..3.45) and an 18 cm
+            // light stripe over the skirt (v 0.78..0.96), _StripeColor x 2.8 (Granite x 0.75 x 2.8 = albedo ~0.44, a light paint;
+            // BV_r02 KS06 at x 2.1: the bands at 33 luma on a 20 luma body),
+            // each band box-filtered over one pixel (fp m / px), with the same CC0 albedo variation as the graphite
+            float hb = max(0.5 * fp, 1e-4);
+            float shoulder = saturate((min(3.45, v + hb) - max(2.86, v - hb)) / (2.0 * hb));
+            float lowStripe = saturate((min(0.96, v + hb) - max(0.78, v - hb)) / (2.0 * hb));
+            a = lerp(a, _StripeColor.rgb * 2.8 * lerp(1.0, 2.0 * alb.rgb, 0.45), side * max(shoulder, lowStripe));
             // seams: horizontal at 1.0 / 2.86 / 3.45 m, vertical every 2.92 m, door outlines (grooves 12 mm)
             float seamH = max(NocFilteredGrid1(v - 1.0, 100.0, 0.012, fp, 2.0), max(NocFilteredGrid1(v - 2.86, 100.0, 0.012, fp, 2.0), NocFilteredGrid1(v - 3.45, 100.0, 0.012, fp, 2.0)));
             float seamV = NocFilteredGrid1(u - 0.18, 2.92, 0.012, fp, 2.0);

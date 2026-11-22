@@ -8,8 +8,8 @@
 //    a centre mullion, piers between shops; every bay has a panel state (G4Kit.PickShop, BV's NocShopfront vertex colour: lit,
 //    dim, half-lowered shutter, dark; 1 in 6 closed behind a roller shutter); each open bay hangs a small NocNeon blade sign; rooms
 //    and signs are cool on the faces seen from the Heart (LOOK_V2 R6: no warm light in beat 7);
-//  - the upper floors (y 6.6..38) clad in FA's S2 metal-panel skin with ribbon windows and LED-strip housings (the screen-wall
-//    family, NocFacade, world-derived windows); on the faces toward the Heart two service catwalks (grating, rails, brackets)
+//  - the upper floors (y 6.6..38) clad in FA's S1 precast-concrete skin (fix wave C36; the S2 metal ribbon of the screen-wall
+//    family before; NocFacade, world-derived windows); on the faces toward the Heart two service catwalks (grating, rails, brackets)
 //    with maintenance lights under them (NocHalos), and cable risers on the three faces: the lit back of the screen district.
 // The south face (z 236) and the plinth's sides lie inside NotchEastBlock's lower part or under the floors (never seen). Nothing
 // rises above the 38 m roof line (KS17's koi composition lists the roof as an occluder). Not an H4 wall plane (14.7 H4 lists the
@@ -54,8 +54,10 @@ namespace Megastructure
             G4Kit.OrientedQuad(P(Mat.Concrete).Mb, V(x0, soff, z0) - O, V(x1, soff, z0) - O, V(x1, soff, z1) - O, V(x0, soff, z1) - O, Vector3.down);
             G4Kit.OrientedQuad(P(Mat.Concrete).Mb, V(x0, top, z0) - O, V(x1, top, z0) - O, V(x1, top, z1) - O, V(x0, top, z1) - O, Vector3.up);
 
-            // upper floors: the S2 LED-housing skin (west, north, east; the south face lies on the east block)
-            G4Kit.FacadeBox(P(Mat.Facade).Mb, O, x0, x1, z0, z1, soff, top, NocFacadeMath.SkinOverride(NocFacadeMath.OverrideScreenWall), 0,
+            // upper floors (west, north, east; the south face lies on the east block): fix wave C36, the boulevard podium's skin
+            // (override 4: S1 precast + stone base, punched windows with the interior factor) instead of the S2 metal ribbon of the
+            // screen wall, which read as untextured CG in KS17's right third (high-pass std 2.6); override 2 (f01) was all louvres
+            G4Kit.FacadeBox(P(Mat.Facade).Mb, O, x0, x1, z0, z1, soff, top, NocFacadeMath.SkinOverride(NocFacadeMath.OverridePodium), 0,
                 west: true, east: true, south: false, north: true);
 
             // fascia band round the soffit edge

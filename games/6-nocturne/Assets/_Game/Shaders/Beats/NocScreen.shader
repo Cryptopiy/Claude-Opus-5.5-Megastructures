@@ -7,7 +7,8 @@
 // and the LED view-angle falloff. The black LED face is the albedo; the bezels are painted metal that catches the lights.
 // Photosensitivity (14.5.6): every modulation <= 0.11 Hz, no flashing, no pop (failures are static); emission peak below the bloom
 // threshold 0.9 (Beat06SignsTests). Time arrives as the global _NocScreenT (SignsDriver, double, wrapped), so no term jumps.
-// Then NocFog (cloud mix above y 380, fog toward NocSkyColor) and NocFloor last (NocLitPass).
+// Fix wave: the eye (D-034 5.3, C28) on a 4 x 5 panel canvas once per 600 s; the face dissolves into the deck colour from y 230 to
+// 430 (C17). Then NocFog (cloud mix above y 380, fog toward NocSkyColor) and NocFloor last (NocLitPass).
 Shader "Megastructure/NocScreen"
 {
     Properties
@@ -53,6 +54,18 @@ Shader "Megastructure/NocScreen"
         s.smoothness = lerp(_Smooth, 0.55, o.metal);
         s.occlusion = 1.0;
         s.emission = o.emission;
+        // fix wave C17 (2): the face dissolves into the deck from y 230 to 430 (wisps +-40 m): the ceiling colour above the point
+        // replaces the emission and the albedo fades, so the 2 km facade has no top in the look-ups (the cloud mix of NocFog
+        // starts at 380 for everything else)
+        [branch] if (y > 190.0)
+        {
+            float blurM = NocPixelAngle() * length(f.positionWS - _WorldSpaceCameraPos.xyz);
+            float fd;
+            float3 cc = NocCloudColorN(f.positionWS.xz, blurM, fd);
+            float kd = smoothstep(230.0, 430.0, y + 40.0 * fd);
+            s.emission = lerp(s.emission, cc, kd);
+            s.albedo *= 1.0 - kd;
+        }
     }
     ENDHLSL
 

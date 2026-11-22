@@ -76,7 +76,10 @@ half3 NocKoiLight(float3 positionWS, float3 normalWS)
         float q = d / NC_KoiLightRange;
         k += saturate(dot(normalWS, L / max(d, 1e-3))) / (1.0 + q * q);
     }
-    return PAL_KoiGlow * (NC_KoiLightGain * _NocKoiK * k);
+    // C34 (HT, integration round): the ground term is 60 % neutral below 2 m (the plaza granite read teal, R - G -5.3..-6.1),
+    // full KoiGlow above 30 m (the koi's accents on the towers keep their cyan).
+    float3 tint = lerp(lerp(PAL_KoiGlow, PAL_WinNeutral, 0.6), PAL_KoiGlow, smoothstep(2.0, 30.0, positionWS.y));
+    return tint * (NC_KoiLightGain * _NocKoiK * k);
 }
 
 // Specular anti-aliasing (8.11 item 6): widen roughness by the screen-space variance of the shading normal (Tokuyoshi &

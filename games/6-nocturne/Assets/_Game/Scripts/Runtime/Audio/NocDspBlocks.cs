@@ -244,6 +244,17 @@ namespace Megastructure
         double m_phL, m_phR;
         readonly double m_incL, m_incR, m_dL, m_dR, m_depth;
         public double Dry = 1.0, Wet = 0.7;
+        /// <summary>Width of the wet taps: 1 = left tap to the left, right tap to the right (the 14.3 chorus); below 1 each side gets
+        /// (1 + w) / 2 of its own tap and (1 - w) / 2 of the other's, so the two combs (14 / 19 ms) no longer pull L and R apart in
+        /// phase (fix wave C51: the garden pad was anti-correlated, -0.62 at 200-300 Hz). Use WetFor(width) to keep the wet power.</summary>
+        public double Width = 1.0;
+
+        /// <summary>The wet gain that keeps the average wet power of Wet 0.7 at full width for a narrower width.</summary>
+        public static double WetFor(double width, double wet = 0.7)
+        {
+            double a = 0.5 * (1.0 + width), b = 0.5 * (1.0 - width);
+            return wet / Math.Sqrt(a * a + b * b);
+        }
 
         public StereoChorus(double fs, double delayLms = 14.0, double delayRms = 19.0, double depthMs = 0.6, double rateL = 0.17, double rateR = 0.23)
         {
@@ -270,7 +281,8 @@ namespace Megastructure
             m_phL += m_incL; if (m_phL >= 1.0) m_phL -= 1.0;
             m_phR += m_incR; if (m_phR >= 1.0) m_phR -= 1.0;
             double tl = Hermite(m_l, w + Size - dl), tr = Hermite(m_r, w + Size - dr);
-            l = Dry * l + Wet * tl; r = Dry * r + Wet * tr;
+            double wa = 0.5 * (1.0 + Width), wb = 0.5 * (1.0 - Width);
+            l = Dry * l + Wet * (wa * tl + wb * tr); r = Dry * r + Wet * (wa * tr + wb * tl);
             m_w = (w + 1) & Mask;
         }
 

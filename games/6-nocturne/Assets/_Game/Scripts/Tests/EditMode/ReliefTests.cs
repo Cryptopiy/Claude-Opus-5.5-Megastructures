@@ -222,5 +222,28 @@ namespace Megastructure.Tests
             // the walk lane: x <= 911.74 (+0.38 PathGuide wall) on the straight leg and the C2 arc; nothing of the block below y 4 west of x 914
             Assert.Greater(GateDims.EbX0, SignsLayout.LaneCentreX + SignsLayout.LaneHalf + 0.38, "the block's west face stands beyond the lane wall");
         }
+
+        /// <summary>AB fix wave C03: the upper tube's keystone portal (and the canyon bridge's) carries separate collar lamps, not a
+        /// continuous ring, and the keystone's west face is face B's skin (NocFacade), not a dark concrete square around the ring.</summary>
+        [Test]
+        public void TubePortals_SegmentedLamps_KeystoneInFaceBSkin()
+        {
+            int rings = 0;
+            foreach (var p in Parts())
+            {
+                if (p.Mat != ReliefMat.PortalRing) continue;
+                rings++;
+                Assert.AreEqual(2 * GulfPortal.LampCount, p.Mb.Indices.Count / 3, p.Name + ": one quad per lamp");
+            }
+            Assert.AreEqual(2, rings, "notch gate and canyon bridge portals");
+            int keyFacade = 0;
+            foreach (var p in Parts())
+            {
+                if (p.Name != "NotchGate_facade") continue;
+                foreach (var v in p.Mb.Positions)
+                    if (Math.Abs(v.x + p.Origin.x - GateDims.KeyX0) < 1e-3) keyFacade++;
+            }
+            Assert.Greater(keyFacade, EdgeDims.PortalSegments, "the keystone's west face is written in the facade part");
+        }
     }
 }

@@ -116,12 +116,23 @@ def main():
     ap.add_argument("--pricing", default=os.path.join(HERE, "pricing.json"))
     ap.add_argument("--json")
     ap.add_argument("--md")
+    ap.add_argument("--only-sessions", default="",
+                    help="comma list of session ids to keep (other projects' sessions that merely read this STATE.md "
+                         "contain the anchor too, e.g. game 4's lead session; they are not this run's work)")
     args = ap.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
     anchor_line, anchor = read_anchor()
     files, sessions = select_files(anchor_line)
+    if args.only_sessions:
+        keep = set(s.strip() for s in args.only_sessions.split(",") if s.strip())
+        dropped = sorted(set(sessions) - keep)
+        if dropped:
+            print("excluded sessions (not this run's work):", dropped)
+        sessions = sorted(set(sessions) & keep)
+        files = [p for p in files if any(c in keep for c in os.path.normpath(p).split(os.sep))
+                 or os.path.splitext(os.path.basename(p))[0] in keep]
     if not files:
         sys.exit("no transcript contains the anchor line")
 

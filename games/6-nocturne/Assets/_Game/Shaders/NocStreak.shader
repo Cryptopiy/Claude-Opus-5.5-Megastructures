@@ -26,7 +26,11 @@
 //            (e = _Ramp at both ends), fades in with the distance (150 -> 600 m: near a layer its vehicles and their halos carry the
 //            light) and is fogged per vertex like every light (x T x (1 - cloud mix)).
 // Size: the quad is built in clip space, at least 2.2 px in both axes, energy x (true / drawn) per axis (the (true/drawn)^2 rule),
-// a soft profile normalised to mean 1 (energy preserving at every distance). Queue Transparent+10 (3010), Blend One One, ZWrite
+// a soft profile normalised to mean 1 (energy preserving at every distance). AB fix wave (C30, FX's request): the vehicle heads
+// of kind 4 and the static lights of kind 5 are drawn at least LIGHT_MIN_PX (3.0) like the tails (p4_01: far heads and deck lamps
+// read as single bright pixels, KS09 9 and KS04 9 NaN-like pixels), and every minimum is in OUTPUT pixels: x _NocPxScale (render
+// pixels per output pixel; the capture harness's -capture-ss 2 sets 2, unset = 1), so the supersampled reference draws the same
+// blobs as the 1x render. Queue Transparent+10 (3010), Blend One One, ZWrite
 // off: fogged as light (x T, x (1 - cloud mix): additive light never fades toward the fog colour), no NocFloor (the opaque floor
 // is already below it).
 Shader "Megastructure/NocStreak"
@@ -57,6 +61,8 @@ Shader "Megastructure/NocStreak"
     // half-length along z (m; half-width 0.18 of it), w = strength 0..1. Layer vehicles (kind 4) and layer glows (kind 6) below
     // y -450 inside its outline go dark by w; unset (all zero) it is exactly 1 (nothing changes before wave B sets it).
     float4 _NocAbyssOccluder;
+    // AB fix wave (C30): render pixels per output pixel (global; 0 / unset = 1). The size minima below are output pixels.
+    float _NocPxScale;
     float NocAbyssOcclusion(float3 P)
     {
         float2 hl = max(float2(0.18, 1.0) * _NocAbyssOccluder.z, 1.0);
@@ -67,9 +73,26 @@ Shader "Megastructure/NocStreak"
     // AB (INT-42): tails at least 3 px in both axes (2.2 px for every other light), hue a further 18 % toward SodiumAmber
     #define TAIL_MIN_PX 3.0
     #define TAIL_AMBER 0.18
+    // AB fix wave (C30): vehicle heads (kind 4) and static lights (kind 5) at least 3 output px too (energy kept)
+    #define LIGHT_MIN_PX 3.0
     // AB: the layer glow reads only where many lamp halos overlap on screen: it fades in from RIBBON_NEAR0 to RIBBON_NEAR1 m
     #define RIBBON_NEAR0 150.0
     #define RIBBON_NEAR1 600.0
+    // ARK (D-043, the user's "lasers"): while the camera is over the rift (beats 3-4: x 215.3-695.3 on the z 195 axis, eased over
+    // the 24 m before s 400 and after s 880, so the rule holds over the whole of s 400-880), the boulevard's sky lanes (kinds 0 / 1;
+    // they cross the rift at y 140-290, 36-52 m beside the axis, 147 m and more from the walker) show no vehicle within
+    // WALK_CLEAR_R0 of the camera and fade in to WALK_CLEAR_R1: a vehicle seen that close sweeps its 0.12 s streak across the frame
+    // like a laser bolt, and the sky under the Ark stays clear. Far parts (the lanes converging into the canyon and into face B's
+    // notch) keep flowing. The layers (kind 4) need no fade: AbyssTraffic keeps them >= 200 m from the walk.
+    // C# twin: AbyssTraffic.BoulevardClear (AbyssTests).
+    #define WALK_CLEAR_R0 300.0
+    #define WALK_CLEAR_R1 400.0
+    float NocWalkClear(float3 P)
+    {
+        float3 cam = _WorldSpaceCameraPos.xyz;
+        float w = smoothstep(191.3, 215.3, cam.x) * (1.0 - smoothstep(695.3, 719.3, cam.x)) * (1.0 - smoothstep(60.0, 90.0, abs(cam.z - 195.0)));
+        return 1.0 - w * (1.0 - smoothstep(WALK_CLEAR_R0, WALK_CLEAR_R1, distance(P, cam)));
+    }
 
     // lights closer than this along the view axis are dropped (no quad straddles the camera plane)
     float NocNear() { return 0.1; }
@@ -176,7 +199,7 @@ Shader "Megastructure/NocStreak"
                 trueW = pair + lamp;
                 trueLen = max(trueLen, lamp);
                 emit = 2.0 * lamp / trueW;
-                minPx = lerp(TAIL_MIN_PX, NC_StreakMinPx, headW);
+                minPx = lerp(TAIL_MIN_PX, LIGHT_MIN_PX, headW);
             }
             else
             {
@@ -212,10 +235,12 @@ Shader "Megastructure/NocStreak"
                 trueLen = size; trueW = size;
                 alpha = 0.8 + 0.2 * saturate(phase);
                 colour = _Tint.rgb * _Gain;
+                minPx = LIGHT_MIN_PX;
             }
         }
 
         // points sit on facade corners: pull them toward the camera by their drawn radius so the wall never clips them
+        minPx *= max(_NocPxScale, 1.0);                                           // output pixels (C30)
         float3 toCam = _WorldSpaceCameraPos.xyz - centre;
         float dist = max(length(toCam), 1e-3);
         float fp = dist * 2.0 / max(abs(UNITY_MATRIX_P[1][1]) * scr.y, 1e-4);   // metres per pixel at the light
@@ -232,15 +257,24 @@ Shader "Megastructure/NocStreak"
         float2 ax = (lane && lenPx > 1e-4) ? seg / lenPx : float2(1.0, 0.0);
         float wPx = trueW / fp;
         float drawLen = max(lenPx, minPx), drawW = max(wPx, minPx);
+        float2 nr = float2(-ax.y, ax.x);
         if (layer)
         {
-            // the lamp pair: two lobes of half-width max(lamp / 2, 0.75 px) at +-sep / 2, resolved from 3 px of separation
-            float sepPx = max(_Tint.z, 0.0) / fp, lobe = max(0.5 * max(_Tint.w, 0.05) / fp, 0.75);
-            drawW = max(drawW, sepPx + 2.0 * lobe);
+            // the lamp pair: two lobes of half-width max(lamp / 2, 0.75 px) at +-sep / 2, resolved from 3 px of separation.
+            // r04 (AB_r03 KS11: vehicles seen broadside drew their pair as two bars stacked 1.5 m apart across the streak, "="
+            // glyphs): sep is the projection of the vehicle's horizontal cross axis on the quad's width axis (the full pair from in
+            // front or behind, near 0 broadside, where one lamp hides the other) and the quad is as wide as that projected pair;
+            // the energy stays the emitting area / drawn area (wPx x emit = 2 lamp / fp)
+            float3 across = cross(float3(0.0, 1.0, 0.0), dir);
+            across *= rsqrt(max(dot(across, across), 1e-8));
+            float4 cS = TransformWorldToHClip(centre + across * max(_Tint.z, 0.0));
+            float2 dS = (cS.xy / max(cS.w, 1e-4) - nc) * 0.5 * scr;
+            float lampPx = max(_Tint.w, 0.05) / fp;
+            float sepPx = min(abs(dot(dS, nr)), max(_Tint.z, 0.0) / fp), lobe = max(0.5 * lampPx, 0.75);
+            drawW = max(max(sepPx + lampPx, minPx), sepPx + 2.0 * lobe);
             o.shape = float4(smoothstep(3.0, 6.0, sepPx), sepPx / drawW, 2.0 * lobe / drawW, 0.0);
         }
         float energy = (lenPx / drawLen) * (wPx / drawW) * emit;
-        float2 nr = float2(-ax.y, ax.x);
         float2 q = i.uv * 2.0 - 1.0;
         float2 mid = 0.5 * (pa + pb);                                          // grows symmetrically to the 2.2 px minimum
         float2 px = mid + ax * (0.5 * q.x * drawLen) + nr * (0.5 * q.y * drawW);
@@ -250,7 +284,7 @@ Shader "Megastructure/NocStreak"
 
         float T = NocFogT(centre);
         float cloud = 1.0 - smoothstep(NC_CloudMixY0, NC_CloudMixY1, centre.y);
-        float occ = layer ? NocAbyssOcclusion(centre) : 1.0;                     // D-034 hook (1 until wave B sets it)
+        float occ = layer ? NocAbyssOcclusion(centre) : (lane ? NocWalkClear(centre) : 1.0);   // D-034 hook / ARK walk clearance
         o.col = float4(colour * (energy * alpha * T * cloud * occ), 1.0);
         return o;
     }

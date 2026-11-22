@@ -54,14 +54,13 @@ namespace Megastructure
         public const int Branches = 6;
         public const float BranchMinRadius = 0.15f;
         public const int CrownLon = 96, CrownLat = 48;           // 3.9 m chords at r 30 showed facets on the silhouette (KS15)
-        public const float CrownLump = 0.06f;
         public const float NotchClearance = 1f;            // crowns stay 1 m inside the notch walls (G3: lean, see CrownZ)
         public const float BackCrownFrac = 0.316f;          // back-tree crown radius / height (the mean ratio of the 9 hero trees)
         public const int BackTreeCount = 8;
         public const float BackDzMin = 55f, BackDzMax = 70f, BackHMin = 110f, BackHMax = 140f;
         public const float BackMaxLean = 6f;                // back crowns near the notch walls may lean this much toward the axis
 
-        // ---- Look v2 crowns (TEXTURE_PLAN 4, FO; behind -foliage-v 2): an opaque core at 0.90 of the radii, leaf-cluster cards on two
+        // ---- Look v2 crowns (TEXTURE_PLAN 4, FO; the only crowns since GD deleted v1 in Phase 4): an opaque core at 0.90 of the radii, leaf-cluster cards on two
         // shells (0.94, 1.02) placed with a blue-noise lattice at 1.5x area coverage (back trees 0.5x density), every card corner
         // inside 1.10x the ellipsoid (the envelope V's audit may use), the notch clearance kept
         // CoreFrac 0.86 (TEXTURE_PLAN 4: 0.90): lookdev r03 / r04 - at 0.90 the inner shell (0.94) lies 1.2-1.6 m above the core and its
@@ -106,26 +105,6 @@ namespace Megastructure
         };
 
         static GardenTreeSpec[] s_trees;
-
-        /// <summary>Test hook: forces the foliage version (0 = follow the -foliage-v flag).</summary>
-        public static int FoliageVersionOverride;
-
-        /// <summary>Default of -foliage-v: 2 since FO's acceptance (2026-11-16: KS14 / KS15 1080p + 4K, texpans KS15 PASS, rain edge
-        /// probe PASS, beat-5 GPU A/B +0.75 ms mean, V's audit unchanged); -foliage-v 1 keeps the graybox crowns for A/B runs.</summary>
-        public const int DefaultFoliageV = 2;
-
-        /// <summary>
-        /// The -foliage-v flag (TEXTURE_PLAN 1.6, 7.6): 1 = the v1 crowns, 2 = cores and leaf-cluster cards (Look v2, the default). Read
-        /// at build time (geometry) and as the uniform _NocFoliageV (shader).
-        /// </summary>
-        public static bool FoliageV2
-        {
-            get
-            {
-                if (FoliageVersionOverride > 0) return FoliageVersionOverride >= 2;
-                return CliArgs.GetInt("-foliage-v", DefaultFoliageV) >= 2;
-            }
-        }
 
         /// <summary>All 17 trees: the 9 hero trees, then the 8 back trees (|z - 195| 55-70, heights 110-140 by hash).</summary>
         public static GardenTreeSpec[] Trees

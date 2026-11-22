@@ -14,7 +14,11 @@
 //   * on the podium street faces (y 9..30) vertical projecting signs (3-6 cells, 0.75-1.05 m wide) on steel brackets at the column
 //     lines, denser low down: the canyon of signs that recedes along the street in KS04 (facing along x, they show their faces to a
 //     walker looking down the street).
-//   * small signs (1-4 m; ShaftSigns): projecting vertical signs on brackets and flat light boxes on the shafts' street faces over the
+//   * BV fix wave (panel p4_01 C15, D-037 (10) answered yes): podium-level shop signs at the column line (ArcadeSignList): on
+//     80 % of the columns a projecting light box (0.6-0.9 m out, 1.4-3.5 m tall, 2-4 glyph cells per face, y 3.6..7.6 under the
+//     arcade's 8 m head) in a dark 16 cm case 6 cm larger all round, the glyph faces 1 cm proud, on two brackets to the column:
+//     at 75 m they are 10-40 px, the human-scale counterpoint to the 14 x 200 m blades (the shafts stay clean);
+//   * small signs (1-4 m; ShaftSigns): projecting vertical signs on brackets (fifth start: no flat boxes, y <= 100) on the shafts' street faces over the
 //     terrace (y 43.5..165, densest low, e-folding 34 m, clear of the blades) and flat light boxes on the podium faces (y 10..37).
 // Deterministic (PCG hashes of the bay index and side); every piece stays inside the arcade or within 1.4 m of the podium face, far
 // from every lane and the tram sight sector. Look v2 accent rule: the signs are small, mostly white / warm (Beat02BoulevardTests).
@@ -73,7 +77,7 @@ namespace Megastructure
                 uint h = NocMath.Pcg((uint)(k + 4096) * 0x27D4EB2Fu ^ seed);
                 float u0 = U(h), u1 = U(NocMath.Pcg(h + 1u)), u2 = U(NocMath.Pcg(h + 2u)), u3 = U(NocMath.Pcg(h + 3u)), u4 = U(NocMath.Pcg(h + 4u));
                 var b = new Bay { Side = side, K = k, X0 = (float)bx0, X1 = (float)bx1, Rnd = u3, Warm = u2 < 0.36f };
-                if (u0 < 0.30f) { b.State = ShopState.Lit; b.Gain = Mathf.Lerp(0.50f, 0.80f, u1); }
+                if (u0 < 0.26f) { b.State = ShopState.Lit; b.Gain = Mathf.Lerp(0.50f, 0.80f, u1); }
                 else if (u0 < 0.48f) { b.State = ShopState.Dim; b.Gain = Mathf.Lerp(0.14f, 0.28f, u1); }
                 else if (u0 < 0.80f) { b.State = ShopState.Shutter; b.Gain = Mathf.Lerp(0.40f, 0.70f, u1); }
                 else if (u0 < 0.91f) { b.State = ShopState.HalfShutter; b.Gain = Mathf.Lerp(0.40f, 0.70f, u1); b.ShutterFrac = Mathf.Lerp(0.42f, 0.70f, u4); }
@@ -182,6 +186,7 @@ namespace Megastructure
                 }
             }
             PodiumSigns(parts, side);
+            ArcadeSigns(parts, side);
             SmallSigns(parts, side);
         }
 
@@ -250,9 +255,67 @@ namespace Megastructure
             }
         }
 
+        // ---- podium-level shop signs at the column line (BV fix wave, C15 / D-037 (10))
+        public const float ArcadeSignY0 = 3.6f, ArcadeSignY1 = 7.6f, ArcadeSignOff = 0.15f, ArcadeSignP = 0.8f;
+        public const float ArcadeCaseHalf = 0.08f, ArcadeCaseRim = 0.06f;
+
+        /// <summary>The column-line projecting signs of a side: (x, y centre, w = projection, h), palette; deterministic.</summary>
+        public static List<Vector4> ArcadeSignList(int side, List<int> palettes)
+        {
+            var list = new List<Vector4>(64);
+            uint seed = side < 0 ? 0xA5C0u : 0xA5C1u;
+            for (int k = BoulevardLayout.ColumnK0; k <= BoulevardLayout.ColumnK1; k++)
+            {
+                float x = (float)StreetFacade.ColumnX(k);
+                if (side < 0 && (x < (float)BoulevardLayout.SouthPodiumX0 + 2f || x > 207f)) continue;   // south: east of the alley blocks
+                if (side > 0 && (x < -36f || x > 199f)) continue;                                          // north: west of the terminus
+                uint h = NocMath.Pcg((uint)(k + 2048) * 0x9E3779B9u ^ seed);
+                if (U(h) > ArcadeSignP) continue;
+                float w = Mathf.Lerp(0.6f, 0.9f, U(NocMath.Pcg(h + 1u)));
+                float y0 = Mathf.Lerp(ArcadeSignY0, ArcadeSignY0 + 0.8f, U(NocMath.Pcg(h + 3u)));
+                int cells = 2 + (int)(U(NocMath.Pcg(h + 2u)) * 3f);                    // 2-4 cells of aspect 14 x 18
+                while (cells > 2 && y0 + cells * w * 18f / 14f > ArcadeSignY1) cells--;
+                float hh = cells * w * 18f / 14f;
+                list.Add(new Vector4(x, y0 + 0.5f * hh, w, hh));
+                palettes?.Add(SignPalette(U(NocMath.Pcg(h + 4u))));
+            }
+            return list;
+        }
+
+        static void ArcadeSigns(G1Parts parts, int side)
+        {
+            string sn = side < 0 ? "S" : "N";
+            float zf = FaceZ(side), nz = Nz(side);
+            var brk = parts.Get("arcadeSignCases" + sn, G1Mat.SteelPainted, new Vector3(85f, 5.5f, zf + nz * 0.6f));
+            var pals = new List<int>(64);
+            var signs = ArcadeSignList(side, pals);
+            Quaternion alongRot = Quaternion.LookRotation(Vector3.right), backRot = Quaternion.LookRotation(Vector3.left);
+            float fo = ArcadeCaseHalf + 0.01f, r = ArcadeCaseRim;
+            for (int i = 0; i < signs.Count; i++)
+            {
+                var s = signs[i];
+                float zc = zf + nz * (ArcadeSignOff + r + 0.5f * s.z);
+                parts.Sign(new Vector3(s.x - fo, s.y, zc), alongRot, s.z, s.w, pals[i]);
+                parts.Sign(new Vector3(s.x + fo, s.y, zc), backRot, s.z, s.w, pals[i]);
+                // the case: 16 cm thick, 6 cm larger than the faces all round, from the bracket ends outward
+                float y0 = s.y - 0.5f * s.w, y1 = s.y + 0.5f * s.w;
+                float za = zf + nz * ArcadeSignOff, zb = zf + nz * (ArcadeSignOff + 2f * r + s.z);
+                G1Mesh.Chamfer(brk, new Vector3(s.x - ArcadeCaseHalf, y0 - r, Mathf.Min(za, zb)), new Vector3(s.x + ArcadeCaseHalf, y1 + r, Mathf.Max(za, zb)), 0.015f);
+                // a cap 2 cm proud over the case and two brackets back to the column face
+                G1Mesh.Chamfer(brk, new Vector3(s.x - ArcadeCaseHalf - 0.02f, y1 + r, Mathf.Min(za, zb) - 0.02f), new Vector3(s.x + ArcadeCaseHalf + 0.02f, y1 + r + 0.05f, Mathf.Max(za, zb) + 0.02f), 0.01f);
+                foreach (float yy in new[] { y0 + 0.2f, y1 - 0.2f })
+                    G1Mesh.Chamfer(brk, new Vector3(s.x - 0.035f, yy - 0.035f, Mathf.Min(zf, za)), new Vector3(s.x + 0.035f, yy + 0.035f, Mathf.Max(zf, za)), 0.008f);
+            }
+        }
+
         // ---- the small signs of the shafts and the podium faces (14.5.2 "6 000 shopfront signs (1-4 m)"; BV wave A)
-        public const float ShaftSignY0 = 43.5f, ShaftSignY1 = 165f, ShaftSignLevel = 4.2f, ShaftSignPitch = 3.0f;
-        public const float ShaftProjP = 0.30f, ShaftFlatP = 0.22f, ShaftFold = 34f, PodiumFlatP = 0.16f;
+        // Fifth start (BV_r02 KS04 / KS06 / beat02 look_l, look_r at 1:1): the flat light boxes on the shafts and the projecting signs
+        // high on them read as confetti over the window grid (flat colour rectangles without readable glyphs at 60-200 m). The
+        // shafts keep only projecting signs, as a band over the terrace (y 43.5..80, e-folding 30 m, p 0.4 at the bottom); no flat
+        // boxes on the shafts or the podium faces (BV_r03: the podium boxes were the horizontal cyan / grey rectangles of KS04's
+        // right podium). The podium faces keep their projecting signs at the column lines; the towers above read dark and colossal.
+        public const float ShaftSignY0 = 43.5f, ShaftSignY1 = 80f, ShaftSignLevel = 4.2f, ShaftSignPitch = 3.0f;
+        public const float ShaftProjP = 0.40f, ShaftFlatP = 0.0f, ShaftFold = 30f, PodiumFlatP = 0.0f;
 
         /// <summary>One small sign: centre, size (w along its plane, h), palette, kind (0 projecting, faces +-x; 1 flat on the face).</summary>
         public struct SmallSign { public Vector3 C; public float W, H; public int Palette, Kind; }

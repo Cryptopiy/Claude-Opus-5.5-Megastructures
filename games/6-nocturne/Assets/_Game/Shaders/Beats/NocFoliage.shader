@@ -1,14 +1,50 @@
 // NocFoliage - the crowns of the hanging garden (MASTER_PROMPT 14.2.5, 14.5.5; Look v2: TEXTURE_PLAN 4, LOOK_V2 5.1 and 10) through
 // the Noc lit template (trilight x LightCal, Forward+ lights, analytic sky reflection, specular AA). Three modes, chosen per material
-// by _LeafMode (a material constant: every branch on it is uniform; no keyword):
-// 0, the v1 glowing crown (the graybox; -foliage-v 1, unchanged): dark leaf albedo (Moss token) plus emission:
-//   leaf glow   LeafGlow x _GlowGain x (0.55 + 0.9 leaf) x clump: `leaf` = contrast-stretched 3D value noise on 0.9 m world cells
-//               (60 %) and on 0.35 m cells (40 %), `clump` = the same noise on 5 m cells (mean 1), each octave faded to its mean (0.5)
-//               by the pixel footprint (smoothstep(1.5, 4.0) px per cell), so a far crown is its mean energy (no shimmer, no
-//               moire; Part 8.6) and a near crown is a soft glow with leaf-sized variation, not dark blotches;
-//   tips        LeafWarm x _TipGain where a third noise exceeds a threshold, on up-facing surfaces, faded to its mean by the same rule;
-//   rim         LeafGlow x _RimGain x (1 - n.v)^_RimPower (the silhouette glows against the cloud);
-//   underside   x (1 + _UnderGain x max(0, -n.y)) (KS15: the glowing undersides seen from below).
+// by _LeafMode (a material constant: every branch on it is uniform; no keyword). GD (Phase 4) deleted the v1 glowing crown
+// (mode 0 and its noise cells; mode 0 now draws as the core) and added the lanterns, the fireflies, the leaf sway and the lantern
+// field (GardenLanterns.cs):
+//   vertex hook  cards (2): leaf sway, a horizontal wind displacement of _SwayAmp (0.25 m at the crown tips: the cards are the
+//               crown's outer leaves) with period _SwayPeriod (7 s) plus a 0.618x slower partial (both <= 0.2 Hz), phase from the
+//               world position (gust fronts about 30 m long) and the card hash; the core, trunks and limbs stay still.
+//               Lanterns (3) and fireflies (4): the ball centre is position - normal x radius (uv0.x; radial normals); the ball
+//               grows about it to a 2.2 px diameter (_MinPx) where it would be smaller, and custom.x = (r / r')^2 keeps its
+//               energy (no sparkle, Part 8.6); the post lanterns swing with half the sway; fireflies wander 1.5 m (0.05 m/s) and
+//               orbit 0.3 m on the scene clock (_NocTime.x, so -freeze-clock freezes them). Integration round (QA-F13 / SG, G5 on
+//               the KS16 hold): the TREE lanterns (crown in uv1) hang still. Their 6 cm swing is 1-3 px at 25-40 m; a 2.2-8 px ball
+//               moving by a pixel or two re-rasterises at 0.6-1.2 Hz (amplitude 0.023 in 5 px block means at KS16's top left),
+//               and it moved them across the fringe-fade bands (the f928 block pop); still, their only modulation is the 0.1 Hz
+//               pulse, and a fade changes only with the eye.
+//               GD fix wave (C32, panel p4_01): the floor holds for the ball's INSCRIBED sphere (an icosahedron's inradius is
+//               0.795 of the circumradius r: at the old circumradius floor the silhouette was 1.75-2.2 px) and a ball drawn under
+//               _FlatPx px is shaded flat (custom.z = its drawn diameter in px): the hot face-on profile 0.55 + 0.9 (n.v)^2 on a
+//               2-px disc put the centre pixel 100-137 codes over all 24 neighbours (image_metrics NaN-like; it twinkles as the
+//               disc crosses pixel centres). A flat disc of >= 2.2 px under MSAA 4x: centre <= 69 codes over the best neighbour at
+//               any sub-pixel offset and a constant peak (GD sim, QA/GD_lantern_sim.py), so no isolated maxima and no twinkle.
+//               Tree lanterns behind their own crown (GD r06: the 13 KS15 maxima left were whole lanterns seen through 1-px gaps
+//               of the fringe cards, (233, 166, 87) among leaves at 50): uv1 = (crown centre x, z, y, horizontal radius Rh),
+//               colour A = Ry / (2 Rh); in the crown's ellipsoid space the eye ray to the lantern centre comes within q of the
+//               crown centre; when it passes deeper than the lantern itself (|l| - q > 0) and inside the leaf fringe (q < 1.18:
+//               lobes to 1.031, card shell 1.02, cards 2 m on a 20 m crown) the lantern is hidden by leaves: its emission fades
+//               (1 - max(smoothstep(0, 0.05, |l| - q), smoothstep(0.05, 0.12, (1 - t*) |l - o|)) x (1 - smoothstep(1.08, 1.18, q)):
+//               the second term catches a low lantern whose ray grazes the fringe 1-2.4 m before reaching it; t* = the parameter of
+//               the closest approach on the eye-lantern segment) and a faded ball shrinks to its centre over fade 0.02..0 (no
+//               raster: neither a peek nor a dark speck; integration round: the old switch at fade 0.01 was a one-frame step). The same "grazes the fringe before it" test runs against the other 16 crowns
+//               (_NocGardenCrowns, a global array set once at build): far lanterns behind the near crowns' fringes.
+//   lantern field  modes 1 and 2: colour A = the lanterns' irradiance / _FieldScale (GardenLanterns.ApplyField); added as the
+//               light scattered through the canopy: lum(albedo) x E x _LanternLightGain x lerp(Lantern, WinNeutral, 0.4) x the
+//               leaf chroma raised to a power that goes from 1 next to a strand (E >= _NearWarm: the light has crossed one leaf,
+//               the leaves beside a strand turn LeafWarm) to _ScatterPow deep in the crown (the light has crossed many leaves);
+//               plus the faint glow of the down-facing leaves, lerp(LeafGlow, LeafWarm, _UnderWarm) x _UnderGlow x albedo / Leaf
+//               (GD fix wave C33: pure LeafGlow pulled the canopy to a mint hue 138; LOOK_V2 2.1's Leaf is yellow-green, hue 93).
+// 3, LANTERNS: emission Lantern x _LanternGain (2.0) x (1 +- _LanternPulse 6 % at _LanternHz 0.1, phase = lantern hash) x energy
+//   x (0.35 + 1.3 (n.v)^2: the hot face-on paper, disc mean 1.0) x the per-lantern warmth (vertex colour); no albedo.
+//   Under _FlatPx (custom.z) the profile is flat 1.0 (same disc mean: no energy change; C32).
+// 4, FIREFLIES: emission lerp(LeafWarm, LeafGlow, hash) x _FireflyGain x a slow glow (0.55 +- 0.45 at _FireflyHz <= 0.2 Hz) x
+//   energy, faded out nearer than 1.5-4 m.
+// 5, BARK (GD fix wave C33: the limbs under the crowns read as smooth black tubes): the CC0 bark photo of lib.Bark (trident maple,
+//   texprep: _BarkTex / _BarkNormalTex, the variation around 0.5) on the limbs' UV0 metres / _BarkTile, albedo _BarkColor x 2 x the
+//   variation, normals from the photo through a derivative tangent frame, the template's PBR terms, plus the lantern field (colour A)
+//   as the direct light of the lanterns around the limb: albedo x E x _LanternLightGain x lerp(Lantern, WinNeutral, 0.4).
 // 1, the v2 CORE (lib.LeafCore, queue 2000): the opaque lobed crown at 0.90 seen through the card gaps = the deep leaves: two
 //   layers of the LeafCrown atlas (sprites of 2 m, the second offset by half a sprite, a hashed sprite per 2 m cell; the sprite
 //   borders are empty, so the cell edges never show) planar-projected on the axis plane facing the smooth core normal, with
@@ -43,18 +79,12 @@ Shader "Megastructure/NocFoliage"
     {
         _AlbedoGain ("Leaf albedo (x Moss token in v1, x Leaf in v2)", Range(0, 2)) = 0.6
         _Smoothness ("Smoothness", Range(0, 0.95)) = 0.3
-        _CellSize ("Leaf cell (m)", Float) = 0.9
-        _ClumpSize ("Clump cell (m)", Float) = 5.0
-        _FineSize ("Fine leaf cell (m)", Float) = 0.35
-        _Contrast ("Leaf contrast", Range(0, 4)) = 1.8
         _GlowGain ("Leaf glow gain (x LeafGlow)", Float) = 0.042
         _TipGain ("Tip glow gain (x LeafWarm)", Float) = 0.08
-        _TipThreshold ("Tip threshold", Range(0, 1)) = 0.68
         _RimGain ("Rim gain (x LeafGlow)", Float) = 0.06
         _RimPower ("Rim power", Float) = 3
-        _UnderGain ("Underside glow gain", Float) = 1.0
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
-        _LeafMode ("Mode (0 v1 crown, 1 v2 core, 2 v2 cards)", Float) = 0
+        _LeafMode ("Mode (1 core, 2 cards, 3 lanterns, 4 fireflies, 5 bark; 0 = core)", Float) = 1
         _AlphaToMask ("Alpha to coverage (0 off, 1 on)", Float) = 0
         _AlbedoTex ("Leaf atlas albedo variation (a = opacity)", 2DArray) = "" {}
         _NormalTex ("Leaf atlas normal (GL)", 2DArray) = "" {}
@@ -65,30 +95,44 @@ Shader "Megastructure/NocFoliage"
         _Transmission ("Thin-leaf transmission (x albedo)", Range(0, 3)) = 1.2
         _WetSmooth ("Rain sheen (smoothness added)", Range(0, 0.5)) = 0.2
         _CoreAo ("Core occlusion (crown interior)", Range(0, 1)) = 0.55
-        _CoreContrast ("Core leaf-noise contrast (unused since the atlas core)", Range(0, 2)) = 0.7
         _CoreGap ("Core: brightness of the gaps between its leaves", Range(0, 1)) = 0.25
         _SpeckThreshold ("Speck threshold", Range(0, 1)) = 0.8
         _AlphaMipBias ("Alpha mip bias (moire fallback)", Range(0, 1)) = 0
         _SharpMip ("Alpha sharpening kept up to this mip (leaf >= 2 px)", Range(0, 8)) = 5
+        _SwayAmp ("Leaf sway at the crown tips (m)", Range(0, 1)) = 0.25
+        _SwayPeriod ("Leaf sway period (s)", Range(1, 20)) = 7
+        _LanternGain ("Lantern emission (x Lantern)", Float) = 2.0
+        _LanternPulse ("Lantern pulse depth", Range(0, 0.2)) = 0.06
+        _LanternHz ("Lantern pulse (Hz)", Range(0, 0.2)) = 0.1
+        _MinPx ("Lantern / firefly minimum diameter (px)", Range(0, 6)) = 2.2
+        _LanternLightGain ("Lantern field light on the leaves", Range(0, 4)) = 1.2
+        _ScatterPow ("Leaf chroma power of the scattered lantern light", Range(1, 5)) = 2.5
+        _FieldScale ("Lantern field scale (E = A x scale)", Float) = 4
+        _UnderGlow ("Jade glow of the down-facing leaves (x LeafGlow)", Range(0, 0.2)) = 0.045
+        _FireflyGain ("Firefly emission", Float) = 8
+        _FireflyHz ("Firefly glow (Hz)", Range(0, 0.2)) = 0.12
+        _FlatPx ("Lantern: flat profile below this drawn diameter (px)", Range(0, 16)) = 3
+        _UnderWarm ("Under-glow hue: lerp(LeafGlow, LeafWarm, x)", Range(0, 1)) = 0.65
+        _NearWarm ("Field: E at which the scattered light keeps the lantern's warmth", Range(0.1, 8)) = 1.6
+        [NoScaleOffset] _BarkTex ("Bark albedo variation (photo, mode 5)", 2D) = "grey" {}
+        [NoScaleOffset] _BarkNormalTex ("Bark normal (GL, mode 5)", 2D) = "bump" {}
+        _BarkColor ("Bark token (linear, mode 5)", Color) = (0.071, 0.054, 0.045, 1)
+        _BarkTile ("Bark tile (m, mode 5)", Float) = 1.8
+        _BarkNormalStrength ("Bark normal strength (mode 5)", Range(0, 2)) = 1
     }
 
     HLSLINCLUDE
     #include "../Include/NocLitCore.hlsl"
     #define NOC_PASS_UV1ZW
+    #define NOC_HAS_VERTEX_HOOK
 
     CBUFFER_START(UnityPerMaterial)
         float _AlbedoGain;
         float _Smoothness;
-        float _CellSize;
-        float _ClumpSize;
-        float _FineSize;
-        float _Contrast;
         float _GlowGain;
         float _TipGain;
-        float _TipThreshold;
         float _RimGain;
         float _RimPower;
-        float _UnderGain;
         float _Cull;
         float _LeafMode;
         float _AlphaToMask;
@@ -98,11 +142,28 @@ Shader "Megastructure/NocFoliage"
         float _Transmission;
         float _WetSmooth;
         float _CoreAo;
-        float _CoreContrast;
         float _SpeckThreshold;
         float _AlphaMipBias;
         float _SharpMip;
         float _CoreGap;
+        float _SwayAmp;
+        float _SwayPeriod;
+        float _LanternGain;
+        float _LanternPulse;
+        float _LanternHz;
+        float _MinPx;
+        float _LanternLightGain;
+        float _ScatterPow;
+        float _FieldScale;
+        float _UnderGlow;
+        float _FireflyGain;
+        float _FireflyHz;
+        float _FlatPx;
+        float _UnderWarm;
+        float _NearWarm;
+        float _BarkTile;
+        float _BarkNormalStrength;
+        float4 _BarkColor;
         float4 _AlbedoTex_TexelSize;
     CBUFFER_END
 
@@ -110,6 +171,12 @@ Shader "Megastructure/NocFoliage"
     SAMPLER(sampler_AlbedoTex);
     TEXTURE2D_ARRAY(_NormalTex);
     TEXTURE2D_ARRAY(_MaskTex);
+    // the 17 crowns of the garden (GardenLanterns.SetCrownGlobals at build: even = centre xyz, odd = radii xyz; count in
+    // _NocGardenCrownCount, 0 = none): a tree lantern behind ANOTHER crown's leaves fades like one behind its own (C32)
+    float4 _NocGardenCrowns[34];
+    float _NocGardenCrownCount;
+    TEXTURE2D(_BarkTex);                                                      // mode 5; sampled with sampler_AlbedoTex (Repeat)
+    TEXTURE2D(_BarkNormalTex);
 
     // 3D value noise in [0, 1], quintic, PCG lattice (twin of GardenTree.Noise3: NocPcg(x + NocPcg(y + NocPcg(z))))
     float NocFoliageHash(int3 i) { return NocU01(NocPcg((uint)i.x + NocPcg((uint)i.y + NocPcg((uint)i.z)))); }
@@ -138,41 +205,128 @@ Shader "Megastructure/NocFoliage"
         return normalize(n);
     }
 
-    // the v1 crown (mode 0), unchanged from the graybox
-    void NocFoliageV1(inout NocFragData f, inout SurfaceData s)
+    // leaf sway (vertex; see the header): metres of displacement at world position p for a card of hash h
+    float3 NocFoliageSway(float3 p, float h)
     {
-        float3 p = f.positionWS;
-        float3 n = f.normalWS;
-        float fp = f.footprint;
-        float cell = max(_CellSize, 0.05), clumpCell = max(_ClumpSize, 0.1), fine = max(_FineSize, 0.05);
+        float t = _NocTime.x;
+        float w = 6.2831853 / max(_SwayPeriod, 0.5);
+        float ph = dot(p.xz, float2(0.17, 0.11)) + 1.5 * h;
+        float s1 = sin(w * t + ph), s2 = sin(0.618 * w * t + 1.7 * ph + 2.0);
+        float a = _SwayAmp * (0.75 * s1 + 0.25 * s2);
+        return float3(0.8 * a, 0.15 * _SwayAmp * s2, 0.6 * a);
+    }
 
-        float wLeaf = NocFoliageKeep(cell, fp);
-        float wFine = NocFoliageKeep(fine, fp);
-        float wClump = NocFoliageKeep(clumpCell, fp);
-        // the noise is only evaluated where it shows (uniform branches would not save work; the weights are pixel-local)
-        float nLeaf = wLeaf > 0.0 ? NocFoliageNoise(p / cell) : 0.5;
-        float nFine = wFine > 0.0 ? NocFoliageNoise(p / fine + float3(7.7, 31.1, 11.9)) : 0.5;
-        float nClump = wClump > 0.0 ? NocFoliageNoise(p / clumpCell + float3(17.3, 5.1, 29.7)) : 0.5;
-        float nTip = wLeaf > 0.0 ? NocFoliageNoise(p / cell + float3(41.9, 13.7, 3.3)) : 0.5;
+    // the light under the crowns (modes 1 and 2; see the header): the lantern field's warm light scattered through the canopy
+    // (E = colour A x _FieldScale) plus the faint jade glow of the leaves facing down (LeafGlow x _UnderGlow, the garden's
+    // bioluminescence, LOOK_V2 beat 5), both x the leaf albedo relative to the Leaf token (the leaf texture carries through)
+    float3 NocFoliageFieldLight(float3 albedo, float a, float ny)
+    {
+        const float3 lumW = float3(0.2126, 0.7152, 0.0722);
+        float lum = max(dot(albedo, lumW), 1e-5);
+        float E = a * _FieldScale;
+        // next to a strand (E >= _NearWarm) the light has crossed one leaf: chroma^1 (warm, LeafWarm); deep in the crown _ScatterPow
+        float pw = lerp(max(_ScatterPow, 1.0), 1.0, smoothstep(0.25 * _NearWarm, _NearWarm, E));
+        float3 sc = pow(max(albedo / lum, 1e-3), pw);
+        sc /= max(dot(sc, lumW), 1e-4);
+        float3 L = lerp(PAL_Lantern, PAL_WinNeutral, 0.4);
+        float rel = lum / max(dot(PAL_Leaf, lumW), 1e-4);
+        float under = saturate(0.2 - 0.8 * ny);
+        float3 glow = lerp(PAL_LeafGlow, PAL_LeafWarm, _UnderWarm);
+        glow *= dot(PAL_LeafGlow, lumW) / max(dot(glow, lumW), 1e-4);        // the hue moves, the luminance stays LeafGlow's
+        return L * sc * (lum * E * _LanternLightGain) + glow * (_UnderGlow * rel * under);
+    }
 
-        float leaf = saturate(0.5 + _Contrast * (0.6 * (nLeaf - 0.5) * wLeaf + 0.4 * (nFine - 0.5) * wFine));   // mean 0.5 at every distance
-        float clump = 1.0 + 0.8 * (nClump - 0.5) * wClump;                           // mean 1
-        const float tipMean = 0.13;                                                  // mean of the step below over the noise (numerical, threshold 0.68)
-        float tipRaw = smoothstep(_TipThreshold, _TipThreshold + 0.12, nTip);
-        float tip = lerp(tipMean, tipRaw, wLeaf) * saturate(n.y * 1.5 + 0.2);
+    void NocVertexHook(inout NocVertexData v)
+    {
+        [branch] if (_LeafMode > 2.5 && _LeafMode < 4.5)
+        {
+            float r = max(v.uv.x, 1e-4);
+            float h = v.uv.y;
+            float3 n = v.normalWS;
+            float3 c = v.positionWS - n * r;
+            float t = _NocTime.x;
+            [branch] if (_LeafMode > 3.5)
+            {
+                // fireflies: a slow wander (1.5 m at 0.033 rad/s = 0.05 m/s) and a 0.3 m orbit (period 6-12 s)
+                float h2 = frac(h * 13.37), h3 = frac(h * 71.93);
+                float w1 = 0.033 * (0.8 + 0.4 * h2);
+                c += 1.5 * float3(sin(w1 * t + 6.2831853 * h), 0.35 * sin(0.7 * w1 * t + 6.2831853 * h2), cos(0.9 * w1 * t + 6.2831853 * h3));
+                float wo = 6.2831853 / (6.0 + 6.0 * h2);
+                c += 0.3 * float3(cos(wo * t + 6.2831853 * h3), 0.3 * sin(2.0 * wo * t), sin(wo * t + 6.2831853 * h3));
+            }
+            else if (v.custom.w <= 2.0) c += 0.5 * NocFoliageSway(c, h);    // post lanterns swing; tree lanterns hang still (QA-F13)
+            float d = length(_WorldSpaceCameraPos.xyz - c);
+            float fp = d * 2.0 / max(abs(UNITY_MATRIX_P[1][1]) * max(_NocScreen.x, 1.0), 1e-4);
+            // C32: the floor on the inscribed sphere (icosahedron inradius 0.795 r), so the silhouette is never under _MinPx
+            const float inK = 0.795;
+            float k = max(1.0, 0.5 * _MinPx * fp / (inK * r));
+            float fade = 1.0;
+            [branch] if (_LeafMode < 3.5 && v.custom.w > 2.0)
+            {
+                // tree lanterns: hidden behind the leaf fringe of their own crown (see the header)
+                float3 R = float3(v.custom.w, max(2.0 * v.color.a * v.custom.w, 0.5), v.custom.w);
+                float3 C = float3(v.uv.z, v.custom.z, v.uv.w);
+                float3 o = (_WorldSpaceCameraPos.xyz - C) / R, l = (c - C) / R;
+                float3 dir = l - o;
+                float tq = saturate(-dot(o, dir) / max(dot(dir, dir), 1e-6));
+                float q = length(o + tq * dir);
+                float deeper = smoothstep(0.0, 0.05, length(l) - q);                       // the ray goes deeper than the lantern
+                float before = smoothstep(0.05, 0.12, (1.0 - tq) * length(dir));          // or grazes the fringe 1-2.4 m before it
+                fade = 1.0 - max(deeper, before) * (1.0 - smoothstep(1.08, 1.18, q));
+                // the other crowns (GD r09: the KS15 / KS14 peeks left were far lanterns behind the near crowns' fringes): the eye
+                // ray comes within q_j of crown j's centre 1-2.4 m before the lantern -> that crown is in front of it
+                int nC = (int)min(_NocGardenCrownCount, 17.0);
+                [loop] for (int j = 0; j < nC; j++)
+                {
+                    float3 Cj = _NocGardenCrowns[2 * j].xyz, Rj = max(_NocGardenCrowns[2 * j + 1].xyz, 0.5);
+                    float3 oj = (_WorldSpaceCameraPos.xyz - Cj) / Rj, lj = (c - Cj) / Rj;
+                    float3 dj = lj - oj;
+                    float tj = saturate(-dot(oj, dj) / max(dot(dj, dj), 1e-6));
+                    float qj = length(oj + tj * dj);
+                    float other = step(1.69, dot(lj, lj));                 // not its own crown (|l| >= 1.3; the own test is above)
+                    fade *= 1.0 - other * smoothstep(0.05, 0.12, (1.0 - tj) * length(dj)) * (1.0 - smoothstep(1.08, 1.18, qj));
+                }
+            }
+            v.positionWS = c + n * (r * k * saturate(50.0 * fade));          // shrinks over fade 0.02..0 (was a switch at 0.01)
+            v.custom.x = fade / (k * k);
+            v.custom.y = d;
+            v.custom.z = 2.0 * inK * r * k / max(fp, 1e-6);                   // drawn (inscribed) diameter in px
+        }
+        else
+        {
+            [branch] if (_LeafMode > 1.5 && _LeafMode < 2.5) v.positionWS += NocFoliageSway(v.positionWS, v.uv.w);
+        }
+    }
 
-        float nv = saturate(dot(n, f.viewDirWS));
-        float rim = PositivePow(1.0 - nv, max(_RimPower, 0.5));
-        float under = 1.0 + _UnderGain * saturate(-n.y);
-
-        float3 E = PAL_LeafGlow * (_GlowGain * (0.55 + 0.9 * leaf) * clump * under + _RimGain * rim)
-                 + PAL_LeafWarm * (_TipGain * tip);
-
-        s.albedo = PAL_Moss * _AlbedoGain * (0.7 + 0.6 * leaf);
+    // mode 3: a lantern ball (emission only)
+    void NocFoliageLantern(inout NocFragData f, inout SurfaceData s)
+    {
+        float h = f.uv.y;
+        float pulse = 1.0 + _LanternPulse * sin(6.2831853 * (_LanternHz * _NocTime.x + h));
+        float nv = saturate(dot(f.normalWS, f.viewDirWS));
+        s.albedo = 0.0;
         s.metallic = 0.0;
-        s.smoothness = min(_Smoothness, 0.95);
-        s.occlusion = lerp(1.0, f.color.r, 0.5);
-        s.emission = E;
+        s.smoothness = 0.0;
+        s.occlusion = 1.0;
+        // a paper lantern with a lamp inside: the light crossing the paper face-on is the brightest (GD r01: a flat 0.8 + 0.2 n.v
+        // ball peaked at luma 195 in KS15, 14.5.5 asks maxima > 200); mean over the disc 0.35 + 1.3 / 2 = 1.0 (fix wave r07: the
+        // 0.55 + 0.9 (n.v)^2 core left the KS15 lanterns at 190-202, 18 blobs over 200). A ball drawn under _FlatPx is shaded
+        // flat (mean 1.0 too): a profile on a 2-4 px disc makes one hot pixel (C32)
+        float hot = lerp(1.0, 0.35 + 1.3 * nv * nv, smoothstep(0.5 * _FlatPx, 1.5 * _FlatPx, f.custom.z));
+        s.emission = (half3)(PAL_Lantern * saturate(f.color.rgb) * (_LanternGain * pulse * f.custom.x * hot));
+    }
+
+    // mode 4: a firefly mote (emission only)
+    void NocFoliageFirefly(inout NocFragData f, inout SurfaceData s)
+    {
+        float h = f.uv.y;
+        float glow = 0.55 + 0.45 * sin(6.2831853 * (_FireflyHz * _NocTime.x + h));
+        float nearFade = smoothstep(1.5, 4.0, f.custom.y);
+        s.albedo = 0.0;
+        s.metallic = 0.0;
+        s.smoothness = 0.0;
+        s.occlusion = 1.0;
+        s.emission = (half3)(lerp(PAL_LeafWarm, PAL_LeafGlow, frac(h * 3.7)) * (_FireflyGain * glow * f.custom.x * nearFade));
     }
 
     // the v2 core (mode 1): two planar layers of the leaf atlas on the axis plane facing the normal (see the header)
@@ -200,7 +354,28 @@ Shader "Megastructure/NocFoliage"
         s.metallic = 0.0;
         s.smoothness = min(_Smoothness, 0.95);
         s.occlusion = _CoreAo * f.color.r;
-        s.emission = 0.0;
+        s.emission = (half3)(NocFoliageFieldLight(s.albedo, f.color.a, f.normalWS.y) * sqrt(saturate(s.occlusion)));
+    }
+
+    // mode 5: the limbs' bark lit by the lanterns around them (see the header); uvB / gB* = the bark uv and its gradients
+    void NocFoliageBark(inout NocFragData f, inout SurfaceData s, float2 uvB, float2 gBx, float2 gBy, float3 dpx, float3 dpy)
+    {
+        float4 a = SAMPLE_TEXTURE2D_GRAD(_BarkTex, sampler_AlbedoTex, uvB, gBx, gBy);
+        float4 nt = SAMPLE_TEXTURE2D_GRAD(_BarkNormalTex, sampler_AlbedoTex, uvB, gBx, gBy);
+        s.albedo = _BarkColor.rgb * 2.0 * saturate(a.rgb);
+        s.metallic = 0.0;
+        s.smoothness = min(_Smoothness, 0.95);
+        s.occlusion = 1.0;
+        // derivative tangent frame (cotangent frame of the uv over the triangle), guarded
+        float3 N = normalize(f.normalWS);
+        float3 d2p = cross(dpy, N), d1p = cross(N, dpx);
+        float3 T = d2p * gBx.x + d1p * gBy.x;
+        float3 B = d2p * gBx.y + d1p * gBy.y;
+        float inv = rsqrt(max(max(dot(T, T), dot(B, B)), 1e-20));
+        float3 ts = UnpackNormalScale(nt, max(_BarkNormalStrength, 0.0));
+        f.normalWS = normalize(T * (inv * ts.x) + B * (inv * ts.y) + N * max(ts.z, 0.05));
+        float3 L = lerp(PAL_Lantern, PAL_WinNeutral, 0.4);
+        s.emission = (half3)(L * s.albedo * (f.color.a * _FieldScale * _LanternLightGain));
     }
 
     void NocSurfaceHook(inout NocFragData f, inout SurfaceData s)
@@ -215,9 +390,13 @@ Shader "Megastructure/NocFoliage"
         float aw = max(fwidth(alb.a), 1e-4);
         float res = _AlbedoTex_TexelSize.z > 1.0 ? _AlbedoTex_TexelSize.z : 1024.0;
         float mip = 0.5 * log2(max(max(dot(dx, dx), dot(dy, dy)) * res * res, 1e-8)) + _AlphaMipBias;
+        float bInv = 1.0 / max(_BarkTile, 0.05);
+        float2 uvB = uv * bInv, gBx = dx * bInv, gBy = dy * bInv;
 
-        [branch] if (_LeafMode < 0.5) { NocFoliageV1(f, s); return; }
+        [branch] if (_LeafMode > 4.5) { NocFoliageBark(f, s, uvB, gBx, gBy, dpx, dpy); return; }
         [branch] if (_LeafMode < 1.5) { NocFoliageCore(f, s, dpx, dpy); return; }
+        [branch] if (_LeafMode > 3.5) { NocFoliageFirefly(f, s); return; }
+        [branch] if (_LeafMode > 2.5) { NocFoliageLantern(f, s); return; }
 
         // ---- cards (mode 2)
         float4 nTex = SAMPLE_TEXTURE2D_ARRAY_GRAD(_NormalTex, sampler_AlbedoTex, uv, slice, dx, dy);
@@ -270,13 +449,14 @@ Shader "Megastructure/NocFoliage"
         float nv = saturate(dot(nBent, f.viewDirWS));
         float rim = PositivePow(1.0 - nv, max(_RimPower, 0.5)) * glowCard;
         float tip = smoothstep(0.70, 0.95, mask.b) * saturate(n.y * 1.5 + 0.2);
-        s.emission = (half3)(PAL_LeafGlow * (_GlowGain * speck + _RimGain * rim) + PAL_LeafWarm * (_TipGain * tip));
+        s.emission = (half3)(PAL_LeafGlow * (_GlowGain * speck + _RimGain * rim) + PAL_LeafWarm * (_TipGain * tip)
+                   + NocFoliageFieldLight(s.albedo, f.color.a, nBent.y) * lerp(1.0, ao, 0.5));
     }
 
     // depth-type passes (never run while depth priming and the depth texture are off; kept correct): the card cut-out at 0.5
     void NocClipHook(NocFragData f)
     {
-        [branch] if (_LeafMode > 1.5)
+        [branch] if (_LeafMode > 1.5 && _LeafMode < 2.5)
         {
             float a = SAMPLE_TEXTURE2D_ARRAY_LOD(_AlbedoTex, sampler_AlbedoTex, f.uv.xy, floor(f.uv.z + 0.5), 0).a;
             clip(a - 0.5);
@@ -361,7 +541,7 @@ Shader "Megastructure/NocFoliage"
             {
                 // one return (INT): the early return inside [branch] drew fxc X4000 "potentially uninitialized variable"
                 half3 c;
-                [branch] if (_LeafMode < 1.5) c = NocShadeOcc(inputData, s, f.specOcc);
+                [branch] if (_LeafMode < 1.5 || _LeafMode > 4.5) c = NocShadeOcc(inputData, s, f.specOcc);
                 else c = NocFoliageShadeCards(f, s, inputData);
                 return c;
             }

@@ -89,6 +89,9 @@ namespace Megastructure
                 case G1Mat.LinePost: return Line(lib, "G1_Post", Post, NocPal.ConcreteDark, 1.05f);
                 case G1Mat.GlassBack: return lib.GlassBack;
                 case G1Mat.GlassFront: return lib.GlassFront;
+                case G1Mat.AlleyWindow: return AlleyMaterials.Make(slot, lib) ?? Room(lib, "G1_ShopWarm", NocPal.WinWarm, ShopWarmFactor, 4.0f, 0.45f, 0.12f, 2) ?? Emissive(lib, "G1_ShopWarm", NocPal.WinWarm, ShopWarmFactor);
+                case G1Mat.AlleyRoomBar: case G1Mat.AlleyRoomA: case G1Mat.AlleyRoomB: case G1Mat.AlleySign: return AlleyMaterials.Make(slot, lib) ?? lib.Concrete;
+                case G1Mat.Steam: case G1Mat.SteamBar: case G1Mat.AlleyPool: case G1Mat.AlleyGlow: case G1Mat.AlleyWorkPool: return AlleyMaterials.Make(slot, lib);
             }
             return lib.GrayWall;
         }

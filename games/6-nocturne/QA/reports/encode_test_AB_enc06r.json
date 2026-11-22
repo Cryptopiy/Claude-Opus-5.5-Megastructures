@@ -1,0 +1,97 @@
+{
+ "run": "AB_enc06r",
+ "status": "FAIL",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat03_abyss",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\captures\\AB_enc06\\enc_beat03_abyss",
+   "checks": [
+    {
+     "name": "x264_crf23[cli0]",
+     "status": "FAIL",
+     "value": 2.632,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 5.26 (max 1.41 code), BandScore 2.39 (run 29 px) (source score 0.503), frame 0"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\encode\\AB_enc06r\\enc_beat03_abyss\\x264_crf23.mp4",
+     "encode_s": 11.5,
+     "kbps": 3286.4,
+     "decoded_frames": 600,
+     "mean_abs_error": 1.7216462713798868,
+     "decoded": {
+      "cli0": {
+       "direction": "v",
+       "n_strips": 5,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 5.2631578947368425,
+       "steps": 1,
+       "step_max_code": 1.4096424337141826,
+       "bandscore": 2.390242256944442,
+       "longest_run_px": 29,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.030629646211405192,
+       "score": 2.6315789473684212,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\encode\\AB_enc06r\\enc_beat03_abyss\\crops\\x264_crf23_cli0_f00342_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\encode\\AB_enc06r\\enc_beat03_abyss\\crops\\x264_crf23_cli0_f00342_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\encode\\AB_enc06r\\enc_beat03_abyss\\crops\\x264_crf23_cli0_f00342_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 600,
+   "regions": [
+    {
+     "name": "cli0",
+     "rect": [
+      1080,
+      30,
+      1460,
+      220
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "cli0": {
+     "direction": "v",
+     "n_strips": 5,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 0.7545816611842087,
+     "longest_run_px": 9,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.030759410499962534,
+     "score": 0.5030544407894725,
+     "pass": true,
+     "frame": 513
+    }
+   },
+   "status": "FAIL"
+  }
+ ]
+}

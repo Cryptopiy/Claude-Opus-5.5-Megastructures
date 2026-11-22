@@ -111,6 +111,8 @@ namespace Megastructure
     public sealed class VisFailure
     {
         public string shot, subject, kind, detail, fix, owner;
+        /// <summary>A lead ruling that keeps this miss on purpose (fix wave C48: KS12's composition, D-039 (12)); "" = open.</summary>
+        public string ruling = "";
     }
 
     public sealed class VisibilityAudit
@@ -142,10 +144,13 @@ namespace Megastructure
         public VisibilityAudit(IVisRayScene spec, IVisRayScene built) { Spec = spec; Built = built; }
 
         // ------------------------------------------------------------------ run
-        public void Run()
+        public void Run() => Run(VisibilitySubjects.All(), true);
+
+        /// <summary>Audits the given shots (fix wave C10: a candidate pose, e.g. KS04 at pitch 27, can be checked before it is
+        /// committed to the 14.10 table); preReveal runs the pre-reveal koi check of every key shot as well.</summary>
+        public void Run(List<VisShot> shots, bool preReveal)
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var shots = VisibilitySubjects.All();
             // the whole cinematic walk from s 0 (sampled at every key-shot s), traced for the readable windows
             var sList = new List<double>();
             foreach (var sh in shots) sList.Add(sh.ks.s);
@@ -158,7 +163,7 @@ namespace Megastructure
                 RunShot(r, wy[i], wp[i], trS, trY, trP);
                 Results.Add(r);
             }
-            RunPreReveal();
+            if (preReveal) RunPreReveal();
             Seconds = sw.Elapsed.TotalSeconds;
         }
 
@@ -531,6 +536,12 @@ namespace Megastructure
                     if (Math.Abs(r.sharesSpec[0] - sp[0]) > 0.05 || Math.Abs(r.sharesSpec[1] - sp[1]) > 0.05)
                         Fail(r, "wall_share", "composition", FormattableString.Invariant($"wall covers {r.sharesSpec[0]:0.00} (16:9) / {r.sharesSpec[1]:0.00} (21:9) of the frame vs spec {sp[0]:0.00} / {sp[1]:0.00}"),
                              "correct the 14.5.6 share numbers to the ray-cast values (Part 1.6)", "lead");
+                    // fix wave C48: a built subject share below its 14.5 number is a reported miss (KS16: the built wall covers less
+                    // of the frame than 14.5.6's 59 % / 46 %)
+                    // (the built frame against the ray-cast spec model's own shares, 2 points of tolerance)
+                    if (r.sharesBuilt != null && (r.sharesBuilt[0] < r.sharesSpec[0] - 0.02 || r.sharesBuilt[1] < r.sharesSpec[1] - 0.02))
+                        Fail(r, "wall_share", "composition-built", FormattableString.Invariant($"built wall covers {r.sharesBuilt[0]:0.000} (16:9) / {r.sharesBuilt[1]:0.000} (21:9) of the frame vs the spec model's {r.sharesSpec[0]:0.000} / {r.sharesSpec[1]:0.000} (14.5.6 {sp[0]:0.00} / {sp[1]:0.00})"),
+                             "bring the built screen wall's share of the KS16 frame up to the 14.5.6 numbers (pose or wall extent; SG's C16), or record the built shares as a Part 1.6 decision", "SG");
                     break;
                 }
             }
@@ -544,9 +555,14 @@ namespace Megastructure
             double e = Math.Max(Math.Abs(pier - sp[1]), Math.Abs(drop - sp[2]));
             string txt = FormattableString.Invariant($"{what} shares sky {s[0]:0.000}, deck {s[1]:0.000}, rail {s[2]:0.000}, near structure {s[3]:0.000}, drop {s[4]:0.000} vs spec sky/{(deckOnly ? "deck" : "pier")}/drop {sp[0]:0.00}/{sp[1]:0.00}/{sp[2]:0.00}");
             if (e > 0.05 || Math.Abs(s[0] - sp[0]) > 0.02)
+            {
                 Fail(r, "composition", kind, txt, s[3] > 0.02
                     ? "the near structure (gate block / frame) takes part of the drop: move the pose (yaw / s) or narrow the structure; else correct the 14.5 share numbers (Part 1.6)"
                     : "correct the 14.5 share numbers to the ray-cast values (Part 1.6) or change the deck plan / pose", owner);
+                // fix wave C48: D-039 (12) keeps T3 across KS12's upper third on purpose; the built shares become the Part 1.6 numbers
+                if (r.shot.id == "KS12" && kind == "composition-built")
+                    Failures[Failures.Count - 1].ruling = FormattableString.Invariant($"D-039 (12): T3 crosses the upper third on purpose; Part 1.6 shares sky {s[0]:0.000} / deck {s[1]:0.000} / rail {s[2]:0.000} / near structure {s[3]:0.000} / drop {s[4]:0.000} (lead logs them)");
+            }
             if (r.shot.id == "KS10" && s[4] < 0.40)
                 Fail(r, "composition", kind, FormattableString.Invariant($"{what}: KS10 drop {s[4]:0.000} < 0.40 (14.5.3 acceptance 2); near structure {s[3]:0.000}"),
                      "keep gate block A out of the KS10 frame (yaw / s) or narrow the pier / pitch further down" + (owner == "lead" ? DropPoseHint(r) : ""), owner ?? "G2");
@@ -993,7 +1009,7 @@ namespace Megastructure
             j.EndArray();
             j.Key("failures").BeginArray();
             foreach (var f in Failures)
-                j.BeginObject().Prop("shot", f.shot).Prop("subject", f.subject).Prop("kind", f.kind).Prop("detail", f.detail).Prop("fix", f.fix).Prop("owner", f.owner).EndObject();
+                j.BeginObject().Prop("shot", f.shot).Prop("subject", f.subject).Prop("kind", f.kind).Prop("detail", f.detail).Prop("fix", f.fix).Prop("owner", f.owner).Prop("ruling", f.ruling).EndObject();
             j.EndArray();
             j.EndObject();
             return j.ToString();
@@ -1146,7 +1162,9 @@ namespace Megastructure
             sb.AppendLine();
             if (Failures.Count == 0) sb.AppendLine("None.");
             foreach (var f in Failures)
-                sb.AppendLine($"- **{f.shot} {f.subject}** ({f.kind}, owner {f.owner}): {f.detail}. Fix: {f.fix}.");
+                sb.AppendLine(f.ruling.Length > 0
+                    ? $"- {f.shot} {f.subject} ({f.kind}, owner {f.owner}), RULED {f.ruling}: {f.detail}."
+                    : $"- **{f.shot} {f.subject}** ({f.kind}, owner {f.owner}): {f.detail}. Fix: {f.fix}.");
             if (Notes.Count > 0)
             {
                 sb.AppendLine();

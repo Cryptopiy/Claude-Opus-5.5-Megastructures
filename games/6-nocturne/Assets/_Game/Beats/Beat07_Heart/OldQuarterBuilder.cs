@@ -10,13 +10,20 @@
 //   picture and a shelf of books hang on the back wall (the part KS19 sees, y 5.64 - 7.0);
 // - the other windows are openings with brick reveals, dark glass at the back, a frame lining, a mullion and a transom, stone
 //   sills and lintels (two of them glow faintly cold behind drawn curtains); the neighbours' proud panes get frames and sills;
-// - the entrance: a recessed door under the entrance light, a stone step and a wall lantern for the light (LOOK_V2 6 beat 7).
+// - the entrance: a recessed door under the entrance light, a stone step and a wall lantern for the light (LOOK_V2 6 beat 7);
+// - HT-03 / HT-08 (fourth start): a cast-iron downpipe with clips, hopper head and shoe on the pier between the two south window
+//   columns (the south half of the face was plain: KS19 texture region 1 meso 0.95); the lantern gets a dark cage (corner posts,
+//   a mid band, a finial) around its frosted glass.
 // The table lamp (GoalLamp x 3.5 sphere at its 14.5.7 height y 5.0) stands on a dresser; the real point light of 14.2.3 (r 14,
 // i 5) at (1 155.6, 5.2, 387.9). The balcony: slab 2.6 x 1.4 m at y 3.4 - 3.6 (D-029, GB-18), railing 0.9 m (NocLine rods 0.02 m
 // every 0.11 m and a 0.05 m top rail on the three open sides), a 0.35 m pot with a 0.6 m plant of 12 dark leaf blades.
 // Neighbours 11.0 m (z 355 - 377) and 12.5 m (z 399 - 421) 1 m behind the tenement's face, a back row to x 1 202. No amber
 // anywhere but the window (14.5.7). The wet floor reflects the quarter's west face (H4 wall plane, dark) and the window (H4
 // source, weight 1). Every goal-window part is named goalWindow* (VisibilitySubjects: the window's and the lamp's own geometry).
+// Fix wave p4_01 (HT): C18 the room x 1.7 and its light x 1.6 (aperture 165-195), the balcony slab in a CC0 concrete skin glowing
+// with the window's bounce (underside 50-80); C35 the railing's side returns at a 0.33 m pitch (no hatch at 1080p); D-034 6 an
+// empty lit room (table, chair pushed back, cup, a cold desk lamp on, nobody) behind the ground-floor window of column -1; FX's
+// request: the ring towers east of the spire and SG's arcade face as kind-0 wall planes of the wet plaza (FX's NocWallWindows).
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -89,8 +96,10 @@ namespace Megastructure
             var ys = new SortedSet<double> { y0, y1 };
             var zs = new SortedSet<double> { z0, z1 };
             foreach (var h in holes) { ys.Add(System.Math.Max(y0, h.y0)); ys.Add(h.y1); zs.Add(h.z0); zs.Add(h.z1); }
-            var ya = new List<double>(ys);
-            var za = new List<double>(zs);
+            // HT-t03: the goal window's constants (387.3, 4.4) and the column / storey arithmetic (387.9 - 0.6, 3.6 + 0.8) differ
+            // in the last bits: merge grid lines closer than 1 mm, or the slivers between them are degenerate triangles
+            var ya = Merged(ys);
+            var za = Merged(zs);
             for (int i = 0; i + 1 < ya.Count; i++)
                 for (int j = 0; j + 1 < za.Count; j++)
                 {
@@ -99,6 +108,14 @@ namespace Megastructure
                     foreach (var h in holes) if (yc > h.y0 && yc < h.y1 && zc > h.z0 && zc < h.z1) { hole = true; break; }
                     if (!hole) G4Kit.OrientedQuad(mb, W(x, ya[i], za[j]), W(x, ya[i + 1], za[j]), W(x, ya[i + 1], za[j + 1]), W(x, ya[i], za[j + 1]), Vector3.left);
                 }
+        }
+
+        /// <summary>Sorted grid values with every run closer than 1 mm merged into its first value.</summary>
+        static List<double> Merged(SortedSet<double> values)
+        {
+            var l = new List<double>(values.Count);
+            foreach (double v in values) if (l.Count == 0 || v - l[l.Count - 1] > 1e-3) l.Add(v);
+            return l;
         }
 
         /// <summary>The four reveal quads of an opening, depth d behind the face at x0 (facing into the opening).</summary>
@@ -144,10 +161,64 @@ namespace Megastructure
             foreach (var o in Openings())
             {
                 if (o.kind != 1) continue;
+                if (IsEmptyRoom(o)) continue;                                   // D-034 6: open to the empty lit room behind
                 bool lit = (o.storey == 2 && o.column == -1) || (o.storey == 3 && o.column == 1);
                 Box(lit ? glow : dark, xb - 0.02, xb + 0.005, o.y0 - 0.005, o.y1 + 0.005, o.z0 - 0.005, o.z1 + 0.005, 0.002f);
             }
         }
+
+        /// <summary>D-034 6: the dark window that opens onto the empty lit room.</summary>
+        public static bool IsEmptyRoom(Opening o) => o.kind == 1 && o.storey == HeartLayout.EmptyStorey && o.column == HeartLayout.EmptyColumn;
+
+        /// <summary>The empty room's opening (D-034 6).</summary>
+        public static Opening EmptyRoomOpening()
+        {
+            foreach (var o in Openings()) if (IsEmptyRoom(o)) return o;
+            return default;
+        }
+
+        /// <summary>D-034 6 (lead ruling): the empty lit room. `shell` the inward-facing room box (back wall, side walls, floor,
+        /// ceiling), `wood` a table and a chair pushed back from it, half turned toward the window, `steel` the cup, the desk lamp's
+        /// base, stem and shade, `bulb` the lamp's globe under its shade. Nobody.</summary>
+        public static void EmptyRoom(MeshBuilder shell, MeshBuilder wood, MeshBuilder steel, MeshBuilder bulb)
+        {
+            double xa = HeartLayout.TenX0 + HeartLayout.DarkRevealD, xb = HeartLayout.EmptyX1, yb = HeartLayout.EmptyY1;
+            double za = HeartLayout.EmptyZ0, zb = HeartLayout.EmptyZ1;
+            G4Kit.OrientedQuad(shell, W(xb, 0.0, za), W(xb, yb, za), W(xb, yb, zb), W(xb, 0.0, zb), Vector3.left);
+            G4Kit.OrientedQuad(shell, W(xa, 0.0, za), W(xa, yb, za), W(xb, yb, za), W(xb, 0.0, za), Vector3.forward);
+            G4Kit.OrientedQuad(shell, W(xa, 0.0, zb), W(xa, yb, zb), W(xb, yb, zb), W(xb, 0.0, zb), Vector3.back);
+            G4Kit.OrientedQuad(shell, W(xa, 0.002, za), W(xa, 0.002, zb), W(xb, 0.002, zb), W(xb, 0.002, za), Vector3.up);
+            G4Kit.OrientedQuad(shell, W(xa, yb, za), W(xa, yb, zb), W(xb, yb, zb), W(xb, yb, za), Vector3.down);
+            // the table: a 1.0 x 0.7 m top at 0.76 m on four legs, its long side along z, 1.3 m behind the window
+            double tx = 1157.55, tz = 384.75, ty = 0.76;
+            Box(wood, tx - 0.35, tx + 0.35, ty - 0.035, ty, tz - 0.5, tz + 0.5, 0.004f);
+            for (int i = 0; i < 4; i++)
+            {
+                double lx = tx + ((i & 1) == 0 ? -0.3 : 0.3), lz = tz + ((i & 2) == 0 ? -0.45 : 0.45);
+                Box(wood, lx - 0.025, lx + 0.025, 0.002, ty - 0.035, lz - 0.025, lz + 0.025, 0.002f);
+            }
+            // the chair, pushed back toward the window and turned 25 deg (someone has just got up): seat, legs, back with two rails
+            Vector3 cc = W(1156.85, 0.0, 385.2);
+            Quaternion q = Quaternion.Euler(0f, 25f, 0f);
+            ChairPart(wood, cc, q, new Vector3(0f, 0.455f, 0f), new Vector3(0.42f, 0.03f, 0.42f));
+            for (int i = 0; i < 4; i++)
+                ChairPart(wood, cc, q, new Vector3((i & 1) == 0 ? -0.18f : 0.18f, 0.22f, (i & 2) == 0 ? -0.18f : 0.18f), new Vector3(0.035f, 0.44f, 0.035f));
+            ChairPart(wood, cc, q, new Vector3(-0.19f, 0.71f, -0.18f), new Vector3(0.03f, 0.48f, 0.03f));
+            ChairPart(wood, cc, q, new Vector3(-0.19f, 0.71f, 0.18f), new Vector3(0.03f, 0.48f, 0.03f));
+            ChairPart(wood, cc, q, new Vector3(-0.19f, 0.88f, 0f), new Vector3(0.025f, 0.08f, 0.40f));
+            ChairPart(wood, cc, q, new Vector3(-0.19f, 0.66f, 0f), new Vector3(0.025f, 0.05f, 0.40f));
+            // a cup by the table's window edge, the desk lamp at its far end
+            MeshKit.Cylinder(steel, W(tx - 0.2, ty, tz + 0.18), W(tx - 0.2, ty + 0.09, tz + 0.18), 0.04f, 12, true);
+            MeshKit.Cylinder(steel, W(tx + 0.12, ty, tz - 0.32), W(tx + 0.12, ty + 0.02, tz - 0.32), 0.08f, 12, true);
+            MeshKit.Cylinder(steel, W(tx + 0.12, ty + 0.02, tz - 0.32), W(tx + 0.12, ty + 0.40, tz - 0.32), 0.012f, 8, true);
+            MeshKit.Cylinder(steel, W(tx + 0.12, ty + 0.38, tz - 0.32), W(tx + 0.12, ty + 0.47, tz - 0.32), 0.10f, 16, false);
+            MeshKit.Sphere(bulb, W(tx + 0.12, ty + 0.37, tz - 0.32), 0.035f, 12, 6);
+        }
+
+        static void ChairPart(MeshBuilder mb, Vector3 centre, Quaternion q, Vector3 local, Vector3 size) => MeshKit.ChamferBox(mb, centre + q * local, size, 0.003f, q);
+
+        /// <summary>The desk lamp's bulb centre (the empty room's light).</summary>
+        public static Vector3 EmptyLampPos => new Vector3(1157.67f, 0.76f + 0.37f, 384.43f);
 
         /// <summary>Joinery of a dark window opening (x0 face): lining in the reveal at the pane, a mullion and a transom at 2/3.</summary>
         static void DarkJoinery(MeshBuilder mb, double xFace, double depth, double y0, double y1, double z0, double z1)
@@ -170,9 +241,11 @@ namespace Megastructure
                 Box(mb, x - HeartLayout.LintelProud, x + 0.02, y1, y1 + HeartLayout.LintelH, z0 - HeartLayout.LintelOver, z1 + HeartLayout.LintelOver, 0.005f);
         }
 
-        /// <summary>The tenement's window joinery (dark windows, the door) and stone (sills, lintels, the goal window's lintel, the step).</summary>
-        public static void TenementTrim(MeshBuilder joinery, MeshBuilder stone)
+        /// <summary>The tenement's window joinery (dark windows), the door (into `door`, or the joinery if null) and stone (sills,
+        /// lintels, the goal window's lintel, the step).</summary>
+        public static void TenementTrim(MeshBuilder joinery, MeshBuilder stone, MeshBuilder door = null)
         {
+            door = door ?? joinery;
             foreach (var o in Openings())
             {
                 if (o.kind == 1)
@@ -190,11 +263,26 @@ namespace Megastructure
                         o.z0 - HeartLayout.LintelOver, o.z1 + HeartLayout.LintelOver, 0.005f);
                     Box(stone, HeartLayout.TenX0 - 0.32, HeartLayout.TenX0 + HeartLayout.DoorRevealD, -0.05, 0.14, o.z0 - 0.15, o.z1 + 0.15, 0.01f);
                     double xd = HeartLayout.TenX0 + HeartLayout.DoorRevealD;
-                    Box(joinery, xd - 0.05, xd, 0.14, o.y1, o.z0, o.z1);
-                    Box(joinery, xd - 0.07, xd - 0.05, 0.14, o.y1, o.z0, o.z0 + 0.08);
-                    Box(joinery, xd - 0.07, xd - 0.05, 0.14, o.y1, o.z1 - 0.08, o.z1);
-                    Box(joinery, xd - 0.07, xd - 0.05, 1.05, 1.15, o.z0 + 0.08, o.z1 - 0.08);
-                    Box(joinery, xd - 0.07, xd - 0.05, o.y1 - 0.48, o.y1 - 0.40, o.z0 + 0.08, o.z1 - 0.08);
+                    Box(door, xd - 0.05, xd, 0.14, o.y1, o.z0, o.z1);
+                    Box(door, xd - 0.07, xd - 0.05, 0.14, o.y1, o.z0, o.z0 + 0.08);
+                    Box(door, xd - 0.07, xd - 0.05, 0.14, o.y1, o.z1 - 0.08, o.z1);
+                    Box(door, xd - 0.07, xd - 0.05, 1.05, 1.15, o.z0 + 0.08, o.z1 - 0.08);
+                    Box(door, xd - 0.07, xd - 0.05, o.y1 - 0.48, o.y1 - 0.40, o.z0 + 0.08, o.z1 - 0.08);
+                    // HT-10 (fifth start): the leaf read as a flat grey slab under the lantern (HT_r01 KS19): a bottom rail, a centre
+                    // muntin and four raised fielded panels (the lantern's light catches their top edges), a lever handle; the
+                    // transom light above the top rail is a dark pane between glazing bars
+                    double zc = 0.5 * (o.z0 + o.z1);
+                    Box(door, xd - 0.07, xd - 0.05, 0.14, 0.30, o.z0 + 0.08, o.z1 - 0.08);
+                    Box(door, xd - 0.07, xd - 0.05, 0.30, o.y1 - 0.48, zc - 0.04, zc + 0.04);
+                    foreach (var (pa, pb) in new[] { (0.36, 0.99), (1.21, o.y1 - 0.54) })
+                        foreach (var (qa, qb) in new[] { (o.z0 + 0.14, zc - 0.10), (zc + 0.10, o.z1 - 0.14) })
+                        {
+                            Box(door, xd - 0.068, xd - 0.05, pa, pb, qa, qb);                               // the field
+                            Box(door, xd - 0.085, xd - 0.068, pa + 0.05, pb - 0.05, qa + 0.05, qb - 0.05);  // the raised centre
+                        }
+                    Box(door, xd - 0.16, xd - 0.07, 1.00, 1.03, o.z1 - 0.26, o.z1 - 0.12);                   // lever
+                    Box(door, xd - 0.085, xd - 0.07, 0.94, 1.12, o.z1 - 0.15, o.z1 - 0.11);                  // back plate
+                    Box(door, xd - 0.07, xd - 0.05, o.y1 - 0.40, o.y1, zc - 0.02, zc + 0.02);                 // transom bar
                 }
             }
         }
@@ -398,6 +486,8 @@ namespace Megastructure
                 Vector2 a = corners[side], b = corners[side + 1];
                 float len = (b - a).magnitude;
                 int n = Mathf.Max(1, Mathf.RoundToInt(len / (float)HeartLayout.RodStep));
+                // C35: the side returns (sides 0 and 2, seen nearly edge-on from KS19) at RodStepSide, the front at RodStep
+                if (side != 1) n = Mathf.Max(1, Mathf.RoundToInt(len / (float)HeartLayout.RodStepSide));
                 for (int i = (side == 0 ? 0 : 1); i <= n; i++)
                 {
                     Vector2 p = Vector2.Lerp(a, b, (float)i / n);
@@ -472,6 +562,42 @@ namespace Megastructure
             Box(housing, x - 0.11, x + 0.11, y + 0.13, y + 0.17, z - 0.11, z + 0.11, 0.01f);                            // cap
             Box(housing, x - 0.09, x + 0.09, y - 0.16, y - 0.13, z - 0.09, z + 0.09, 0.008f);                            // base
             Box(glass, x - 0.08, x + 0.08, y - 0.13, y + 0.13, z - 0.08, z + 0.08, 0.004f);
+            // HT-08: the cage around the glass: four corner posts, a mid band, a finial on the cap
+            const double g = 0.08, pw = 0.012;
+            for (int i = 0; i < 4; i++)
+            {
+                double sx = (i & 1) == 0 ? -g : g, sz = (i & 2) == 0 ? -g : g;
+                Box(housing, x + sx - pw, x + sx + pw, y - 0.125, y + 0.125, z + sz - pw, z + sz + pw, 0.002f);
+            }
+            Box(housing, x - g - 0.006, x + g + 0.006, y - 0.012, y + 0.012, z - g - 0.006, z + g + 0.006, 0.002f);
+            Box(housing, x - 0.02, x + 0.02, y + 0.17, y + 0.24, z - 0.02, z + 0.02, 0.004f);
+        }
+
+        /// <summary>The rainwater downpipe (HT-03; HeartLayout.Downpipe*): the pipe from the shoe to the hopper head, a shoe kicked
+        /// out at the foot, the hopper head under the roof edge with its outlet into the wall, wall clips every DownpipeClipStep.</summary>
+        public static void Downpipe(MeshBuilder mb)
+        {
+            double x = HeartLayout.TenX0 - HeartLayout.DownpipeOff, z = HeartLayout.DownpipeZ, top = HeartLayout.DownpipeTop;
+            float r = (float)HeartLayout.DownpipeR;
+            MeshKit.Cylinder(mb, W(x, 0.25, z), W(x, top - 0.30, z), r, 12, true);
+            MeshKit.Cylinder(mb, W(x, 0.25, z), W(x - 0.12, 0.08, z), r, 12, true);
+            Box(mb, x - 0.09, HeartLayout.TenX0 + 0.01, top - 0.32, top, z - 0.14, z + 0.14, 0.01f);
+            for (double y = 1.2; y < top - 0.5; y += HeartLayout.DownpipeClipStep)
+                Box(mb, x - r - 0.01, HeartLayout.TenX0 + 0.01, y - 0.03, y + 0.03, z - r - 0.012, z + r + 0.012, 0.004f);
+        }
+
+        /// <summary>FX's request (fix wave, INT-13 / D-032 3): the lit facades the Heart plaza mirrors, as kind-0 wall planes (FX's
+        /// NocWallWindows, gain 2.5): the ring towers' inner faces east of the spire (one plane at RingInner, z 388 +- 330: KS17's
+        /// floor mirrors elevations 0-15 deg, where these towers stand behind the spire) over s 1 250 - 1 515, and SG's arcade north
+        /// face (z ArcZ1, x ArcX0 - ArcX1, 38 m) beside the KS17 eye until s 1 350. With the tenement's kind-1 plane (s 1 380 -
+        /// 1 515) at most 3 walls are active at any s (12 m crossfades: the arcade's ends at 1 362, the tenement's starts at 1 368).</summary>
+        public static void RegisterPlazaWalls()
+        {
+            Color ring = NocSurfaceMath.FacadeMacro(0, NocFacadeMath.RegionD, 1380.0);
+            NocWetRegistry.AddWall(1250.0, 1515.0, (float)(HeartLayout.SX + HeartLayout.RingInner), (float)HeartLayout.SZ, -1f, 0f, 330f, 450f, ring, 0);
+            Color arc = NocSurfaceMath.FacadeMacro(0, NocFacadeMath.RegionD, 1300.0);
+            NocWetRegistry.AddWall(1250.0, 1350.0, (float)(0.5 * (SignsLayout.ArcX0 + SignsLayout.ArcX1)), (float)SignsLayout.ArcZ1, 0f, 1f,
+                (float)(0.5 * (SignsLayout.ArcX1 - SignsLayout.ArcX0)), (float)SignsLayout.ArcH, arc, 0);
         }
 
         public static void Build(WorldContext ctx, Transform root)
@@ -526,7 +652,14 @@ namespace Megastructure
             GoalSill(goalSill);
             G4Kit.Add(ctx, root, "goalWindowSill", goalSill, stone, Origin);
 
-            G4Kit.Add(ctx, root, "balcony", BalconySlab(), lib != null ? lib.StoneWall : null, Origin);
+            // C18: the slab in a CC0 concrete skin glowing with the window's warm bounce (emission follows the albedo)
+            Material bal = null;
+            if (lib != null)
+            {
+                bal = G4Kit.Emissive(lib.Concrete != null ? lib.Concrete : lib.StoneWall, warm, HeartLayout.BalconyBounce, "Beat07_BalconyBounce");
+                if (bal != null && bal.HasProperty("_EmitByAlbedo")) bal.SetFloat("_EmitByAlbedo", 1f);
+            }
+            G4Kit.Add(ctx, root, "balcony", BalconySlab(), bal, Origin);
             var rods = new MeshBuilder();
             var rails = new MeshBuilder();
             Railing(rods, rails);
@@ -569,7 +702,9 @@ namespace Megastructure
             G4Kit.Add(ctx, root, "darkWindowsCurtained", glowPanes, glowM, Origin);
             var joinery = new MeshBuilder();
             var trim = new MeshBuilder();
-            TenementTrim(joinery, trim);
+            var doorLeaf = new MeshBuilder();
+            TenementTrim(joinery, trim, doorLeaf);
+            G4Kit.Add(ctx, root, "tenementDoor", doorLeaf, lib != null ? lib.SteelPainted : null, Origin);   // HT-10: dark paint
             NeighbourTrim(joinery, trim);
             G4Kit.Add(ctx, root, "darkWindowsJoinery", joinery, wood, Origin);
             G4Kit.Add(ctx, root, "tenementStoneTrim", trim, stone, Origin);
@@ -589,12 +724,36 @@ namespace Megastructure
             Lantern(housing, lanternGlass);
             G4Kit.Add(ctx, root, "entranceLantern", housing, lib != null ? lib.SteelPainted : null, Origin);
             G4Kit.Add(ctx, root, "entranceLanternGlass", lanternGlass, lib != null ? G4Kit.Emissive(lib.SteelPainted, entrance, HeartLayout.LanternGain, "Beat07_Lantern") : null, Origin);
+            // D-034 6: the empty lit room (cold light; the goal window stays the only warm window)
+            Color cold = G4Kit.Lin(NocPal.WinCold);
+            var eShell = new MeshBuilder();
+            var eWood = new MeshBuilder();
+            var eSteel = new MeshBuilder();
+            var eBulb = new MeshBuilder();
+            EmptyRoom(eShell, eWood, eSteel, eBulb);
+            Material eWall = null;
+            if (lib != null)
+            {
+                eWall = G4Kit.Emissive(lib.Plaster != null ? lib.Plaster : lib.Concrete, cold, HeartLayout.EmptyGlow, "Beat07_EmptyRoom");
+                if (eWall != null && eWall.HasProperty("_EmitByAlbedo")) eWall.SetFloat("_EmitByAlbedo", 1f);
+            }
+            G4Kit.Add(ctx, root, "emptyRoom", eShell, eWall, Origin);
+            G4Kit.Add(ctx, root, "emptyRoomFurniture", eWood, wood, Origin);
+            G4Kit.Add(ctx, root, "emptyRoomThings", eSteel, lib != null ? lib.SteelPainted : null, Origin);
+            G4Kit.Add(ctx, root, "emptyRoomBulb", eBulb, lib != null ? G4Kit.Emissive(lib.SteelPainted, cold, HeartLayout.EmptyBulbGain, "Beat07_EmptyBulb") : null, Origin);
+            G4Kit.PointLight(root, "emptyRoomLight", EmptyLampPos, cold, HeartLayout.EmptyLightRange, HeartLayout.EmptyLightIntensity);
+            var pipe = new MeshBuilder();
+            Downpipe(pipe);
+            G4Kit.Add(ctx, root, "tenementDownpipe", pipe, lib != null ? lib.SteelPainted : null, Origin);
             // H4: the window as a vertical source (weight 1), the quarter's west face as a dark wall plane
             NocWetRegistry.AddSource(new Vector3((float)HeartLayout.GoalX, (float)(HeartLayout.GoalY0 + 0.1), (float)HeartLayout.GoalZC),
                 new Vector3((float)HeartLayout.GoalX, (float)(HeartLayout.GoalY1 - 0.1), (float)HeartLayout.GoalZC), 0.6f, G4Kit.Scale(warm, 1.6));
             // Look v2 (-surf-v 2, TEXTURE_PLAN 2.11): the brick face's radiance under PA's rig (porosity 0.5) at the range's midpoint
             Color quarter = NocSurfaceMath.WallRadiance(NocPal.Brick, 0.5 * (1380.0 + 1515.0), -1.0, 0.0, 1.0, NocSurfaceConstants.SurfPorBrick);
             NocWetRegistry.AddWall(1380.0, 1515.0, (float)HeartLayout.TenX0, 388f, -1f, 0f, 33f, (float)HeartLayout.TenH, quarter, 1);
+            // RegisterPlazaWalls() runs in ScreenWallBuilder (Beat06), before the screen wall: a kind-0 wall must be registered before
+            // every wall whose activity changes during its own (here the screen wall's fade-out at s 1 277 and this tenement plane's
+            // fade-in at s 1 368), or it changes slot and its mirrored windows re-roll in one frame (integration round, QA-F02)
             ctx.Log(System.FormattableString.Invariant($"Beat07 Old Quarter: tenement x {HeartLayout.TenX0}-{HeartLayout.TenX1}, z {HeartLayout.TenZ0}-{HeartLayout.TenZ1}, {HeartLayout.TenH} m; window x {HeartLayout.GoalX}, y {HeartLayout.GoalY0}-{HeartLayout.GoalY1}, z {HeartLayout.GoalZ0}-{HeartLayout.GoalZ1}; lamp y {LampCentreY}; {Openings().Count} openings, joinery {joinery.TriangleCount + goalJoinery.TriangleCount} triangles, curtain {curtain.TriangleCount}"));
         }
     }

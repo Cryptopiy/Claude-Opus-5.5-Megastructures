@@ -1,7 +1,8 @@
 // PromenadeLintel: the garden courtyard's north side above the promenade's entrance (GE, D-029 GB-03; GateDims part 4): a 6 m deep
-// wall-beam from the screen-wall slab (x 874, 0.5 m into its mass) to the east block's line x 914, z 280..286, y 40..560. Without
+// wall-beam from the screen-wall slab (x 874, 0.5 m into its mass) to the east block's line x 914, z 280..286, y 50..560. Without
 // it the courtyard was open to the north between the screen wall and the arcade, and from the garden (KS15, the beat-5 stills)
-// the koi showed over the 38 m arcade through the promenade gap. The walker passes under its 40 m soffit (a concrete head band
+// the koi showed over the 38 m arcade through the promenade gap. The walker passes under its 50 m soffit (integration round: 40 ->
+// 50 for KS16's wall share, GateDims.PlY0; the koi's sight lines over the arcade start at y 58) (a concrete head band
 // and soffit) onto the promenade; the south face (toward the garden), the north face (toward the promenade) and the east end are
 // NocFacade facade mode, the top a roof cap at the face top. Its west end lies inside the screen-wall slab (no face there).
 using System.Collections.Generic;
@@ -14,9 +15,13 @@ namespace Megastructure
         public const uint IdSouth = 0x6400u, IdNorth = 0x6401u, IdEnd = 0x6402u, IdTop = 0x6403u;
         public const int Beat = 5;
 
+        /// <summary>Soffit height of the next build (GateDims.PlY0; PromenadeLintelTests builds the world at other heights to show
+        /// why the soffit stops at 50: the koi's sight lines over the arcade).</summary>
+        public static double SoffitY = GateDims.PlY0;
+
         public static void Build(List<ReliefPart> parts)
         {
-            double x0 = GateDims.PlX0, x1 = GateDims.PlX1, z0 = GateDims.PlZ0, z1 = GateDims.PlZ1, y0 = GateDims.PlY0, top = EdgeDims.FaceTop;
+            double x0 = GateDims.PlX0, x1 = GateDims.PlX1, z0 = GateDims.PlZ0, z1 = GateDims.PlZ1, y0 = SoffitY, top = EdgeDims.FaceTop;
             var origin = ReliefKit.P(894.0, 300.0, 283.0);
             var fac = new ReliefPart("PromenadeLintel_facade", ReliefMat.Facade, origin, Beat);
             var conc = new ReliefPart("PromenadeLintel_concrete", ReliefMat.Concrete, origin, Beat);

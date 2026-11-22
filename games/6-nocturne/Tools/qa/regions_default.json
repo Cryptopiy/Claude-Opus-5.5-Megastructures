@@ -9,7 +9,8 @@
   "its geometry exists; neon masks (clipped / isolated-pixel exclusions) likewise ('exclude').",
   "Q1 (Phase 3 graybox gate): every banding rect re-placed on the gradient it names in the built geometry (the D-025 abyss rect y 0.60-0.95 lies on the deck in KS09 / KS10 / KS12; the sky rects of KS00-KS04 / KS07 lay on facades and blades; KS16 spanned panel seams; KS17 / KS18 held the koi; KS19 the tenement roof edge). Rects avoid rails, cross bridges, layer lines, the upper tube and the koi at 16:9, 16:10 and 21:9 (checked on QA/captures/graybox01*). KS03 and KS19 have no sky: their darkest smooth gradient (alley wall, tenement wall) is the region. Thresholds unchanged.",
   "TQ 2026-11-16 (requests of GE and PA after GE's masses, checked on QA/captures/PA_r03): KS04 sky to y 0.22 (the canyon skybridge starts at 0.26), KS05 cloud y 0.05-0.36 (the beam at 0.37-0.45), KS13 abyss inside the glass strip between its inner members and above the light line, KS17 plaza clear of the bollards; KS07 sky_above_gulf and KS15 crown_gap_sky dropped (face B and the east block now fill those frames: no sky or soffit gradient left); seq_enc_beat07_goal (a static clip at the KS19 pose) and seq_enc_beat01_wall carry the KS19 / KS00 wall rects.",
-  "FX 2026-11-16 (QA-2, QA-6; checked on QA/captures/lookv2_01, lookv2_01_ksv1, graybox01): KS00 mouth_glow moved off the signs and lamps of the far alley onto the wet floor that mirrors the mouth glow (x 0.487-0.527, y 0.493-0.572, BandScore 0.20); KS03 alley_wall_dark onto the dark alley wall alone (x 0.01-0.10, clear of the boulevard towers; BandScore 0.15); KS17 plaza gated on coherent visible steps only (\"gate\": \"steps\": the granite paving's own plateaus and the lamp-streak edges are not banding; a quantisation contour still fails). Thresholds unchanged."
+  "FX 2026-11-16 (QA-2, QA-6; checked on QA/captures/lookv2_01, lookv2_01_ksv1, graybox01): KS00 mouth_glow moved off the signs and lamps of the far alley onto the wet floor that mirrors the mouth glow (x 0.487-0.527, y 0.493-0.572, BandScore 0.20); KS03 alley_wall_dark onto the dark alley wall alone (x 0.01-0.10, clear of the boulevard towers; BandScore 0.15); KS17 plaza gated on coherent visible steps only (\"gate\": \"steps\": the granite paving's own plateaus and the lamp-streak edges are not banding; a quantisation contour still fails). Thresholds unchanged.",
+  "QA 2026-11-21 (fix wave C19 / C47; checked on QA/captures/p4_01 and p4_01_1610 / _219): \"units\": \"frac169\" = a 16:9 frame fraction projected to the image's aspect at the same vFOV (qa_common.scale_xy), so one rect stays on its subject at 16:9, 16:10 and 21:9. Every encode clip carries the rects of the key shot it ends on (match lists). KS10 abyss [0.40, 0.04, 0.51, 0.22] (AT's request, D-037 19). KS12 abyss moved onto the visible drop between the deck members, left of the traffic river [0.41, 0.53, 0.51, 0.68] (the old rect lay on T3's windows and the tube). KS16 wall_panel on one open panel of the wall field between its seams, above the LED dot grid and left of the cyan bars [0.14, 0.53, 0.20, 0.62] (the old 16:10 / 21:9 rects sat on the lobby canopy, the 16:9 one on the dot grid). Thresholds unchanged. enc_beat05_crown: the dark gap between the two canopies left of the crown ring [0.42, 0.0, 0.48, 0.11] (encode clip only, not KS15's gate); enc_trans_mouth: the fogged dark alley wall left of the mouth [0.04, 0.10, 0.20, 0.60] (checked on the p4_01 CRF-23 decodes)."
  ],
  "regions": [
   {
@@ -40,7 +41,10 @@
    ]
   },
   {
-   "match": "KS02_*",
+   "match": [
+    "KS02_*",
+    "seq_enc_beat01_slit*"
+   ],
    "aspect": "any",
    "units": "frac",
    "banding": [
@@ -74,7 +78,10 @@
    ]
   },
   {
-   "match": "KS04_*",
+   "match": [
+    "KS04_*",
+    "seq_enc_beat02_axis*"
+   ],
    "aspect": "any",
    "units": "frac",
    "banding": [
@@ -91,7 +98,10 @@
    ]
   },
   {
-   "match": "KS05_*",
+   "match": [
+    "KS05_*",
+    "seq_enc_beat02_sky*"
+   ],
    "aspect": "any",
    "units": "frac",
    "banding": [
@@ -125,16 +135,19 @@
    ]
   },
   {
-   "match": "KS10_*",
+   "match": [
+    "KS10_*",
+    "seq_enc_beat03_abyss*"
+   ],
    "aspect": "any",
-   "units": "frac",
+   "units": "frac169",
    "banding": [
     {
      "name": "abyss",
      "rect": [
-      0.36,
+      0.4,
       0.04,
-      0.52,
+      0.51,
       0.22
      ],
      "dir": "v"
@@ -142,17 +155,20 @@
    ]
   },
   {
-   "match": "KS12_*",
+   "match": [
+    "KS12_*",
+    "seq_enc_beat04_void*"
+   ],
    "aspect": "any",
-   "units": "frac",
+   "units": "frac169",
    "banding": [
     {
      "name": "abyss",
      "rect": [
+      0.41,
       0.53,
-      0.2,
-      0.66,
-      0.4
+      0.51,
+      0.68
      ],
      "dir": "v"
     }
@@ -176,58 +192,30 @@
    ]
   },
   {
-   "match": "KS16_*",
-   "aspect": "16:9",
-   "units": "frac",
+   "match": [
+    "KS16_*",
+    "seq_enc_beat06_wall*"
+   ],
+   "aspect": "any",
+   "units": "frac169",
    "banding": [
     {
      "name": "wall_panel",
      "rect": [
+      0.14,
+      0.53,
       0.2,
-      0.56,
-      0.32,
-      0.76
+      0.62
      ],
      "dir": "v"
     }
    ]
   },
   {
-   "match": "KS16_*",
-   "aspect": "16:10",
-   "units": "frac",
-   "banding": [
-    {
-     "name": "wall_panel",
-     "rect": [
-      0.1,
-      0.62,
-      0.3,
-      0.95
-     ],
-     "dir": "v"
-    }
-   ]
-  },
-  {
-   "match": "KS16_*",
-   "aspect": "21:9",
-   "units": "frac",
-   "banding": [
-    {
-     "name": "wall_panel",
-     "rect": [
-      0.2,
-      0.62,
-      0.4,
-      0.95
-     ],
-     "dir": "v"
-    }
-   ]
-  },
-  {
-   "match": "KS17_*",
+   "match": [
+    "KS17_*",
+    "seq_enc_beat07_plaza*"
+   ],
    "aspect": "any",
    "units": "frac",
    "banding": [
@@ -317,6 +305,44 @@
       0.05,
       0.25,
       0.55
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": [
+    "seq_enc_beat05_crown*"
+   ],
+   "aspect": "any",
+   "units": "frac169",
+   "banding": [
+    {
+     "name": "crown_gap",
+     "rect": [
+      0.42,
+      0.0,
+      0.48,
+      0.11
+     ],
+     "dir": "v"
+    }
+   ]
+  },
+  {
+   "match": [
+    "seq_enc_trans_mouth*"
+   ],
+   "aspect": "any",
+   "units": "frac169",
+   "banding": [
+    {
+     "name": "mouth_dark_wall",
+     "rect": [
+      0.04,
+      0.1,
+      0.2,
+      0.6
      ],
      "dir": "v"
     }

@@ -1,7 +1,9 @@
 // CityHum: the H layer of MASTER_PROMPT 14.3 (brown noise LP 90 Hz, 50 and 100 Hz partials, neon buzz 2.4-3.6 kHz;
 // docs/research/R5 4.3), the distant city. Four parts with per-beat power shares (Rule-P blended, they sum to 1):
-//   brown: white -> leaky integrator (5 Hz corner) -> TPT LP 90 Hz, decorrelated L / R;
-//   deep : the abyss's voice in beats 3-4 (S4's "deep hum"), an independent brown -> LP 45 Hz;
+//   brown: white -> leaky integrator (5 Hz corner) -> TPT LP 90 Hz -> 4th-order Butterworth HP 32 Hz, decorrelated L / R;
+//   deep : the abyss's voice in beats 3-4 (S4's "deep hum"), an independent brown -> LP 45 Hz -> HP 32 Hz (4th order);
+//   (fix wave C49: without the high-pass 20-56 % of H's power lay below 30 Hz, where nothing plays it and the edit's
+//   make-up limiter would pump on it; the normaliser now counts only the audible hum, so the 14.3 levels are heard)
 //   mains: one double 50 Hz master phase with +-0.02 Hz grid wander, 100 Hz at 0 dB, 50 Hz at -6, 150 Hz at -12
 //          (transformer magnetostriction hums at twice the line frequency), DC-blocker loss compensated per partial;
 //   buzz : harmonics 24-36 of 100 Hz under a Gaussian at 3.0 kHz (sigma 350 Hz), hashed phases, +-15 % flutter at 0.2-0.7 Hz;
@@ -16,7 +18,9 @@ namespace Megastructure
     public sealed class CityHum
     {
         public const int BuzzPartials = 13;
-        public const double BrownLpHz = 90.0, DeepLpHz = 45.0, LeakHz = 5.0;
+        public const double BrownLpHz = 90.0, DeepLpHz = 45.0, LeakHz = 5.0, SubHpHz = 32.0;
+        /// <summary>The two sections of the 4th-order Butterworth high-pass (Q of each 2nd-order stage).</summary>
+        const double HpQ1 = 0.5412, HpQ2 = 1.3066;
         // power shares per beat: brown, deep, mains, buzz
         static readonly double[] ShBrown = { 0.65, 0.62, 0.35, 0.40, 0.65, 0.40, 0.62 };
         static readonly double[] ShDeep = { 0.05, 0.08, 0.50, 0.45, 0.10, 0.05, 0.08 };
@@ -26,7 +30,7 @@ namespace Megastructure
         readonly double m_fs, m_leak, m_brownNorm, m_deepNorm, m_mainsNorm, m_buzzNorm, m_g50, m_g100, m_g150;
         NoiseD m_nl, m_nr, m_ndl, m_ndr;
         double m_il, m_ir, m_idl, m_idr;
-        SvfD m_ll, m_lr, m_dl, m_dr;
+        SvfD m_ll, m_lr, m_dl, m_dr, m_hl, m_hr, m_hdl, m_hdr, m_gl, m_gr, m_gdl, m_gdr;
         double m_ph50;
         readonly double[] m_bAmp = new double[BuzzPartials], m_bPsi = new double[BuzzPartials], m_bFl = new double[BuzzPartials];
         readonly double[] m_flAmp = new double[BuzzPartials];
@@ -41,6 +45,8 @@ namespace Megastructure
             m_leak = Math.Exp(-NocAudio.TwoPi * LeakHz / fs);
             m_ll.Set(BrownLpHz, 0.7071, fs); m_lr.CopyCoefficients(in m_ll);
             m_dl.Set(DeepLpHz, 0.7071, fs); m_dr.CopyCoefficients(in m_dl);
+            m_hl.Set(SubHpHz, HpQ1, fs); m_hr.CopyCoefficients(in m_hl); m_hdl.CopyCoefficients(in m_hl); m_hdr.CopyCoefficients(in m_hl);
+            m_gl.Set(SubHpHz, HpQ2, fs); m_gr.CopyCoefficients(in m_gl); m_gdl.CopyCoefficients(in m_gl); m_gdr.CopyCoefficients(in m_gl);
             m_brownNorm = BrownNorm(fs, BrownLpHz, m_leak);
             m_deepNorm = BrownNorm(fs, DeepLpHz, m_leak);
             ulong sd = DspHash.Mix(seed ^ 0xB022UL);
@@ -59,13 +65,14 @@ namespace Megastructure
             m_kb.Init(0.05, controlRate); m_kd.Init(0.05, controlRate); m_km.Init(0.05, controlRate); m_kz.Init(0.05, controlRate);
         }
 
-        /// <summary>Unit-RMS normaliser of white (variance 1/3) -> leaky integrator -> LP fc -> DC 20 Hz (impulse energy).</summary>
+        /// <summary>Unit-RMS normaliser of white (variance 1/3) -> leaky integrator -> LP fc -> HP 32 Hz (4th order) -> DC 20 Hz (impulse energy).</summary>
         public static double BrownNorm(double fs, double fc, double leak)
         {
-            var lp = new SvfD(); lp.Set(fc, 0.7071, fs); var dc = new DcBlockD(); dc.Init(NocturneConstants.DcBlockHz, fs);
+            var lp = new SvfD(); lp.Set(fc, 0.7071, fs); var hp = new SvfD(); hp.Set(SubHpHz, HpQ1, fs); var hp2 = new SvfD(); hp2.Set(SubHpHz, HpQ2, fs);
+            var dc = new DcBlockD(); dc.Init(NocturneConstants.DcBlockHz, fs);
             double y = 0, e = 0;
             int n = (int)(4 * fs);
-            for (int i = 0; i < n; i++) { y = leak * y + (i == 0 ? 1.0 : 0.0); double o = dc.Tick(lp.Low(y)); e += o * o; }
+            for (int i = 0; i < n; i++) { y = leak * y + (i == 0 ? 1.0 : 0.0); double o = dc.Tick(hp2.High(hp.High(lp.Low(y)))); e += o * o; }
             return 1.0 / Math.Sqrt(e / 3.0);
         }
 
@@ -86,8 +93,8 @@ namespace Megastructure
             m_il = m_leak * m_il + m_nl.Next(); m_ir = m_leak * m_ir + m_nr.Next();
             m_idl = m_leak * m_idl + m_ndl.Next(); m_idr = m_leak * m_idr + m_ndr.Next();
             double kb = m_kb.At(u), kd = m_kd.At(u);
-            double bl = kb * m_ll.Low(m_il) + kd * m_dl.Low(m_idl);
-            double br = kb * m_lr.Low(m_ir) + kd * m_dr.Low(m_idr);
+            double bl = kb * m_gl.High(m_hl.High(m_ll.Low(m_il))) + kd * m_gdl.High(m_hdl.High(m_dl.Low(m_idl)));
+            double br = kb * m_gr.High(m_hr.High(m_lr.Low(m_ir))) + kd * m_gdr.High(m_hdr.High(m_dr.Low(m_idr)));
             m_ph50 += 50.0 * m_drift / m_fs; if (m_ph50 >= 1.0) m_ph50 -= 1.0;
             double ph = m_ph50;
             double mains = m_km.At(u) * (m_g50 * SineTable.Lookup(ph) + m_g100 * NocAudio.Sin01(2.0 * ph) + m_g150 * NocAudio.Sin01(3.0 * ph));
@@ -102,7 +109,7 @@ namespace Megastructure
 
         public void Flush()
         {
-            m_ll.Flush(); m_lr.Flush(); m_dl.Flush(); m_dr.Flush();
+            m_ll.Flush(); m_lr.Flush(); m_dl.Flush(); m_dr.Flush(); m_hl.Flush(); m_hr.Flush(); m_hdl.Flush(); m_hdr.Flush(); m_gl.Flush(); m_gr.Flush(); m_gdl.Flush(); m_gdr.Flush();
             if (Math.Abs(m_il) < 1e-30) m_il = 0; if (Math.Abs(m_ir) < 1e-30) m_ir = 0;
         }
     }

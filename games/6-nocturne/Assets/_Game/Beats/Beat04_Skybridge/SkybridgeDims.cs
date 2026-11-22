@@ -50,7 +50,7 @@ namespace Megastructure
         public const float GateZ0 = 175f, GateZ1 = 215f, GateTop = 10f, GateBottom = -3.5f;
         public const float OpeningZ0 = 189f, OpeningZ1 = 201f, OpeningTop = 8f;
         public const float TrenchY = -0.5f;            // gate A passage floor beside the 5 m deck (lane 2.15 there)
-        public const float TunnelDepth = 6f;           // blind tube tunnels behind the mouths (trains are clipped there, Phase 4)
+        public const float TunnelDepth = 11.9f;        // TR: blind tube tunnels through the 12 m blocks (ends 10 cm inside the far face; TrainSchedule)
         public const int MouthSegments = 32;           // divisible by 8: the square-ring corners fall on samples
 
         // ---- gate frames (14.5.4: pylons 3 m, lintel 2 m, 16 m high, at x 372-376 and 683-689)

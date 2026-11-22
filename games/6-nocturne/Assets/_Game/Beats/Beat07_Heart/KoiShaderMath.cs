@@ -54,6 +54,10 @@ namespace Megastructure
         /// <summary>Tail: the body (x 1 - 0.9 f) and rim (x 1 - 0.85 f) fade over a 820 - 900 m, f = smoothstep, so the caudal
         /// peduncle dissolves into the veil instead of ending in a rounded tube.</summary>
         public const float TailFadeA0 = 820f, TailFadeA1 = 900f;
+        /// <summary>Fix wave C02 (hologram, not an inflatable): front-shell thinning at the silhouette centre (x 1 - CoreClear n.v^2),
+        /// the Ghost pass's background lift (dst x (1 + GhostGain n.v^2 T)), the interference gaps along the spine (pitch, line
+        /// half-width as a fraction of the pitch, depth; mean kept). NocKoi: _CoreClear, _GhostGain, _GapDepth, KOI_GAPP, KOI_GAPW.</summary>
+        public const float CoreClear = 0.8f, GhostGain = 1.5f, GapPitch = 7.0f, GapHalfWidth = 0.15f, GapDepth = 0.22f;
         /// <summary>Pelvic fins (KO's own frame parts, inside KoiMath's pectoral envelope): root from a = 0.47 L, chord 28 m, at
         /// 70 deg below the side axis, 60 m along normalize(-0.65 F +- 0.65 N - 0.40 B) (splayed, seen from below).</summary>
         public const double PelvicA0 = 423.0, PelvicChord = 28.0, PelvicLength = 60.0, PelvicRootTheta = 70.0;
@@ -377,7 +381,7 @@ namespace Megastructure
             float sFade = Smoothstep(2.5f, 5f, pitchPx);
             float patchP = Patch(a, st);
             float sc = Scales(X, sv, fwE, a, rowM, patchP, out float patchQ);
-            patchM = Lerp(patchP, patchQ, sFade);
+            patchM = Lerp(patchP, patchQ, 0.5f * sFade);                     // fix wave C02: half-cell feather on the patch edges
             float gill = GillA + GillB * Math.Abs(ct);
             float onBody = Smoothstep(gill - 3f, gill + 5f, a);
             float sideW = Smoothstep(0.15f, 0.45f, Math.Abs(ct));

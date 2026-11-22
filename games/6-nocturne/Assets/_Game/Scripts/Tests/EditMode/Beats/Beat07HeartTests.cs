@@ -8,6 +8,9 @@
 //   reproduce KoiMath within 5 cm for every vertex of the mesh at many poses and every pose stays inside the mesh bounds; the driver's
 //   head azimuth follows the 14.5.7 table; nothing of beat 7 stands in the lane; every mesh validates; lights and triangles within
 //   the 14.2.3 / 14.5.7 budgets; no amber-hued emitter but the window.
+// HT (Phase 4 wave A): the plaza inlay overlay is the slab's own top fan, its pattern (17 rings, 48 seams, the walk's leading
+// seam, energy-kept sub-pixel lines, the 6 px pitch fade); the spire's 11 hoops, ring-light breathing (0.1 Hz, ring sum
+// within +-4.2 %), the buttress flare landing on the lowest drum, the podium steps and the envelope R(y) + 4 above 96 m.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -431,10 +434,12 @@ namespace Megastructure.Tests
             var gs = new MeshBuilder(); OldQuarterBuilder.GoalSill(gs); Add("goalSill", gs, OldQuarterBuilder.Origin);
             var tp = new MeshBuilder(); var tg = new MeshBuilder(); OldQuarterBuilder.TenementPanes(tp, tg);
             Add("tenementPanes", tp, OldQuarterBuilder.Origin); Add("curtainedPanes", tg, OldQuarterBuilder.Origin);
-            var tj = new MeshBuilder(); var ts = new MeshBuilder(); OldQuarterBuilder.TenementTrim(tj, ts); OldQuarterBuilder.NeighbourTrim(tj, ts);
+            var tj = new MeshBuilder(); var ts = new MeshBuilder(); var td = new MeshBuilder(); OldQuarterBuilder.TenementTrim(tj, ts, td); OldQuarterBuilder.NeighbourTrim(tj, ts);
+            Add("door", td, OldQuarterBuilder.Origin);
             Add("joinery", tj, OldQuarterBuilder.Origin); Add("stoneTrim", ts, OldQuarterBuilder.Origin);
             var lh = new MeshBuilder(); var lg = new MeshBuilder(); OldQuarterBuilder.Lantern(lh, lg);
             Add("lantern", lh, OldQuarterBuilder.Origin); Add("lanternGlass", lg, OldQuarterBuilder.Origin);
+            var dp = new MeshBuilder(); OldQuarterBuilder.Downpipe(dp); Add("downpipe", dp, OldQuarterBuilder.Origin);
             var dark = new MeshBuilder(); var curtain = new MeshBuilder(); var lamp = new MeshBuilder();
             OldQuarterBuilder.Interior(dark, curtain, lamp);
             Add("furniture", dark, OldQuarterBuilder.Origin); Add("curtain", curtain, OldQuarterBuilder.Origin); Add("lamp", lamp, OldQuarterBuilder.Origin);
@@ -450,10 +455,17 @@ namespace Megastructure.Tests
             PlazaFurnitureBuilder.BollardPoints(pts, yaws);
             var bollards = new MeshBuilder(); PromenadeBuilder.Bollards(bollards, pts, yaws, PlazaFurnitureBuilder.Origin);
             Add("plazaBollards", bollards, PlazaFurnitureBuilder.Origin);
-            var lampPosts = new MeshBuilder();
+            var lampPosts = new MeshBuilder(); var lampLenses = new MeshBuilder();
             for (int i = 0; i < HeartLayout.PlazaLampCount; i++)
-                MeshKit.Cylinder(lampPosts, PlazaFurnitureBuilder.LampPosition(i) - PlazaFurnitureBuilder.Origin, PlazaFurnitureBuilder.LampPosition(i) - PlazaFurnitureBuilder.Origin + Vector3.up * 6f, 0.09f, 8, false);
-            Add("plazaLampPosts", lampPosts, PlazaFurnitureBuilder.Origin);
+                PlazaFurnitureBuilder.LampFixture(lampPosts, lampLenses, PlazaFurnitureBuilder.LampPosition(i) - PlazaFurnitureBuilder.Origin);
+            Add("plazaLampPosts", lampPosts, PlazaFurnitureBuilder.Origin); Add("plazaLampLenses", lampLenses, PlazaFurnitureBuilder.Origin);
+            var benchStone = new MeshBuilder(); var benchWood = new MeshBuilder(); PlazaFurnitureBuilder.Benches(benchStone, benchWood);
+            Add("plazaBenches", benchStone, PlazaFurnitureBuilder.Origin); Add("plazaBenchSeats", benchWood, PlazaFurnitureBuilder.Origin);
+            Assert.AreEqual(6.0, WorldBounds(lampPosts, PlazaFurnitureBuilder.Origin).max.y, 0.05, "lamps 6 m (14.5.7)");
+            // HT-05: the lit bowl is 0.22 m tall from the side (a flat lens disc was a 1-2 px sliver from afar)
+            Bounds lensB = WorldBounds(lampLenses, PlazaFurnitureBuilder.Origin);
+            Assert.GreaterOrEqual(lensB.size.y, 0.2, "lamp bowl height");
+            Assert.AreEqual(HeartLayout.LampBowlY, lensB.min.y, 0.01);
             long tris = 0;
             foreach (var kv in meshes)
             {
@@ -465,14 +477,198 @@ namespace Megastructure.Tests
                 UnityEngine.Object.DestroyImmediate(m);
             }
             // the rest of the beat: floor, spire, towers, koi
-            tris += HeartFloorBuilder.Slab().TriangleCount + SpireBuilder.Shaft().TriangleCount + SpireBuilder.Drums().TriangleCount + 24 * 12 * 2 + 12 * 12 * 16;
+            tris += HeartFloorBuilder.Slab().TriangleCount + HeartFloorBuilder.InlayFan().TriangleCount + SpireBuilder.Shaft().TriangleCount
+                + SpireBuilder.Drums().TriangleCount + SpireBuilder.Plinth().TriangleCount + SpireBuilder.Hoops().TriangleCount;
+            var finsT = new MeshBuilder(); var stripsT = new MeshBuilder();
+            for (int j = 0; j < HeartLayout.FinCount; j++) { SpireBuilder.Fin(finsT, j); SpireBuilder.Strip(stripsT, j); }
+            tris += finsT.TriangleCount + stripsT.TriangleCount;
+            foreach (double y in SpireBuilder.HoopHeights()) tris += SpireBuilder.RingLight(y).TriangleCount;
             int culled = 0; var mbT = new MeshBuilder();
             tris += 2 * CityMesher.Append(mbT, RingTowersBuilder.Towers(), 0, 0, ref culled);
             tris += KoiBuilder.Body().TriangleCount;
-            int lights = HeartLayout.PlazaLampCount + 3;   // the goal light, the room light (INT-08, HT), the entrance light
+            int lights = HeartLayout.PlazaLampCount + 4;   // the goal light, the room light (INT-08, HT), the entrance light, the empty room's lamp (D-034 6)
+            var eS = new MeshBuilder(); var eW = new MeshBuilder(); var eT = new MeshBuilder(); var eB = new MeshBuilder();
+            OldQuarterBuilder.EmptyRoom(eS, eW, eT, eB);
+            tris += eS.TriangleCount + eW.TriangleCount + eT.TriangleCount + eB.TriangleCount;
             Debug.Log(FormattableString.Invariant($"[NOC] Beat07: about {tris} triangles (budget 560 k), {lights} real lights (14.2.3 row 7: 32), {pts.Count} bollards"));
             Assert.LessOrEqual(tris, 560000);
             Assert.LessOrEqual(lights, 32);
+        }
+
+        [Test]
+        public void PlazaInlay_SameTopFan_RingsSeamsFade()
+        {
+            // the overlay is the slab's top fan: identical vertices and triangles (ZTest LEqual passes exactly on the floor)
+            var slab = HeartFloorBuilder.Slab();
+            var fan = HeartFloorBuilder.InlayFan();
+            Assert.Greater(fan.VertexCount, 900, "a fine fan (the outline's 961 points and the centre)");
+            for (int i = 0; i < fan.VertexCount; i++) Assert.AreEqual(slab.Positions[i], fan.Positions[i], "fan vertex " + i);
+            Mesh ms = slab.ToMesh("slab"), mf = fan.ToMesh("fan");
+            int[] ts = ms.triangles, tf = mf.triangles;
+            for (int i = 0; i < tf.Length; i++) Assert.AreEqual(ts[i], tf[i], "fan index " + i);
+            Assert.IsTrue(MeshValidation.Validate(mf).Ok, MeshValidation.Validate(mf).ToString());
+            foreach (var v in mf.vertices) Assert.AreEqual(0f, v.y, 0f);
+            UnityEngine.Object.DestroyImmediate(ms); UnityEngine.Object.DestroyImmediate(mf);
+
+            double fine = 0.002;   // 2 mm per pixel: every line resolved
+            Vector2 C(double r, double degFromEast, double fwR, double fwT)
+            {
+                double a = degFromEast * Math.PI / 180.0;
+                return HeartFloorBuilder.InlayCoverage(HeartLayout.SX + r * Math.Cos(a), HeartLayout.SZ + r * Math.Sin(a), fwR, fwT);
+            }
+            int rings = 0;
+            for (double r = 20.0; r <= 400.0; r += 20.0) if (C(r, 3.75, fine, fine).x > 0.99f) rings++;
+            Assert.AreEqual(17, rings, "17 brass rings 60 .. 380 m");
+            Assert.AreEqual(0f, C(40.0, 3.75, fine, fine).x, 1e-6, "no ring under the podium");
+            Assert.AreEqual(0f, C(390.0, 3.75, fine, fine).x, 1e-6, "between the rings: the floor shows");
+            Assert.AreEqual(1f, C(300.0 + 0.05, 3.75, fine, fine).x, 1e-6, "inside the 0.12 m line");
+            Assert.AreEqual(0f, C(300.0 + 0.07, 3.75, fine, fine).x, 1e-6, "outside the 0.12 m line");
+            // a sub-pixel ring keeps its energy (w / footprint) while its pitch is still >= 10 px
+            Assert.AreEqual(0.12 / 1.2, C(300.0, 3.75, 1.2, fine).x, 1e-4, "energy-kept ring at 1.2 m per pixel");
+            // the pitch fade: 20 m / fwR px; none below 6 px, full above 10 px
+            Assert.AreEqual(0f, C(300.0, 3.75, 20.0 / 5.9, fine).x, 1e-6);
+            Assert.Greater(C(300.0, 3.75, 20.0 / 8.0, fine).x, 0f);
+            // 48 seams every 7.5 deg from R 58; one runs along the walk (bearing 180 deg, 0.12 m north of the east leg)
+            int seams = 0;
+            for (int k = 0; k < 96; k++) if (C(250.0, k * 3.75, fine, fine).y > 0.99f) seams++;
+            Assert.AreEqual(48, seams, "seams every 7.5 deg");
+            Assert.AreEqual(1f, C(250.0, 180.0, fine, fine).y, 1e-6, "the leading seam under the walk");
+            Assert.AreEqual(1f, C(250.0, -180.0, fine, fine).y, 1e-6, "atan2's cut is a seam too");
+            Assert.AreEqual(0f, C(50.0, 180.0, fine, fine).x, 1e-6, "no seam on the podium");
+            double zSeam = HeartLayout.SZ - HeartLayout.EastLegZ;
+            Debug.Log(FormattableString.Invariant($"[NOC] inlay: {rings} rings, {seams} seams, the leading seam {zSeam:F2} m north of the walk's centre line"));
+            Assert.Less(Math.Abs(zSeam), 0.5);
+            // the aged brass under the SignWhite lamps stays below the warm-blob saturation 0.5
+            Color lamp = NocturnePalette.Linear(NocPal.SignWhite), b = HeartLayout.InlayBrass;
+            Color glint = new Color(Mathf.LinearToGammaSpace(b.r * lamp.r), Mathf.LinearToGammaSpace(b.g * lamp.g), Mathf.LinearToGammaSpace(b.b * lamp.b));
+            Color.RGBToHSV(glint, out float gh, out float gs, out _);
+            Debug.Log(FormattableString.Invariant($"[NOC] brass glint under SignWhite: hue {gh * 360f:F1} sat {gs:F3}"));
+            Assert.Less(gs, 0.5f);
+        }
+
+        [Test]
+        public void Tenement_DownpipeClearOfOpeningsAndBelowTheRoof()
+        {
+            // HT-03: the downpipe (clips +-(R + 0.012), hopper +-0.14) stays clear of every opening with its sills and lintels
+            double z = HeartLayout.DownpipeZ, half = 0.14;
+            foreach (var o in OldQuarterBuilder.Openings())
+            {
+                double over = Math.Max(HeartLayout.LintelOver, HeartLayout.DarkSillOver);
+                bool clear = z + half < o.z0 - over || z - half > o.z1 + over;
+                Assert.IsTrue(clear, FormattableString.Invariant($"downpipe z {z} vs opening z {o.z0:F2}-{o.z1:F2} (storey {o.storey})"));
+            }
+            var mb = new MeshBuilder();
+            OldQuarterBuilder.Downpipe(mb);
+            Bounds b = WorldBounds(mb, OldQuarterBuilder.Origin);
+            Assert.LessOrEqual(b.max.y, HeartLayout.TenH - 0.2, "the hopper stays under the roof edge (KS19 silhouette unchanged)");
+            Assert.LessOrEqual(b.max.x, HeartLayout.TenX0 + 0.02, "no part inside the wall beyond the outlet");
+            Assert.GreaterOrEqual(b.min.x, HeartLayout.TenX0 - 0.35, "stands off the face by centimetres");
+            Assert.GreaterOrEqual(b.min.y, -1e-3, "the shoe stays above the plaza");
+            // below the KS19 roof silhouette: the hopper's front top edge seen from the KS19 eye lies under the roof edge
+            double ex = 1148.18, ey = 1.7;
+            double eRoof = Math.Atan2(HeartLayout.TenH - ey, HeartLayout.TenX0 - ex), eHop = Math.Atan2(b.max.y - ey, b.min.x - ex);
+            Debug.Log(FormattableString.Invariant($"[NOC] downpipe z {z}, y {b.min.y:F2}..{b.max.y:F2}, x {b.min.x:F3}..{b.max.x:F3}; KS19 elevation roof {eRoof * 180 / Math.PI:F2} deg, hopper {eHop * 180 / Math.PI:F2} deg"));
+            Assert.Less(eHop, eRoof);
+            Mesh m = mb.ToMesh("downpipe");
+            Assert.IsTrue(MeshValidation.Validate(m).Ok, MeshValidation.Validate(m).ToString());
+            UnityEngine.Object.DestroyImmediate(m);
+        }
+
+        [Test]
+        public void SpireStrips_MirrorSources_SteadyAcrossThePlaza()
+        {
+            NocWetRegistry.Clear();
+            try
+            {
+                SpireBuilder.AddStripSources(new Color(1.0f, 1.4f, 1.5f));
+                int nf = SpireBuilder.MirrorFins.Length;
+                Assert.AreEqual(nf * SpireBuilder.MirrorS.Length, NocWetRegistry.TotalSources);
+                double minW = double.MaxValue, maxW = 0.0;
+                int maxN = 0;
+                for (double s = 1240.0; s <= 1500.0; s += 0.25)
+                {
+                    int n = NocWetRegistry.Collect(s);
+                    maxN = Math.Max(maxN, n);
+                    double sum = 0.0;
+                    for (int i = 0; i < n; i++) { NocWetRegistry.GetSource(i, out _, out _, out Vector4 l); sum += l.y; }
+                    double w = sum / (1.4 * nf);
+                    minW = Math.Min(minW, w); maxW = Math.Max(maxW, w);
+                    Assert.AreEqual(0, NocWetRegistry.Dropped);
+                }
+                Debug.Log(FormattableString.Invariant($"[NOC] spire strip mirror: weight {minW:F6}..{maxW:F6} over s 1240-1500, at most {maxN} sources"));
+                Assert.AreEqual(1.0, minW, 1e-5, "the copies' crossfades sum to 1 (steady streaks)");
+                Assert.AreEqual(1.0, maxW, 1e-5);
+                Assert.LessOrEqual(maxN, 2 * nf);
+                // the chords start on the strip at the drum and stay within 6 m of it up to MirrorTop
+                double y0 = HeartLayout.FlareY0 + 0.3, r0 = HeartLayout.FinOuter(y0), r1 = HeartLayout.FinOuter(SpireBuilder.MirrorTop);
+                for (double y = y0; y <= SpireBuilder.MirrorTop; y += 1.0)
+                {
+                    double rc = r0 + (r1 - r0) * (y - y0) / (SpireBuilder.MirrorTop - y0);
+                    Assert.Less(Math.Abs(rc - HeartLayout.FinOuter(y)), 6.0, FormattableString.Invariant($"chord vs strip at y {y:F0}"));
+                }
+            }
+            finally { NocWetRegistry.Clear(); }
+        }
+
+        [Test]
+        public void Spire_HoopsRingLightsFlarePodium()
+        {
+            var hy = SpireBuilder.HoopHeights();
+            Assert.AreEqual(11, hy.Count, "ring lights every 40 m, 40 .. 440");
+            for (int k = 0; k < hy.Count; k++) Assert.AreEqual(40.0 * (k + 1), hy[k], 1e-9);
+            // hoops and ring lights inside the envelope R(y) + 4 (the fins' outer edge above the flare)
+            foreach (var mb in new[] { SpireBuilder.Hoops(), SpireBuilder.RingLight(40.0), SpireBuilder.RingLight(440.0) })
+            {
+                foreach (var q in mb.Positions)
+                {
+                    double r = Math.Sqrt(q.x * q.x + q.z * q.z);
+                    Assert.LessOrEqual(r, HeartLayout.SpireRadius(q.y) + HeartLayout.FinDepth + 0.05, FormattableString.Invariant($"hoop vertex r {r:F2} at y {q.y:F1}"));
+                }
+                Mesh m = mb.ToMesh("hoop");
+                Assert.IsTrue(MeshValidation.Validate(m).Ok, MeshValidation.Validate(m).ToString());
+                UnityEngine.Object.DestroyImmediate(m);
+            }
+            // the buttress flare lands on the lowest drum and is gone at 96 m; above it the fins keep R(y) + 4
+            Assert.AreEqual(HeartLayout.SpireRadius(6.0) + 13.5, HeartLayout.FinOuter(6.0), 1e-9);
+            Assert.Less(HeartLayout.FinOuter(5.9), HeartLayout.DrumR[0], "the fin's foot stands on the R 48 drum");
+            for (double y = 96.0; y <= 560.0; y += 4.0) Assert.AreEqual(HeartLayout.SpireRadius(y) + 4.0, HeartLayout.FinOuter(y), 1e-9);
+            for (double y = 6.0; y < 96.0; y += 1.0) Assert.GreaterOrEqual(HeartLayout.FinOuter(y), HeartLayout.FinOuter(y + 1.0), "monotone flare");
+            var fins = new MeshBuilder();
+            for (int j = 0; j < HeartLayout.FinCount; j++) SpireBuilder.Fin(fins, j);
+            double yLow = double.MaxValue;
+            foreach (var q in fins.Positions)
+            {
+                yLow = Math.Min(yLow, q.y);
+                double r = Math.Sqrt(q.x * q.x + q.z * q.z);
+                if (q.y >= 96.0) Assert.LessOrEqual(r, HeartLayout.SpireRadius(q.y) + 4.0 + 0.61, "fin within the envelope above the flare");
+            }
+            Assert.AreEqual(5.9, yLow, 1e-4, "fins start on the lowest drum (y 6, sunk 0.1)");
+            // the podium: three steps R 56 / 53 / 50.5 of 0.16 m around the drums
+            Bounds pb = WorldBounds(SpireBuilder.Plinth(), Vector3.zero);
+            Assert.AreEqual(56.0, 0.5 * pb.size.x, 0.05);
+            Assert.AreEqual(0.48, pb.max.y, 1e-4);
+            Mesh pm = SpireBuilder.Plinth().ToMesh("plinth");
+            Assert.IsTrue(MeshValidation.Validate(pm).Ok, MeshValidation.Validate(pm).ToString());
+            UnityEngine.Object.DestroyImmediate(pm);
+            // breathing: 0.55 .. 1 at 0.1 Hz (period 10 s), ring k lagging 0.5 k rad; the eleven rings' sum within +-4.2 %
+            Assert.AreEqual(1.0, SpireDriver.Breath(0, 0.0), 1e-9);
+            Assert.AreEqual(0.55, SpireDriver.Breath(0, 5.0), 1e-9);
+            Assert.AreEqual(SpireDriver.Breath(3, 1.7), SpireDriver.Breath(3, 11.7), 1e-9, "period 10 s");
+            double sMin = double.MaxValue, sMax = 0.0, slope = 0.0;
+            for (double t = 0.0; t < 10.0; t += 0.01)
+            {
+                double sum = 0.0;
+                for (int k = 0; k < hy.Count; k++)
+                {
+                    sum += SpireDriver.Breath(k, t);
+                    slope = Math.Max(slope, Math.Abs(SpireDriver.Breath(k, t + 0.01) - SpireDriver.Breath(k, t)) / 0.01);
+                }
+                sMin = Math.Min(sMin, sum); sMax = Math.Max(sMax, sum);
+            }
+            double mean = 0.5 * (sMin + sMax), dev = 0.5 * (sMax - sMin) / mean;
+            Debug.Log(FormattableString.Invariant($"[NOC] ring lights: sum {sMin:F3}..{sMax:F3} (+-{100 * dev:F2} %), steepest {slope:F3} /s"));
+            Assert.Less(dev, 0.042);
+            Assert.Less(slope, 0.15, "no ring changes by more than 15 % of its peak per second");
         }
 
         [Test]

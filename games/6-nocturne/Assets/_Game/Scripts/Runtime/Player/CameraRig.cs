@@ -8,6 +8,8 @@
 // Order: AutoWalker (-120) sets the look absolutely, PlayerController (-100) moves with the current yaw, Update (-50)
 // integrates manual look input; LateUpdate places the camera after the player moved and before ProgressDirector (500)
 // computes the uniforms. Zero allocations per frame.
+// D-034 camera layer (FX, fix wave p4_01): the bridge sway of TR's BridgeSway and the KS10 vertigo (DreadCamera) act in the
+// non-override branch only, so every capture pose stays exact.
 using System;
 using UnityEngine;
 
@@ -152,8 +154,19 @@ namespace Megastructure
             }
             var player = NocServices.Player;
             Vector3 pos = player != null ? player.EyePosition : transform.position;
+            double sNow = player != null ? player.S : ProgressDirector.S;
+            // D-034 4.3 bridge sway (TR, BridgeSway): lateral eye translation on the skybridge (z is lateral on the east leg), no roll
+            if (player != null) pos.z += (float)BridgeSway.Offset(player.S, NocClock.Time);
+            // D-034 4.2 vertigo at the plunge (KS10): the eye leans VertigoLean m along the gaze in the cinematic walk (the lane keeps
+            // >= 2.15 m to its barrier there, so the 0.2 m camera sphere stays clear); the vFOV widening below applies in both modes
+            double wv = DreadCamera.Vertigo(sNow);
+            if (wv > 0.0 && AutoWalker.Active && AutoWalker.Mode == WalkMode.Cinematic)
+            {
+                float lean = (float)(DreadCamera.VertigoLean * wv), yr = m_yaw * Mathf.Deg2Rad;
+                pos.x += Mathf.Sin(yr) * lean; pos.z += Mathf.Cos(yr) * lean;
+            }
             transform.SetPositionAndRotation(pos, Quaternion.Euler(-m_pitch, m_yaw, 0f));   // never roll
-            m_cam.fieldOfView = (float)NocSchedule.Fov(player != null ? player.S : ProgressDirector.S);
+            m_cam.fieldOfView = (float)(NocSchedule.Fov(sNow) + DreadCamera.VertigoFov * wv);
             NocRig.Yaw = m_yaw; NocRig.Pitch = m_pitch;
         }
     }

@@ -1,7 +1,8 @@
 // AlleyBlocks: the masses of beat 1 (MASTER_PROMPT 14.5.1, AlleyBuilder graybox-plus; dimensions in AlleyLayout):
 //   * the two alley walls: vertical strips at x = -+HalfWidth(z) sampled every 0.5 m from the dead-end (z -2.5) to the mouth
 //     (z 120), y -1..22 (west) / -1..31 (east), Concrete; openings for the noodle bar (z 43..47, y 0..2.3) and the vending niche
-//     (z 61.9..67.1, y 0..2.4) and 18 side doors 1.0 x 2.1 m, whose interiors NoodleBar / VendingMachines / AlleyDoors build;
+//     (z 61.9..67.1, y 0..2.4), 18 side doors 1.0 x 2.1 m and the two empty rooms' windows (y 0.9..2.2, AL wave B), whose interiors
+//     NoodleBar / VendingMachines / AlleyDoors / AlleyRooms build;
 //   * the podium roofs (y 22 / 31, the closed tops of both blocks; invisible from the walk, measured by the tests);
 //   * the dead-end block (x -2.6..2.6, z -60..-2.5, 26 m) with the 0.9 x 2.0 m steel door recessed 8 cm, frame and reveals;
 //   * the two towers above the podia (NocFacade, FacadeKit): west x -90..-30, z -60..116 from y 22; east x 34..90, z -60..86 from
@@ -26,6 +27,11 @@ namespace Megastructure
             zs.Add(AlleyLayout.MouthZ);
             foreach (double e in new[] { AlleyLayout.CounterZ0, AlleyLayout.CounterZ1, VendingMachines.NicheZ0, VendingMachines.NicheZ1 })
                 if (!zs.Contains(e)) zs.Add(e);
+            for (int r = 0; r < AlleyRooms.Count; r++)
+            {
+                AlleyRooms.Window(r, out _, out float ra, out float rb);
+                foreach (double e in new[] { (double)ra, (double)rb }) if (!zs.Contains(e)) zs.Add(e);
+            }
             foreach (double[] doors in new[] { AlleyLayout.DoorZWest, AlleyLayout.DoorZEast })
                 foreach (double d in doors)
                     foreach (double e in new[] { d - 0.5 * AlleyLayout.SideDoorW, d + 0.5 * AlleyLayout.SideDoorW })
@@ -47,13 +53,15 @@ namespace Megastructure
                 // west wall (faces +x): opening for the bar
                 bool bar = zm > AlleyLayout.CounterZ0 && zm < AlleyLayout.CounterZ1;
                 bool doorW = AlleyDoors.InDoor(AlleyLayout.DoorZWest, zm);
+                bool roomW = AlleyRooms.InWindow(-1, zm);
                 WallStrip(west, -xa, -xb, (float)za, (float)zb, (float)AlleyLayout.WallBottom, (float)AlleyLayout.WestPodiumH,
-                    bar || doorW ? 0f : float.NaN, bar ? (float)AlleyLayout.WindowY1 : (float)AlleyLayout.SideDoorH, Vector3.right);
+                    roomW ? AlleyRooms.WinY0 : (bar || doorW ? 0f : float.NaN), roomW ? AlleyRooms.WinY1 : (bar ? (float)AlleyLayout.WindowY1 : (float)AlleyLayout.SideDoorH), Vector3.right);
                 // east wall (faces -x): opening for the vending niche
                 bool niche = zm > VendingMachines.NicheZ0 && zm < VendingMachines.NicheZ1;
                 bool doorE = AlleyDoors.InDoor(AlleyLayout.DoorZEast, zm);
+                bool roomE = AlleyRooms.InWindow(1, zm);
                 WallStrip(east, xa, xb, (float)za, (float)zb, (float)AlleyLayout.WallBottom, (float)AlleyLayout.EastPodiumH,
-                    niche || doorE ? 0f : float.NaN, niche ? (float)VendingMachines.NicheTop : (float)AlleyLayout.SideDoorH, Vector3.left);
+                    roomE ? AlleyRooms.WinY0 : (niche || doorE ? 0f : float.NaN), roomE ? AlleyRooms.WinY1 : (niche ? (float)VendingMachines.NicheTop : (float)AlleyLayout.SideDoorH), Vector3.left);
             }
             Roofs(parts, zs);
             DeadEnd(parts);

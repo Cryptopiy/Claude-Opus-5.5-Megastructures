@@ -1,6 +1,6 @@
 # Encode test: PA_enc01
 
-ffmpeg: `C:\Users\Cryptopiy\AppData\Local\Microsoft\WinGet\Links\ffmpeg.EXE`, encoders: libvpx-vp9, libx264
+ffmpeg: `C:\Users\<user>\AppData\Local\Microsoft\WinGet\Links\ffmpeg.EXE`, encoders: libvpx-vp9, libx264
 
 Sequences: 1. Checks: 0 PASS, 2 FAIL, 0 WARN, 0 SKIP.
 

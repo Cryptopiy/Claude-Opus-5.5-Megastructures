@@ -21,10 +21,11 @@ namespace Megastructure
             long tris0 = ctx.Triangles;
             int tier = ctx.Tier;
             ScreenWallBuilder.Build(ctx, root, tier, out var screen, out var wallLights);
+            var cradles = ScreenWallBuilder.BuildService(ctx, root);
             PromenadeBuilder.Build(ctx, root);
             ArcadeBuilder.Build(ctx, root);
             if (ReliefBuilder.ReliefOn) BuildSignBaseShops(ctx, root);
-            ctx.Register(new SignsDriver(screen, wallLights, SignsLayout.Waves(tier)));
+            ctx.Register(new SignsDriver(screen, wallLights, SignsLayout.Waves(tier), cradles));
             ctx.Log(System.FormattableString.Invariant($"Beat06 built: {ctx.Triangles - tris0} triangles (14.5.6 budget 120 k), tier {tier}"));
         }
 

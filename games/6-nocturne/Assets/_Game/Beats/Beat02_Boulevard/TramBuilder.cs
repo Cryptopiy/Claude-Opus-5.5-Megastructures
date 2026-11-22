@@ -5,6 +5,10 @@
 //     Megastructure/NocTram (zones by vertex colour R: paint, the continuous window band of the saloon, headlights, tail
 //     lights, dark running gear, windscreens, bare steel, destination band); cab ends with a 0.35 m windscreen rake on the head
 //     and the tail module, a single-arm pantograph on the middle module, roof equipment, bogies, bellows. About 1 900 triangles.
+//     BV fix wave (DREAD 6, C29): two plug-sliding doors per module and side (car-local z -2.9 / +2.9, 1.32 x 2.57 m): on the
+//     north side the closed leaves are part of the module; on the south (platform) side each module has a lit doorway (the saloon's
+//     ZWindow light) behind two moving leaf meshes (tramDoorsA / B, children of the module) that TramDriver slides 0.64 m apart
+//     while the tram waits at the stop (TramSchedule.DoorOpen). Leaves: paint with a glazed upper panel (ZWindow), dark edges.
 //   * the overhead line: the contact wire (y 5.6) along the whole route from inside the terminus into the depot tunnel, a sagging
 //     messenger (y 6.7 at the arms), steel poles 7.4 m every 30 m on the route's right-hand side (z 230.4 on the straight: north
 //     of the track, outside the tram sight sector z 195-225), cantilever arms and droppers;
@@ -103,6 +107,10 @@ namespace Megastructure
                 Q(mb, P(x, YShoulder, zA), P(side * RoofHalfW, YRoof, zA), P(side * RoofHalfW, YRoof, zB), P(x, YShoulder, zB),
                     U(zA - za, YShoulder), U(zA - za, YRoof), U(zB - za, YRoof), U(zB - za, YShoulder), new Vector3(side * 0.83f, 0.56f, 0f));
             }
+            // doors (DREAD 6): the south side's lit doorways (the moving leaves are TramDriver's), the north side's closed leaves
+            Doorways(mb, seed);
+            foreach (float dc in DoorZ) { Leaf(mb, +1, dc - DoorLeafW, dc, seed); Leaf(mb, +1, dc, dc + DoorLeafW, seed); }
+
             // roof and underside
             Zone(mb, ZPaint, seed);
             Q(mb, P(-RoofHalfW, YRoof, zA), P(RoofHalfW, YRoof, zA), P(RoofHalfW, YRoof, zB), P(-RoofHalfW, YRoof, zB),
@@ -140,6 +148,60 @@ namespace Megastructure
                 MeshKit.ChamferBox(mb, new Vector3(0f, YRoof + 0.17f, zc), new Vector3(1.9f, 0.34f, len), 0.03f);
                 Zone(mb, ZDark, seed);
                 MeshKit.ChamferBox(mb, new Vector3(0f, YRoof + 0.38f, zc), new Vector3(1.4f, 0.08f, len - 0.4f), 0.01f);   // grille
+            }
+        }
+
+        // ---- doors (DREAD 6, BV fix wave): car-local door centres, leaf width and the leaves' planes (outside the body wall)
+        public static readonly float[] DoorZ = { -2.9f, 2.9f };
+        public const float DoorLeafW = 0.66f, DoorY0 = 0.38f, DoorY1 = 2.95f, DoorGlassY0 = 1.10f, DoorGlassY1 = 2.70f, DoorFrame = 0.07f;
+        public const float LeafOut = 0.035f, LeafIn = 0.012f, DoorwayOut = 0.004f;
+
+        /// <summary>The south (platform) side's doorways: a lit panel (ZWindow: the saloon's light) 4 mm outside the body wall over
+        /// each door opening and a dark threshold under it; the leaves close over them.</summary>
+        static void Doorways(MeshBuilder mb, float seed)
+        {
+            float x = -HalfW - DoorwayOut;
+            Vector3 n = Vector3.left;
+            foreach (float dc in DoorZ)
+            {
+                float z0 = dc - DoorLeafW, z1 = dc + DoorLeafW;
+                Zone(mb, ZWindow, seed);
+                Q(mb, P(x, DoorY0, z0), P(x, DoorY1, z0), P(x, DoorY1, z1), P(x, DoorY0, z1), U(z0, DoorY0), U(z0, DoorY1), U(z1, DoorY1), U(z1, DoorY0), n);
+                Zone(mb, ZDark, seed);
+                Q(mb, P(x, Y0, z0), P(x, DoorY0, z0), P(x, DoorY0, z1), P(x, Y0, z1), U(z0, Y0), U(z0, DoorY0), U(z1, DoorY0), U(z1, Y0), n);
+            }
+        }
+
+        /// <summary>One plug-sliding door leaf on `side` (car-local z0..z1): its outer face (paint, a glazed upper panel inset by the
+        /// frame width, ZWindow) LeafOut outside the body wall and dark edges back to LeafIn. UV v = y (the livery bands carry on).</summary>
+        public static void Leaf(MeshBuilder mb, int side, float z0, float z1, float seed)
+        {
+            float xo = side * (HalfW + LeafOut), xi = side * (HalfW + LeafIn);
+            Vector3 n = new Vector3(side, 0f, 0f);
+            float f = DoorFrame, g0 = DoorGlassY0, g1 = DoorGlassY1;
+            Zone(mb, ZPaint, seed);
+            Q(mb, P(xo, DoorY0, z0), P(xo, g0, z0), P(xo, g0, z1), P(xo, DoorY0, z1), U(z0, DoorY0), U(z0, g0), U(z1, g0), U(z1, DoorY0), n);
+            Q(mb, P(xo, g1, z0), P(xo, DoorY1, z0), P(xo, DoorY1, z1), P(xo, g1, z1), U(z0, g1), U(z0, DoorY1), U(z1, DoorY1), U(z1, g1), n);
+            Q(mb, P(xo, g0, z0), P(xo, g1, z0), P(xo, g1, z0 + f), P(xo, g0, z0 + f), U(z0, g0), U(z0, g1), U(z0 + f, g1), U(z0 + f, g0), n);
+            Q(mb, P(xo, g0, z1 - f), P(xo, g1, z1 - f), P(xo, g1, z1), P(xo, g0, z1), U(z1 - f, g0), U(z1 - f, g1), U(z1, g1), U(z1, g0), n);
+            Zone(mb, ZWindow, seed);
+            Q(mb, P(xo, g0, z0 + f), P(xo, g1, z0 + f), P(xo, g1, z1 - f), P(xo, g0, z1 - f), U(z0 + f, g0), U(z0 + f, g1), U(z1 - f, g1), U(z1 - f, g0), n);
+            Zone(mb, ZDark, seed);
+            Q(mb, P(xi, DoorY0, z0), P(xi, DoorY1, z0), P(xo, DoorY1, z0), P(xo, DoorY0, z0), U(0f, DoorY0), U(0f, DoorY1), U(LeafOut, DoorY1), U(LeafOut, DoorY0), Vector3.back);
+            Q(mb, P(xi, DoorY0, z1), P(xi, DoorY1, z1), P(xo, DoorY1, z1), P(xo, DoorY0, z1), U(0f, DoorY0), U(0f, DoorY1), U(LeafOut, DoorY1), U(LeafOut, DoorY0), Vector3.forward);
+            Q(mb, P(xi, DoorY1, z0), P(xi, DoorY1, z1), P(xo, DoorY1, z1), P(xo, DoorY1, z0), U(z0, 0f), U(z1, 0f), U(z1, LeafOut), U(z0, LeafOut), Vector3.up);
+            Q(mb, P(xi, DoorY0, z0), P(xi, DoorY0, z1), P(xo, DoorY0, z1), P(xo, DoorY0, z0), U(z0, 0f), U(z1, 0f), U(z1, LeafOut), U(z0, LeafOut), Vector3.down);
+        }
+
+        /// <summary>The south side's moving leaves of one module: dir -1 the leaves that open toward -z (the -z half of each door),
+        /// +1 the others; built closed, in car-local coordinates (TramDriver offsets the child by dir x opening x DoorTravel).</summary>
+        public static void DoorLeaves(MeshBuilder mb, int k, int dir)
+        {
+            float seed = 0.13f + 0.17f * k;
+            foreach (float dc in DoorZ)
+            {
+                if (dir < 0) Leaf(mb, -1, dc - DoorLeafW, dc, seed);
+                else Leaf(mb, -1, dc, dc + DoorLeafW, seed);
             }
         }
 
@@ -278,7 +340,8 @@ namespace Megastructure
             var mat = TramMaterial(ctx.Materials);
             int n = TramSchedule.Cars;
             var cars = new Transform[n];
-            var rs = new Renderer[n];
+            var rs = new Renderer[3 * n];
+            var doorA = new Transform[n]; var doorB = new Transform[n];
             for (int k = 0; k < n; k++)
             {
                 var mb = new MeshBuilder();
@@ -289,12 +352,25 @@ namespace Megastructure
                 TramDriver.Place(0.0, k, out Vector3 pos, out Quaternion rot);
                 mr.transform.SetPositionAndRotation(pos, rot);
                 cars[k] = mr.transform; rs[k] = mr;
+                // DREAD 6: the south side's two moving leaf meshes, children of the module (car-local, built closed)
+                for (int dir = -1; dir <= 1; dir += 2)
+                {
+                    var lb = new MeshBuilder();
+                    DoorLeaves(lb, k, dir);
+                    string nm = "tramDoors" + (dir < 0 ? "A" : "B") + k;
+                    var lrep = MeshValidation.Validate(lb, "Beat02_" + nm);
+                    if (!lrep.Ok) { failed++; Debug.LogError("[NOC-FAIL] Beat02 tram doors: " + lrep); }
+                    var lr = ctx.AddMesh(mr.transform, nm, lb.ToMesh("Beat02_" + nm), mat);
+                    lr.transform.localPosition = Vector3.zero; lr.transform.localRotation = Quaternion.identity;
+                    if (dir < 0) doorA[k] = lr.transform; else doorB[k] = lr.transform;
+                    rs[n + 2 * k + (dir < 0 ? 0 : 1)] = lr;
+                }
             }
             var head = MakeLight(root, "tramHeadlight", G1Materials.Lin(NocPal.SignWhite, 1f), TramDriver.HeadRange, TramDriver.HeadIntensity);
             var saloon = new Light[TramDriver.SaloonCars.Length];
             for (int i = 0; i < saloon.Length; i++)
                 saloon[i] = MakeLight(root, "tramSaloon" + i, G1Materials.Lin(NocPal.WinNeutral, 1f), TramDriver.SaloonRange, 0f);
-            var d = new TramDriver(cars, rs, head, saloon);
+            var d = new TramDriver(cars, rs, head, saloon, doorA, doorB);
             ctx.Register(d);
             return d;
         }
@@ -318,7 +394,10 @@ namespace Megastructure
         public static long VehicleTriangles()
         {
             long t = 0;
-            for (int k = 0; k < TramSchedule.Cars; k++) { var mb = new MeshBuilder(); Car(mb, k); t += mb.TriangleCount; }
+            for (int k = 0; k < TramSchedule.Cars; k++)
+            {
+                var mb = new MeshBuilder(); Car(mb, k); DoorLeaves(mb, k, -1); DoorLeaves(mb, k, 1); t += mb.TriangleCount;
+            }
             return t;
         }
 
@@ -408,6 +487,67 @@ namespace Megastructure
                 }
                 prevTip = tip; havePrev = true;
             }
+            PoleLamps(parts);
+        }
+
+        // Fifth start (BV_r01 KS06 / KS04: the tram ran through the darkest stretch of the street, the sector x 79-175 where the
+        // north-row median lamps are left out, so its line had no light of its own): a luminaire on every overhead-line pole of
+        // the straight east of x 0, as on many tram streets. The pole goes on as a mast to y 8.95; a 1.5 m arm reaches north over
+        // the carriageway (away from the track and the walker: z 230.4 -> 231.9, outside the sight sector z 195-225) and carries
+        // the median lamps' luminaire (dark shell over a LampWarm x 1.6 lens) with its in-air halo. No realtime light (the 28
+        // budget); the lenses at x 60..170 are wet-floor sources, so their streaks run across the north road and onto the median
+        // (mirror point z ~201 for the eye at z 195).
+        public const float PoleMastTop = 8.95f, PoleLampArm = 1.5f;
+        public const float PoleLampWetX0 = 60f, PoleLampWetX1 = 170f;
+
+        /// <summary>Base points (x, 0, z) of the poles that carry a luminaire (the straight, x >= 0).</summary>
+        public static List<Vector3> PoleLampBases()
+        {
+            var l = new List<Vector3>(8);
+            foreach (double p in PoleP())
+            {
+                if (p >= TramSchedule.StraightL - 4.0) continue;
+                Vector3 b = PolePos(p);
+                if (b.x >= 0f) l.Add(b);
+            }
+            return l;
+        }
+
+        /// <summary>The lens centre of a pole luminaire (its wet-floor source point).</summary>
+        public static Vector3 PoleLampLens(Vector3 b)
+            => new Vector3(b.x, PoleMastTop - MedianPromenade.LensDrop - 0.5f * MedianPromenade.LensDepth, b.z + PoleLampArm);
+
+        static void PoleLamps(G1Parts parts)
+        {
+            var mast = parts.Get("tramPoleLampMasts", G1Mat.LinePost, new Vector3(100f, 8f, 231f));
+            var lens = parts.Get("tramPoleLampLenses", G1Mat.EmitLamp, new Vector3(100f, 8.5f, 232f));
+            var shell = parts.Get("tramPoleLampHousings", G1Mat.SteelPainted, new Vector3(100f, 8.7f, 232f));
+            var pts = new List<Vector3>(3); var frames = new List<LoftFrame>(3); var sec = new CrossSection();
+            var halos = new List<Vector3>(8);
+            float hz = 0.5f * (float)BoulevardLayout.LampHead, top = PoleMastTop;
+            foreach (var b in PoleLampBases())
+            {
+                float zi = b.z + PoleLampArm;
+                // mast from inside the pole top, then the arm into the shell's tail (one NocLine tube, as the median posts)
+                pts.Clear();
+                pts.Add(new Vector3(b.x, (float)TramSchedule.PoleH - 0.3f, b.z));
+                pts.Add(new Vector3(b.x, top - 0.2f, b.z));
+                pts.Add(new Vector3(b.x, top - 0.2f, zi - (hz - 0.15f)));
+                G1Mesh.Tube(mast, pts, 0.5f * G1Materials.Post, 8, frames, sec);
+                halos.Add(MedianPromenade.Luminaire(lens, shell, b.x, zi, -1f, top));
+            }
+            NocHalos.Queue("TramPoleLamps", halos, G1Materials.Lin(NocPal.LampWarm, MedianPromenade.LampRadiance), MedianPromenade.LampLightRange);
+        }
+
+        /// <summary>The pole luminaires' wet-floor sources (x 60..170; Beat02_Boulevard.RegisterWet).</summary>
+        public static void RegisterSources()
+        {
+            foreach (var b in PoleLampBases())
+            {
+                if (b.x < PoleLampWetX0 || b.x > PoleLampWetX1) continue;
+                var p = PoleLampLens(b);
+                NocWetRegistry.AddSource(p, p, MedianPromenade.LampRho, G1Materials.Lin(NocPal.LampWarm, MedianPromenade.LampRadiance));
+            }
         }
 
         /// <summary>Rails of the depot branch: the r 35 curve and the run north into the tunnel (z 262..298).</summary>
@@ -436,7 +576,7 @@ namespace Megastructure
             float xc = (float)TramSchedule.PortalX, hw = 0.5f * (float)TramSchedule.PortalW, z0 = (float)TramSchedule.PortalZ;
             return new G1Light { name = "depotLight", position = new Vector3(xc - hw + 0.6f, 4.4f, z0 + 3.0f), colour = G1Materials.Lin(NocPal.LampWarm, 1f), range = 9f, intensity = 0.9f };
         }
-        public const double DepotLightX0 = -80.0, DepotLightX1 = 30.0;
+        public const double DepotLightX0 = -80.0, DepotLightX1 = 10.0;   // behind the walker east of x 10 (faded out by x 26)
 
         /// <summary>The depot portal in the north podium face (z 270) and its tunnel (z 270..300).</summary>
         static void DepotPortal(G1Parts parts)

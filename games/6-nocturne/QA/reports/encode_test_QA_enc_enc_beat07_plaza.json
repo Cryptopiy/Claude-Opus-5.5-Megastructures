@@ -1,0 +1,490 @@
+{
+ "run": "QA_enc_enc_beat07_plaza",
+ "status": "FAIL",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat07_plaza",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza",
+   "checks": [
+    {
+     "name": "x264_crf23[sky_koi_spire]",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 5.67 (run 56 px) (source score 1.323), frame 34; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code)"
+    },
+    {
+     "name": "x264_crf23[plaza]",
+     "status": "FAIL",
+     "value": 8.333,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 8.33 (max 2.11 code), BandScore 6.50 (run 72 px) (source score 0.000), frame 0; Y 8.33 / 1.55, Cb 8.33 / 1.26, Cr 8.33 / 1.06 (steps/1000 / max code)"
+    },
+    {
+     "name": "x264_crf30[sky_koi_spire]",
+     "status": "INFO",
+     "value": 6.579,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 6.58 (max 1.58 code), BandScore 4.51 (run 82 px) (source score 1.323), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "x264_crf30[plaza]",
+     "status": "INFO",
+     "value": 8.333,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 8.33 (max 1.99 code), BandScore 6.88 (run 120 px) (source score 0.000), frame 0; Y 8.33 / 1.98, Cb 8.33 / 1.32, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "vp9_crf31[sky_koi_spire]",
+     "status": "INFO",
+     "value": 6.579,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 6.58 (max 1.03 code), BandScore 5.23 (run 60 px) (source score 1.323), frame 137; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 6.58 / 1.03 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "vp9_crf31[plaza]",
+     "status": "INFO",
+     "value": 8.333,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 8.33 (max 1.22 code), BandScore 5.52 (run 45 px) (source score 0.000), frame 0; Y 0.00 / 0.00, Cb 8.33 / 1.28, Cr 8.33 / 1.23 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\x264_crf23.mp4",
+     "encode_s": 5.3,
+     "kbps": 2100.0,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.6650116142618314,
+     "decoded": {
+      "sky_koi_spire": {
+       "direction": "v",
+       "n_strips": 6,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 5.671524172008541,
+       "longest_run_px": 56,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.05011947422562162,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 3.781016114672361,
+       "pass": false,
+       "frame": 34
+      },
+      "plaza": {
+       "direction": "v",
+       "n_strips": 22,
+       "gate": "steps",
+       "steps_per_1000": 8.333333333333334,
+       "steps": 1,
+       "step_max_code": 2.112774884259263,
+       "bandscore": 6.501612890624997,
+       "longest_run_px": 72,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.059612508290506246,
+       "chan": {
+        "Y": [
+         8.333333333333334,
+         1.5473142511620779
+        ],
+        "Cb": [
+         8.333333333333334,
+         1.2604489588792944
+        ],
+        "Cr": [
+         8.333333333333334,
+         1.06150298436566
+        ],
+        "R": [
+         8.333333333333334,
+         2.112774884259263
+        ],
+        "G": [
+         8.333333333333334,
+         1.3539549031137952
+        ],
+        "B": [
+         8.333333333333334,
+         1.8254228270609332
+        ]
+       },
+       "score": 4.166666666666667,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_sky_koi_spire_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_sky_koi_spire_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_sky_koi_spire_f00137_x8.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_plaza_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_plaza_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf23_plaza_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "x264",
+     "crf": 30,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\x264_crf30.mp4",
+     "encode_s": 5.6,
+     "kbps": 856.5,
+     "decoded_frames": 240,
+     "mean_abs_error": 2.187019856770833,
+     "decoded": {
+      "sky_koi_spire": {
+       "direction": "v",
+       "n_strips": 6,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 6.578947368421052,
+       "steps": 1,
+       "step_max_code": 1.5833333333333357,
+       "bandscore": 4.514838053385414,
+       "longest_run_px": 82,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.04893819330004093,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         6.578947368421052,
+         1.5833333333333357
+        ]
+       },
+       "score": 3.289473684210526,
+       "pass": false,
+       "frame": 0
+      },
+      "plaza": {
+       "direction": "v",
+       "n_strips": 22,
+       "gate": "steps",
+       "steps_per_1000": 8.333333333333334,
+       "steps": 1,
+       "step_max_code": 1.9939610272988695,
+       "bandscore": 6.882481770833326,
+       "longest_run_px": 120,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.056311052991961284,
+       "chan": {
+        "Y": [
+         8.333333333333334,
+         1.9761274500119796
+        ],
+        "Cb": [
+         8.333333333333334,
+         1.3166823844632347
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         8.333333333333334,
+         1.9939610272988695
+        ],
+        "G": [
+         8.333333333333334,
+         1.9811572078544017
+        ],
+        "B": [
+         8.333333333333334,
+         1.8755425347222143
+        ]
+       },
+       "score": 4.166666666666667,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_sky_koi_spire_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_sky_koi_spire_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_sky_koi_spire_f00137_x8.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_plaza_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_plaza_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\x264_crf30_plaza_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "vp9",
+     "crf": 31,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\vp9_crf31.webm",
+     "encode_s": 21.4,
+     "kbps": 2368.3,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.5116215760030864,
+     "decoded": {
+      "sky_koi_spire": {
+       "direction": "v",
+       "n_strips": 6,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 6.578947368421052,
+       "steps": 1,
+       "step_max_code": 1.0316522422789376,
+       "bandscore": 5.227955769230771,
+       "longest_run_px": 60,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.055644735208260396,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         6.578947368421052,
+         1.0316522422789376
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 3.4853038461538475,
+       "pass": false,
+       "frame": 137
+      },
+      "plaza": {
+       "direction": "v",
+       "n_strips": 22,
+       "gate": "steps",
+       "steps_per_1000": 8.333333333333334,
+       "steps": 1,
+       "step_max_code": 1.2192108607446244,
+       "bandscore": 5.519285156250003,
+       "longest_run_px": 45,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.05741372448824548,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         8.333333333333334,
+         1.278134259384018
+        ],
+        "Cr": [
+         8.333333333333334,
+         1.2331717869801224
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 4.166666666666667,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_sky_koi_spire_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_sky_koi_spire_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_sky_koi_spire_f00137_x8.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_plaza_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_plaza_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_plaza\\enc_beat07_plaza\\crops\\vp9_crf31_plaza_f00137_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 240,
+   "regions": [
+    {
+     "name": "sky_koi_spire",
+     "rect": [
+      384,
+      32,
+      768,
+      184
+     ],
+     "dir": "v"
+    },
+    {
+     "name": "plaza",
+     "rect": [
+      192,
+      928,
+      1632,
+      1048
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "sky_koi_spire": {
+     "direction": "v",
+     "n_strips": 6,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 1.985097601744186,
+     "longest_run_px": 9,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.05394465262969942,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       0.0,
+       0.0
+      ],
+      "R": [
+       0.0,
+       0.0
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 1.3233984011627906,
+     "pass": false,
+     "frame": 102
+    },
+    "plaza": {
+     "direction": "v",
+     "n_strips": 22,
+     "gate": "steps",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 1.1381282617845128,
+     "longest_run_px": 11,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.05677906826211907,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       8.333333333333334,
+       1.02351811741228
+      ],
+      "R": [
+       0.0,
+       0.0
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 0.0,
+     "pass": true,
+     "frame": 0
+    }
+   },
+   "status": "FAIL"
+  }
+ ],
+ "lookv2_encoded": null
+}

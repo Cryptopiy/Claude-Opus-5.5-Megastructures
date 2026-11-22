@@ -40,22 +40,49 @@ namespace Megastructure
         }
 
         /// <summary>The nine signs, south to north (heights 70-120 m, y 22-420). Placed off the sight lines of KS16's three wall
-        /// points (Beat06SignsTests) and off the lane (blades end at x 890.5, the lane edge is x 891.74).</summary>
+        /// points (Beat06SignsTests) and off the lane (blades end at x 890.5, the lane edge is x 891.74). Fix wave (C16, panel
+        /// p4_01: the wall covered 43 % of KS16 behind two hanging signs): the blades of z 292 and z 366 hang above KS16's frame
+        /// (y 200-290 and 230-330, into the deck mist), the z 438, 490 and 505 blades became boards, and every board is mounted flush
+        /// on the face (BoardX 874.35: the screen field reads to its edge; the audit counts a flush board as wall). GE's promenade
+        /// lintel (z 280-286, y 40+) takes 2.9 % of KS16 in front of the wall. The boards z 405 / 438 sit above the eye's canvas
+        /// (z 311.4 - 457.0, y 20.4 - 122.4; SG_f02: the z 405 board covered the iris).</summary>
         public static readonly GlyphSign[] GlyphSigns =
         {
-            new GlyphSign(true, 292.0, 22.0, 90.0, 14.0, 1),
+            new GlyphSign(true, 292.0, 200.0, 90.0, 14.0, 1),
             new GlyphSign(false, 298.0, 330.0, 90.0, 16.0, 4),
             new GlyphSign(false, 329.0, 175.0, 120.0, 22.0, 4),
-            new GlyphSign(true, 366.0, 40.0, 100.0, 16.0, 4),
-            new GlyphSign(false, 405.0, 60.0, 80.0, 20.0, 5),
-            new GlyphSign(true, 438.0, 120.0, 120.0, 16.0, 1),
+            new GlyphSign(true, 366.0, 230.0, 100.0, 16.0, 4),
+            new GlyphSign(false, 405.0, 150.0, 80.0, 20.0, 5),
+            new GlyphSign(false, 438.0, 126.0, 120.0, 16.0, 1),
             new GlyphSign(false, 469.0, 300.0, 80.0, 18.0, 4),
-            new GlyphSign(true, 490.0, 30.0, 70.0, 14.0, 2),
-            new GlyphSign(true, 505.0, 200.0, 120.0, 15.0, 4),
+            new GlyphSign(false, 490.0, 30.0, 70.0, 14.0, 2),
+            new GlyphSign(false, 505.0, 200.0, 120.0, 15.0, 4),
         };
         /// <summary>Blade housing: from x 873.9 (0.1 m into the slab) to 874.5 + w + 0.3, 0.9 m thick, 0.8 m above and below the sign
-        /// faces; the NocNeon faces 0.02 m outside the housing. Board housing: x 873.9 - 876.4, 0.6 m around the face.</summary>
-        public const double BladeX0 = 874.5, BladeT = 0.9, BladeRim = 0.8, BoardX = 876.4, BoardRim = 0.6, NeonProud = 0.02;
+        /// faces; the NocNeon faces 0.02 m outside the housing. Board housing: x 873.9 - 874.35 (flush, C16; 876.4 before), 0.6 m
+        /// around the face.</summary>
+        public const double BladeX0 = 874.5, BladeT = 0.9, BladeRim = 0.8, BoardX = 874.35, BoardRim = 0.6, NeonProud = 0.02;
+
+        // ------------------------------------------------------------------ scale markers on the face (fix wave C17)
+        /// <summary>Two service ledges on the row seams y 81.6 and 204.0 (20.4 x 4 and x 10): painted steel x 874.0 - 874.45 (flush:
+        /// inside the audit's 0.5 m), 0.3 m thick, z 275.3 - 519.7, with a lamp row under the lip: 0.3 x 0.2 m lenses (SignWhite x
+        /// 1.6, NocHalos) every 6 m from z 278. A lamp every 6 m and the 1.2 m-scale ledge give a 36 m panel its size.</summary>
+        public static readonly double[] LedgeY = { 81.6, 204.0 };
+        public const double LedgeX1 = 874.45, LedgeT = 0.30, LedgeLampPitch = 6.0, LedgeLampZ0 = 278.0, LedgeLampGain = 1.6;
+        /// <summary>The lens itself glows at 0.35 (the halo carries the 1.6): at 90-200 m a 0.3 m lens is under a pixel, and at 1.6 it
+        /// read as isolated hot pixels (SG_f04 image_metrics: 10 bright NaN-like pixels on the ledge lines) that twinkle in motion.</summary>
+        public const double LedgeLensGain = 0.35;
+        /// <summary>Four window-cleaning cradles (lit cabins 3.0 x 1.0 x 1.5 m: 1/12 of a panel width) at x 874.5 - 875.5, each
+        /// riding two fixed cables (NocLine, 0.04 m) from the wall top y 560 down to 2 m below its lowest position. Height
+        /// y(t) = Yc + A sin(2 pi (t600 / 600 + phase)): a pure function of the 600 s clock (exact wrap), speed <= 2 pi A / 600
+        /// = 0.188 m/s at A 18 (C17: <= 0.2 m/s). The ranges stay clear of the ledges (cabin 1.5 m + hoists 0.5 m).</summary>
+        public static readonly double[] CradleZ = { 296.0, 352.0, 412.0, 470.0 };
+        public static readonly double[] CradleYc = { 46.0, 106.0, 160.0, 52.0 };
+        public static readonly double[] CradleA = { 12.0, 16.0, 18.0, 13.0 };
+        public static readonly double[] CradlePhase = { 0.10, 0.62, 0.35, 0.81 };
+        public const double CradleW = 3.0, CradleD = 1.0, CradleH = 1.5, CradleX0 = 874.5, CableR = 0.02, CradleGain = 0.9;
+        public static double CradleY(int i, double t600) => CradleYc[i] + CradleA[i] * System.Math.Sin(2.0 * System.Math.PI * (t600 / 600.0 + CradlePhase[i]));
+
 
         // ------------------------------------------------------------------ wall lights (14.2.3 row 6: 12 wall lights, wave colour, r 45, i 5)
         public const int WallLightCount = 12;
@@ -118,7 +145,7 @@ namespace Megastructure
         /// <summary>Shop room light (x token, NocShopfront room gain 0.6 and the panel state's gain 0.16-0.85 on top: G4Kit.PickShop):
         /// cool rooms visible from the Heart (LOOK_V2 R6: no warm light in beat 7), a few neutral ones on the promenade face; closed
         /// bays are roller shutters. ShopClosed: the dark-room level of the -relief-off fallback.</summary>
-        public const double ShopLight = 0.34, ShopClosed = 0.08;
+        public const double ShopLight = 0.26, ShopClosed = 0.08;   // 0.34 in r03: white boxes
 
         // ------------------------------------------------------------------ s ranges (wet walls and sources, events)
         /// <summary>The straight leg starts at s 1 103.56 (C2 tangent out); z = s - 878.56 on it.</summary>

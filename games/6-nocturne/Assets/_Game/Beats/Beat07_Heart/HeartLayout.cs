@@ -31,6 +31,31 @@ namespace Megastructure
         public const int FinCount = 12;
         public const double FinDepth = 4.0, FinThick = 1.2, FinInset = 0.4, StripWidth = 0.5, StripGain = 1.5;
 
+        /// <summary>The podium (CRIT0 #21, HT): three granite steps around the lowest drum, outer radii PlinthR, each PlinthStep tall.</summary>
+        public static readonly double[] PlinthR = { 56.0, 53.0, 50.5 };
+        public const double PlinthStep = 0.16;
+        /// <summary>Ring girders (hoops) every HoopPitch from HoopPitch to HoopTop (11, below the cloud base 460), HoopH tall, from
+        /// R(y) - 0.3 to R(y) + HoopOut (inside the fins' outer edge R + 4, so the 14.5.7 envelope R(y) + 4 holds); on each outer face a
+        /// NocLine ring light (StripWidth) that breathes at RingBreathHz (0.1 Hz; 14.10 photosensitivity <= 0.2 Hz) between
+        /// RingLightLow and 1 of RingLightGain x NeonCyan (14.5.7), ring k lagging k RingLag rad: a slow pulse rises up the spire
+        /// (2 pi / 0.5 = 12.6 rings per period: 503 m per 10 s). HT-06 (fifth start): at the strips' colour and gain (1.5) the
+        /// 12 strips and 11 rings read as a cyan wire cage (FX_r03 KS17 / KS18); the rings are now the subordinate accent:
+        /// NeonCyan x 0.6 (peak G 0.47, B 0.60 linear against the strips' 1.35 / 1.5), so the verticals carry the spire.</summary>
+        public const double HoopPitch = 40.0, HoopTop = 440.0, HoopH = 1.6, HoopOut = 3.6;
+        public const double RingBreathHz = 0.1, RingLightLow = 0.55, RingLightGain = 0.6, RingLag = 0.5;
+        /// <summary>Buttress flare of the fins: the outer edge stands FinFlare beyond R(y) + FinDepth at y FlareY0 (on the lowest drum,
+        /// R 48: 31.84 + 4 + 9.5 = 45.34) and joins R(y) + FinDepth at FlareY1 (smoothstep), in FlarePieces straight pieces; the strip
+        /// follows the edge down to the drum. Below FlareY1 = 96 m only: the koi (lowest 184 m) never meets it.</summary>
+        public const double FinFlare = 9.5, FlareY0 = 6.0, FlareY1 = 96.0;
+        public const int FlarePieces = 12;
+
+        /// <summary>Outer edge radius of a fin at height y (the flare, then R(y) + FinDepth).</summary>
+        public static double FinOuter(double y)
+        {
+            double t = System.Math.Max(0.0, System.Math.Min(1.0, (y - FlareY0) / (FlareY1 - FlareY0)));
+            return SpireRadius(y) + FinDepth + FinFlare * (1.0 - t * t * (3.0 - 2.0 * t));
+        }
+
         /// <summary>Spire radius (corner radius of the 24-gon) at height y.</summary>
         public static double SpireRadius(double y)
         {
@@ -69,6 +94,12 @@ namespace Megastructure
         public const double BalX0 = 1154.6, BalX1 = 1156.0, BalW = 2.6, BalTop = 4.2, BalT = 0.18;
         /// <summary>Railing 0.9 m: top rail 0.05 m, rods 0.02 m every 0.11 m (NocLine tubes), on the three open sides.</summary>
         public const double RailH = 0.9, RailTop = 0.05, RodW = 0.02, RodStep = 0.11, RailInset = 0.05;
+        /// <summary>Fix wave C35: rod pitch on the two side returns (seen nearly edge-on from KS19 the 0.11 m rods fell to 1-1.5 px and
+        /// aliased into a hatch at 1080p): 1.33 m / 4 = 0.33 m, 3 x the front pitch, so the projected pitch stays >= 3 px.</summary>
+        public const double RodStepSide = 0.33;
+        /// <summary>Fix wave C18: the balcony slab (CC0 concrete skin) glows with the window's bounce, GoalLamp x BalconyBounce with
+        /// the emission following the albedo (LOOK_V2 6 / 8.1: the underside lit 50-80 codes; it was 27, sat 0.09).</summary>
+        public const double BalconyBounce = 0.06;
         /// <summary>Pot 0.35 m (radius 0.16) with a 0.6 m plant of 12 dark leaf blades, at the balcony's south corner.</summary>
         public const double PotH = 0.35, PotR = 0.16, PlantH = 0.6;
         public const int PlantBlades = 12;
@@ -78,8 +109,21 @@ namespace Megastructure
         public const double GoalLightX = NocturneConstants.GoalLampX, GoalLightY = NocturneConstants.GoalLampY, GoalLightZ = NocturneConstants.GoalLampZ;
         public const double GoalLightRange = 14.0, GoalLightIntensity = 5.0;
         /// <summary>Lamp-lit room surfaces (GoalLamp x gain): back wall, side walls, ceiling, floor, the half-drawn curtain. HT (INT-08):
-        /// the base glow is lowered (was 0.55 / 0.32 / 0.22 / 0.12 / 0.42); the room light adds the falloff.</summary>
-        public const double RoomBack = 0.30, RoomSide = 0.18, RoomCeil = 0.10, RoomFloor = 0.08, CurtainGain = 0.30;
+        /// the base glow is lowered (was 0.55 / 0.32 / 0.22 / 0.12 / 0.42); the room light adds the falloff. Fifth start: back 0.30 -> 0.20
+        /// and ceiling 0.10 -> 0.07 (HT_r01 KS19: the upper back wall above the picture was a flat pale panel; the lamp's own light now
+        /// carries the gradient from the globe up the wall).
+        /// Fix wave C18 (panel p4_01): the aperture read 117 against LOOK_V2's 165-195 (about 2.2 x in linear light); HT_r04 with the
+        /// base x 1.7 and the light x 1.6 read 134, HT_r05 (x 2.75) 148: from KS19 the upper sash looks up at the CEILING (it read as a
+        /// grey veil at 0.18): ceiling 0.55 (the lamp's warm pool overhead), back 0.70, sides 0.60, curtain 0.90, the room light
+        /// x 2.5 (0.20 / 0.18 / 0.07 / 0.08 / 0.30 and i 4.0 before the fix wave).</summary>
+        public const double RoomBack = 0.70, RoomSide = 0.60, RoomCeil = 0.55, RoomFloor = 0.18, CurtainGain = 0.90;
+        /// <summary>D-034 6 (lead ruling, fix wave): an empty lit room behind the ground-floor window of column -1 (z 384.3 - 385.5):
+        /// a table, a chair pushed back, a cup, a desk lamp on (cold: the goal window stays the only warm window), nobody. Room box
+        /// x from the dark reveal's back to EmptyX1, y 0 - EmptyY1, z EmptyZ0 - EmptyZ1 (clear of the goal room above, y >= 3.6,
+        /// and of the next openings); walls WinCold x EmptyGlow (emission follows the plaster); the lamp's light WinCold r / i.</summary>
+        public const int EmptyStorey = 0, EmptyColumn = -1;
+        public const double EmptyX1 = 1160.2, EmptyY1 = 3.2, EmptyZ0 = 382.6, EmptyZ1 = 387.2, EmptyGlow = 0.012, EmptyBulbGain = 2.2;
+        public const double EmptyLightRange = 4.0, EmptyLightIntensity = 1.8;
         /// <summary>Faint cold glow of the two curtained dark windows (WinCold x), the entrance lantern's frosted glass (x).</summary>
         public const double DarkCurtainGlow = 0.05, LanternGain = 1.4;
 
@@ -101,7 +145,7 @@ namespace Megastructure
         /// <summary>The table lamp's own light inside the room (GoalLamp, r 5.5, i 4.0; LOOK_V2 6 "warm falloff into the room"): the
         /// back wall, the ceiling and the furniture fall off with distance from the lamp (the room's emissive glow is lowered to a
         /// base: RoomBack / RoomSide / RoomCeil / RoomFloor).</summary>
-        public const double RoomLightRange = 5.5, RoomLightIntensity = 4.0;
+        public const double RoomLightRange = 5.5, RoomLightIntensity = 10.0;
         /// <summary>The back wall's furniture seen through the window from KS19 (the visible band is y 5.64 - 7.0 at z 387.0 - 388.8):
         /// a picture (centre z, y; width, height; frame bar), a shelf (y, z range, depth) with books.</summary>
         public const double PictureZ = 388.25, PictureY = 6.2, PictureW = 0.56, PictureH = 0.42, PictureBar = 0.035;
@@ -121,8 +165,41 @@ namespace Megastructure
         public const int PlazaLampCount = 20;
         public const double PlazaLampX0 = 950.0, PlazaLampStep = 20.0, PlazaLampLateral = 16.0, PlazaLampH = 6.0;
         public const double PlazaLampRange = 12.0, PlazaLampIntensity = 3.0, PlazaLampHeadGain = 2.0;
+        /// <summary>The lamp fixture (INT-12, HT): a lathe of a cast plinth (R 0.2, 0.45 m), a pole tapering from R 0.09 to 0.055, a
+        /// collar; the luminaire a dark disc housing (R 0.42) over its lens (R LampLensR at LampLensY, facing down, SignWhite x
+        /// LampLensGain); the real light LampLightDrop under the lens, the halo and the H4 source at the lens.</summary>
+        public const double LampLensY = 5.70, LampLensR = 0.315, LampLensGain = 2.0, LampLightDrop = 0.35;
+        /// <summary>HT-05: the lit part is a frosted bowl under the housing (rim R 0.31 at LampLensY down to LampBowlY on the axis),
+        /// not a flat disc: a disc seen edge-on from eye height was a 1-2 px sliver at 100-250 m (NaN-like pixels in KS17); the
+        /// bowl is 0.22 m tall from the side. Halo and H4 source at its centre LampGlowY.</summary>
+        public const double LampBowlY = 5.485, LampGlowY = 5.60;
+        /// <summary>Benches (scale cues near the walk): one between every second pair of lamp columns (x BenchX0 + BenchStep k, k 0..4)
+        /// on both rows, BenchLateral from the east leg (2.5 m outside the lane), two granite legs and a seat of BenchSlats slats.</summary>
+        public const int BenchPerRow = 5, BenchSlats = 5;
+        public const double BenchX0 = 960.0, BenchStep = 40.0, BenchL = 2.4, BenchD = 0.56, BenchH = 0.46, BenchLateral = 14.8;
+
+        // ------------------------------------------------------------------ plaza inlay (INT-12, HT; Shaders/Beats/NocInlay.shader)
+        /// <summary>Brass ring lines InlayRingW wide every InlayRingPitch about S from InlayRing0 (outside the podium, R 56) to
+        /// InlayRing1 (17 rings; the edge at 400 is the floor's outline); radial seams every 360 / InlaySeams deg (7.5), brass-capped
+        /// joints InlaySeamW wide beyond InlaySeamR0 (one runs 0.12 m beside the east leg's centre line: the walk's leading line to
+        /// the spire); both families fade out where their pitch falls below InlayFadePx0 px (full above InlayFadePx1).</summary>
+        public const double InlayRingPitch = 20.0, InlayRingW = 0.12, InlayRing0 = 60.0, InlayRing1 = 380.0;
+        public const int InlaySeams = 48;
+        public const double InlaySeamW = 0.06, InlaySeamR0 = 58.0, InlayFadePx0 = 6.0, InlayFadePx1 = 10.0;
+        /// <summary>Aged brass F0 (linear; HSV saturation 0.40: under the SignWhite lamps its glints stay below the warm-blob rule's
+        /// saturation 0.5), smoothness (worn by feet and wet: 0.70, GGX alpha 0.09, a sharper lobe than the wet film's 0.18
+        /// floor), the seams' darker cap (x the brass). HT-04: NocInlay mirrors the wet floor's analytic world with this F0.</summary>
+        public static readonly UnityEngine.Color InlayBrass = new UnityEngine.Color(0.50f, 0.42f, 0.30f, 1f);
+        public const double InlaySmooth = 0.70, InlaySeamTint = 0.6;
         /// <summary>A low planter (0.45 m with a 0.2 m hedge) closes the walk 1.4 - 2.2 m beyond the goal (behind the PathGuide end
         /// cap); r01's 0.8 m box filled the lower third of a pitch-0 view.</summary>
         public const double EndPlanterX0 = 1149.6, EndPlanterX1 = 1150.4, EndPlanterHalfZ = 4.2, EndPlanterH = 0.45, EndHedgeH = 0.2;
+
+        // ------------------------------------------------------------------ the tenement's downpipe (HT-03)
+        /// <summary>A cast-iron rainwater downpipe on the pier between the two south window columns (z 382.56 - 384.24 clear of
+        /// sills and lintels): axis DownpipeOff in front of the west face, radius DownpipeR, wall clips every DownpipeClipStep, a
+        /// hopper head under the roof edge (top DownpipeTop: below the roof's KS19 silhouette, so no koi sample is hidden) and a
+        /// shoe at the foot.</summary>
+        public const double DownpipeZ = 383.4, DownpipeOff = 0.09, DownpipeR = 0.05, DownpipeClipStep = 1.8, DownpipeTop = 13.85;   // HT-t04: 14.15 rose 0.32 deg over the roof edge from the KS19 eye
     }
 }

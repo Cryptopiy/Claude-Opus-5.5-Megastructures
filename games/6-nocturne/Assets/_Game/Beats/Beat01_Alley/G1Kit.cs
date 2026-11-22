@@ -22,6 +22,13 @@ namespace Megastructure
         Grating,                          // Look v2 (SU, TEXTURE_PLAN 3.5): open steel grating plates (NocGrating, two-sided)
         ConcreteAlley,                    // Look v2 (SU, TEXTURE_PLAN 1.3): the alley walls (concrete_wall_006; v1: Concrete)
         Wood, TileWall,                   // Look v2 (SU, TEXTURE_PLAN 3.5): the noodle-bar counter and back wall (v1: SteelPainted, Concrete)
+        AlleyWindow,                      // AL (Phase 4 wave B, INT-06): framed recessed windows with rooms (NocAlleyWindow)
+        AlleyRoomBar, AlleyRoomA, AlleyRoomB,   // AL (INT-07, DREAD 6): the noodle bar and the two empty rooms (NocAlleyRoom, own lamps)
+        Steam, SteamBar,                  // AL (14.5.1 vents, INT-07 pots): NocSteam plumes
+        AlleyPool,                        // AL (INT-21): baked light pools on the walls (NocAlleyPool)
+        AlleyGlow,                        // AL (KS00): the lit boulevard haze seen through the mouth (NocAlleyGlow)
+        AlleySign,                        // AL (INT-06): light-box faces of the blade signs (NocAlleyRoom kind 4, no lamps)
+        AlleyWorkPool,                    // AL (fix wave, D-039 (6)): the catwalk work floodlights' wash on the KS02 walls (NocAlleyPool spot mode)
     }
 
     /// <summary>One NocNeon sign instance: centre, rotation, size (W, H) and palette (-1 hash, 0 magenta, 1 cyan, 2 amber, 3 violet).</summary>
@@ -89,8 +96,15 @@ namespace Megastructure
                 if (p.Mb.VertexCount == 0) continue;
                 var rep = MeshValidation.Validate(p.Mb, prefix + "_" + p.Name);
                 if (!rep.Ok) { failed++; Debug.LogError("[NOC-FAIL] " + prefix + ": " + rep); }
+                var mat = G1Materials.Get(lib, p.Mat);
+                // AL slots of beat 1's own transparent shaders (steam, pools, the mouth haze): skipped when the shader is missing
+                if (lib != null && mat == null && (p.Mat == G1Mat.Steam || p.Mat == G1Mat.SteamBar || p.Mat == G1Mat.AlleyPool || p.Mat == G1Mat.AlleyGlow || p.Mat == G1Mat.AlleyWorkPool))
+                {
+                    Debug.LogWarning("[NOC] " + prefix + "_" + p.Name + ": shader of " + p.Mat + " missing, part skipped");
+                    continue;
+                }
                 Mesh mesh = p.Mb.ToMesh(prefix + "_" + p.Name);
-                var mr = ctx.AddMesh(root, p.Name, mesh, G1Materials.Get(lib, p.Mat));
+                var mr = ctx.AddMesh(root, p.Name, mesh, mat);
                 mr.transform.localPosition = p.Origin;
                 if (p.Mat == G1Mat.GlassBack) ctx.AddMesh(root, p.Name + "_front", mesh, G1Materials.Get(lib, G1Mat.GlassFront)).transform.localPosition = p.Origin;
             }

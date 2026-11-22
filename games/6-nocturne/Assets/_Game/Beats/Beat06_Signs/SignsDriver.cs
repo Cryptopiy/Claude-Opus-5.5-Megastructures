@@ -3,7 +3,8 @@
 // by the H4 wall plane of kind 2 (NocMirror's NocScreenMirror), and gives the 12 wall lights the wave colour at their position
 // (NocScreenMath, the shader's formulas). The colour of a light changes at the wave rate (0.017 Hz), far below the 0.2 Hz
 // photosensitivity limit. Clock-driven only (the scene clock; -freeze-clock freezes it), so the static tests are frame-identical.
-// Zero allocations per frame.
+// The four window-cleaning cradles ride their cables at y = SignsLayout.CradleY(i, t mod 600) (fix wave C17). Zero allocations
+// per frame.
 using UnityEngine;
 
 namespace Megastructure
@@ -17,9 +18,14 @@ namespace Megastructure
         readonly Light[] m_lights;
         readonly float[] m_z, m_y;
         readonly int m_waves;
+        readonly Transform[] m_cradles;
+        readonly Vector3[] m_cradleP;
 
-        public SignsDriver(Material screen, Light[] lights, int waves)
+        public SignsDriver(Material screen, Light[] lights, int waves, Transform[] cradles = null)
         {
+            m_cradles = cradles ?? new Transform[0];
+            m_cradleP = new Vector3[m_cradles.Length];
+            for (int i = 0; i < m_cradles.Length; i++) if (m_cradles[i] != null) m_cradleP[i] = m_cradles[i].position;
             m_screen = screen;
             m_lights = lights ?? new Light[0];
             m_waves = waves;
@@ -43,6 +49,14 @@ namespace Megastructure
                 if (m_lights[i] == null) continue;
                 D3 c = NocScreenMath.Ramp(NocScreenMath.Index(m_z[i], m_y[i], p58, p60, m_waves));
                 m_lights[i].color = ScreenWallBuilder.UnitColour(c).gamma;
+            }
+            // the window-cleaning cradles (fix wave C17): y a pure function of the 600 s clock, <= 0.19 m/s
+            for (int i = 0; i < m_cradles.Length; i++)
+            {
+                if (m_cradles[i] == null) continue;
+                Vector3 p = m_cradleP[i];
+                p.y = (float)SignsLayout.CradleY(i, t600);
+                m_cradles[i].position = p;
             }
         }
     }

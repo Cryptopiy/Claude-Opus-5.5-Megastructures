@@ -1,0 +1,912 @@
+{
+ "run": "SG_f04",
+ "capture_dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\captures\\SG_f04",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-21T02:41:11.970Z",
+  "finished": "2026-11-21T02:41:20.865Z",
+  "seconds": 8.895205,
+  "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\captures\\SG_f04",
+  "captureSet": "keyshots1080",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "freezeDither": true,
+   "freezeAmbient": false,
+   "args": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\Builds\\SG\\Nocturne.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\Logs\\player-SG-f04.log -report-dir W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\reports -capture W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\captures\\SG_f04 -capture-set keyshots1080 -capture-only KS16,KS17"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "supersample": 1,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 1.84793,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "NocturneConstants.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS00_alley_start": [],
+  "KS01_alley_noodle": [],
+  "KS02_alley_slit": [],
+  "KS03_boulevard_mouth": [],
+  "KS04_boulevard_axis": [],
+  "KS06_tram": [],
+  "KS05_boulevard_up": [],
+  "KS07_edge_window": [],
+  "KS08_edge_flank": [],
+  "KS09_edge_gulf": [],
+  "KS10_edge_plunge": [],
+  "KS11_bridge_train": [],
+  "KS12_bridge_void": [],
+  "KS13_bridge_glass": [],
+  "KS14_garden_gate": [],
+  "KS15_garden_canopy": [],
+  "KS16_signs_wall": [
+   "1920x1080"
+  ],
+  "KS17_heart_reveal": [
+   "1920x1080"
+  ],
+  "KS18_koi_pass": [],
+  "KS19_goal_window": []
+ },
+ "images": [
+  {
+   "tag": "KS16_signs_wall",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\captures\\SG_f04\\KS16_signs_wall.png",
+   "beat": 6,
+   "s": 1150.0,
+   "keyshot": "KS16_signs_wall",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 17,
+     "threshold": "0",
+     "note": "bright 10 (mode all), dark 7, first at [[279, 112], [22, 176], [1200, 228], [1244, 311], [1251, 323]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[708, 980], [866, 1000]]; neon mask 0.538 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 1 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0656,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.212,
+     "threshold": "0.1255..0.251",
+     "note": "display"
+    },
+    {
+     "name": "banding[wall_panel]",
+     "status": "FAIL",
+     "value": 2.058,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 3.09 (run 7 px), - / -, 3 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 10,
+    "nan_like_dark": 7,
+    "nan_like_pos": [
+     [
+      279,
+      112
+     ],
+     [
+      22,
+      176
+     ],
+     [
+      1200,
+      228
+     ],
+     [
+      1244,
+      311
+     ],
+     [
+      1251,
+      323
+     ],
+     [
+      1257,
+      335
+     ],
+     [
+      1263,
+      347
+     ],
+     [
+      1275,
+      369
+     ],
+     [
+      1209,
+      426
+     ],
+     [
+      1211,
+      429
+     ],
+     [
+      1320,
+      526
+     ],
+     [
+      1841,
+      1019
+     ],
+     [
+      1743,
+      1064
+     ],
+     [
+      1382,
+      1070
+     ],
+     [
+      1411,
+      1071
+     ],
+     [
+      1412,
+      1075
+     ],
+     [
+      1413,
+      1079
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.5383391203703703,
+    "isolated_px": 2,
+    "isolated_pos": [
+     [
+      708,
+      980
+     ],
+     [
+      866,
+      1000
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.21195119619369507,
+     "p1": 0.06556549668312073,
+     "p50": 0.1908854991197586,
+     "p99": 0.5224329829216003,
+     "std": 0.11359340697526932
+    },
+    "luma_linear": {
+     "mean": 0.04917631298303604,
+     "p1": 0.005494729615747929,
+     "p50": 0.03101215325295925,
+     "p99": 0.24422694742679596,
+     "std": 0.052064199000597
+    },
+    "banding": {
+     "wall_panel": {
+      "direction": "v",
+      "n_strips": 3,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 3.0869524088541676,
+      "longest_run_px": 7,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.010827493392605017,
+      "score": 2.057968272569445,
+      "pass": false,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.46310914351851823,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.22529761284722016,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 3.0869524088541676,
+        "longest_run_px": 6
+       }
+      ]
+     }
+    },
+    "band_score_worst": 2.057968272569445
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS17_heart_reveal",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\heart\\QA\\captures\\SG_f04\\KS17_heart_reveal.png",
+   "beat": 7,
+   "s": 1296.0,
+   "keyshot": "KS17_heart_reveal",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 1, first at [[1328, 330]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 2.298 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0001,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0575,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.147,
+     "threshold": "0.0706..0.2353",
+     "note": "display"
+    },
+    {
+     "name": "banding[sky_koi_spire]",
+     "status": "PASS",
+     "value": 0.776,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 1.16 (run 11 px), - / -, 6 strips"
+    },
+    {
+     "name": "banding[plaza]",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 1.39 (run 9 px) not gated (textured: gate steps), - / -, 22 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      1328,
+      330
+     ]
+    ],
+    "clipped_pct": 0.00014467592592592592,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.2979841820987654,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.14701837301254272,
+     "p1": 0.057454902678728104,
+     "p50": 0.12749256193637848,
+     "p99": 0.704520046710968,
+     "std": 0.10668957978487015
+    },
+    "luma_linear": {
+     "mean": 0.030148284509778023,
+     "p1": 0.004668275360018015,
+     "p50": 0.01488864328712225,
+     "p99": 0.47016021609306335,
+     "std": 0.07211112976074219
+    },
+    "banding": {
+     "sky_koi_spire": {
+      "direction": "v",
+      "n_strips": 6,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 1.164650471698112,
+      "longest_run_px": 11,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.06367813849790539,
+      "score": 0.7764336477987414,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 1.164650471698112,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.9146957465277792,
+        "longest_run_px": 8
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6895655257936499,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         192,
+         256
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.5967759497548997,
+        "longest_run_px": 11
+       },
+       {
+        "strip": [
+         256,
+         320
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.5283491861979177,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         320,
+         384
+        ],
+        "rows": [
+         0,
+         152
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.1867246636284725,
+        "longest_run_px": 5
+       }
+      ]
+     },
+     "plaza": {
+      "direction": "v",
+      "n_strips": 22,
+      "gate": "steps",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 1.3858227528825988,
+      "longest_run_px": 9,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.08595965264514892,
+      "score": 0.0,
+      "pass": true,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.9637980902777782,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.27174653320312514,
+        "longest_run_px": 9
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.0,
+        "longest_run_px": 0
+       },
+       {
+        "strip": [
+         192,
+         256
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.14433477303522943,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         256,
+         320
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.1766965986394562,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         320,
+         384
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.5629541666666684,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         384,
+         448
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.7699050897696464,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         448,
+         512
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.5867763047138049,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         512,
+         576
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6103871376811595,
+        "longest_run_px": 8
+       },
+       {
+        "strip": [
+         576,
+         640
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.8422012992831545,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         640,
+         704
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.8059652083333333,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         704,
+         768
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 1.3858227528825988,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         768,
+         832
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.43569842836257294,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         832,
+         896
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.4423523763020826,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         896,
+         960
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.512683736559139,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         960,
+         1024
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6279601942274307,
+        "longest_run_px": 7
+       },
+       {
+        "strip": [
+         1024,
+         1088
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.08731427951388859,
+        "longest_run_px": 4
+       },
+       {
+        "strip": [
+         1088,
+         1152
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.23507998046874867,
+        "longest_run_px": 9
+       },
+       {
+        "strip": [
+         1152,
+         1216
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.25422708333333455,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         1216,
+         1280
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.630671585648147,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         1280,
+         1344
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.6655221214157715,
+        "longest_run_px": 5
+       },
+       {
+        "strip": [
+         1344,
+         1408
+        ],
+        "rows": [
+         0,
+         120
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.18986740740740798,
+        "longest_run_px": 4
+       }
+      ]
+     }
+    },
+    "band_score_worst": 0.7764336477987414
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  }
+ ]
+}

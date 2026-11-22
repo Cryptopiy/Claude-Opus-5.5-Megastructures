@@ -404,10 +404,27 @@ NocWinV2 NocWindowV2(int i, int jl, int band, uint face, int type, float p, floa
     float x = tEpoch + NocU01(h.z);
     float e = floor(x);
     uint4 k = uint4((uint)(i + 1048576), (uint)(jg + 1048576), face, (uint)e);
-    float aNow = NocU01(NocPcg4d(k).x) <= p ? 1.0 : 0.0;
-    float aPrev = NocU01(NocPcg4d(uint4(k.xyz, k.w - 1u)).x) <= p ? 1.0 : 0.0;
-    w.lit = lerp(aPrev, aNow, smoothstep(0.0, NC_FaToggle / NC_FaEpoch, x - e));
-    float uh = NocU01(h.y);
+    // FX (INT-14): a section floor lights in runs (NocFacadeConstants FaSecRun*): the run is on with p / q, each of its cells with
+    // q = max(FaSecRunFill, p), so E[lit] = p as before; the run toggles on its own epoch (twin NocFacadeMath.WindowV2)
+    float pc = p, runLit = 1.0, uRun = -1.0;
+    [branch] if (type == NOC_ST_SEC)
+    {
+        float qf = max(NC_FaSecRunFill, p), pr = p / qf;
+        pc = qf;
+        uint hr = NocPcg3d(uint3((uint)(jg + 1048576), face, 0x52554E53u)).x;
+        float L = NC_FaSecRunMin + floor((NC_FaSecRunMax - NC_FaSecRunMin + 1.0) * NocU01(hr));
+        float r = floor(((float)i + floor(L * NocU01(NocPcg(hr)))) / L);
+        uint3 hq = NocPcg3d(uint3((uint)(r + 1048576.0), (uint)(jg + 1048576), face ^ 0x52554E31u));
+        float xr = tEpoch + NocU01(hq.z), er = floor(xr);
+        float rNow = NocU01(NocPcg4d(uint4(hq.x, hq.y, face, (uint)er)).x) <= pr ? 1.0 : 0.0;
+        float rPrev = NocU01(NocPcg4d(uint4(hq.x, hq.y, face, (uint)er - 1u)).x) <= pr ? 1.0 : 0.0;
+        runLit = lerp(rPrev, rNow, smoothstep(0.0, NC_FaToggle / NC_FaEpoch, xr - er));
+        uRun = NocU01(NocPcg(hq.x ^ 0x48554555u));          // one hue per run: a lit floor is one kind of light
+    }
+    float aNow = NocU01(NocPcg4d(k).x) <= pc ? 1.0 : 0.0;
+    float aPrev = NocU01(NocPcg4d(uint4(k.xyz, k.w - 1u)).x) <= pc ? 1.0 : 0.0;
+    w.lit = runLit * lerp(aPrev, aNow, smoothstep(0.0, NC_FaToggle / NC_FaEpoch, x - e));
+    float uh = uRun >= 0.0 ? uRun : NocU01(h.y);
     float3 hue = type == NOC_ST_MECH ? NocMechHueV2(uh, wf) : NocHueV2(uh, wf, nf);
     w.eLit = hue * NocBrightnessV2(h.x);
     w.eUn = PAL_WinNeutral * (NC_FaStandby * (0.5 + NocU01(NocPcg(h.x ^ h.z))));
@@ -506,7 +523,9 @@ float3 NocWallTokenV2(NocSkinV2 s, int type)
 float NocSecDistMulV2(uint face, float ub, float vb)
 {
     uint3 h = NocPcg3d(uint3((uint)(ub + 1048576.0), (uint)(vb + 1048576.0), face ^ 0x44495354u));
-    return NocLogNormal1(NocNormalV2(h.x, h.y), NC_FaSecDistSigma);
+    // FX (INT-14): a share FaSecVoidP of the districts are dark voids, the rest carry the remainder (mean 1)
+    return NocU01(h.z) < NC_FaSecVoidP ? NC_FaSecVoidMul
+         : NocLogNormal1(NocNormalV2(h.x, h.y), NC_FaSecDistSigma) * ((1.0 - NC_FaSecVoidP * NC_FaSecVoidMul) / (1.0 - NC_FaSecVoidP));
 }
 
 // District multiplier box-filtered over the 2 x 2 districts under the footprint (the band-mean regime).
@@ -601,6 +620,11 @@ struct NocFaceOutV2
     float louver;                // section mechanical band (louvre wall) coverage, mode 1
 };
 
+// C11 (AT, integration round): strata below the walk go dark with depth, so AT's sink veil lifts a dark wall into the umber
+// haze: the lit probability x (1 - 0.6 S01((-40 - y) / 400)) at world height y (1 above y -40, 0.4 below y -440).
+// NocS01 is NocAtmosphere.hlsl's (every includer includes NocLitCore first). Mirrored by NocFacadeMath.DepthLitV2.
+float NocFaDepthLitV2(float yWS) { return 1.0 - 0.6 * NocS01((-40.0 - yWS) / 400.0); }
+
 // Mean (unresolved) fractions of a band of type `type` at band-local vl (neighbour bands of a footprint straddling a boundary):
 // opening, glass, frame, jamb, sill / head, slab, spandrel, and the emission of those parts.
 void NocBandMeanPartV2(NocSkinV2 s, int band, int mode, float u, float vlNb, float fwu, float fwv, float uMin, float uMax,
@@ -624,7 +648,8 @@ void NocBandMeanPartV2(NocSkinV2 s, int band, int mode, float u, float vlNb, flo
     aA = float4(aOpen, aGlass, max(0.0, Vx * Vy - aGlass), max(0.0, (Ox - Vx) * Oy));
     float aSp = c.sp1 > c.sp0 ? NocGlassX(0.0, 1.0, 0.0, c, 0.0, true) * Ax * (c.sp1 - c.sp0) / c.Pv * Ay : 0.0;
     aB = float3(max(0.0, Vx * (Oy - Vy)), c.slab / c.Pv * Aband, aSp);
-    float p = NC_FaLit * NocFactorV2(type) * NocTowerMulV2(s.key) * (s.region == 1 ? NC_FaOqLit : 1.0);
+    float p = NC_FaLit * NocFactorV2(type) * NocTowerMulV2(s.key) * (s.region == 1 ? NC_FaOqLit : 1.0)
+            * NocFaDepthLitV2(band * c.bandH + vlNb);                                         // C11 depth fade (world y)
     float3 hue = type == NOC_ST_MECH ? NocMeanMechHueV2(wf) : NocMeanHueV2(wf, nf);
     float3 eLitMean = hue * NC_FaBMean, eUnMean = PAL_WinNeutral * NC_FaStandby;
     float3 albRev = NocWallTokenV2(s, type) * NC_FaAoReveal;
@@ -715,7 +740,8 @@ NocFaceOutV2 NocFacadeEvalV2(NocFaceInV2 q)
     if (c.sp1 > c.sp0) o.aSpandrel = (wu * spx + (1.0 - wu) * mSx * Ax) * (wv * spy + (1.0 - wv) * mSpy * Ay);
 
     // lit probability at the pixel: tower x lit-floor group x zone, each level blended to its parent by its own fade
-    float aT = NC_FaLit * NocFactorV2(type) * NocTowerMulV2(K) * (s.region == 1 ? NC_FaOqLit : 1.0);   // the Old Quarter lights fewer windows
+    float aT0 = NC_FaLit * NocFactorV2(type) * NocTowerMulV2(K) * (s.region == 1 ? NC_FaOqLit : 1.0);   // the Old Quarter lights fewer windows
+    float aT = aT0 * NocFaDepthLitV2(q.v);   // C11 depth fade at the fragment (q.v = world y); resolved cells take their row centre
     int jc = clamp((int)floor(vl / c.Pv), 0, rows - 1);
     NocGroupsV2 G = NocGroupsOfV2(K, band, cy0, jc, rows);
     float wg = smoothstep(NC_FaGroupFadePx0, NC_FaGroupFadePx1, NC_FaGroupMinRows * c.Pv / fwv);
@@ -768,7 +794,8 @@ NocFaceOutV2 NocFacadeEvalV2(NocFaceInV2 q)
                     int zc = (int)floor((i + sh) / NC_FacadeZoneCols);
                     // mode 1: the district of the cell (cells never straddle a district: 28 bays x 75 floors)
                     float mc = q.mode == 1 ? NocSecDistMulV2(q.face, floor((i + 0.5) * c.Pu / NC_FaSecDistU), floor((band * bandH + (j + 0.5) * c.Pv) / NC_FaSecDistV)) : 1.0;
-                    float p = min(1.0, aT * gm * mc * NocZoneZ(uRow, NocZoneCellU(q.face, zrg, zc)));
+                    float dRow = NocFaDepthLitV2(band * bandH + (j + 0.5) * c.Pv);   // C11: one state per window (no split across its height)
+                    float p = min(1.0, aT0 * dRow * gm * mc * NocZoneZ(uRow, NocZoneCellU(q.face, zrg, zc)));
                     NocWinV2 w = NocWindowV2(i, j, band, q.face, type, p, q.tEpoch, q.wf, q.nf);
                     // interior factor I / E[I] at the pixel's glass-plane point (x, y in the opening), zero-mean part faded in
                     float xg = q.u - i * c.Pu + sx, yg = vl - j * c.Pv + sy;

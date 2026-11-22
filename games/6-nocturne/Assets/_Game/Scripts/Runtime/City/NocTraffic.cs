@@ -13,6 +13,9 @@
 // courtyard above the crowns and end inside the east block (the ramp x 815.3..1 015.9 runs in the lintel, the courtyard and the
 // block); the four spec lanes below y 135 ((-48, 60), (-42, 95), (+44, 70), (+50, 112)) would enter the crowns at the face-B plane
 // (y 98-125) and rise to y 150, 175, 145, 185, above the canyon bridge (roof y 132) and the crowns (135.4 m inside the notch).
+// ARK (D-043): the two skyway lanes of 14.5.2 (z 195, y 320 east-bound and 400 west-bound) crossed the rift inside the Ark's
+// volume (x 295-735, y 300-600: the ship would sail through them); they run at y 275 and 290 now, under its gondolas. Over the
+// rift the walker sees no boulevard vehicle within 300 m (NocStreak NocWalkClear, AbyssTraffic.BoulevardClear).
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -164,6 +167,10 @@ namespace Megastructure
             return m;
         }
 
+        /// <summary>QA A/B switch (ARK D-043): with the environment variable NOC_TRAFFIC_OFF=1 the vehicle batches and the layer glows
+        /// are built but not registered, so an A/B capture pair isolates exactly the traffic's light (the streak-length proof).</summary>
+        public static readonly bool Off = Environment.GetEnvironmentVariable("NOC_TRAFFIC_OFF") == "1";
+
         /// <summary>One batch of every vehicle of the lanes (registered for per-camera submission).</summary>
         public static InstancedBatch Batch(string name, IList<TrafficLane> lanes, Material mat, Mesh laneQuad, uint seed)
         {
@@ -175,7 +182,7 @@ namespace Megastructure
                 Vehicles(lanes[l], seed + (uint)l * 7919u, phis, vs);
                 for (int i = 0; i < phis.Count; i++) b.Add(VehicleMatrix(lanes[l], phis[i], vs[i]));
             }
-            NocCameraBatches.Register(b);
+            if (!Off) NocCameraBatches.Register(b);
             return b;
         }
 
@@ -184,14 +191,14 @@ namespace Megastructure
         /// the courtyard and into the east block). Heights: 14.5.2, with the four lanes below y 135 raised (GE, GB-06, see above).</summary>
         public static void BoulevardLanes(List<TrafficLane> eastBound, List<TrafficLane> westBound)
         {
-            double[,] lanes = { { -48, 150 }, { -42, 175 }, { -52, 140 }, { -38, 200 }, { 44, 145 }, { 50, 185 }, { 40, 160 }, { 36, 230 }, { 0, 320 }, { 0, 400 } };
+            double[,] lanes = { { -48, 150 }, { -42, 175 }, { -52, 140 }, { -38, 200 }, { 44, 145 }, { 50, 185 }, { 40, 160 }, { 36, 230 }, { 0, 275 }, { 0, 290 } };   // ARK D-043: skyway 320 / 400 -> 275 / 290 (out of the Ark)
             for (int k = 0; k < lanes.GetLength(0); k++)
             {
                 double z = 195.0 + lanes[k, 0], y = lanes[k, 1];
                 double xB = CityField.GulfXB(z);
                 double e = NocturneConstants.TrafficRampLane;
                 double x1 = xB + e * (xB - NocturneConstants.TrafficLaneX0) / (1.0 - e);          // ramp starts exactly at the face
-                bool east = lanes[k, 0] < 0 || (lanes[k, 0] == 0 && k == 8);                        // skyway 320 east, 400 west
+                bool east = lanes[k, 0] < 0 || (lanes[k, 0] == 0 && k == 8);                        // skyway 275 east, 290 west
                 var lane = new TrafficLane { name = "boulevard_" + k, ay = y, by = y, az = z, bz = z, ramp = e };
                 if (east) { lane.ax = NocturneConstants.TrafficLaneX0; lane.bx = x1; eastBound.Add(lane); }
                 else { lane.ax = x1; lane.bx = NocturneConstants.TrafficLaneX0; westBound.Add(lane); }

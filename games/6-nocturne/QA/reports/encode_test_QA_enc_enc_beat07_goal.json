@@ -1,0 +1,283 @@
+{
+ "run": "QA_enc_enc_beat07_goal",
+ "status": "PASS",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat07_goal",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_enc_enc_beat07_goal\\enc_beat07_goal",
+   "checks": [
+    {
+     "name": "x264_crf23[tenement_wall]",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.22 (run 10 px) (source score 0.073), frame 34; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code)"
+    },
+    {
+     "name": "x264_crf30[tenement_wall]",
+     "status": "INFO",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.60 (run 30 px) (source score 0.073), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "vp9_crf31[tenement_wall]",
+     "status": "INFO",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 0.38 (run 17 px) (source score 0.073), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\x264_crf23.mp4",
+     "encode_s": 3.3,
+     "kbps": 568.7,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.7590038660622427,
+     "decoded": {
+      "tenement_wall": {
+       "direction": "v",
+       "n_strips": 2,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 0.21845496961805544,
+       "longest_run_px": 10,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.007190230653306345,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 0.14563664641203697,
+       "pass": true,
+       "frame": 34
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf23_tenement_wall_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf23_tenement_wall_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf23_tenement_wall_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "x264",
+     "crf": 30,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\x264_crf30.mp4",
+     "encode_s": 3.5,
+     "kbps": 195.1,
+     "decoded_frames": 240,
+     "mean_abs_error": 2.2403448310506686,
+     "decoded": {
+      "tenement_wall": {
+       "direction": "v",
+       "n_strips": 2,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 0.6003821614583327,
+       "longest_run_px": 30,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.0071933938257079996,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 0.4002547743055551,
+       "pass": true,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf30_tenement_wall_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf30_tenement_wall_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\x264_crf30_tenement_wall_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "vp9",
+     "crf": 31,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\vp9_crf31.webm",
+     "encode_s": 8.4,
+     "kbps": 867.6,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.68209084844393,
+     "decoded": {
+      "tenement_wall": {
+       "direction": "v",
+       "n_strips": 2,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 0.3794664333767349,
+       "longest_run_px": 17,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.005592147977632021,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 0.2529776222511566,
+       "pass": true,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\vp9_crf31_tenement_wall_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\vp9_crf31_tenement_wall_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat07_goal\\enc_beat07_goal\\crops\\vp9_crf31_tenement_wall_f00137_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 240,
+   "regions": [
+    {
+     "name": "tenement_wall",
+     "rect": [
+      96,
+      270,
+      231,
+      476
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "tenement_wall": {
+     "direction": "v",
+     "n_strips": 2,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 0.10881654188368062,
+     "longest_run_px": 5,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.005398355445249705,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       0.0,
+       0.0
+      ],
+      "R": [
+       0.0,
+       0.0
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 0.07254436125578707,
+     "pass": true,
+     "frame": 0
+    }
+   },
+   "lookv2_frame": true,
+   "status": "PASS"
+  }
+ ],
+ "lookv2_encoded": null
+}

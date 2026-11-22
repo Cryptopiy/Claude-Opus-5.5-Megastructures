@@ -25,12 +25,16 @@ Shader "Megastructure/NocGlass"
         [NoScaleOffset] _OverlayNormal ("v2 OverlayArr normal", 2DArray) = "" {}
         _GrimeGain ("v2 grime gain", Range(0, 1)) = 0
         _RivuletGain ("v2 rivulet gain", Range(0, 1)) = 0
+        // TR (INT-40 / INT-16): a per-material cap of the Fresnel term (alpha and the sky / wall reflection); 1 = no cap
+        _FresnelMax ("Fresnel / reflection cap", Range(0, 1)) = 1
     }
 
     HLSLINCLUDE
     #include "Include/NocLitCore.hlsl"
     #include "Include/NocTexturing.hlsl"
     #include "Include/NocMirror.hlsl"
+    #include "Include/NocFacadeSkin.hlsl"     // FX (INT-40 / INT-16): NocSkylineV2, the reflected city skyline of the facade glass
+    // FX (C06): the horizontal-pane constants NC_SurfGlassRingGain / GrimeH / GrimeBreak / SrcRho / SigmaFloor (NocSurfaceConstants)
 
     CBUFFER_START(UnityPerMaterial)
         float4 _BaseColor;
@@ -40,6 +44,7 @@ Shader "Megastructure/NocGlass"
         float _Cull;
         float _GrimeGain;
         float _RivuletGain;
+        float _FresnelMax;
     CBUFFER_END
 
     TEXTURE2D_ARRAY(_OverlayMask); SAMPLER(sampler_OverlayMask);
@@ -62,9 +67,15 @@ Shader "Megastructure/NocGlass"
         float F = NocGlassFresnel(dot(n, f.viewDirWS));
         s.metallic = 0.0;
         s.occlusion = 1.0;
-        // v2 overlay coordinates (m): along the pane's run (the rib axis) and up; derivatives before the branch
+        // v2 overlay coordinates (m): along the pane's run (the rib axis) and up; derivatives before the branch.
+        // FX (INT-17): (run, y) is degenerate where the pane turns horizontal (the KS13 glass strip / floor, a tube's top and
+        // bottom: y constant across them), so the grime map was sampled along one line and drew bands across everything seen
+        // through or mirrored in the pane. Those parts take (x, z), blended by wf over |n.y| 0.55..0.85 (no seam on a tube).
+        float wf = smoothstep(0.55, 0.85, abs(n.y));
         float2 g = float2(abs(n.x) <= abs(n.z) + 1e-3 ? f.positionWS.x : f.positionWS.z, f.positionWS.y);
-        float2 gdx = ddx(g), gdy = ddy(g);
+        float2 gF = f.positionWS.xz;
+        float2 gdx = ddx(g), gdy = ddy(g), gFdx = ddx(gF), gFdy = ddy(gF);
+        float fwm = max(max(length(gFdx), length(gFdy)), 1e-5);               // m per pixel on (x, z) (the horizontal panes)
         float rib = NocGlassRibs(f.positionWS, n, f.footprint);
         // grime raises the roughness 0.05 -> 0.20 and scatters a little light (alpha and albedo); rivulets bend the reflection
         // near the eye; both fade to their means by the footprint, no tap at gain 0
@@ -72,24 +83,45 @@ Shader "Megastructure/NocGlass"
         float2 slope = 0.0;
         [branch] if (_GrimeGain > 0.0)
         {
-            float2 uv = g / 1.5, dx = gdx / 1.5, dy = gdy / 1.5;
-            float fade = NocTexFade(1.0, NocFootprintBox(dx, dy));
-            grime = lerp(0.136, 0.0, fade);                                         // texmeta coverage mean of slice 1
-            [branch] if (fade > 0.0) grime += fade * SAMPLE_TEXTURE2D_ARRAY_GRAD(_OverlayMask, sampler_OverlayMask, uv, 1, dx, dy).r;
-            grime *= _GrimeGain;
+            float gv = 0.0, gh = 0.0;
+            [branch] if (wf < 1.0)
+            {
+                float2 uv = g / 1.5, dx = gdx / 1.5, dy = gdy / 1.5;
+                float fade = NocTexFade(1.0, NocFootprintBox(dx, dy));
+                gv = lerp(0.136, 0.0, fade);                                        // texmeta coverage mean of slice 1
+                [branch] if (fade > 0.0) gv += fade * SAMPLE_TEXTURE2D_ARRAY_GRAD(_OverlayMask, sampler_OverlayMask, uv, 1, dx, dy).r;
+            }
+            [branch] if (wf > 0.0)
+            {
+                float2 uv = gF / 1.5, dx = gFdx / 1.5, dy = gFdy / 1.5;
+                float fade = NocTexFade(1.0, NocFootprintBox(dx, dy));
+                gh = lerp(0.136, 0.0, fade);
+                [branch] if (fade > 0.0) gh += fade * SAMPLE_TEXTURE2D_ARRAY_GRAD(_OverlayMask, sampler_OverlayMask, uv, 1, dx, dy).r;
+            }
+            grime = lerp(gv, gh, wf) * _GrimeGain;
         }
-        [branch] if (_RivuletGain > 0.0 && f.viewDist < NC_SurfGlassRivuletD)
+        [branch] if (_RivuletGain > 0.0 && f.viewDist < NC_SurfGlassRivuletD && wf < 1.0)   // rivulets run down the steep panes only
         {
             float near = 1.0 - smoothstep(0.6 * NC_SurfGlassRivuletD, NC_SurfGlassRivuletD, f.viewDist);
             float2 uv = g + float2(0.37, 0.0), dx = gdx, dy = gdy;
-            float fade = NocTexFade(1.0, NocFootprintBox(dx, dy)) * near * _RivuletGain;
+            float fade = NocTexFade(1.0, NocFootprintBox(dx, dy)) * near * _RivuletGain * (1.0 - wf);
             [branch] if (fade > 0.0) slope = NocTangentToSlope(SAMPLE_TEXTURE2D_ARRAY_GRAD(_OverlayNormal, sampler_OverlayMask, uv, 2, dx, dy), 1.0) * fade;
         }
+        // FX (C06, fix wave p4_01): the horizontal panes (the KS10 ledge, the KS13 strip) carry the rain: the water film's impact
+        // rings (NocWet's NocRippleGrad2, faded by the footprint like the puddles; 0 at rain 0, so the static test is unchanged)
+        float rho = _NocFog.w;
+        float rfade = wf * smoothstep(NC_SurfRippleFadePx0, NC_SurfRippleFadePx1, NC_SurfRippleLambda / fwm);
+        float2 ring = 0.0;
+        [branch] if (rho > 0.001 && rfade > 0.0) ring = NocRippleGrad2(gF, _NocTime.y, rho) * (NC_SurfRippleSlope * NC_SurfGlassRingGain * rfade);
         float2 tt = float2(-n.z, n.x);
         float3 Tg = dot(tt, tt) > 1e-6 ? normalize(float3(tt.x, 0.0, tt.y)) : float3(1.0, 0.0, 0.0);
-        f.normalWS = NocResolveNormal(n, NocSurfGradTB(slope, Tg, float3(0.0, 1.0, 0.0)));
-        float aGlass = saturate(F + (1.0 - F) * 0.25 * grime);
-        s.albedo = PAL_GlassDark + NC_SurfGlassGrimeAlb * grime;
+        f.normalWS = normalize(NocResolveNormal(n, NocSurfGradTB(slope, Tg, float3(0.0, 1.0, 0.0))) + float3(ring.x, 0.0, ring.y));
+        float Fc = min(F, _FresnelMax);                                       // TR's cap (1 = none)
+        // the grime's occlusion of what lies behind: 0.25 on the steep panes; up to 0.75 on the horizontal ones, where the dirt is seen
+        // against the bright abyss (at 0.25 its +-0.1 coverage moved the haze by +-1.6 codes: invisible in the KS13 4K crop, FX_4k13)
+        float aGlass = saturate(Fc + (1.0 - F) * (0.25 + 0.5 * wf) * grime);
+        // grime on the horizontal panes scatters more (dust and dried spots seen from above catch the deck light)
+        s.albedo = PAL_GlassDark + NC_SurfGlassGrimeAlb * grime * (1.0 + NC_SurfGlassGrimeH * wf);
         float rough = lerp(NC_SurfGlassRough0, NC_SurfGlassRough1, saturate(grime));
         s.smoothness = 1.0 - rough;
         s.alpha = rib + (1.0 - rib) * aGlass;
@@ -126,16 +158,39 @@ Shader "Megastructure/NocGlass"
             {
                 BRDFData brdf;
                 InitializeBRDFData(s, brdf);
-                float F = f.custom.x;
+                float F = f.custom.x, Fc = min(F, _FresnelMax);
                 float3 r = reflect(-inputData.viewDirectionWS, inputData.normalWS);
+                // FX (C06): the registered light sources (lamps, LED lines: NocWetRegistry) mirrored in the horizontal panes seen
+                // from above, through the wet floor's closed-form lobe mass (never brighter than the emitter; the lobe is built here,
+                // outside any branch, for its derivatives); the grime breaks the image up
+                float wUp = smoothstep(0.55, 0.85, abs(inputData.normalWS.y)) * (inputData.normalWS.y > 0.0 ? 1.0 : 0.0);
+                float grimeR = saturate((f.custom.z - Fc) / max((1.0 - F) * (0.25 + 0.5 * smoothstep(0.55, 0.85, abs(inputData.normalWS.y))), 1e-4));
+                NocLobe oL = NocMirrorLobe(f.positionWS, _WorldSpaceCameraPos.xyz, inputData.normalWS, brdf.roughness * brdf.roughness + NC_SurfGlassSigmaFloor, 1.0);
+                // INT-19 / C06: on a horizontal pane seen from above the Forward+ lights keep their diffuse (the grime lit by the deck
+                // lamps) but not their GGX highlight: a point light's peak D(0) = 1 / (pi alpha^2) at the glass alpha 0.0025 blooms into
+                // a 75-110 px orb (KS13 (1240, 730): p4_01 75 px, AB's lamp-sized lobe with its 0.02 alpha floor 109 px, FX_r10); the
+                // mirrored source core (srcs) is the lamp's image there, bounded by its radiance x F. Vertical panes keep x K.
+                BRDFData brdfL = brdf;
+                brdfL.specular *= (half)(1.0 - wUp);
                 half3 premul;
                 [branch] if (f.custom.w > 0.5)
                 {
                     float rib = f.custom.y, aGlass = f.custom.z;
                     half3 sky = NocReflection(r, brdf.perceptualRoughness);
-                    float4 w = NocWallReflect(f.positionWS, r, max(brdf.perceptualRoughness * brdf.perceptualRoughness, NocPixelAngle()), f.viewDist, sky);
-                    half3 env = lerp(sky, w.rgb, w.a);
-                    half3 glass = brdf.diffuse * inputData.bakedGI * aGlass + env * F + NocDirect(brdf, inputData);
+                    float blur = max(brdf.perceptualRoughness * brdf.perceptualRoughness, NocPixelAngle());
+                    // FX (INT-40 / INT-16): the glass reflects the city skyline in front of the sky, as the facade glass does
+                    // (NocSkylineV2: fogged dark shafts with window speckle rising into the deck), so a tube at grazing mirrors the
+                    // dark city around it instead of a milky band of the horizon glow; the wall planes stay in front of both
+                    float2 rh = r.xz / max(length(r.xz), 1e-4);
+                    float3 Lb;
+                    float cov = NocSkylineV2(r, f.positionWS, blur, NocAmbient(float3(-rh.x, 0.0, -rh.y)), _NocFacade.y, _NocFacade.w, sky, Lb);
+                    half3 bgC = lerp(sky, (half3)Lb, (half)cov);
+                    float4 w = NocWallReflect(f.positionWS, r, blur, f.viewDist, sky);
+                    half3 env = lerp(bgC, w.rgb, w.a);
+                    half3 srcs = 0;
+                    [branch] if (wUp > 0.0) srcs = (half3)(NocMirrorSourcesMixR(f.positionWS, f.viewDist, oL, oL, 1.0, NC_SurfGlassSrcRho) * (wUp * (1.0 - NC_SurfGlassGrimeBreak * grimeR) * Fc / max(F, 1e-4)));
+                    // FX (INT-19): the lamps' highlights x NC_SurfGlassLightK (none on the horizontal panes, see above)
+                    half3 glass = brdf.diffuse * inputData.bakedGI * aGlass + env * Fc + srcs + NocDirect(brdfL, inputData) * NC_SurfGlassLightK;
                     half3 frame = 0;
                     [branch] if (rib > 0.0)
                     {

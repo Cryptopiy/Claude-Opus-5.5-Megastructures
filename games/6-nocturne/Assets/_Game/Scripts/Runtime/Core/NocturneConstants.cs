@@ -329,20 +329,52 @@ namespace Megastructure
         {
             // 14.5.1 alley
             new GazeKey(0, 0, -2), new GazeKey(8, 0, -2), new GazeKey(20, -6, 2), new GazeKey(34, -14, 4), new GazeKey(40, -14, 4),
-            new GazeKey(54, 12, 5), new GazeKey(66, 0, 10), new GazeKey(76, 0, 40), new GazeKey(88, 0, 66), new GazeKey(94, 0, 66),
-            new GazeKey(110, 0, 14), new GazeKey(118, 0, 14),
-            // 14.5.2 boulevard
-            new GazeKey(128, 12, 24), new GazeKey(150, 25, 32), new GazeKey(171, 30, 30), new GazeKey(209, 0, 24), new GazeKey(250, 0, 22),
-            new GazeKey(258, -33, 14), new GazeKey(270, -33, 14), new GazeKey(286, 0, 30), new GazeKey(310, 0, 52), new GazeKey(330, 0, 52),
+            new GazeKey(54, 12, 5), new GazeKey(66, 0, 10), new GazeKey(76, 0, 40), new GazeKey(88, 0, 66), new GazeKey(95.5, 0, 66),
+            // QA-F03 (integration round): the descent from the KS02 slit ends at s 115 (was 110: 7.8 s instead of 5.8 s), so the
+            // lit wall lamp and the slit sky leave the frame at 0.74 x the old pitch rate: cinematic luma step at s 107.9 0.99 levels
+            // / frame (was 1.51; 14.10 limit 1.2); KS02 readable 6.52 s, the KS03 pose (s 117, pitch 14) reached 2 m before its shot
+            new GazeKey(115, 0, 14), new GazeKey(118, 0, 14),
+            // 14.5.2 boulevard. D-040 (C10): KS04 pitch 22 -> 27. D-034 4.1 (C10 / C25): the long look-up before KS05, rise from the
+            // KS06 tram glance to +63 over s 270-286 (6.4 s, peak 13.5 deg/s), hold to s 296 (4 s at the top: the bridge sits in the
+            // lower third, the towers run into the deck), ease to the 14.10 KS05 pose +52 by s 304 (KS05 readable 301.7-339.3)
+            new GazeKey(128, 12, 24), new GazeKey(150, 25, 32), new GazeKey(171, 30, 30), new GazeKey(209, 0, 24), new GazeKey(250, 0, 27),
+            new GazeKey(258, -33, 14), new GazeKey(270, -33, 14), new GazeKey(286, 0, 63), new GazeKey(296, 0, 63), new GazeKey(304, 0, 52), new GazeKey(330, 0, 52),
             new GazeKey(350, 10, 30), new GazeKey(380, 0, 12), new GazeKey(400, 0, 4),
             // 14.5.3 edge
+            // D-043 (THE ARK, FX, on DR's course: the Ark comes DOWN the rift from the north haze, bow first, over z 195 at s 596): the
+            // KS09 long look-up of the 1 800 m hull (D-034 4.1, s 476-499 up to +58 NE) is replaced by the look up the rift at the
+            // coming bow: after the falling panel's tear (s 470-476) the gaze turns to rel -80 / +16 (world 10), where the bow's belly
+            // sits 14.6-15.2 deg up at s 494-498 (1.2-1.3 km out; off the frame centre < 1.3 deg), held 7.8 s, then down to the KS09
+            // pose by s 520 (KS09 readable 516.0-533.8 = 7.12 s; peak 8.3 / 7.7 deg/s)
             new GazeKey(402, 0, 2), new GazeKey(428, -62, 24), new GazeKey(436, -62, 24), new GazeKey(450, -20, 10), new GazeKey(470, -50, -6),
-            // D-029 (GB-04): the plunge keys at s 540 / 556 look -95 / -32 (V's pose search: 40.1 % drop on the plan in KS10)
-            new GazeKey(520, -70, -18), new GazeKey(528, -70, -18), new GazeKey(540, -95, -32), new GazeKey(556, -95, -32), new GazeKey(585, -2, 2),
+            new GazeKey(476, -50, -8), new GazeKey(492, -80, 16), new GazeKey(500, -80, 16),
+            // D-029 (GB-04): the plunge pose -95 / -32 (V's pose search: 40.1 % drop on the plan in KS10). C12 (D-040): held s 538-548
+            // and forward by s 568, so the gaze leaves the drop before gate A's tunnel (x 372-384 = s 556.7-568.7); KS10 readable
+            // 536.0-554.3 (7.3 s), peak yaw 20.98 deg/s
+            new GazeKey(520, -70, -18), new GazeKey(528, -70, -18), new GazeKey(538, -95, -32), new GazeKey(548, -95, -32), new GazeKey(568, -2, 2),
+            // D-043: out of gate A's tunnel (s 568.7) the gaze lifts left into the Ark's bow coming over the bridge's head (rel -58..-55 /
+            // +40..+36, world 32-35: the bow 270-130 m out and 50-68 deg up at s 575-590, leaving the frame's top as it passes over),
+            // with no turn while the bridge lamp head the walker passes at s 585.0 (SkybridgeDims lamp 1: 1.85 m left, 2.35 m over the
+            // eye) and its halo leave the frame's left edge (14.10 luma step <= 1.2 levels / frame: keys 576 / 582 with the turn at
+            // s 582 measured 1.262 (FX_arkseq), 576 / 586 at +42 1.186 (FX_arkseq2), world 26-28 1.70 (FX_arkseq4); this sinking
+            // hold had the lowest step of four variants rendered frame by frame (FX_lamp01: 0.77 vs 0.88 for the 1.186 one)), then down
+            // to KS11 (readable 594.7-609.5) as the bow passes overhead (s 596, 72 deg up); KS11's hold and the turn north after it
+            // moved 1-3 m later (KS12 readable 643.7-667.7)
+            new GazeKey(576, -58, 40), new GazeKey(586, -55, 36),
             // 14.5.4 skybridge
-            new GazeKey(594, -14, 2), new GazeKey(602, -14, 2), new GazeKey(614, -50, 4), new GazeKey(624, -90, -10),
+            new GazeKey(595, -14, 2), new GazeKey(603, -14, 2), new GazeKey(617, -50, 4), new GazeKey(627, -90, -10),
             new GazeKey(660, -90, -20), new GazeKey(680, -40, -4), new GazeKey(700, 40, -14), new GazeKey(716, 0, -75), new GazeKey(724, 0, -75),
-            new GazeKey(748, 0, -5), new GazeKey(790, 0, 4), new GazeKey(846, 0, 18), new GazeKey(860, 0, 6),
+            // D-043: the long look-up under the Ark's belly (ARK.md, FX): up from the KS13 glass to the north (rel -95 / +28 over s
+            // 748-766: the endless lit belly comes out of the northern haze toward the walker, the stern 3.1-3.3 km out at 6 deg near the
+            // frame's lower edge, its rows converging on it; 6.2 s held), then up to near the zenith, a little east of north (rel
+            // -78..-76 / +74..+76 over s 782-822, world 12-14: chosen from 15 poses on DR's Ark, QA/captures/FX_zen01 z015_76: the
+            // belly and its gondolas fill about 85 % of the frame, the bridge's upper tube a thin line across it; world 55 put the
+            // belly's east edge through the centre, world 315-355 a large haze-lit slab on the left), held through s 822 so that
+            // lamp 17 (s 821.8, left) leaves the frame before the turn down (FX_arkseq3 with the turn at s 814: a 1.351-level luma step
+            // at s 823.8; lamp model: 1.93 -> no crossing above 1.53 NDC/s in s 740-860), sliding south overhead; down to the KS14 pose
+            // by s 841 (KS14 readable 6.57 s)
+            new GazeKey(748, -50, 10), new GazeKey(766, -95, 28), new GazeKey(782, -95, 28), new GazeKey(806, -78, 74), new GazeKey(822, -76, 76),
+            new GazeKey(841, 0, 18), new GazeKey(846, 0, 18), new GazeKey(860, 0, 6),
             // 14.5.5 garden
             new GazeKey(880, 0, 6), new GazeKey(930, 0, 20), new GazeKey(970, 0, 50), new GazeKey(1000, 0, 50), new GazeKey(1040, 10, 10),
             new GazeKey(1060, -10, 6),
@@ -350,7 +382,10 @@ namespace Megastructure
             new GazeKey(1100, -20, 12), new GazeKey(1125, -30, 26), new GazeKey(1150, -35, 34), new GazeKey(1180, -40, 40), new GazeKey(1210, -20, 20),
             new GazeKey(1236, 0, 8),
             // 14.5.7 heart
-            new GazeKey(1250, 25, 6), new GazeKey(1284, 10, 14), new GazeKey(1296, 6, 18), new GazeKey(1310, 6, 18), new GazeKey(1350, -20, 46),
+            // D-034 4.1 (C25): the KS17 long look-up after the reveal hold: +18 -> +60 over s 1310-1327 (6.8 s, peak 11 deg/s), 2.4 s at
+            // the top under the koi, down to the KS18 pose by s 1346 (KS17 readable 1273.8-1316.5, KS18 1342.0-1378.4)
+            new GazeKey(1250, 25, 6), new GazeKey(1284, 10, 14), new GazeKey(1296, 6, 18), new GazeKey(1310, 6, 18), new GazeKey(1327, -10, 60),
+            new GazeKey(1333, -10, 60), new GazeKey(1346, -20, 46),
             new GazeKey(1366, -20, 46), new GazeKey(1400, 0, 12), new GazeKey(1440, 4, 14), new GazeKey(1470, 6, 24), new GazeKey(1500, 6, 28),
         };
         /// <summary>Gaze follower (14.5): critically damped omega (rad/s), yaw / pitch rate limits (deg/s), sway radius (deg).</summary>
@@ -368,7 +403,7 @@ namespace Megastructure
             new KeyShot("KS01_alley_noodle", 36, 0, 1.7, 36, -14, 4, 62, 0.0549, 0.1569),
             new KeyShot("KS02_alley_slit", 88, 0, 1.7, 88, 0, 66, 62.1, 0.0549, 0.1569),
             new KeyShot("KS03_boulevard_mouth", 117, 0, 1.7, 117, 0, 14, 63.8, 0.0549, 0.1569),
-            new KeyShot("KS04_boulevard_axis", 250, 65.30, 1.7, 195, 90, 22, 66, 0.0941, 0.2118),
+            new KeyShot("KS04_boulevard_axis", 250, 65.30, 1.7, 195, 90, 27, 66, 0.0941, 0.2118),   // D-040: pitch 22 -> 27 (C10)
             new KeyShot("KS06_tram", 264, 79.30, 1.7, 195, 57, 14, 66, 0.0941, 0.2118),
             new KeyShot("KS05_boulevard_up", 310, 125.30, 1.7, 195, 90, 52, 66, 0.0941, 0.2118),
             new KeyShot("KS07_edge_window", 402, 217.30, 1.7, 195, 90, 2, 66, 0.0941, 0.1961),

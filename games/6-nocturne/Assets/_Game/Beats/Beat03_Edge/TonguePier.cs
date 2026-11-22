@@ -6,13 +6,15 @@
 //   * hull skirt: a ruled surface (NocFacade section mode) from the deck edges down to a keel 120 m deep at the root and 10 m at
 //     the tip (the bridge's truss depth), keel half-width 0.4 w(x), a flat keel soffit, a stone tip cap;
 //   * AB (Phase 4 wave A, D-032 1): the glass edge of the pier, x 338..371.95, lateral 1.75..w on both sides: a walk-on NocGlass
-//     pane 3 cm below the top on a steel frame (edge girder, nosing, cross beams), the slab and the hull pulled in to 1.75 there
-//     (EdgeDims.Ledge*): the eye looks through the floor past the hull into the rift (KS10's vertigo and drop share);
+//     pane 3 cm below the top, frameless since the fix wave (C05): a steel nosing on the stone edge, structural glass fins under
+//     the pane and a 6 cm stainless channel clamping its outer edge under the balustrade shoe; the slab and the hull pulled in to
+//     1.75 there (EdgeDims.Ledge*): the eye looks through the floor past the hull into the rift (KS10's vertigo and drop share);
 //   * glass balustrade 1.1 m on both edges from the face-A junction to x 371.95 (gate block A, G3, starts at x 372): a lofted steel
 //     shoe, NocGlass panels (back / front materials), a NocLine top rail tube 0.06 m;
 //   * on the plaza x 216-290 the visible barrier at the lane edge + 0.7 (planters 1.0 m with a moss top), 14 sodium lamps 5 m
 //     (posts 0.9 m outside the planters, heads over the planters), 12 benches 0.45 m outside the barrier facing the drop;
-//   * 14 balustrade lights (step-light fixtures on the shoe: steel housing, lens slit; AB INT-18) on the pier.
+//   * 14 balustrade lights (step-light fixtures on the shoe: steel housing, lens slit; AB INT-18) on the pier; their realtime light
+//     is a spot thrown inward and down onto the walk (fix wave C13: no light reaches the glass, the shoe or the housing).
 // Nothing stands inside the lane + 0.2 m camera sphere: planters at lane + 0.7, rail parts at w - 0.135 >= 2.43 m on the pier
 // (lane 2.15). Positions relative to the chunk origin (295.3, 0, 195).
 using System;
@@ -51,7 +53,14 @@ namespace Megastructure
 
         /// <summary>LOOK_V2 6 beat 3: balustrade lights SignWhite r 10 i 2 (EdgeDims keeps the v1 2.5), tongue lamps LampWarm r 14 i 3.5
         /// (EdgeDims keeps the v1 4.0).</summary>
-        public const float BalLightIntensityV2 = 2.0f, LampIntensityV2 = 3.5f;
+        public const float BalLightIntensityV2 = 1.4f, LampIntensityV2 = 3.5f;   // r04: balustrade 2.0 -> 1.4 (AB-04: the step light's point-light specular drew a star on the glass and the shoe in KS09)
+        /// <summary>AB: the balustrade lights' realtime light, metres inside the deck edge. 0.2 keeps its specular images on the
+        /// balustrade glass and the glass ledge right over the fixture (r04 tried 0.32: AB_enc06 frame 342 showed the two images as
+        /// separate orbs 55 px above and 80 px below the lens; the KS09 star of AB-04 is answered by the warm colour and 1.4).</summary>
+        public const double BalLightInset = 0.2;
+
+        /// <summary>AB r03: the ledge nosing's LED line: lateral offset from LedgeIn, width, height above the walk plane (m).</summary>
+        public const double LedgeLedIn = 0.035, LedgeLedW = 0.015, LedgeLedY = 0.0008;
 
         public static void Build(List<EdgePart> parts, List<EdgeLight> lights)
         {
@@ -74,8 +83,12 @@ namespace Megastructure
             var top = new EdgePart("Tongue_deck", EdgeMat.Floor, Origin);
             var side = new EdgePart("Tongue_deckSides", EdgeMat.Stone, Origin);
             var glass = new EdgePart("Tongue_glassLedge", EdgeMat.Glass, Origin);
-            var frame = new EdgePart("Tongue_ledgeFrame", EdgeMat.Steel, Origin);
-            parts.Add(top); parts.Add(side); parts.Add(glass); parts.Add(frame);
+            // fix wave C05: the frameless edge: the stone edge's steel nosing (a deck part), the balustrade's base channel (a rail
+            // part) and the glass fins (transparent) replace the "ledgeFrame" girder and ribs
+            var nosing = new EdgePart("Tongue_deckNosing", EdgeMat.Steel, Origin);
+            var channel = new EdgePart("Tongue_railChannel", EdgeMat.Steel, Origin);
+            var fins = new EdgePart("Tongue_glassFins", EdgeMat.Glass, Origin);
+            parts.Add(top); parts.Add(side); parts.Add(glass); parts.Add(nosing); parts.Add(channel); parts.Add(fins);
             var xs = DeckSamples(EdgeDims.TongueX0, EdgeDims.TongueX1);
             double b = EdgeDims.DeckBevel, th = EdgeDims.DeckThickness, zc = EdgeDims.TongueZ, li = EdgeDims.LedgeIn;
             for (int i = 0; i < xs.Count - 1; i++)
@@ -119,20 +132,31 @@ namespace Megastructure
                     for (int k = 1; k < pent.Length - 1; k++) EdgeMesh.Tri(side.Mb, Origin, pent[0], pent[k], pent[k + 1], n);
                 }
             }
-            LedgeFrame(frame.Mb);
+            LedgeFrame(channel.Mb, nosing.Mb, fins.Mb);
+            // AB r03 (D-032 5, INT-03): a warm LED safety line in the ledge nosing's top, where the stone walk meets the glass (1.5 cm
+            // wide, 0.8 mm above the walk plane: under the lane test's 1 mm and the floor probe's tolerance), x 338.05..371.90 per side;
+            // it marks the edge of the walkable stone and carries KS09 / KS10's foreground light (the handrail glows only underneath)
+            var led = new EdgePart("Tongue_deckLED", EdgeMat.LampHead, Origin);      // in the deck's nosing (fix wave: was "ledgeLED")
+            parts.Add(led);
+            for (int s = -1; s <= 1; s += 2)
+            {
+                double l0 = li + LedgeLedIn, l1 = l0 + LedgeLedW, x0 = EdgeDims.LedgeX0 + 0.05, x1 = EdgeDims.LedgeX1 - 0.05;
+                EdgeMesh.FlatQuad(led.Mb, Origin, P(x0, LedgeLedY, zc + s * l0), P(x0, LedgeLedY, zc + s * l1), P(x1, LedgeLedY, zc + s * l1), P(x1, LedgeLedY, zc + s * l0), Vector3.up);
+            }
             // tip cap at x 375.3 (hexagon: chamfer corners included); G3's deck abuts it from x 375.3
             double xt = EdgeDims.TongueX1, wt = W(xt);
             var hex = new[] { P(xt, 0, zc - (wt - b)), P(xt, 0, zc + (wt - b)), P(xt, -b, zc + wt), P(xt, -th, zc + wt), P(xt, -th, zc - wt), P(xt, -b, zc - wt) };
             for (int k = 1; k < hex.Length - 1; k++) EdgeMesh.Tri(side.Mb, Origin, hex[0], hex[k], hex[k + 1], Vector3.right);
         }
 
-        /// <summary>The glass ledge's steel (AB): per side an edge girder under the shoe (LedgeGirderW x LedgeGirderD, its top 5 mm into
-        /// the shoe, the pane's LedgeGlassLip under it), a nosing on the stone edge (LedgeNosing wide, flush with the walk, down to
-        /// the ribs) and cantilever ribs every LedgeBeamPitch under the pane. The girder is a prism swept along the deck samples
-        /// with w(x) at both ends of each interval (exact edge, no steps), closed at x 338 and 371.95.</summary>
-        static void LedgeFrame(MeshBuilder mb)
+        /// <summary>The glass ledge's support (AB; frameless since the fix wave, C05): per side a stainless channel under the shoe
+        /// (LedgeGirderW x LedgeChannelD, its top 5 mm into the shoe, the pane's LedgeGlassLip in its slot), a nosing on the stone
+        /// edge (LedgeNosing wide, flush with the walk, down to the fins) and structural glass fins (LedgeFinW thick) every
+        /// LedgeBeamPitch under the pane. The channel is a prism swept along the deck samples with w(x) at both ends of each interval
+        /// (exact edge, no steps), closed at x 338 and 371.95.</summary>
+        static void LedgeFrame(MeshBuilder mb, MeshBuilder nosing, MeshBuilder fins)
         {
-            double zc = EdgeDims.TongueZ, li = EdgeDims.LedgeIn, gw = EdgeDims.LedgeGirderW, gd = EdgeDims.LedgeGirderD;
+            double zc = EdgeDims.TongueZ, li = EdgeDims.LedgeIn, gw = EdgeDims.LedgeGirderW, gd = EdgeDims.LedgeChannelD;
             double gy0 = -0.005, gy1 = -0.005 - gd;
             var xs = DeckSamples(EdgeDims.LedgeX0, EdgeDims.LedgeX1);
             for (int i = 0; i < xs.Count - 1; i++)
@@ -149,14 +173,15 @@ namespace Megastructure
                     if (i == 0) EdgeMesh.FlatQuad(mb, Origin, ia0, oa0, oa1, ia1, Vector3.left);
                     if (i == xs.Count - 2) EdgeMesh.FlatQuad(mb, Origin, ib0, ob0, ob1, ib1, Vector3.right);
                     double nw = EdgeDims.LedgeNosing, nd = EdgeDims.LedgeBeamD + 0.05;
-                    mb.Box(P(xm, -0.5 * nd, zc + s * (li + 0.5 * nw)) - Origin, new Vector3((float)len, (float)nd, (float)nw));
+                    nosing.Box(P(xm, -0.5 * nd, zc + s * (li + 0.5 * nw)) - Origin, new Vector3((float)len, (float)nd, (float)nw));
                 }
             }
+            // glass fins: top 5 mm under the pane (no shared plane), from the nosing to the channel
             for (double x = EdgeDims.LedgeX0 + 0.5 * EdgeDims.LedgeBeamPitch; x < EdgeDims.LedgeX1 - 0.5; x += EdgeDims.LedgeBeamPitch)
             {
                 double w = W(x), lo = li + EdgeDims.LedgeNosing - 0.01, hi = w - gw + 0.01, bd = EdgeDims.LedgeBeamD;
                 for (int s = -1; s <= 1; s += 2)
-                    mb.Box(P(x, EdgeDims.LedgeGlassY - 0.02 - 0.5 * bd, zc + s * 0.5 * (lo + hi)) - Origin, new Vector3((float)EdgeDims.LedgeBeamW, (float)bd, (float)(hi - lo)));
+                    fins.Box(P(x, EdgeDims.LedgeGlassY - 0.005 - 0.5 * bd, zc + s * 0.5 * (lo + hi)) - Origin, new Vector3((float)EdgeDims.LedgeFinW, (float)bd, (float)(hi - lo)));
             }
         }
 
@@ -273,11 +298,14 @@ namespace Megastructure
                     MeshKit.ChamferBox(shoe.Mb, c - Origin, new Vector3(0.20f, 0.07f, 0.045f), 0.006f, rot);
                     Vector3 lens = P(x, 0.047, EdgeDims.TongueZ + s * (lat - 0.0225 - 0.002));
                     MeshKit.ChamferBox(puck.Mb, lens - Origin, new Vector3(0.13f, 0.012f, 0.006f), 0.001f, rot);
+                    // fix wave C13: a spot thrown inward and down (EdgeDims.BalSpot*); the glass, shoe and housing lie behind its cone
+                    float sp = (float)(EdgeDims.BalSpotPitch * Math.PI / 180.0);
                     lights.Add(new EdgeLight
                     {
-                        Pos = P(x, EdgeDims.BalustradeLightY, EdgeDims.TongueZ + s * (W(x) - 0.2)), Linear = NocturnePalette.Linear(NocPal.SignWhite),
+                        Pos = P(x, EdgeDims.BalustradeLightY, EdgeDims.TongueZ + s * (W(x) - BalLightInset)), Linear = NocturnePalette.Linear(NocPal.LampWarm),
                         Range = (float)EdgeDims.BalLightRange, Intensity = BalLightIntensityV2, Realtime = true,
                         Rho = 0.12f, Radiance = Beat03_Edge.BalWetGain,
+                        SpotDir = new Vector3(0f, -Mathf.Sin(sp), -s * Mathf.Cos(sp)), SpotAngle = (float)EdgeDims.BalSpotAngle, SpotInner = (float)EdgeDims.BalSpotInner,
                     });
                 }
             }
@@ -336,11 +364,14 @@ namespace Megastructure
                     Vector3 head = P(x, H - 0.185, EdgeDims.TongueZ + s * (armEnd + 0.12));
                     MeshKit.ChamferBox(heads.Mb, head - Origin, new Vector3(0.26f, 0.1f, 0.5f), 0.015f);
                     NocHalos.Queue("TongueLamps", head, NocturnePalette.Linear(NocPal.LampWarm) * NocturnePalette.EmissionSign, EdgeDims.LampRange);   // LOOK_V2 6 halo
+                    // fix wave C13 (AB_c13b: the same sub-pixel pop as the step lights on these lamps' heads, s 391-394 blocks at
+                    // +-130..190 px): a spot aimed straight down, so the emissive head 7 cm above the light lies outside its cone
                     lights.Add(new EdgeLight
                     {
                         Pos = head + Vector3.down * 0.12f, Linear = NocturnePalette.Linear(NocPal.LampWarm),
                         Range = (float)EdgeDims.LampRange, Intensity = LampIntensityV2, Realtime = k * 2 >= EdgeDims.RealtimeLampFrom,
                         Rho = 0.35f, Radiance = NocturnePalette.EmissionSign,
+                        SpotDir = Vector3.down, SpotAngle = (float)EdgeDims.LampSpotAngle, SpotInner = (float)EdgeDims.LampSpotInner,
                     });
                 }
 

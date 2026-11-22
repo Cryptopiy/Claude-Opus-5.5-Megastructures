@@ -6,9 +6,10 @@
 //     optional dark back wall;
 //   * Band: a chamfered concrete member (MeshKit.ChamferBox: 2 cm bevels at the scale of a building edge are invisible, so bands use
 //     a 6 cm bevel) for fascias, head beams, ribs, ledges and parapets;
-//   * TubePortal: the collar / light ring / tunnel of a face-to-face tube portal on a plane x = const, the same construction as
-//     GulfPortal (r 6.3 collar 1 m proud, NeonCyan ring r 5.3..5.6, tunnel r 5.3, dark end disc), and the square panel with the
-//     matching round hole (GulfFace.PortalPanel's corner fan).
+//   * TubePortal: the collar / collar lamps / tunnel of a face-to-face tube portal on a plane x = const, the same construction as
+//     GulfPortal (r 6.3 collar 1 m proud, NeonCyan lamps on r 5.3..5.6, tunnel r 5.3, dark end disc), and the square panel with the
+//     matching round hole (GulfFace.PortalPanel's corner fan). AB fix wave (C03): the lip carries GulfPortal.LampCount separate
+//     lamps (GulfPortal.IsLamp), the rest of it is concrete: no continuous neon circle (the p4_01 "HUD reticle").
 // Every face is wound toward its wanted normal (EdgeMesh.Wind); no two faces share a plane (offsets are recorded where they meet).
 using System;
 using System.Collections.Generic;
@@ -133,9 +134,10 @@ namespace Megastructure
 
         // ------------------------------------------------------------------ tube portals (face-to-face tubes, r 5)
         /// <summary>
-        /// Collar (outer cylinder r 6.3 from the face plane `lip` m toward `outDir`, its front annulus 5.6..6.3), the NeonCyan light
-        /// ring (5.3..5.6, into `ring`), the tunnel (inward cylinder r 5.3 from the lip `depth` m into the mass) and its dark end
-        /// disc; 32 segments (the panel's hole uses the same angles, so the collar closes it watertight).
+        /// Collar (outer cylinder r 6.3 from the face plane `lip` m toward `outDir`, its front annulus 5.6..6.3), the collar lamps
+        /// (the GulfPortal.IsLamp segments of the annulus 5.3..5.6, into `ring`; the other segments into `conc`), the tunnel (inward
+        /// cylinder r 5.3 from the lip `depth` m into the mass) and its dark end disc; 32 segments (the panel's hole uses the same
+        /// angles, so the collar closes it watertight).
         /// </summary>
         public static void TubePortal(MeshBuilder conc, MeshBuilder ring, Vector3 origin, double xFace, double outDir, double yc, double zc, double lip, double depth)
         {
@@ -149,7 +151,7 @@ namespace Megastructure
                 Cyl(conc, origin, (float)xFace, xLip, (float)EdgeDims.PortalOuter, r0, r1, yc, zc, true);
                 Cyl(conc, origin, xLip, xEnd, (float)GulfPortal.RingInner, r0, r1, yc, zc, false);
                 Ann(conc, origin, xLip, (float)GulfPortal.RingOuter, (float)EdgeDims.PortalOuter, r0, r1, yc, zc, axisOut);
-                Ann(ring, origin, xLip, (float)GulfPortal.RingInner, (float)GulfPortal.RingOuter, r0, r1, yc, zc, axisOut);
+                Ann(GulfPortal.IsLamp(j) ? ring : conc, origin, xLip, (float)GulfPortal.RingInner, (float)GulfPortal.RingOuter, r0, r1, yc, zc, axisOut);
                 EdgeMesh.Tri(conc, origin, P(xEnd, yc, zc), RP(xEnd, r0, (float)GulfPortal.RingInner, yc, zc), RP(xEnd, r1, (float)GulfPortal.RingInner, yc, zc), axisOut);
             }
         }

@@ -1,0 +1,2722 @@
+diff --git a/Assets/_Game/Beats/Beat05_Garden/GardenDims.cs b/Assets/_Game/Beats/Beat05_Garden/GardenDims.cs
+index 57b3652..24b7d95 100644
+--- a/Assets/_Game/Beats/Beat05_Garden/GardenDims.cs
++++ b/Assets/_Game/Beats/Beat05_Garden/GardenDims.cs
+@@ -60,6 +60,18 @@ namespace Megastructure
+         public const int BackTreeCount = 8;
+         public const float BackDzMin = 55f, BackDzMax = 70f, BackHMin = 110f, BackHMax = 140f;
+         public const float BackMaxLean = 6f;                // back crowns near the notch walls may lean this much toward the axis
++
++        // ---- Look v2 crowns (TEXTURE_PLAN 4, FO; behind -foliage-v 2): an opaque core at 0.90 of the radii, leaf-cluster cards on two
++        // shells (0.94, 1.02) placed with a blue-noise lattice at 1.5x area coverage (back trees 0.5x density), every card corner
++        // inside 1.10x the ellipsoid (the envelope V's audit may use), the notch clearance kept
++        public const float CoreFrac = 0.90f, ShellInner = 0.94f, ShellOuter = 1.02f, EnvelopeFrac = 1.10f;
++        public const float CardMin = 1.6f, CardMax = 2.6f, CardMinShrunk = 1.2f;
++        public const float CardCoverage = 1.5f, CardMeanArea = 4.4f, BackCardDensity = 0.5f;
++        public const float CardTiltMaxDeg = 50f;            // card normal = radial normal tilted up to this angle (random azimuth)
++        public const float CardJitter = 0.45f;              // lattice jitter as a fraction of the mean spacing
++        public const float ClumpDepth = 0.45f, ClumpFreq = 2.6f;   // card density x (1 +- 0.45) by a low-frequency clump noise
++        public const float BarkTile = 1.8f;                 // trident_maple_bark (TEXTURES.md final sets): whole tiles around every limb
++        public const float BarkRefY = 8f;                   // the trunk's tile count is set by its perimeter at y 8 m (above the flare)
+         // 4 south then 4 north, midway between the hero trunks in x (trunk footprints with flare and buttresses reach 1.81 r0)
+         static readonly float[] BackX = { 737f, 779f, 823f, 866f, 741f, 784f, 828f, 872f };
+ 
+@@ -79,6 +91,22 @@ namespace Megastructure
+ 
+         static GardenTreeSpec[] s_trees;
+ 
++        /// <summary>Test hook: forces the foliage version (0 = follow the -foliage-v flag).</summary>
++        public static int FoliageVersionOverride;
++
++        /// <summary>
++        /// The -foliage-v flag (TEXTURE_PLAN 1.6, 7.6): 1 = the v1 crowns, 2 = cores and leaf-cluster cards (Look v2). Read at build time
++        /// (geometry) and as the uniform _NocFoliageV (shader).
++        /// </summary>
++        public static bool FoliageV2
++        {
++            get
++            {
++                if (FoliageVersionOverride > 0) return FoliageVersionOverride >= 2;
++                return CliArgs.GetInt("-foliage-v", 1) >= 2;
++            }
++        }
++
+         /// <summary>All 17 trees: the 9 hero trees, then the 8 back trees (|z - 195| 55-70, heights 110-140 by hash).</summary>
+         public static GardenTreeSpec[] Trees
+         {
+diff --git a/Assets/_Game/Beats/Beat05_Garden/GardenTree.cs b/Assets/_Game/Beats/Beat05_Garden/GardenTree.cs
+index da7e8dd..93608d6 100644
+--- a/Assets/_Game/Beats/Beat05_Garden/GardenTree.cs
++++ b/Assets/_Game/Beats/Beat05_Garden/GardenTree.cs
+@@ -1,185 +1,333 @@
+-// GardenTree: one giant tree of 14.5.5 at the graybox tier: the trunk as a loft of 24-gon rings (40 rings, denser at the base) from
+-// r0 (4-6 m by hash) with a root flare and 5 buttress lobes near the ground, tapering to 0.45 r0 at the top (inside the crown);
+-// six main branches (12-gon tapered sweeps, radius 0.11 r0 -> 0.20 m >= 0.15 m) that leave the trunk under the crown and end
+-// well inside it; the crown as one ellipsoid (r, 0.28 h, r) centred at 0.66 h with a low-frequency lumpy displacement (+-6 %, shared
+-// vertices and accumulated face normals, so it shades smoothly; the lumps stay inside 1.02 x the ellipsoid). A crown that must
+-// stay inside face B's notch walls leans toward the axis (GardenTreeSpec.CrownZ): the trunk axis bends with it.
+-// Trunk and branches use the Bark material, the crown NocFoliage. Load-time only.
+-using System.Collections.Generic;
+-using UnityEngine;
+-
+-namespace Megastructure
+-{
+-    public static class GardenTree
+-    {
+-        static readonly CrossSection s_ring = new CrossSection();
+-        static readonly List<LoftFrame> s_frames = new List<LoftFrame>(48);
+-        static readonly List<float> s_ringY = new List<float>(48);
+-        static float s_r0, s_yTop;
+-        static float s_phase;
+-
+-        /// <summary>Height (m) of the trunk axis' lean offset at y (0 at the ground, full lean at the crown centre).</summary>
+-        public static float LeanAt(in GardenTreeSpec t, float y)
+-        {
+-            float u = Mathf.Clamp01(y / Mathf.Max(GardenDims.CrownCentreFrac * t.Height, 1f));
+-            return (t.CrownZ - t.Z) * u * u;
+-        }
+-
+-        /// <summary>Trunk radius at height y before the buttress lobes: taper r0 -> 0.45 r0 over the trunk, times the root flare.</summary>
+-        public static float TrunkRadius(float r0, float y, float yTop)
+-        {
+-            float u = Mathf.Clamp01(y / Mathf.Max(yTop, 1f));
+-            float taper = Mathf.Lerp(1f, GardenDims.TaperEnd, u);
+-            float flare = 1f + GardenDims.FlareGain * Mathf.Exp(-Mathf.Max(y, 0f) / GardenDims.FlareHeight);
+-            return r0 * taper * flare;
+-        }
+-
+-        /// <summary>Largest ground radius of the trunk (flare and buttress tips), for the spacing checks.</summary>
+-        public static float FootprintRadius(float r0) => r0 * (1f + GardenDims.FlareGain) * (1f + GardenDims.ButtressGain);
+-
+-        public static void Build(in GardenTreeSpec t, int seed, MeshBuilder trunk, MeshBuilder crown)
+-        {
+-            float h = t.Height;
+-            float yTop = GardenDims.TrunkTopFrac * h;
+-            s_r0 = t.R0; s_yTop = yTop;
+-            s_phase = 2f * Mathf.PI * BridgeGardenKit.Hash01(seed, 7);
+-
+-            // ---- trunk loft (vertical frames on the leaning axis; rings denser near the flare)
+-            s_frames.Clear(); s_ringY.Clear();
+-            int rings = GardenDims.TrunkRings;
+-            for (int k = 0; k < rings; k++)
+-            {
+-                float u = (float)k / (rings - 1);
+-                float y = -0.3f + (yTop + 0.3f) * Mathf.Pow(u, 1.6f);
+-                s_ringY.Add(y);
+-            }
+-            for (int k = 0; k < rings; k++)
+-            {
+-                float y = s_ringY[k];
+-                var p = new Vector3(t.X, y, t.Z + LeanAt(t, y));
+-                float yPrev = s_ringY[Mathf.Max(0, k - 1)], yNext = s_ringY[Mathf.Min(rings - 1, k + 1)];
+-                Vector3 a = new Vector3(t.X, yPrev, t.Z + LeanAt(t, yPrev)), b = new Vector3(t.X, yNext, t.Z + LeanAt(t, yNext));
+-                Vector3 fwd = (b - a).normalized;
+-                s_frames.Add(new LoftFrame(p, Quaternion.LookRotation(fwd, Vector3.forward)));
+-            }
+-            MeshKit.LoftVarying(trunk, Section, s_frames, false, false);
+-
+-            // ---- six main branches: from the trunk axis under the crown bottom up to a point well inside the crown (normalised
+-            // radius 0.65 < 0.90, the lowest lump), so both open ends are hidden and the limbs show between trunk and crown
+-            float rC = t.CrownR, vr = GardenDims.CrownVertFrac * h;
+-            Vector3 cc = t.CrownCentre;
+-            for (int k = 0; k < GardenDims.Branches; k++)
+-            {
+-                float az = s_phase + k * (2f * Mathf.PI / GardenDims.Branches) + 0.35f * (BridgeGardenKit.Hash01(seed, 20 + k) - 0.5f);
+-                float y0 = (0.20f + 0.07f * BridgeGardenKit.Hash01(seed, 30 + k)) * h;   // well under the crown bottom (0.38 h): limbs show
+-                var a = new Vector3(t.X, y0, t.Z + LeanAt(t, y0));
+-                var b = cc + new Vector3(0.35f * rC * Mathf.Cos(az), -0.55f * vr, 0.35f * rC * Mathf.Sin(az));
+-                float ra = Mathf.Max(0.11f * t.R0, 0.3f), rb = Mathf.Max(GardenDims.BranchMinRadius + 0.05f, 0.04f * t.R0);
+-                MeshKit.TaperedCylinder(trunk, a, b, ra, rb, 12, false);
+-            }
+-
+-            // ---- crown
+-            Crown(crown, t.CrownCentre, t.CrownRadii, seed);
+-        }
+-
+-        /// <summary>Ring k of the trunk loft: 24-gon with the buttress lobes near the ground.</summary>
+-        static CrossSection Section(int k)
+-        {
+-            float y = s_ringY[k];
+-            float r = TrunkRadius(s_r0, y, s_yTop);
+-            float bw = GardenDims.ButtressGain * Mathf.Exp(-Mathf.Max(y, 0f) / GardenDims.ButtressHeight);
+-            s_ring.Clear(true);
+-            int n = GardenDims.TrunkSides;
+-            for (int i = 0; i < n; i++)
+-            {
+-                float a = 2f * Mathf.PI * i / n;
+-                float c = Mathf.Cos(GardenDims.Buttresses * (a - s_phase));
+-                float lobe = c > 0f ? c * c * c : 0f;
+-                float rr = r * (1f + bw * lobe);
+-                s_ring.Add(new Vector2(rr * Mathf.Cos(a), rr * Mathf.Sin(a)));
+-            }
+-            return s_ring;
+-        }
+-
+-        static readonly List<Vector3> s_cp = new List<Vector3>(1200);
+-        static readonly List<Vector3> s_cn = new List<Vector3>(1200);
+-        static readonly List<int> s_ci = new List<int>(7000);
+-
+-        /// <summary>Lumpy ellipsoid with shared vertices (poles + lat-1 rings of lon vertices), outward winding, smooth normals.</summary>
+-        public static void Crown(MeshBuilder mb, Vector3 c, Vector3 radii, int seed)
+-        {
+-            int lon = GardenDims.CrownLon, lat = GardenDims.CrownLat;
+-            s_cp.Clear(); s_cn.Clear(); s_ci.Clear();
+-            float ox = 31.7f * BridgeGardenKit.Hash01(seed, 61), oy = 17.3f * BridgeGardenKit.Hash01(seed, 62), oz = 23.9f * BridgeGardenKit.Hash01(seed, 63);
+-            // south pole, rings, north pole
+-            s_cp.Add(Point(c, radii, new Vector3(0f, -1f, 0f), ox, oy, oz));
+-            for (int i = 1; i < lat; i++)
+-            {
+-                float th = Mathf.PI * i / lat;
+-                for (int j = 0; j < lon; j++)
+-                {
+-                    float ph = 2f * Mathf.PI * j / lon;
+-                    var d = new Vector3(Mathf.Sin(th) * Mathf.Cos(ph), -Mathf.Cos(th), Mathf.Sin(th) * Mathf.Sin(ph));
+-                    s_cp.Add(Point(c, radii, d, ox, oy, oz));
+-                }
+-            }
+-            s_cp.Add(Point(c, radii, new Vector3(0f, 1f, 0f), ox, oy, oz));
+-            int north = s_cp.Count - 1;
+-            for (int j = 0; j < lon; j++) Tri(c, 0, 1 + (j + 1) % lon, 1 + j);
+-            for (int i = 0; i < lat - 2; i++)
+-                for (int j = 0; j < lon; j++)
+-                {
+-                    int a = 1 + i * lon + j, b = 1 + i * lon + (j + 1) % lon, a2 = a + lon, b2 = b + lon;
+-                    Tri(c, a, b, b2);
+-                    Tri(c, a, b2, a2);
+-                }
+-            int lastRing = 1 + (lat - 2) * lon;
+-            for (int j = 0; j < lon; j++) Tri(c, north, lastRing + j, lastRing + (j + 1) % lon);
+-
+-            // accumulated (area-weighted) face normals
+-            for (int i = 0; i < s_cp.Count; i++) s_cn.Add(Vector3.zero);
+-            for (int t = 0; t < s_ci.Count; t += 3)
+-            {
+-                int a = s_ci[t], b = s_ci[t + 1], d = s_ci[t + 2];
+-                Vector3 n = Vector3.Cross(s_cp[b] - s_cp[a], s_cp[d] - s_cp[a]);
+-                s_cn[a] += n; s_cn[b] += n; s_cn[d] += n;
+-            }
+-            int first = mb.VertexCount;
+-            for (int i = 0; i < s_cp.Count; i++)
+-            {
+-                Vector3 n = s_cn[i].sqrMagnitude > 1e-12f ? s_cn[i].normalized : (s_cp[i] - c).normalized;
+-                mb.Vertex(s_cp[i], n, new Vector2(s_cp[i].x, s_cp[i].z));
+-            }
+-            for (int t = 0; t < s_ci.Count; t += 3) mb.Tri(first + s_ci[t], first + s_ci[t + 1], first + s_ci[t + 2]);
+-        }
+-
+-        /// <summary>Appends triangle (a, b, d) wound outward (front face where cross(b - a, d - a) points away from the centre).</summary>
+-        static void Tri(Vector3 c, int a, int b, int d)
+-        {
+-            Vector3 n = Vector3.Cross(s_cp[b] - s_cp[a], s_cp[d] - s_cp[a]);
+-            Vector3 m = (s_cp[a] + s_cp[b] + s_cp[d]) / 3f - c;
+-            if (Vector3.Dot(n, m) >= 0f) { s_ci.Add(a); s_ci.Add(b); s_ci.Add(d); }
+-            else { s_ci.Add(a); s_ci.Add(d); s_ci.Add(b); }
+-        }
+-
+-        /// <summary>Ellipsoid point along unit direction d with the lump displacement (inward-biased, max 1.02).</summary>
+-        static Vector3 Point(Vector3 c, Vector3 radii, Vector3 d, float ox, float oy, float oz)
+-        {
+-            float n = 0.65f * Noise3(d.x * 2.2f + ox, d.y * 2.2f + oy, d.z * 2.2f + oz) + 0.35f * Noise3(d.x * 5.1f + oz, d.y * 5.1f + ox, d.z * 5.1f + oy);
+-            float k = 1f - 0.04f + GardenDims.CrownLump * (2f * n - 1f);
+-            return c + Vector3.Scale(d, radii) * Mathf.Min(k, 1.02f);
+-        }
+-
+-        /// <summary>3D value noise in [0, 1] (quintic, PCG lattice), the CPU twin of the shader's leaf-cell noise.</summary>
+-        public static float Noise3(float x, float y, float z)
+-        {
+-            int ix = Mathf.FloorToInt(x), iy = Mathf.FloorToInt(y), iz = Mathf.FloorToInt(z);
+-            float fx = x - ix, fy = y - iy, fz = z - iz;
+-            float ux = fx * fx * fx * (fx * (fx * 6f - 15f) + 10f), uy = fy * fy * fy * (fy * (fy * 6f - 15f) + 10f), uz = fz * fz * fz * (fz * (fz * 6f - 15f) + 10f);
+-            float H(int a, int b, int cc) => (float)NocMath.U01(NocMath.Pcg3(a, b, cc));
+-            float x00 = Mathf.Lerp(H(ix, iy, iz), H(ix + 1, iy, iz), ux), x10 = Mathf.Lerp(H(ix, iy + 1, iz), H(ix + 1, iy + 1, iz), ux);
+-            float x01 = Mathf.Lerp(H(ix, iy, iz + 1), H(ix + 1, iy, iz + 1), ux), x11 = Mathf.Lerp(H(ix, iy + 1, iz + 1), H(ix + 1, iy + 1, iz + 1), ux);
+-            return Mathf.Lerp(Mathf.Lerp(x00, x10, uy), Mathf.Lerp(x01, x11, uy), uz);
+-        }
+-    }
+-}
++// GardenTree: one giant tree of 14.5.5: the trunk as a loft of 24-gon rings (40 rings, denser at the base) from r0 (4-6 m by hash)
++// with a root flare and 5 buttress lobes near the ground, tapering to 0.45 r0 at the top (inside the crown), branches, and the crown.
++// A crown that must stay inside face B's notch walls leans toward the axis (GardenTreeSpec.CrownZ): the trunk axis bends with it.
++// Trunk and branches use lib.Bark, the crown NocFoliage. Load-time only.
++//   v1 (-foliage-v 1, the graybox crowns): six straight main branches (12-gon tapered cylinders, radius 0.11 r0 -> 0.20 m) that end
++//      well inside the crown, and the crown as one lumpy ellipsoid (r, 0.28 h, r) centred at 0.66 h (+-6 % low-frequency lumps,
++//      shared vertices and accumulated face normals; the lumps stay inside 1.02 x the ellipsoid).
++//   v2 (-foliage-v 2, Look v2, TEXTURE_PLAN 4): the same trunk; six curved main limbs (quadratic Bezier lofts, 12-gon, leaving the
++//      trunk at about 40 deg and rising steeply into the crown) and two sub-limbs per limb that fan out under the crown and enter
++//      its underside, so the branching continues into the canopy (CRIT0 #25); the crown becomes the opaque CORE at 0.90 of the
++//      lumpy ellipsoid (lib.LeafCore), and GardenLeafCards puts the leaf-cluster cards on two shells around it (lib.Leaves).
++// Bark UV0 (both versions; v1 NocSurface is triplanar and ignores UV0): x = the arc-length fraction around the ring x N_t x 1.8 m with
++// a whole number N_t of trident_maple_bark tiles per limb (N_t from the perimeter at y 8 m for the trunk, at the base for a limb),
++// so the texture wraps without a seam step and the grain follows the limb; y = metres along the limb. The trunk ring starts on the
++// side facing away from the walk axis (z 195), so the u wrap is never in view. MeshKit.Loft / Lathe UV0 are metres, not wrapped.
++using System.Collections.Generic;
++using UnityEngine;
++
++namespace Megastructure
++{
++    public static class GardenTree
++    {
++        static readonly CrossSection s_ring = new CrossSection();
++        static readonly List<LoftFrame> s_frames = new List<LoftFrame>(48);
++        static readonly List<float> s_ringY = new List<float>(48);
++        static readonly List<Vector3> s_pts = new List<Vector3>(32);
++        static float s_r0, s_yTop, s_ringOffset;
++        static float s_phase;
++        static float s_limbR0, s_limbR1;
++        static int s_limbSides, s_limbRings;
++
++        /// <summary>Height (m) of the trunk axis' lean offset at y (0 at the ground, full lean at the crown centre).</summary>
++        public static float LeanAt(in GardenTreeSpec t, float y)
++        {
++            float u = Mathf.Clamp01(y / Mathf.Max(GardenDims.CrownCentreFrac * t.Height, 1f));
++            return (t.CrownZ - t.Z) * u * u;
++        }
++
++        /// <summary>Trunk radius at height y before the buttress lobes: taper r0 -> 0.45 r0 over the trunk, times the root flare.</summary>
++        public static float TrunkRadius(float r0, float y, float yTop)
++        {
++            float u = Mathf.Clamp01(y / Mathf.Max(yTop, 1f));
++            float taper = Mathf.Lerp(1f, GardenDims.TaperEnd, u);
++            float flare = 1f + GardenDims.FlareGain * Mathf.Exp(-Mathf.Max(y, 0f) / GardenDims.FlareHeight);
++            return r0 * taper * flare;
++        }
++
++        /// <summary>Largest ground radius of the trunk (flare and buttress tips), for the spacing checks.</summary>
++        public static float FootprintRadius(float r0) => r0 * (1f + GardenDims.FlareGain) * (1f + GardenDims.ButtressGain);
++
++        /// <summary>Whole bark tiles around a limb of the given perimeter (at least 1).</summary>
++        public static int BarkTiles(float perimeter) => Mathf.Max(1, Mathf.RoundToInt(perimeter / GardenDims.BarkTile));
++
++        /// <summary>Bark tiles around the trunk: its perimeter at y 8 m (just above the flare, the part seen from the path).</summary>
++        public static int TrunkBarkTiles(in GardenTreeSpec t)
++            => BarkTiles(2f * Mathf.PI * TrunkRadius(t.R0, GardenDims.BarkRefY, GardenDims.TrunkTopFrac * t.Height));
++
++        public static void Build(in GardenTreeSpec t, int seed, MeshBuilder trunk, MeshBuilder crown)
++        {
++            float h = t.Height;
++            float yTop = GardenDims.TrunkTopFrac * h;
++            s_r0 = t.R0; s_yTop = yTop;
++            s_phase = 2f * Mathf.PI * BridgeGardenKit.Hash01(seed, 7);
++            // the ring starts on the side away from the walk axis: the 24-gon is rotated by a whole number of steps (6 of 15 deg),
++            // so the vertex set and the triangles are those of the unrotated ring and only the u wrap moves
++            s_ringOffset = (t.Z >= GardenDims.AxisZ ? 0.5f : -0.5f) * Mathf.PI;
++
++            // ---- trunk loft (vertical frames on the leaning axis; rings denser near the flare)
++            s_frames.Clear(); s_ringY.Clear();
++            int rings = GardenDims.TrunkRings;
++            for (int k = 0; k < rings; k++)
++            {
++                float u = (float)k / (rings - 1);
++                float y = -0.3f + (yTop + 0.3f) * Mathf.Pow(u, 1.6f);
++                s_ringY.Add(y);
++            }
++            for (int k = 0; k < rings; k++)
++            {
++                float y = s_ringY[k];
++                var p = new Vector3(t.X, y, t.Z + LeanAt(t, y));
++                float yPrev = s_ringY[Mathf.Max(0, k - 1)], yNext = s_ringY[Mathf.Min(rings - 1, k + 1)];
++                Vector3 a = new Vector3(t.X, yPrev, t.Z + LeanAt(t, yPrev)), b = new Vector3(t.X, yNext, t.Z + LeanAt(t, yNext));
++                Vector3 fwd = (b - a).normalized;
++                s_frames.Add(new LoftFrame(p, Quaternion.LookRotation(fwd, Vector3.forward)));
++            }
++            int first = trunk.VertexCount;
++            MeshKit.LoftVarying(trunk, Section, s_frames, false, false);
++            WrapBarkLoft(trunk, first, GardenDims.TrunkSides + 1, 0, TrunkBarkTiles(t));
++
++            if (GardenDims.FoliageV2) BuildLimbsV2(t, seed, trunk);
++            else BuildBranchesV1(t, seed, trunk);
++
++            // ---- crown (v1) or core (v2)
++            if (GardenDims.FoliageV2) Crown(crown, t.CrownCentre, t.CrownRadii * GardenDims.CoreFrac, seed);
++            else Crown(crown, t.CrownCentre, t.CrownRadii, seed);
++        }
++
++        /// <summary>
++        /// v1: six main branches from the trunk axis under the crown bottom up to a point well inside the crown (normalised radius
++        /// 0.65 < 0.90, the lowest lump), so both open ends are hidden and the limbs show between trunk and crown.
++        /// </summary>
++        static void BuildBranchesV1(in GardenTreeSpec t, int seed, MeshBuilder trunk)
++        {
++            float h = t.Height, rC = t.CrownR, vr = GardenDims.CrownVertFrac * h;
++            Vector3 cc = t.CrownCentre;
++            for (int k = 0; k < GardenDims.Branches; k++)
++            {
++                float az = s_phase + k * (2f * Mathf.PI / GardenDims.Branches) + 0.35f * (BridgeGardenKit.Hash01(seed, 20 + k) - 0.5f);
++                float y0 = (0.20f + 0.07f * BridgeGardenKit.Hash01(seed, 30 + k)) * h;   // well under the crown bottom (0.38 h): limbs show
++                var a = new Vector3(t.X, y0, t.Z + LeanAt(t, y0));
++                var b = cc + new Vector3(0.35f * rC * Mathf.Cos(az), -0.55f * vr, 0.35f * rC * Mathf.Sin(az));
++                float ra = Mathf.Max(0.11f * t.R0, 0.3f), rb = Mathf.Max(GardenDims.BranchMinRadius + 0.05f, 0.04f * t.R0);
++                int f0 = trunk.VertexCount;
++                MeshKit.TaperedCylinder(trunk, a, b, ra, rb, 12, false);
++                WrapBarkLathe(trunk, f0, a, b, BarkTiles(2f * Mathf.PI * ra));
++            }
++        }
++
++        /// <summary>
++        /// v2: six curved main limbs (12-gon lofts, 14 rings) from the trunk axis at 0.20-0.27 h to a point inside the core
++        /// (normalised horizontal 0.35, vertical -0.55: radius 0.65 < 0.86, the lowest core lump), leaving the trunk at about
++        /// 40 deg and rising steeply; two sub-limbs per limb (10-gon, 10 rings) branch off below the crown and fan out to points
++        /// inside the core's underside (normalised horizontal 0.50-0.70, vertical -0.62..-0.45), so the limbs read as a branching
++        /// structure entering the canopy. Every end is inside the core (closed by it); seams face up and inward (hidden from below).
++        /// </summary>
++        static void BuildLimbsV2(in GardenTreeSpec t, int seed, MeshBuilder trunk)
++        {
++            float h = t.Height, rC = t.CrownR, vr = GardenDims.CrownVertFrac * h;
++            Vector3 cc = t.CrownCentre;
++            for (int k = 0; k < GardenDims.Branches; k++)
++            {
++                float az = s_phase + k * (2f * Mathf.PI / GardenDims.Branches) + 0.35f * (BridgeGardenKit.Hash01(seed, 20 + k) - 0.5f);
++                float y0 = (0.20f + 0.07f * BridgeGardenKit.Hash01(seed, 30 + k)) * h;
++                var a = new Vector3(t.X, y0, t.Z + LeanAt(t, y0));
++                var o = new Vector3(Mathf.Cos(az), 0f, Mathf.Sin(az));
++                var b = cc + new Vector3(0.35f * rC * o.x, -0.55f * vr, 0.35f * rC * o.z);
++                Vector3 d = b - a;
++                Vector3 dh = new Vector3(d.x, 0f, d.z);
++                var ctrl = a + 0.70f * dh + new Vector3(0f, 0.25f * d.y, 0f);
++                float ra = Mathf.Max(0.11f * t.R0, 0.3f), rb = Mathf.Max(GardenDims.BranchMinRadius + 0.05f, 0.04f * t.R0);
++                Limb(trunk, a, ctrl, b, ra, rb, 12, 14, o);
++
++                for (int j = 0; j < 2; j++)
++                {
++                    float us = 0.40f + 0.22f * BridgeGardenKit.Hash01(seed, 40 + 2 * k + j);
++                    Vector3 ps = Bezier(a, ctrl, b, us);
++                    float daz = (j == 0 ? -1f : 1f) * (0.35f + 0.30f * BridgeGardenKit.Hash01(seed, 60 + 2 * k + j));
++                    var os = new Vector3(Mathf.Cos(az + daz), 0f, Mathf.Sin(az + daz));
++                    float hr = 0.50f + 0.20f * BridgeGardenKit.Hash01(seed, 80 + 2 * k + j);
++                    float vy = -0.62f + 0.17f * BridgeGardenKit.Hash01(seed, 100 + 2 * k + j);
++                    var e = cc + new Vector3(hr * rC * os.x, vy * vr, hr * rC * os.z);
++                    Vector3 ds = e - ps;
++                    Vector3 dsh = new Vector3(ds.x, 0f, ds.z);
++                    var cs = ps + 0.60f * dsh + new Vector3(0f, 0.20f * ds.y, 0f);
++                    float rLimb = Mathf.Lerp(ra, rb, Mathf.Pow(us, 0.8f));
++                    float sa = Mathf.Max(0.55f * rLimb, 0.18f), sb = Mathf.Max(GardenDims.BranchMinRadius, 0.35f * sa);
++                    Limb(trunk, ps, cs, e, sa, sb, 10, 10, os);
++                }
++            }
++        }
++
++        static Vector3 Bezier(Vector3 a, Vector3 c, Vector3 b, float u)
++        {
++            float v = 1f - u;
++            return v * v * a + 2f * u * v * c + u * u * b;
++        }
++
++        /// <summary>A tapered limb along the quadratic Bezier a-c-b (radius ra -> rb), open ends, bark UV0 wrapped.</summary>
++        static void Limb(MeshBuilder mb, Vector3 a, Vector3 c, Vector3 b, float ra, float rb, int sides, int rings, Vector3 outward)
++        {
++            s_pts.Clear();
++            for (int i = 0; i < rings; i++) s_pts.Add(Bezier(a, c, b, (float)i / (rings - 1)));
++            // section up = -(tangential): the ring's first point (u = 0, the wrap) lies on the upper inner side of the limb
++            var upHint = new Vector3(-outward.z, 0f, outward.x);
++            MeshKit.PathFrames(s_pts, upHint, s_frames, false, 89f);
++            s_limbR0 = ra; s_limbR1 = rb; s_limbSides = sides; s_limbRings = rings;
++            int first = mb.VertexCount;
++            MeshKit.LoftVarying(mb, LimbSection, s_frames, false, false);
++            WrapBarkLoft(mb, first, sides + 1, 0, BarkTiles(2f * Mathf.PI * ra));
++        }
++
++        static CrossSection LimbSection(int k)
++        {
++            float u = (float)k / Mathf.Max(s_limbRings - 1, 1);
++            return MeshKit.Circle(Mathf.Lerp(s_limbR0, s_limbR1, Mathf.Pow(u, 0.8f)), s_limbSides, s_ring);
++        }
++
++        /// <summary>
++        /// Rewrites UV0.x of a closed smooth loft (rings of `columns` vertices, the last column closing the ring at u = perimeter) as
++        /// the arc-length fraction x tiles x 1.8 m: a whole number of bark tiles around every ring (no seam step).
++        /// </summary>
++        public static void WrapBarkLoft(MeshBuilder mb, int first, int columns, int capVertices, int tiles)
++        {
++            int ringVerts = mb.VertexCount - first - capVertices;
++            float span = tiles * GardenDims.BarkTile;
++            for (int r = first; r + columns <= first + ringVerts; r += columns)
++            {
++                float total = mb.UV0[r + columns - 1].x;
++                float inv = total > 1e-6f ? 1f / total : 0f;
++                for (int c = 0; c < columns; c++)
++                {
++                    Vector2 uv = mb.UV0[r + c];
++                    mb.UV0[r + c] = new Vector2(c == columns - 1 ? span : uv.x * inv * span, uv.y);
++                }
++            }
++        }
++
++        /// <summary>
++        /// Rewrites UV0.x of a TaperedCylinder (Lathe: u = r phi) between a and b as (phi / 2 pi) x tiles x 1.8 m, phi = u / r with r
++        /// the vertex's distance from the axis.
++        /// </summary>
++        public static void WrapBarkLathe(MeshBuilder mb, int first, Vector3 a, Vector3 b, int tiles)
++        {
++            Vector3 ax = (b - a).normalized;
++            float span = tiles * GardenDims.BarkTile;
++            for (int i = first; i < mb.VertexCount; i++)
++            {
++                Vector3 q = mb.Positions[i] - a;
++                float r = (q - ax * Vector3.Dot(q, ax)).magnitude;
++                Vector2 uv = mb.UV0[i];
++                float frac = r > 1e-5f ? uv.x / (2f * Mathf.PI * r) : 0f;
++                mb.UV0[i] = new Vector2(frac * span, uv.y);
++            }
++        }
++
++        /// <summary>Ring k of the trunk loft: 24-gon with the buttress lobes near the ground.</summary>
++        static CrossSection Section(int k)
++        {
++            float y = s_ringY[k];
++            float r = TrunkRadius(s_r0, y, s_yTop);
++            float bw = GardenDims.ButtressGain * Mathf.Exp(-Mathf.Max(y, 0f) / GardenDims.ButtressHeight);
++            s_ring.Clear(true);
++            int n = GardenDims.TrunkSides;
++            for (int i = 0; i < n; i++)
++            {
++                float a = 2f * Mathf.PI * i / n + s_ringOffset;
++                float c = Mathf.Cos(GardenDims.Buttresses * (a - s_phase));
++                float lobe = c > 0f ? c * c * c : 0f;
++                float rr = r * (1f + bw * lobe);
++                s_ring.Add(new Vector2(rr * Mathf.Cos(a), rr * Mathf.Sin(a)));
++            }
++            return s_ring;
++        }
++
++        static readonly List<Vector3> s_cp = new List<Vector3>(1200);
++        static readonly List<Vector3> s_cn = new List<Vector3>(1200);
++        static readonly List<int> s_ci = new List<int>(7000);
++
++        /// <summary>The noise offsets of a crown's lumps (shared by the crown, the core and the card shells).</summary>
++        public static Vector3 LumpOffsets(int seed)
++            => new Vector3(31.7f * BridgeGardenKit.Hash01(seed, 61), 17.3f * BridgeGardenKit.Hash01(seed, 62), 23.9f * BridgeGardenKit.Hash01(seed, 63));
++
++        /// <summary>Lump factor of the crown along unit direction d: 0.96 + 0.06 (2 n - 1), at most 1.02 (inward-biased).</summary>
++        public static float Lump(Vector3 d, Vector3 o)
++        {
++            float n = 0.65f * Noise3(d.x * 2.2f + o.x, d.y * 2.2f + o.y, d.z * 2.2f + o.z) + 0.35f * Noise3(d.x * 5.1f + o.z, d.y * 5.1f + o.x, d.z * 5.1f + o.y);
++            float k = 1f - 0.04f + GardenDims.CrownLump * (2f * n - 1f);
++            return Mathf.Min(k, 1.02f);
++        }
++
++        /// <summary>Lumpy ellipsoid with shared vertices (poles + lat-1 rings of lon vertices), outward winding, smooth normals.</summary>
++        public static void Crown(MeshBuilder mb, Vector3 c, Vector3 radii, int seed)
++        {
++            int lon = GardenDims.CrownLon, lat = GardenDims.CrownLat;
++            s_cp.Clear(); s_cn.Clear(); s_ci.Clear();
++            Vector3 o = LumpOffsets(seed);
++            // south pole, rings, north pole
++            s_cp.Add(Point(c, radii, new Vector3(0f, -1f, 0f), o));
++            for (int i = 1; i < lat; i++)
++            {
++                float th = Mathf.PI * i / lat;
++                for (int j = 0; j < lon; j++)
++                {
++                    float ph = 2f * Mathf.PI * j / lon;
++                    var d = new Vector3(Mathf.Sin(th) * Mathf.Cos(ph), -Mathf.Cos(th), Mathf.Sin(th) * Mathf.Sin(ph));
++                    s_cp.Add(Point(c, radii, d, o));
++                }
++            }
++            s_cp.Add(Point(c, radii, new Vector3(0f, 1f, 0f), o));
++            int north = s_cp.Count - 1;
++            for (int j = 0; j < lon; j++) Tri(c, 0, 1 + (j + 1) % lon, 1 + j);
++            for (int i = 0; i < lat - 2; i++)
++                for (int j = 0; j < lon; j++)
++                {
++                    int a = 1 + i * lon + j, b = 1 + i * lon + (j + 1) % lon, a2 = a + lon, b2 = b + lon;
++                    Tri(c, a, b, b2);
++                    Tri(c, a, b2, a2);
++                }
++            int lastRing = 1 + (lat - 2) * lon;
++            for (int j = 0; j < lon; j++) Tri(c, north, lastRing + j, lastRing + (j + 1) % lon);
++
++            // accumulated (area-weighted) face normals
++            for (int i = 0; i < s_cp.Count; i++) s_cn.Add(Vector3.zero);
++            for (int t = 0; t < s_ci.Count; t += 3)
++            {
++                int a = s_ci[t], b = s_ci[t + 1], d = s_ci[t + 2];
++                Vector3 n = Vector3.Cross(s_cp[b] - s_cp[a], s_cp[d] - s_cp[a]);
++                s_cn[a] += n; s_cn[b] += n; s_cn[d] += n;
++            }
++            int first = mb.VertexCount;
++            for (int i = 0; i < s_cp.Count; i++)
++            {
++                Vector3 n = s_cn[i].sqrMagnitude > 1e-12f ? s_cn[i].normalized : (s_cp[i] - c).normalized;
++                mb.Vertex(s_cp[i], n, new Vector2(s_cp[i].x, s_cp[i].z));
++            }
++            for (int t = 0; t < s_ci.Count; t += 3) mb.Tri(first + s_ci[t], first + s_ci[t + 1], first + s_ci[t + 2]);
++        }
++
++        /// <summary>Appends triangle (a, b, d) wound outward (front face where cross(b - a, d - a) points away from the centre).</summary>
++        static void Tri(Vector3 c, int a, int b, int d)
++        {
++            Vector3 n = Vector3.Cross(s_cp[b] - s_cp[a], s_cp[d] - s_cp[a]);
++            Vector3 m = (s_cp[a] + s_cp[b] + s_cp[d]) / 3f - c;
++            if (Vector3.Dot(n, m) >= 0f) { s_ci.Add(a); s_ci.Add(b); s_ci.Add(d); }
++            else { s_ci.Add(a); s_ci.Add(d); s_ci.Add(b); }
++        }
++
++        /// <summary>Ellipsoid point along unit direction d with the lump displacement (inward-biased, max 1.02).</summary>
++        static Vector3 Point(Vector3 c, Vector3 radii, Vector3 d, Vector3 o) => c + Vector3.Scale(d, radii) * Lump(d, o);
++
++        /// <summary>3D value noise in [0, 1] (quintic, PCG lattice), the CPU twin of the shader's leaf-cell noise.</summary>
++        public static float Noise3(float x, float y, float z)
++        {
++            int ix = Mathf.FloorToInt(x), iy = Mathf.FloorToInt(y), iz = Mathf.FloorToInt(z);
++            float fx = x - ix, fy = y - iy, fz = z - iz;
++            float ux = fx * fx * fx * (fx * (fx * 6f - 15f) + 10f), uy = fy * fy * fy * (fy * (fy * 6f - 15f) + 10f), uz = fz * fz * fz * (fz * (fz * 6f - 15f) + 10f);
++            float H(int a, int b, int cc) => (float)NocMath.U01(NocMath.Pcg3(a, b, cc));
++            float x00 = Mathf.Lerp(H(ix, iy, iz), H(ix + 1, iy, iz), ux), x10 = Mathf.Lerp(H(ix, iy + 1, iz), H(ix + 1, iy + 1, iz), ux);
++            float x01 = Mathf.Lerp(H(ix, iy, iz + 1), H(ix + 1, iy, iz + 1), ux), x11 = Mathf.Lerp(H(ix, iy + 1, iz + 1), H(ix + 1, iy + 1, iz + 1), ux);
++            return Mathf.Lerp(Mathf.Lerp(x00, x10, uy), Mathf.Lerp(x01, x11, uy), uz);
++        }
++    }
++}
+diff --git a/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs b/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs
+new file mode 100644
+index 0000000..6f01bf8
+--- /dev/null
++++ b/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs
+@@ -0,0 +1,115 @@
++// NocFacadeConstants: the Look v2 facade (docs/TEXTURE_PLAN.md section 2, docs/LOOK_V2.md section 4, docs/FACADE_V2.md), owner FA.
++// Exported as NC_<Name> into Shaders/Generated/NocFacadeConstantsGen.hlsl (gen_hlsl.py / ShaderGen: `public const` literals only;
++// every name starts with "Fa" so it never collides with NocturneConstants' v1 Facade* lines, which stay byte-identical for
++// CityField and the -facade-v 1 path). Lengths in metres, cell-local coordinates: x along u from the cell's left edge, y up
++// from the cell's bottom (the floor line). The C# twin is NocFacadeMath (v2 section), the HLSL Shaders/Include/NocFacadeSkin.hlsl.
++namespace Megastructure
++{
++    public static class NocFacadeConstants
++    {
++        // ------------------------------------------------------------------ window light (LOOK_V2 4; D-028: the final values)
++        /// <summary>Overall lit fraction 0.18 and the strata lit factors (residential, commercial, mechanical, sky lobby; shares
++        /// 70/15/10/5 % stay NocturneConstants.FacadeShare*, share x factor sums to 1.00). Section bays (mode 1) light 0.21.</summary>
++        public const double FaLit = 0.18, FaFactorRes = 1.08, FaFactorCom = 0.69, FaFactorMech = 0.23, FaFactorLobby = 2.31, FaSecLit = 0.21;
++        /// <summary>Zone level z = FaZoneLo + FaZoneSpan x 0.5 (U_row + U_cell): rows of 2 floors keyed per tower, 24 columns per face (mean 1).</summary>
++        public const double FaZoneLo = 0.40, FaZoneSpan = 1.2;
++        /// <summary>Tower multiplier m_T and lit-floor-group factor g_G: log-normal, mean 1, clamped to [FaLnMin, FaLnMax]
++        /// (the clamp of p at 1 then loses 0.2 % of the residential mean and 3 % of the lobby's: 0.4 % overall).</summary>
++        public const double FaTowerSigma = 0.35, FaGroupSigma = 0.45, FaLnMin = 0.3, FaLnMax = 3.0;
++        /// <summary>Lit floor groups of 4-12 floors, laid out per (tower key, band); g fades to 1 by smoothstep(3, 6, group px).</summary>
++        public const int FaGroupMinRows = 4, FaGroupMaxRows = 12;
++        public const double FaGroupFadePx0 = 3.0, FaGroupFadePx1 = 6.0;
++        /// <summary>Lit glass radiance E = token x (FaYMed / Y(token)) x b x I / E[I]; b = exp(FaBSigma N) clamped to [FaBMin, FaBMax],
++        /// E[b] = FaBMean (Box-Muller from two window hashes; checked by FacadeTests).</summary>
++        public const double FaYMed = 0.12, FaBSigma = 0.45, FaBMin = 0.40, FaBMax = 2.40, FaBMean = 1.0954;
++        /// <summary>Hue classes on one window hash U (LOOK_V2 4): [0, w_f/3) WinTungsten, [w_f/3, w_f) WinWarm, [w_f, w_f + n_f)
++        /// WinNeutral, then WinCold up to FaHueBlue0, WinBlue (x FaBlueGain) up to FaHueCol0, then coloured (x FaColGain, each
++        /// lerp(c, WinNeutral, FaColDesat)): NeonCyan 0.015, AviationRed 0.010, LeafGlow 0.010, NeonMagenta 0.005. The moving
++        /// boundaries (w_f, w_f + n_f) are soft over FaHueBand; at w_f = 0 no window is warm.</summary>
++        public const double FaHueBlue0 = 0.93, FaHueCol0 = 0.96, FaBlueGain = 0.6, FaColGain = 0.8, FaColDesat = 0.4, FaHueBand = 0.03;
++        public const double FaColCyan = 0.015, FaColRed = 0.010, FaColLeaf = 0.010, FaColMagenta = 0.005;
++        /// <summary>Interior factor I (LOOK_V2 4): ceiling falloff 1.0 at the head to FaFalloffSill at the sill; curtains on
++        /// FaCurtainP of lit windows (x FaCurtainGain, tint lerp(hue, WinWarm, FaCurtainTint)), blinds on FaBlindP (slats of
++        /// FaBlindPitch, open fraction FaBlindOpen, faded below FaBlindFadePx of slat pitch); curtains and blinds are exclusive.
++        /// Only the zero-mean part I / E[I] - 1 fades in, over smoothstep(FaIntFadePx0, FaIntFadePx1) of window height (px).</summary>
++        public const double FaFalloffSill = 0.70, FaCurtainP = 0.35, FaCurtainGain = 0.45, FaCurtainTint = 0.25;
++        public const double FaBlindP = 0.15, FaBlindPitch = 0.08, FaBlindOpen = 0.45, FaBlindFadePx = 3.0;
++        public const double FaIntFadePx0 = 4.0, FaIntFadePx1 = 8.0;
++        /// <summary>Unlit glass interior: GlassDark x ambient_eq + WinNeutral x FaStandby x (0.5..1.5 by hash) (LOOK_V2 4).</summary>
++        public const double FaStandby = 0.0005;
++        /// <summary>Stateless epochs (H2, unchanged): 150 s epochs with a 1.2 s toggle ramp.</summary>
++        public const double FaEpoch = 150.0, FaToggle = 1.2;
++
++        // ------------------------------------------------------------------ skins and regions (TEXTURE_PLAN 2.2, 2.3)
++        /// <summary>Region OQ (Old Quarter and the Heart ring): a disc about (FaOqX, FaOqZ) of radius FaOqR; D elsewhere. Skin byte
++        /// 0x00-0x77 = D (seed % 120), 0x78-0xEF = OQ (0x78 + seed % 120), 0xF0 + k = hero override k.</summary>
++        public const double FaOqX = 1250.0, FaOqZ = 388.0, FaOqR = 600.0;
++        public const int FaRegionSpan = 120, FaOqBase = 0x78, FaOverrideBase = 0xF0;
++        /// <summary>Skin shares (S0 glass curtain wall, S1 precast, S2 metal ribbon, S3 brick, S4 tiled residential) per region,
++        /// as cumulative thresholds on U_skin (S4 takes the rest).</summary>
++        public const double FaShareD0 = 0.25, FaShareD1 = 0.55, FaShareD2 = 0.70, FaShareD3 = 0.75;
++        public const double FaShareQ0 = 0.10, FaShareQ1 = 0.35, FaShareQ2 = 0.40, FaShareQ3 = 0.80;
++        /// <summary>Tower variants keyed by K: S1 centre mullion, S2 ribbed panels, core strip (on faces wider than FaCoreMinFace),
++        /// setback ledge line, mechanical stripe per residential band.</summary>
++        public const double FaS1MullionP = 0.5, FaS2RibbedP = 0.3, FaCoreP = 0.4, FaCoreMinFace = 30.0, FaLedgeP = 0.3, FaMechStripeP = 0.75;
++
++        // ------------------------------------------------------------------ whole bays and bands (TEXTURE_PLAN 2.5)
++        /// <summary>Openings lie inside [uMin + FaCornerPier, uMax - FaCornerPier] x [y0 + base, y1 - FaParapet]; base is FaBase on
++        /// faces whose y0 is at or below FaBaseY0 (podium faces), else 0. The parapet coping line is FaCoping tall at the top.</summary>
++        public const double FaCornerPier = 0.6, FaParapet = 1.6, FaBase = 6.0, FaBaseY0 = 0.0, FaCoping = 0.12;
++        /// <summary>Setback ledge line: FaLedgeH tall at y1, drawn at least FaLedgeMinPx (energy x true / drawn), x FaLedgeGain.</summary>
++        public const double FaLedgeH = 0.3, FaLedgeMinPx = 1.0, FaLedgeGain = 0.35;
++        /// <summary>Corner trim (metal flashing) within FaCornerTrim of a face edge.</summary>
++        public const double FaCornerTrim = 0.25;
++
++        // ------------------------------------------------------------------ cell geometry (TEXTURE_PLAN 2.3; docs/FACADE_V2.md table)
++        /// <summary>Frame and mullion of residential openings (LOOK_V2: 0.12 m MetalPaint inside the opening).</summary>
++        public const double FaFrame = 0.12;
++        // S0 glass curtain wall: metal slab cap [0, FaS0Cap), spandrel glass [FaS0Cap, FaS0Sp1), transom, vision [FaS0Oy0, FaS0Oy1],
++        // mullions 0.12 at the cell edges (outside the opening) and at FaS0Mid; glass nearly flush (recess FaS0D).
++        public const double FaS0Cap = 0.18, FaS0Sp1 = 1.89, FaS0Ox0 = 0.06, FaS0Ox1 = 2.34, FaS0Oy0 = 1.95, FaS0Oy1 = 3.54, FaS0Mull = 0.12, FaS0D = 0.05;
++        // S1 precast: slab band FaS1Slab, opening 1.6 x 2.2 at sill 0.9 (variant B: 1.72 wide with a centre mullion), recess 0.22.
++        public const double FaS1Slab = 0.35, FaS1Ox0 = 0.40, FaS1Ox1 = 2.00, FaS1BOx0 = 0.34, FaS1BOx1 = 2.06, FaS1Oy0 = 0.90, FaS1Oy1 = 3.10, FaS1D = 0.22;
++        // S2 metal ribbon: panel band FaS2Slab, ribbon 1.8 tall at sill 0.9 between edge mullions, centre mullion 0.08, recess 0.08.
++        public const double FaS2Slab = 0.30, FaS2Ox0 = 0.06, FaS2Ox1 = 2.34, FaS2Oy0 = 0.90, FaS2Oy1 = 2.70, FaS2Frame = 0.05, FaS2Mull = 0.08, FaS2D = 0.08;
++        // S3 brick: window 1.2 x 1.6 at sill 0.85, frame 0.08, recess 0.18, stone sill and lintel bands FaS3Stone tall.
++        public const double FaS3Slab = 0.12, FaS3Ox0 = 0.60, FaS3Ox1 = 1.80, FaS3Oy0 = 0.85, FaS3Oy1 = 2.45, FaS3Frame = 0.08, FaS3D = 0.18, FaS3Stone = 0.12;
++        // S4 tiled residential: window 1.4 x 1.6 at sill 0.9, frame 0.08, slab edge 0.25, recess 0.15.
++        public const double FaS4Slab = 0.25, FaS4Ox0 = 0.50, FaS4Ox1 = 1.90, FaS4Oy0 = 0.90, FaS4Oy1 = 2.50, FaS4Frame = 0.08, FaS4D = 0.15;
++        // commercial 4.8 x 4.32: opening 4.4 x 3.2 (LOOK_V2 cover 0.679), frame 0.10, mullions 0.08 every 1.1 m, recess 0.10 (0.25 on S1/S3)
++        public const double FaComOx0 = 0.20, FaComOx1 = 4.60, FaComOy0 = 0.60, FaComOy1 = 3.80, FaComFrame = 0.10, FaComMull = 0.08, FaComMullP = 1.1, FaComD = 0.10, FaComDDeep = 0.25;
++        // mechanical 9 x 6.171: louvre slit 8.4 x 0.8, frame 0.05, louvre blades of FaLouvreW every FaLouvreP (open fraction 0.5)
++        public const double FaMechOx0 = 0.30, FaMechOx1 = 8.70, FaMechOy0 = 2.70, FaMechOy1 = 3.50, FaMechFrame = 0.05, FaMechD = 0.15, FaLouvreP = 0.15, FaLouvreW = 0.075;
++        // sky lobby 18 x 14.4: opening 17 x 12 in stone portal frames, frame 0.15, mullions 0.12 every 3.4 m, a transom at mid height
++        public const double FaLobOx0 = 0.50, FaLobOx1 = 17.50, FaLobOy0 = 1.20, FaLobOy1 = 13.20, FaLobFrame = 0.15, FaLobMull = 0.12, FaLobMullP = 3.4, FaLobD = 0.30;
++        // section bays (mode 1) 9 x 4: opening 8.2 x 3.2, frame 0.10, mullions 0.10 every 2.05 m, cut slab 0.5, recess 0.5
++        public const double FaSecSlab = 0.50, FaSecOx0 = 0.40, FaSecOx1 = 8.60, FaSecOy0 = 0.50, FaSecOy1 = 3.70, FaSecFrame = 0.10, FaSecMull = 0.10, FaSecMullP = 2.05, FaSecD = 0.50;
++        /// <summary>Panel joints: FaJoint wide (darker, rougher), drawn at least 1 px with energy w / drawn, mean below 4 px.</summary>
++        public const double FaJoint = 0.015, FaJointDark = 0.45;
++
++        // ------------------------------------------------------------------ materials (tokens x factors; the token is the mean colour)
++        /// <summary>Wall token factors: S2 MetalPaint x FaS2Albedo, S4 Plaster x FaS4Albedo; per-panel tone +- FaPanelTone faded by
++        /// smoothstep(2, 4) of panel px; per-face albedo +- FaFaceTone.</summary>
++        public const double FaS2Albedo = 2.0, FaS4Albedo = 0.75, FaPanelTone = 0.12, FaFaceTone = 0.04;
++        /// <summary>Smoothness (perceptual): concrete / render walls, metal walls, frames (anodised constant), reveals, wet sills.</summary>
++        public const double FaSmoothWall = 0.30, FaSmoothMetal = 0.45, FaSmoothFrame = 0.55, FaSmoothSill = 0.85;
++        /// <summary>Ambient occlusion of slab soffit lines, reveals and recessed frames.</summary>
++        public const double FaAoSlab = 0.85, FaAoReveal = 0.60, FaAoFrame = 0.75;
++        /// <summary>Frontal mean sky reflection per unit area of wall (LOOK_V2 4: 0.0006) and of glass (F0 0.04 x sky ~0.02), for
++        /// the unresolved MeanRadiance only (the shader reflects analytically).</summary>
++        public const double FaWallSpec = 0.0006, FaGlassSpec = 0.0008;
++        /// <summary>Room-light spill (TEXTURE_PLAN 2.6): lit window radiance x albedo x F on jambs, sill, head and frame edges, and a
++        /// halo below the opening E x FaHalo x exp(-d / FaHaloL) for d in [0, FaHaloMax].</summary>
++        public const double FaSpillJamb = 0.25, FaSpillSill = 0.35, FaSpillHead = 0.15, FaSpillFrame = 0.20, FaHalo = 0.02, FaHaloL = 0.4, FaHaloMax = 1.2;
++
++        // ------------------------------------------------------------------ glass (TEXTURE_PLAN 2.7, LOOK_V2 4)
++        /// <summary>Dielectric F0, perceptual roughness, pane tilt +- deg (folded into roughness below FaTiltFadePx of pane size).</summary>
++        public const double FaGlassF0 = 0.04, FaGlassRough = 0.05, FaPaneTilt = 1.5, FaTiltFadePx = 2.0;
++
++        // ------------------------------------------------------------------ distance ladder (TEXTURE_PLAN 2.9)
++        /// <summary>Per-axis window fade smoothstep(2.5, 5.5, pitch px) (H2, unchanged); box rooms smoothstep(5, 9, window px);
++        /// textured rooms smoothstep(24, 40); photo skins smoothstep(2, 4, tile px); panel tone smoothstep(2, 4, panel px).</summary>
++        public const double FaFadePx0 = 2.5, FaFadePx1 = 5.5, FaBoxPx0 = 5.0, FaBoxPx1 = 9.0, FaRoomPx0 = 24.0, FaRoomPx1 = 40.0;
++        public const double FaTexPx0 = 2.0, FaTexPx1 = 4.0;
++    }
++}
+diff --git a/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs.meta b/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs.meta
+new file mode 100644
+index 0000000..d9d09a0
+--- /dev/null
++++ b/Assets/_Game/Scripts/Runtime/Core/NocFacadeConstants.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: 16d14e325a97118428bf93dc0f8cb27e
+\ No newline at end of file
+diff --git a/Assets/_Game/Scripts/Runtime/Core/NocturneConstants.cs b/Assets/_Game/Scripts/Runtime/Core/NocturneConstants.cs
+index c6daaaf..c3ee7ff 100644
+--- a/Assets/_Game/Scripts/Runtime/Core/NocturneConstants.cs
++++ b/Assets/_Game/Scripts/Runtime/Core/NocturneConstants.cs
+@@ -2,7 +2,9 @@
+ // shots and 14.11 UI timings) shared by code, tests and shaders. One static class, no UnityEngine dependency.
+ // Tools/gen_hlsl.py and the editor ShaderGen export every `public const double|float|int NAME = <literal>;` field to
+ // Shaders/Generated/NocConstantsGen.hlsl as `#define NC_NAME value`: keep const fields literal (computed values are
+-// static readonly). A number that differs from Part 14 is a logged decision in DEVELOPMENT.md.
++// static readonly). A number that differs from Part 14 is a logged decision in DEVELOPMENT.md. Look v2 (D-027, D-028): the
++// atmosphere, post, light and key-shot numbers follow docs/LOOK_V2.md sections 2, 3, 6, 7 and 8 (PA); the facade and wet-floor
++// blocks below stay byte-identical (CityField and the v1 paths read them; FA and SU keep their own constants classes).
+ namespace Megastructure
+ {
+     public static class NocturneConstants
+@@ -74,30 +76,39 @@ namespace Megastructure
+         public const double FogDownDepth = 1400.0;
+         public const double SheetY0 = -250.0, SheetY1 = -700.0, SheetY2 = -1500.0, SheetWidth = 45.0, SheetStrength = 0.5;
+         public const double CloudBaseY = 460.0;
+-        public const float FloorLinR = 0.0033f, FloorLinG = 0.0024f, FloorLinB = 0.0144f;
+-        public const double FloorLuma = 10.4;
++        /// <summary>Floor #0A0C0F (LOOK_V2 2.1): blue-black, luma 11.8 (codes 10, 12, 15); the grade applies exposure and vignette
++        /// relative to it (LOOK_V2 7), so the dithered 1st percentile of a Floor plateau stays >= 9. Crush threshold Floor + 3.</summary>
++        public const float FloorLinR = 0.00304f, FloorLinG = 0.00368f, FloorLinB = 0.00478f;
++        public const double FloorLuma = 11.8;
+         public const double SkyDomeRadius = 11000.0;
+         /// <summary>H3 cloud mix of geometry toward the ceiling colour: smoothstep(380, 560, y) (shaft tops vanish, no roof edge).</summary>
+         public const double CloudMixY0 = 380.0, CloudMixY1 = 560.0;
+         /// <summary>The cloud deck is seen for e &gt; 4 deg (14.2.2): its weight eases in over 3..5 deg (its fog is ~0.996 there).</summary>
+         public const double CloudFadeE0 = 3.0, CloudFadeE1 = 5.0;
+-        /// <summary>Cloud glow (14.2.2): Gaussians sigma 220 m, CloudBase x (1 + 0.8 glow); 2-octave noise 900 / 300 m scrolling
+-        /// 3 m/s (weights 0.65 / 0.35, amplitude 1.0 about the mean, lattice periodic in 64 cells so the scroll wraps exactly).</summary>
+-        public const double CloudGlowSigma = 220.0, CloudGlowGain = 0.8, CloudNoiseAmp = 1.0;
+-        public const double CloudNoise1 = 900.0, CloudNoise2 = 300.0, CloudNoiseW1 = 0.65, CloudScroll = 3.0;
++        /// <summary>Cloud deck (LOOK_V2 3.1, tint model): base = CloudBase (1 + 1.2 (n - 0.5)) (1 - 0.35 g_gulf), glow W = soft union
++        /// of Gaussians (sigma 220 m) with a tint per glow, cloud = lerp(base, tint (1 + 0.5 (n - 0.5)), W). n = 4 octaves 900 / 300 /
++        /// 110 / 40 m (weights 0.36 / 0.19 / 0.30 / 0.15, std 0.111), the 110 and 40 m octaves domain-warped by 60 m (2 n900 - 1),
++        /// each octave faded to its mean below 4..8 px of wavelength; 3 m/s scroll, lattice periodic in 64 cells (exact wrap).</summary>
++        public const double CloudGlowSigma = 220.0, CloudBaseAmp = 1.2, CloudTintAmp = 0.5, CloudGulfShade = 0.35;
++        public const double CloudNoise1 = 900.0, CloudNoise2 = 300.0, CloudNoise3 = 110.0, CloudNoise4 = 40.0;
++        public const double CloudNoiseW1 = 0.36, CloudNoiseW2 = 0.19, CloudNoiseW3 = 0.30, CloudNoiseW4 = 0.15;
++        public const double CloudWarp = 60.0, CloudFadePx0 = 4.0, CloudFadePx1 = 8.0, CloudScroll = 3.0;
+         public const int CloudNoisePeriod = 64;
+         /// <summary>D-006: the cloud term inside NocSkyColor is fogged with min(sigma, 6e-4) (KS02 slit).</summary>
+         public const double CloudSkySigmaMax = 6.0e-4;
+         /// <summary>D-006: HazeHorizon -> AbyssNear over 0..-6 deg below the horizon (no 6.7-code step).</summary>
+         public const double HorizonBlendDeg = 6.0;
+-        /// <summary>H3 sky modulation for rays that hit nothing below the horizon: 1 + 0.10 sum exp(-((e - e_k)/5)^2),
+-        /// e_k = -atan((eye - y_k) / 2 500 m) (-5.7, -15.6, -31 deg for the undrifted sheets).</summary>
+-        public const double SheetSkyAmp = 0.10, SheetSkyWidthDeg = 5.0, SheetSkyDistance = 2500.0;
++        /// <summary>H3 sky modulation for rays that hit nothing below the horizon: 1 + 0.15 sum exp(-((e - e_k)/5)^2) (LOOK_V2 3.1:
++        /// +15 %, about +-5 codes of visible bands), e_k = -atan((eye - y_k) / 2 500 m) (-5.7, -15.6, -31 deg undrifted).</summary>
++        public const double SheetSkyAmp = 0.15, SheetSkyWidthDeg = 5.0, SheetSkyDistance = 2500.0;
+         /// <summary>Haze sheets drift +-15 m with period 120 s (H3); the sheet sum is skipped while min(y0, y1) &gt; -60 m (R2 2.2).</summary>
+         public const double SheetDrift = 15.0, SheetDriftPeriod = 120.0, SheetSkipY = -60.0;
+         /// <summary>D-006 alley haze: sigma_a - sigma_r as an extra layer weighted 1 - smoothstep(18, 30, y) (podia 22 / 31 m),
+-        /// over the regional sigma 3.6e-4; it ends with the 14.6 fog window at s 124.</summary>
+-        public const double AlleyHazeY0 = 18.0, AlleyHazeY1 = 30.0, RegionalSigma = 3.6e-4, AlleyHazeEndS = 124.0;
++        /// over the regional sigma 4.4e-4 (LOOK_V2 3.1; the alley total stays 5.0e-3); it ends with the 14.6 fog window at s 124.
++        /// HazeLow share of the layer inside the sky function: lerp(c, HazeLow, 0.6 sa m / (sr + sa m)), m the layer's mean along
++        /// the ray to min(6 500 m, the cloud hit) (LOOK_V2 3.1).</summary>
++        public const double AlleyHazeY0 = 18.0, AlleyHazeY1 = 30.0, RegionalSigma = 4.4e-4, AlleyHazeEndS = 124.0;
++        public const double HazeLowShare = 0.6, HazeLowPath = 6500.0;
+ 
+         // ------------------------------------------------------------------ wet floor (14.7 H4, D-003, R1 section 2)
+         /// <summary>Fresnel F0 of the water film, reflectivity in puddles / elsewhere, puddle area fraction (14.2.5 NocWet).</summary>
+@@ -115,9 +126,9 @@ namespace Megastructure
+         public const double WetPixVar = 0.25, WetAaClamp = 0.36, WetLatMinPx = 0.75;
+ 
+         // ------------------------------------------------------------------ lit template (14.2.3)
+-        /// <summary>Analytic koi light: 12 spine points, falloff 1 / (1 + (d / 120)^2), I = KoiGlow x 0.9.</summary>
++        /// <summary>Analytic koi light: 12 spine points, falloff 1 / (1 + (d / 120)^2), I = KoiGlow x 0.7 (LOOK_V2 6; R4 exception).</summary>
+         public const int KoiSpinePoints = 12;
+-        public const double KoiLightRange = 120.0, KoiLightGain = 0.9;
++        public const double KoiLightRange = 120.0, KoiLightGain = 0.7;
+         /// <summary>Specular anti-aliasing of the lit template (8.11 item 6): screen-space variance 0.25, threshold 0.18.</summary>
+         public const double SpecAaVariance = 0.25, SpecAaThreshold = 0.18;
+         /// <summary>Smoothness ceiling of lit materials (8.11 item 6: at most 0.95 except analytic water and glass).</summary>
+@@ -159,6 +170,18 @@ namespace Megastructure
+         /// <summary>Warm window fraction per beat (14.2.5; beat 2 0.10, beat 7 0: the goal window is the only warm blob), Rule P.</summary>
+         public static readonly double[] WarmFraction = { 0.08, 0.10, 0.08, 0.06, 0.06, 0.05, 0.0 };
+ 
++        // ------------------------------------------------------------------ window and amber schedules (LOOK_V2 4, R6; read by NocFacadeMath)
++        /// <summary>Warm share w_f(s) of lit windows, piecewise LINEAR in s (LOOK_V2 4): 0.32 to s 400, 0.20 at s 880, 0 from s 1 250
++        /// (peak 0.054 per 100 m = 0.14 % of lit windows per second at 2.5 m/s). Uploaded as _NocFacade.y.</summary>
++        public static readonly double[] WarmKnotS = { 0.0, 400.0, 880.0, 1250.0, 1500.0 };
++        public static readonly double[] WarmKnotV = { 0.32, 0.32, 0.20, 0.0, 0.0 };
++        /// <summary>Neutral (4 000 K) share n_f(s), piecewise linear: 0.30 to s 880, 0.15 from s 1 250. Uploaded as _NocFacade.w.</summary>
++        public static readonly double[] NeutralKnotS = { 0.0, 880.0, 1250.0, 1500.0 };
++        public static readonly double[] NeutralKnotV = { 0.30, 0.30, 0.15, 0.15 };
++        /// <summary>R6: every city-wide SodiumAmber use x k_a(s) = w_f(s) / 0.32 (the remainder goes to SignWhite); the screen wall's
++        /// amber stop turns to SignWhite over s 1 230-1 290; per-item hash bands of 0.06 in k_a keep the change pop-free.</summary>
++        public const double AmberRef = 0.32, AmberBand = 0.06, ScreenAmberS0 = 1230.0, ScreenAmberS1 = 1290.0;
++
+         // ------------------------------------------------------------------ city field (14.7 H2 tiers, 14.4 places)
+         /// <summary>Ring centre (the middle of the path's bounding box): ring 1 to 1.8 km (120 m cells), ring 2 to 6.5 km (240 m).</summary>
+         public const double CityCentreX = 575.0, CityCentreZ = 195.0, CityCell1 = 120.0, CityCell2 = 240.0, CityRing1 = 1800.0, CityRing2 = 6500.0;
+@@ -180,8 +203,12 @@ namespace Megastructure
+         // ------------------------------------------------------------------ signs and streaks (14.2.5 NocNeon / NocStreak, H2, H7)
+         /// <summary>NocNeon: stroke minimum 1.75 px, strokes above 6 px footprint, else flat clamped to 2.2 px, breathing +-8 % at &lt;= 0.2 Hz.</summary>
+         public const double NeonMinPx = 1.75, NeonFlatPx = 6.0, NeonClampPx = 2.2, NeonBreathAmp = 0.08, NeonBreathHz0 = 0.05, NeonBreathHz1 = 0.2;
+-        /// <summary>Neon emission HDR factor (14.2.1 signs x1.8) and stroke width as a fraction of the glyph cell width.</summary>
+-        public const double NeonGain = 1.8, NeonStroke = 0.055;
++        /// <summary>Neon emission HDR factor (LOOK_V2 2.3: signs x1.6) and stroke width as a fraction of the glyph cell width.</summary>
++        public const double NeonGain = 1.6, NeonStroke = 0.055;
++        /// <summary>NocNeon colour weights (LOOK_V2 10, R6, R7): SodiumAmber 0.28 x k_a, WinNeutral 0.24, NeonCyan 0.18, AviationRed 0.14,
++        /// SignWhite 0.12 + 0.28 (1 - k_a), NeonMagenta 0.04, NeonViolet 0; the dark panel face 0.015 x the colour desaturated 60 %.</summary>
++        public const double NeonWAmber = 0.28, NeonWNeutral = 0.24, NeonWCyan = 0.18, NeonWRed = 0.14, NeonWWhite = 0.12, NeonWMagenta = 0.04;
++        public const double NeonPanel = 0.015, NeonPanelDesat = 0.6;
+         /// <summary>NocStreak: minimum 2.2 px both axes, energy x (true/drawn)^2, streak length max(v x 0.12 s, footprint), light width (m).</summary>
+         public const double StreakMinPx = 2.2, StreakSeconds = 0.12, StreakWidth = 0.35;
+         /// <summary>Traffic (H7): speed 14 m/s +-3 %, spacing 28 m +-30 %, ramps e 0.04 (lanes) / 0.06 (layers), lane start x -4 000,
+@@ -198,8 +225,9 @@ namespace Megastructure
+         public const double RainDropLen = 0.30, RainDropWidth = 0.012, RainMinPx = 2.2, RainMarginH = 0.09, RainMarginV = 0.16, RainPresenceBand = 0.06;
+         /// <summary>Zenith fade of each layer by its streak length: smoothstep(3, 8 px at 1080p).</summary>
+         public const double RainFadePx0 = 3.0, RainFadePx1 = 8.0;
+-        /// <summary>Brightness 0.35 (0.04 + 0.9 clamp(Lloc / 0.8, 0, 1.5)) x smoothstep(0, 0.15, Lloc), tint 60 %, clamp 0.8 (exposed).</summary>
+-        public const double RainB0 = 0.35, RainB1 = 0.04, RainB2 = 0.9, RainLlocRef = 0.8, RainLlocMax = 1.5, RainLumaGate = 0.15, RainTint = 0.6, RainTintMax = 2.5, RainClamp = 0.8;
++        /// <summary>Brightness 0.35 (0.04 + 0.9 clamp(Lloc / 0.8, 0, 1.5)) x smoothstep(0, 0.15, Lloc), tint 30 % (Look v2, CRIT0 #28:
++        /// the drops take the local light's hue at about x0.3 saturation, no coloured sparks), clamp 0.8 (exposed).</summary>
++        public const double RainB0 = 0.35, RainB1 = 0.04, RainB2 = 0.9, RainLlocRef = 0.8, RainLlocMax = 1.5, RainLumaGate = 0.15, RainTint = 0.3, RainTintMax = 2.5, RainClamp = 0.8;
+         /// <summary>Density noise rho (0.55 + 0.45 vnoise), 11 lattice cells per turn; tilt 0.10 sin(0.05 t); beat-4 gusts 0.28 rad, 17 s.</summary>
+         public const double RainNoiseBase = 0.55, RainNoiseAmp = 0.45, RainTiltAmp = 0.10, RainTiltRate = 0.05, RainGust = 0.28, RainGustPeriod = 17.0;
+         public const int RainNoiseCells = 11;
+@@ -215,23 +243,24 @@ namespace Megastructure
+         /// <summary>vFOV schedule (one eased curve, 14.2.4).</summary>
+         public static readonly double[] FovKnotS = { 0, 80, 130, 200, 250, 400, 460, 560, 610, 860, 940, 1060, 1120, 1400, 1470, 1500 };
+         public static readonly double[] FovKnotV = { 62, 62, 64, 64, 66, 66, 68, 68, 66, 66, 62, 62, 66, 66, 62, 62 };
+-        /// <summary>EV schedule (manual postExposure, 14.2.4).</summary>
++        /// <summary>EV schedule (manual postExposure, LOOK_V2 7: -0.1 / +0.1 / 0.0 / 0.0 / -0.2 / -0.1 / 0.0 per beat; EV is applied
++        /// relative to the Floor). Peak slope 0.031 EV/s at 2.5 m/s.</summary>
+         public static readonly double[] EvKnotS = { 0, 110, 140, 380, 410, 560, 600, 860, 900, 1060, 1110, 1250, 1290, 1500 };
+-        public static readonly double[] EvKnotV = { -0.1, -0.1, 0.3, 0.3, 0.2, 0.2, 0.1, 0.1, -0.2, -0.2, 0.0, 0.0, 0.1, 0.1 };
+-        /// <summary>Fog sigma schedule (14.12 row 4: 5.0e-3 for s &lt; 96, 3.6e-4 for 124-860, 6.0e-4 for 880-1060,
++        public static readonly double[] EvKnotV = { -0.1, -0.1, 0.1, 0.1, 0.0, 0.0, 0.0, 0.0, -0.2, -0.2, -0.1, -0.1, 0.0, 0.0 };
++        /// <summary>Fog sigma schedule (14.12 row 4 with LOOK_V2 3.1: 5.0e-3 for s &lt; 96, 4.4e-4 for 124-860, 6.0e-4 for 880-1060,
+         /// 4.5e-4 for 1110-1250, 3.4e-4 from 1290).</summary>
+         public static readonly double[] FogKnotS = { 0, 96, 124, 860, 880, 1060, 1110, 1250, 1290, 1500 };
+-        public static readonly double[] FogKnotV = { 5.0e-3, 5.0e-3, 3.6e-4, 3.6e-4, 6.0e-4, 6.0e-4, 4.5e-4, 4.5e-4, 3.4e-4, 3.4e-4 };
++        public static readonly double[] FogKnotV = { 5.0e-3, 5.0e-3, 4.4e-4, 4.4e-4, 6.0e-4, 6.0e-4, 4.5e-4, 4.5e-4, 3.4e-4, 3.4e-4 };
+         /// <summary>Per-beat rain density rho (14.2.4), blended with Rule P.</summary>
+         public static readonly double[] RainRho = { 0.55, 0.80, 0.80, 1.00, 0.35, 0.70, 0.60 };
+         public static readonly double[] RainLayerZ = { 3.0, 6.0, 12.0, 20.0 };
+         public const double RainFallSpeed = 9.0;
+-        /// <summary>Per-beat post (14.2.4): bloom threshold / intensity / scatter, saturation (+%), vignette.</summary>
+-        public static readonly double[] BloomThreshold = { 0.9, 0.9, 0.9, 0.9, 0.8, 0.9, 0.9 };
+-        public static readonly double[] BloomIntensity = { 0.45, 0.55, 0.50, 0.45, 0.40, 0.50, 0.50 };
++        /// <summary>Per-beat post (LOOK_V2 7): bloom threshold / intensity / scatter, saturation (+%), vignette (relative to the Floor).</summary>
++        public static readonly double[] BloomThreshold = { 0.9, 0.9, 0.9, 0.9, 0.85, 0.9, 0.9 };
++        public static readonly double[] BloomIntensity = { 0.40, 0.45, 0.40, 0.40, 0.35, 0.40, 0.45 };
+         public static readonly double[] BloomScatter = { 0.70, 0.75, 0.75, 0.72, 0.70, 0.75, 0.75 };
+-        public static readonly double[] Saturation = { 8, 10, 10, 8, 6, 8, 8 };
+-        public static readonly double[] Vignette = { 0.20, 0.16, 0.16, 0.18, 0.22, 0.16, 0.18 };
++        public static readonly double[] Saturation = { 0, 4, 2, 0, 0, 4, 4 };
++        public static readonly double[] Vignette = { 0.16, 0.14, 0.14, 0.15, 0.16, 0.14, 0.15 };
+         public const double Contrast = 0.0;
+         /// <summary>Bloom prefilter HDR clamp (14.2.4 clamp column; Thread used 64).</summary>
+         public const double BloomClamp = 30.0;
+@@ -290,7 +319,8 @@ namespace Megastructure
+             new GazeKey(350, 10, 30), new GazeKey(380, 0, 12), new GazeKey(400, 0, 4),
+             // 14.5.3 edge
+             new GazeKey(402, 0, 2), new GazeKey(428, -62, 24), new GazeKey(436, -62, 24), new GazeKey(450, -20, 10), new GazeKey(470, -50, -6),
+-            new GazeKey(520, -70, -18), new GazeKey(528, -70, -18), new GazeKey(540, -70, -30), new GazeKey(556, -70, -30), new GazeKey(585, -2, 2),
++            // D-029 (GB-04): the plunge keys at s 540 / 556 look -95 / -32 (V's pose search: 40.1 % drop on the plan in KS10)
++            new GazeKey(520, -70, -18), new GazeKey(528, -70, -18), new GazeKey(540, -95, -32), new GazeKey(556, -95, -32), new GazeKey(585, -2, 2),
+             // 14.5.4 skybridge
+             new GazeKey(594, -14, 2), new GazeKey(602, -14, 2), new GazeKey(614, -50, 4), new GazeKey(624, -90, -10),
+             new GazeKey(660, -90, -20), new GazeKey(680, -40, -4), new GazeKey(700, 40, -14), new GazeKey(716, 0, -75), new GazeKey(724, 0, -75),
+@@ -310,35 +340,42 @@ namespace Megastructure
+         /// <summary>QA walk (autotest): look forward along the heading at this pitch.</summary>
+         public const double GazeDefaultPitch = 0.0;
+ 
+-        // ------------------------------------------------------------------ key shots (14.10; luma window = the beat's 14.10 mean-luma window in codes / 255)
++        // ------------------------------------------------------------------ key shots (14.10 poses; luma window = the beat's mean-luma window of
++        // LOOK_V2 8.1 in codes / 255: 1: 14-40, 2: 24-54, 3: 24-50, 4: 24-50, 5: 20-44, 6: 32-64, 7: 18-60; the beat comes from s)
++        // D-029: KS03 at s 117 (blade x 90 fully visible; 65 % hidden at s 116), KS13 at s 718 (follower lag 0.43 deg; 2.12 at 716),
++        // KS10 world yaw -5 / pitch -32 (the GB-04 gaze keys).
+         public static readonly KeyShot[] KeyShots =
+         {
+-            new KeyShot("KS00_alley_start", 0, 0, 1.7, 0, 0, -2, 62, 0.1098, 0.2745),
+-            new KeyShot("KS01_alley_noodle", 36, 0, 1.7, 36, -14, 4, 62, 0.1098, 0.2745),
+-            new KeyShot("KS02_alley_slit", 88, 0, 1.7, 88, 0, 66, 62.1, 0.1098, 0.2745),
+-            new KeyShot("KS03_boulevard_mouth", 116, 0, 1.7, 116, 0, 14, 63.7, 0.1098, 0.2745),
+-            new KeyShot("KS04_boulevard_axis", 250, 65.30, 1.7, 195, 90, 22, 66, 0.1569, 0.3529),
+-            new KeyShot("KS06_tram", 264, 79.30, 1.7, 195, 57, 14, 66, 0.1569, 0.3529),
+-            new KeyShot("KS05_boulevard_up", 310, 125.30, 1.7, 195, 90, 52, 66, 0.1569, 0.3529),
+-            new KeyShot("KS07_edge_window", 402, 217.30, 1.7, 195, 90, 2, 66, 0.1176, 0.3137),
+-            new KeyShot("KS08_edge_flank", 428, 243.30, 1.7, 195, 28, 24, 66.9, 0.1176, 0.3137),
+-            new KeyShot("KS09_edge_gulf", 520, 335.30, 1.7, 195, 20, -18, 68, 0.1176, 0.3137),
+-            new KeyShot("KS10_edge_plunge", 548, 363.30, 1.7, 195, 20, -30, 68, 0.1176, 0.3137),
+-            new KeyShot("KS11_bridge_train", 600, 415.30, 1.7, 195, 76, 2, 66.1, 0.1098, 0.2941),
+-            new KeyShot("KS12_bridge_void", 660, 475.30, 1.7, 195, 0, -20, 66, 0.1098, 0.2941),
+-            new KeyShot("KS13_bridge_glass", 716, 531.30, 1.7, 195, 90, -75, 66, 0.1098, 0.2941),
+-            new KeyShot("KS14_garden_gate", 846, 661.30, 1.7, 195, 90, 18, 66, 0.1098, 0.2941),
+-            new KeyShot("KS15_garden_canopy", 970, 785.30, 1.7, 195, 90, 50, 62, 0.0941, 0.2510),
+-            new KeyShot("KS16_signs_wall", 1150, 901.74, 1.7, 271.44, 325, 34, 66, 0.1961, 0.4314),
+-            new KeyShot("KS17_heart_reveal", 1296, 944.18, 1.7, 387.88, 96, 18, 66, 0.1333, 0.3333),
+-            new KeyShot("KS18_koi_pass", 1350, 998.18, 1.7, 387.88, 70, 46, 66, 0.1333, 0.3333),
+-            new KeyShot("KS19_goal_window", 1500, 1148.18, 1.7, 387.88, 96, 28, 62, 0.1333, 0.3333),
++            new KeyShot("KS00_alley_start", 0, 0, 1.7, 0, 0, -2, 62, 0.0549, 0.1569),
++            new KeyShot("KS01_alley_noodle", 36, 0, 1.7, 36, -14, 4, 62, 0.0549, 0.1569),
++            new KeyShot("KS02_alley_slit", 88, 0, 1.7, 88, 0, 66, 62.1, 0.0549, 0.1569),
++            new KeyShot("KS03_boulevard_mouth", 117, 0, 1.7, 117, 0, 14, 63.8, 0.0549, 0.1569),
++            new KeyShot("KS04_boulevard_axis", 250, 65.30, 1.7, 195, 90, 22, 66, 0.0941, 0.2118),
++            new KeyShot("KS06_tram", 264, 79.30, 1.7, 195, 57, 14, 66, 0.0941, 0.2118),
++            new KeyShot("KS05_boulevard_up", 310, 125.30, 1.7, 195, 90, 52, 66, 0.0941, 0.2118),
++            new KeyShot("KS07_edge_window", 402, 217.30, 1.7, 195, 90, 2, 66, 0.0941, 0.1961),
++            new KeyShot("KS08_edge_flank", 428, 243.30, 1.7, 195, 28, 24, 66.9, 0.0941, 0.1961),
++            new KeyShot("KS09_edge_gulf", 520, 335.30, 1.7, 195, 20, -18, 68, 0.0941, 0.1961),
++            new KeyShot("KS10_edge_plunge", 548, 363.30, 1.7, 195, 355, -32, 68, 0.0941, 0.1961),
++            new KeyShot("KS11_bridge_train", 600, 415.30, 1.7, 195, 76, 2, 66.1, 0.0941, 0.1961),
++            new KeyShot("KS12_bridge_void", 660, 475.30, 1.7, 195, 0, -20, 66, 0.0941, 0.1961),
++            new KeyShot("KS13_bridge_glass", 718, 533.30, 1.7, 195, 90, -75, 66, 0.0941, 0.1961),
++            new KeyShot("KS14_garden_gate", 846, 661.30, 1.7, 195, 90, 18, 66, 0.0941, 0.1961),
++            new KeyShot("KS15_garden_canopy", 970, 785.30, 1.7, 195, 90, 50, 62, 0.0784, 0.1725),
++            new KeyShot("KS16_signs_wall", 1150, 901.74, 1.7, 271.44, 325, 34, 66, 0.1255, 0.2510),
++            new KeyShot("KS17_heart_reveal", 1296, 944.18, 1.7, 387.88, 96, 18, 66, 0.0706, 0.2353),
++            new KeyShot("KS18_koi_pass", 1350, 998.18, 1.7, 387.88, 70, 46, 66, 0.0706, 0.2353),
++            new KeyShot("KS19_goal_window", 1500, 1148.18, 1.7, 387.88, 96, 28, 62, 0.0706, 0.2353),
+         };
+ 
+         // ------------------------------------------------------------------ world (14.4)
+         public const double SpireX = 1330.0, SpireZ = 388.0, PlazaRadius = 400.0;
+         public const double GoalWindowX = 1156.0, GoalWindowY0 = 4.4, GoalWindowY1 = 5.9, GoalWindowZ0 = 387.3, GoalWindowZ1 = 388.5;
+         public const double GoalLampX = 1155.6, GoalLampY = 5.2, GoalLampZ = 387.9;
++        /// <summary>GB-18 (D-029): the goal lamp's 6 px core displays at hue 28-48 deg. GoalLamp x 3.5 through the Neutral curve's mix
++        /// toward white displays at hue 28.3 (the edge; the graybox measured 27.6), so the core emission is GoalLamp with its blue
++        /// channel x 0.3: hue 32.7, saturation 0.42, luma 210 at beat 7's grade (GradeTests.GoalLampCore_HueInWindow).</summary>
++        public const double GoalLampCoreBlue = 0.3, GoalLampCoreHueMin = 28.0, GoalLampCoreHueMax = 48.0;
+ 
+         // ------------------------------------------------------------------ thin lines (14.2.5 NocLine)
+         public const double LineMinWidthPx = 1.75, LineMinWidthFloorPx = 1.5, LineEnergyFloor = 0.35;
+diff --git a/Assets/_Game/Scripts/Runtime/Core/NocturnePalette.cs b/Assets/_Game/Scripts/Runtime/Core/NocturnePalette.cs
+index 8a83ded..595c251 100644
+--- a/Assets/_Game/Scripts/Runtime/Core/NocturnePalette.cs
++++ b/Assets/_Game/Scripts/Runtime/Core/NocturnePalette.cs
+@@ -1,4 +1,6 @@
+-// NocturnePalette: the only place a colour is typed (MASTER_PROMPT 14.2.1), from Thread's ThreadPalette.
++// NocturnePalette: the only place a colour is typed (MASTER_PROMPT 14.2.1 as replaced by docs/LOOK_V2.md section 2, palette v2:
++// a dark, near-neutral night at a 4 300 K white balance; violet and magenta survive only as small neon accents), from Thread's
++// ThreadPalette.
+ // The editor build script (ShaderGen / PaletteWriter) writes Assets/_Game/Settings/NocturnePalette.asset and the generated
+ // Assets/_Game/Shaders/Generated/NocPalette.hlsl (PAL_<Token>, linear) from the table below; Tools/gen_hlsl.py produces the
+ // byte-identical HLSL before the first RebuildAll. Materials read colours through MaterialFactory, shaders through PAL_*.
+@@ -34,38 +36,39 @@ namespace Megastructure
+         // 14.2.1: token, sRGB hex (the order of this table is the order of NocPal)
+         public static readonly (NocPal id, string hex)[] Table =
+         {
+-            (NocPal.NightZenith, "#0A0C2A"), (NocPal.NightMid, "#1C1244"), (NocPal.HazeHorizon, "#5B2F78"), (NocPal.CloudBase, "#7A2A72"),
+-            (NocPal.CloudHot, "#B03A8C"), (NocPal.AbyssNear, "#4A2A70"), (NocPal.AbyssGlow, "#5A2C5E"), (NocPal.Floor, "#0B0820"),
+-            (NocPal.NeonMagenta, "#FF2FA3"), (NocPal.NeonCyan, "#1FE6FF"), (NocPal.SodiumAmber, "#FFA42E"), (NocPal.NeonViolet, "#8A5CFF"),
+-            (NocPal.SignWhite, "#E8F0FF"), (NocPal.AviationRed, "#FF2A22"), (NocPal.WinCold, "#BFD8FF"), (NocPal.WinWarm, "#FFC470"),
+-            (NocPal.GoalLamp, "#FFB866"), (NocPal.WetAsphalt, "#14121E"), (NocPal.ConcreteDark, "#2A2A38"), (NocPal.Moss, "#1D3A26"),
+-            (NocPal.Bark, "#2A1F1A"), (NocPal.LeafGlow, "#5CFFA0"), (NocPal.LeafWarm, "#D9FF7A"), (NocPal.Lantern, "#FFB35C"),
+-            (NocPal.KoiBody, "#BFEFFF"), (NocPal.KoiPatch, "#FF5CA8"), (NocPal.KoiGlow, "#7FE6FF"), (NocPal.TitleText, "#F3EFE6"),
++            (NocPal.NightZenith, "#121417"), (NocPal.NightMid, "#1A1D21"), (NocPal.HazeHorizon, "#2E2925"), (NocPal.CloudBase, "#252422"),
++            (NocPal.CloudHot, "#4D4034"), (NocPal.AbyssNear, "#24211F"), (NocPal.AbyssGlow, "#4F3D2E"), (NocPal.Floor, "#0A0C0F"),
++            (NocPal.NeonMagenta, "#FF3366"), (NocPal.NeonCyan, "#1FE6FF"), (NocPal.SodiumAmber, "#FFA042"), (NocPal.NeonViolet, "#8A5CFF"),
++            (NocPal.SignWhite, "#DBEAFF"), (NocPal.AviationRed, "#FF2A22"), (NocPal.WinCold, "#C5DDFF"), (NocPal.WinWarm, "#FFCE96"),
++            (NocPal.GoalLamp, "#FFB866"), (NocPal.WetAsphalt, "#3D3C3A"), (NocPal.ConcreteDark, "#74736F"), (NocPal.Moss, "#3F5230"),
++            (NocPal.Bark, "#4B423C"), (NocPal.LeafGlow, "#7FE0B0"), (NocPal.LeafWarm, "#D2E68A"), (NocPal.Lantern, "#FFB35C"),
++            (NocPal.KoiBody, "#9EE0EE"), (NocPal.KoiPatch, "#FF6A2A"), (NocPal.KoiGlow, "#5CDCFF"), (NocPal.TitleText, "#F3EFE6"),
+             (NocPal.CloudCool, "#2A3036"), (NocPal.HazeLow, "#3B3129"), (NocPal.LampWarm, "#FFDBAF"), (NocPal.WinTungsten, "#FFC07B"),
+             (NocPal.WinNeutral, "#FFF6EB"), (NocPal.WinBlue, "#8EBAFF"), (NocPal.ScreenTeal, "#0E8C8C"), (NocPal.ScreenBase, "#101416"),
+             (NocPal.Plaster, "#8B867E"), (NocPal.Brick, "#6C4D3F"), (NocPal.Granite, "#817E7C"), (NocPal.MetalPaint, "#3F4042"),
+             (NocPal.SteelF0, "#C0BEBB"), (NocPal.Leaf, "#3C4B30"), (NocPal.GlassDark, "#242628"),
+         };
+ 
+-        /// <summary>The linear column of the 14.2.1 table (4 decimals), in NocPal order: the palette test compares Linear() with it.</summary>
++        /// <summary>The linear column of the LOOK_V2 2.1 / 2.2 tables (4 decimals), in NocPal order: the palette test compares Linear() with it.</summary>
+         public static readonly double[,] SpecLinear =
+         {
+-            { 0.0030, 0.0037, 0.0232 }, { 0.0116, 0.0060, 0.0578 }, { 0.1046, 0.0284, 0.1878 }, { 0.1946, 0.0232, 0.1683 },
+-            { 0.4342, 0.0423, 0.2623 }, { 0.0685, 0.0232, 0.1620 }, { 0.1022, 0.0252, 0.1119 }, { 0.0033, 0.0024, 0.0144 },
+-            { 1.0000, 0.0284, 0.3663 }, { 0.0137, 0.7913, 1.0000 }, { 1.0000, 0.3712, 0.0273 }, { 0.2542, 0.1070, 1.0000 },
+-            { 0.8070, 0.8714, 1.0000 }, { 1.0000, 0.0232, 0.0160 }, { 0.5210, 0.6867, 1.0000 }, { 1.0000, 0.5520, 0.1620 },
+-            { 1.0000, 0.4793, 0.1329 }, { 0.0070, 0.0060, 0.0130 }, { 0.0232, 0.0232, 0.0395 }, { 0.0123, 0.0423, 0.0194 },
+-            { 0.0232, 0.0137, 0.0103 }, { 0.1070, 1.0000, 0.3515 }, { 0.6939, 1.0000, 0.1946 }, { 1.0000, 0.4508, 0.1070 },
+-            { 0.5210, 0.8632, 1.0000 }, { 1.0000, 0.1070, 0.3916 }, { 0.2122, 0.7913, 1.0000 }, { 0.8963, 0.8632, 0.7913 },
++            { 0.0060, 0.0070, 0.0086 }, { 0.0103, 0.0123, 0.0152 }, { 0.0273, 0.0222, 0.0185 }, { 0.0185, 0.0176, 0.0160 },
++            { 0.0742, 0.0513, 0.0343 }, { 0.0176, 0.0152, 0.0137 }, { 0.0782, 0.0467, 0.0273 }, { 0.0030, 0.0037, 0.0048 },
++            { 1.0000, 0.0331, 0.1329 }, { 0.0137, 0.7913, 1.0000 }, { 1.0000, 0.3515, 0.0545 }, { 0.2542, 0.1070, 1.0000 },
++            { 0.7084, 0.8228, 1.0000 }, { 1.0000, 0.0232, 0.0160 }, { 0.5583, 0.7231, 1.0000 }, { 1.0000, 0.6172, 0.3050 },
++            { 1.0000, 0.4793, 0.1329 }, { 0.0467, 0.0452, 0.0423 }, { 0.1746, 0.1714, 0.1590 }, { 0.0497, 0.0844, 0.0296 },
++            { 0.0704, 0.0545, 0.0452 }, { 0.2122, 0.7454, 0.4342 }, { 0.6445, 0.7913, 0.2542 }, { 1.0000, 0.4508, 0.1070 },
++            { 0.3419, 0.7454, 0.8550 }, { 1.0000, 0.1441, 0.0232 }, { 0.1070, 0.7157, 1.0000 }, { 0.8963, 0.8632, 0.7913 },
+             { 0.0232, 0.0296, 0.0369 }, { 0.0437, 0.0307, 0.0222 }, { 1.0000, 0.7084, 0.4287 }, { 1.0000, 0.5271, 0.1981 },
+             { 1.0000, 0.9216, 0.8308 }, { 0.2705, 0.4910, 1.0000 }, { 0.0044, 0.2623, 0.2623 }, { 0.0052, 0.0070, 0.0080 },
+             { 0.2582, 0.2384, 0.2086 }, { 0.1500, 0.0742, 0.0497 }, { 0.2195, 0.2086, 0.2016 }, { 0.0497, 0.0513, 0.0545 },
+             { 0.5271, 0.5149, 0.4969 }, { 0.0452, 0.0704, 0.0296 }, { 0.0176, 0.0194, 0.0212 },
+         };
+ 
+-        /// <summary>HDR emission factors of 14.2.1 (palette tokens are appearances: tubes x2.5, signs x1.8, windows x1.2,
+-        /// goal lamp x3.5, koi body x0.9, koi rim x2.2).</summary>
+-        public const float EmissionTube = 2.5f, EmissionSign = 1.8f, EmissionWindow = 1.2f, EmissionGoalLamp = 3.5f, EmissionKoiBody = 0.9f, EmissionKoiRim = 2.2f;
++        /// <summary>HDR emission factors (LOOK_V2 2.3; palette tokens are appearances): tubes x2.0, signs x1.6, goal lamp x3.5 (the
++        /// only core above 3.0), koi body x0.55, koi rim x1.6. EmissionWindow 1.2 is the v1 facade factor, kept for the v1 path
++        /// only: Look v2 windows use the per-token luminance normalisation of LOOK_V2 section 4 (Y_med 0.12).</summary>
++        public const float EmissionTube = 2.0f, EmissionSign = 1.6f, EmissionWindow = 1.2f, EmissionGoalLamp = 3.5f, EmissionKoiBody = 0.55f, EmissionKoiRim = 1.6f;
+ 
+         public List<PaletteToken> tokens = new List<PaletteToken>();
+ 
+diff --git a/Assets/_Game/Scripts/Runtime/Core/ShaderIds.cs b/Assets/_Game/Scripts/Runtime/Core/ShaderIds.cs
+index a3ee863..637e60e 100644
+--- a/Assets/_Game/Scripts/Runtime/Core/ShaderIds.cs
++++ b/Assets/_Game/Scripts/Runtime/Core/ShaderIds.cs
+@@ -41,6 +41,18 @@ namespace Megastructure
+         /// <summary>Instanced-batch fade (detail tiers; Abyss _AbFade).</summary>
+         public static readonly int Fade = Shader.PropertyToID("_NocFade");
+ 
++        // Look v2 (TEXTURE_PLAN 1.6, 7.1, 7.4, 7.6; NocCommon.hlsl), written once at start-up by NocLookGlobals; 0 (unset) = the default
++        /// <summary>-tex 0|1: -1 = texture detail off, +1 = on (0, never written, reads as on).</summary>
++        public static readonly int TexDetail = Shader.PropertyToID("_NocTexDetail");
++        /// <summary>-debug-view N (TEXTURE_PLAN 7.1): 0 = off, 1..10 = the debug view.</summary>
++        public static readonly int DebugView = Shader.PropertyToID("_NocDebugView");
++        /// <summary>Feature flags -facade-v / -surf-v / -foliage-v: 2 = the Look v2 path, 1 (or 0) = v1.</summary>
++        public static readonly int FacadeV = Shader.PropertyToID("_NocFacadeV");
++        public static readonly int SurfV = Shader.PropertyToID("_NocSurfV");
++        public static readonly int FoliageV = Shader.PropertyToID("_NocFoliageV");
++        /// <summary>ShaderParityTests (TEXTURE_PLAN 7.4): 1 = NocFog and NocFloor skipped.</summary>
++        public static readonly int Parity = Shader.PropertyToID("_NocParity");
++
+         // wet floor (NocMirror.hlsl, 14.7 H4): written by NocWetRegistry.Upload through the AtmosphereDriver
+         /// <summary>Sources: P0 (xyz, w = glow half-width rho), P1 (xyz), L (rgb = L_eff x crossfade), count.</summary>
+         public static readonly int SrcP0 = Shader.PropertyToID("_NocSrcP0");
+diff --git a/Assets/_Game/Scripts/Runtime/QA/AutoTestRunner.cs b/Assets/_Game/Scripts/Runtime/QA/AutoTestRunner.cs
+index 15ab3af..f5419ed 100644
+--- a/Assets/_Game/Scripts/Runtime/QA/AutoTestRunner.cs
++++ b/Assets/_Game/Scripts/Runtime/QA/AutoTestRunner.cs
+@@ -14,6 +14,8 @@
+ // Crossing times on the runner clock (audit S3 item 8): the exact time at which s crosses every beat boundary and the goal
+ // trigger, interpolated inside the frame on the runner clock (t = 0 when the walk starts), checked against
+ // B / v + ramp / 2 (+- the 14.10 tolerance); the BeatDirector's own event times (one frame late, game clock) are reported too.
++// -beat N / -progress X (GB-19): the walk starts at CliArgs.StartS (beat N's start) instead of s 0; beats N.. are expected once
++// and in order, and every crossing and the trigger / stop times are measured from that start ((B - s0) / v + ramp / 2).
+ // Writes <report dir>/autotest_<mode>.json, logs
+ // "[NOC] AUTOTEST PASS/FAIL ..." (failures also "[NOC-FAIL]") and exits 0 / 1. Zero allocations per frame while walking.
+ using System;
+@@ -57,6 +59,9 @@ namespace Megastructure
+         double m_tTrigger = -1, m_sTrigger = double.NaN, m_tStop = -1, m_sStop = double.NaN, m_tEnding = -1;
+         double m_lastS, m_lastMoveT, m_maxSpeed, m_minCruise = double.MaxValue, m_maxCruise;
+         long m_frames;
++        /// <summary>Start progress of the walk (CliArgs.StartS: -beat N or -progress X, else 0) and its beat index (GB-19).</summary>
++        double m_s0;
++        int m_b0;
+         readonly double[] m_beatS = new double[NocturneConstants.BeatCount];
+         readonly double[] m_beatT = new double[NocturneConstants.BeatCount];
+         readonly int[] m_beatHits = new int[NocturneConstants.BeatCount];
+@@ -70,18 +75,24 @@ namespace Megastructure
+         long m_rollFrames;
+ 
+         /// <summary>Expected walk seconds (from rest at s 0) to the goal trigger for a mode (smootherstep ramp: T / 2 is lost).</summary>
+-        public static double ExpectedTrigger(double speed, bool cinematic)
++        public static double ExpectedTrigger(double speed, bool cinematic) => ExpectedTrigger(speed, cinematic, 0.0);
++
++        /// <summary>Expected walk seconds from rest at s0 to the goal trigger (GB-19: -beat N starts at beat N's boundary).</summary>
++        public static double ExpectedTrigger(double speed, bool cinematic, double s0)
+         {
+             double ramp = cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel;
+-            return NocturneConstants.GoalTriggerS / speed + 0.5 * ramp;
++            return (NocturneConstants.GoalTriggerS - s0) / speed + 0.5 * ramp;
+         }
+ 
+         /// <summary>Expected runner-clock time at which the walk crosses s = b (from rest at s 0; the ramp loses T / 2).</summary>
+-        public static double ExpectedCrossing(double b, double speed, bool cinematic)
++        public static double ExpectedCrossing(double b, double speed, bool cinematic) => ExpectedCrossing(b, speed, cinematic, 0.0);
++
++        /// <summary>Expected runner-clock time at which a walk from rest at s0 crosses s = b (0 for the start boundary itself).</summary>
++        public static double ExpectedCrossing(double b, double speed, bool cinematic, double s0)
+         {
+-            if (b <= 0.0) return 0.0;
++            if (b <= s0) return 0.0;
+             double ramp = cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel;
+-            return b / speed + 0.5 * ramp;
++            return (b - s0) / speed + 0.5 * ramp;
+         }
+ 
+         /// <summary>Camera roll in degrees: the elevation of the camera's right axis (0 for a level horizon at any yaw and pitch).</summary>
+@@ -104,9 +115,13 @@ namespace Megastructure
+             m_cinematic = CliArgs.Cinematic;
+             m_speed = m_cinematic ? NocturneConstants.CinematicSpeed : QaMode.DriveSpeed;
+             m_until = CliArgs.AutoTestUntil;
++            m_s0 = Math.Max(0.0, Math.Min(CliArgs.StartS, NocturneConstants.GoalTriggerS - 1.0));
++            m_b0 = NocMath.BeatIndex(m_s0);
++            m_lastBeat = m_b0 - 1;
+             m_mode = m_cinematic ? "cinematic" : QaMode.SpeedName((float)m_speed);
++            if (m_s0 > 0.0) m_mode += "_from" + ((int)Math.Round(m_s0)).ToString(CultureInfo.InvariantCulture);
+             if (!double.IsNaN(m_until)) m_mode += "_until" + ((int)Math.Round(m_until)).ToString(CultureInfo.InvariantCulture);
+-            m_expTrigger = ExpectedTrigger(m_speed, m_cinematic);
++            m_expTrigger = ExpectedTrigger(m_speed, m_cinematic, m_s0);
+             m_expStop = m_expTrigger + StopRampSeconds(m_speed);
+             m_tol = m_speed >= NocturneConstants.BriskSpeed - 1e-6 ? NocturneConstants.CineTimeTol : NocturneConstants.WalkTimeTol;
+             for (int i = 0; i < m_beatS.Length; i++) { m_beatS[i] = double.NaN; m_beatT[i] = double.NaN; }
+@@ -141,19 +156,19 @@ namespace Megastructure
+             var p = NocServices.Player;
+             if (p == null) { Checks.Add("playerService", false, "NocServices.Player is null"); Finish("no player"); yield break; }
+             p.Frozen = false;
+-            p.Teleport(0, 0);
++            p.Teleport(m_s0, 0);
+             yield return null;
+             if (m_cinematic) AutoWalker.BeginCinematicQa();
+             else p.SetDrive(true, (float)m_speed, float.NaN);
+             m_t0 = Time.timeAsDouble;
+-            m_crossT[0] = 0.0;   // the walk starts at rest at s 0: beat 1 is crossed at t 0 on the runner clock
++            m_crossT[m_b0] = 0.0;   // the walk starts at rest at s0 (beat b0's boundary): crossed at t 0 on the runner clock
+             m_lastS = p.S;
+             m_lastMoveT = 0;
+             m_walking = true;
+             var inv = CultureInfo.InvariantCulture;
+             Debug.Log("[NOC] AUTOTEST start mode=" + m_mode + " speed=" + m_speed.ToString("0.00", inv)
+                       + " expected trigger=" + m_expTrigger.ToString("0.00", inv) + " stop=" + m_expStop.ToString("0.00", inv) + " +- " + m_tol.ToString("0.0", inv)
+-                      + " s virtual" + (double.IsNaN(m_until) ? "" : " until s=" + m_until.ToString("0.0", inv)));
++                      + " s virtual from s=" + m_s0.ToString("0.0", inv) + (double.IsNaN(m_until) ? "" : " until s=" + m_until.ToString("0.0", inv)));
+         }
+ 
+         void Update()
+@@ -209,7 +224,7 @@ namespace Megastructure
+                     return;
+                 }
+             }
+-            double limit = (double.IsNaN(m_until) ? m_expStop + NocturneConstants.EndingSeconds : m_until / m_speed) + m_tol + TimeoutMarginSeconds;
++            double limit = (double.IsNaN(m_until) ? m_expStop + NocturneConstants.EndingSeconds : (m_until - m_s0) / m_speed) + m_tol + TimeoutMarginSeconds;
+             if (t > limit) Finish("timeout at s=" + s.ToString("0.00", CultureInfo.InvariantCulture));
+         }
+ 
+@@ -219,7 +234,7 @@ namespace Megastructure
+             if (double.IsNaN(m_prevS))
+             {
+                 m_prevS = s; m_prevT = t;
+-                if (s <= 1e-9) m_crossT[0] = 0.0;   // beat 1 starts at rest at s 0
++                if (s <= m_s0 + 1e-9) m_crossT[m_b0] = 0.0;   // the start beat begins at rest at s0
+                 return;
+             }
+             if (s > m_prevS)
+@@ -228,7 +243,7 @@ namespace Megastructure
+                 for (int i = 0; i <= NocturneConstants.BeatCount; i++)
+                 {
+                     double x = i < NocturneConstants.BeatCount ? b[i] : NocturneConstants.GoalTriggerS;
+-                    if (!double.IsNaN(m_crossT[i]) || x <= 0.0) continue;
++                    if (!double.IsNaN(m_crossT[i]) || x <= m_s0) continue;
+                     if (m_prevS < x && s >= x) m_crossT[i] = m_prevT + (x - m_prevS) / (s - m_prevS) * (t - m_prevT);
+                 }
+             }
+@@ -252,12 +267,14 @@ namespace Megastructure
+             var inv = CultureInfo.InvariantCulture;
+             bool until = !double.IsNaN(m_until);
+             var bd = BeatDirector.Instance;
++            // beats b0 .. beatsExpected - 1 are expected (GB-19: -beat N starts at beat N)
+             int beatsExpected = until ? NocMath.BeatIndex(Math.Min(m_until, NocturneConstants.GoalS - 1e-6)) + 1 : NocturneConstants.BeatCount;
++            int beatsCount = Math.Max(0, beatsExpected - m_b0);
+ 
+             if (until)
+             {
+                 Checks.Add("reachedUntil", abort == null && m_tStop >= 0, abort ?? ("s=" + m_sStop.ToString("0.000", inv) + " at t=" + m_tStop.ToString("0.00", inv) + " s"));
+-                double expUntil = (m_until < NocturneConstants.GoalTriggerS ? m_until / m_speed : m_expTrigger) + 0.5 * (m_cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel);
++                double expUntil = m_until < NocturneConstants.GoalTriggerS ? (m_until - m_s0) / m_speed + 0.5 * (m_cinematic ? NocturneConstants.CineAccelTime : NocturneConstants.Accel) : m_expTrigger;
+                 Checks.Add("untilTime", m_tStop >= 0 && Math.Abs(m_tStop - expUntil) <= m_tol, m_tStop.ToString("0.00", inv) + " s vs " + expUntil.ToString("0.00", inv) + " +- " + m_tol.ToString("0.0", inv));
+             }
+             else
+@@ -277,28 +294,29 @@ namespace Megastructure
+                            "plan speed during the walk " + (m_minCruise == double.MaxValue ? "n/a" : m_minCruise.ToString("0.000", inv) + " .. " + m_maxCruise.ToString("0.000", inv)) + " m/s", false);
+             }
+             if (bd != null)
+-                Checks.Add("beatsInOrder", bd.EnteredCount == beatsExpected && bd.OrderOk && m_beatOrderErrors == 0,
+-                           "entered " + bd.EnteredCount + " of " + beatsExpected + ", orderOk " + bd.OrderOk + ", order errors " + m_beatOrderErrors);
++                Checks.Add("beatsInOrder", bd.EnteredCount == beatsCount && bd.OrderOk && m_beatOrderErrors == 0,
++                           "entered " + bd.EnteredCount + " of " + beatsCount + " (beats " + (m_b0 + 1) + ".." + beatsExpected + "), orderOk " + bd.OrderOk + ", order errors " + m_beatOrderErrors);
+             else Checks.Add("beatDirector", false, "BeatDirector.Instance is null");
+             bool once = true, atBoundary = true;
+             var sb = new System.Text.StringBuilder();
+-            for (int i = 0; i < beatsExpected; i++)
++            for (int i = 0; i < m_b0; i++) if (m_beatHits[i] != 0) once = false;   // beats before the start are never entered
++            for (int i = m_b0; i < beatsExpected; i++)
+             {
+                 if (m_beatHits[i] != 1) once = false;
+                 double b = NocturneConstants.BeatBoundaries[i];
+                 if (double.IsNaN(m_beatS[i]) || m_beatS[i] < b - 1e-6 || m_beatS[i] > b + BeatSTolerance) atBoundary = false;
+-                sb.Append(i == 0 ? "" : ", ").Append(m_beatS[i].ToString("0.000", inv));
++                sb.Append(i == m_b0 ? "" : ", ").Append(m_beatS[i].ToString("0.000", inv));
+             }
+             // runner-clock crossing times of the boundaries (and the goal trigger) against B / v + ramp / 2
+             bool timesOk = true;
+             var ct = new System.Text.StringBuilder();
+             int crossN = until ? beatsExpected : NocturneConstants.BeatCount + 1;
+-            for (int i = 0; i < crossN; i++)
++            for (int i = m_b0; i < crossN; i++)
+             {
+                 double x = i < NocturneConstants.BeatCount ? NocturneConstants.BeatBoundaries[i] : NocturneConstants.GoalTriggerS;
+-                double exp = ExpectedCrossing(x, m_speed, m_cinematic);
++                double exp = ExpectedCrossing(x, m_speed, m_cinematic, m_s0);
+                 if (double.IsNaN(m_crossT[i]) || Math.Abs(m_crossT[i] - exp) > m_tol) timesOk = false;
+-                ct.Append(i == 0 ? "" : ", ").Append(m_crossT[i].ToString("0.000", inv)).Append('/').Append(exp.ToString("0.00", inv));
++                ct.Append(i == m_b0 ? "" : ", ").Append(m_crossT[i].ToString("0.000", inv)).Append('/').Append(exp.ToString("0.00", inv));
+             }
+             Checks.Add("crossingTimes", timesOk, "runner clock t at s = boundaries" + (until ? "" : " + trigger") + " (measured/expected, +- " + m_tol.ToString("0.0", inv) + " s): " + ct);
+             double rollMax = m_cinematic ? RollMaxCinematic : RollMaxManual;
+@@ -325,7 +343,7 @@ namespace Megastructure
+         void WriteBody(QaJson j)
+         {
+             j.Prop("mode", m_mode).Prop("speed", m_speed).Prop("cinematic", m_cinematic).Prop("virtualFps", QaDrive.VirtualFps);
+-            j.Prop("until", double.IsNaN(m_until) ? -1.0 : m_until);
++            j.Prop("until", double.IsNaN(m_until) ? -1.0 : m_until).Prop("startS", m_s0).Prop("startBeat", m_b0 + 1);
+             j.Prop("expectedTriggerSeconds", m_expTrigger).Prop("expectedStopSeconds", m_expStop).Prop("toleranceSeconds", m_tol);
+             j.Prop("triggerSeconds", m_tTrigger).Prop("triggerS", m_sTrigger);
+             j.Prop("stopSeconds", m_tStop).Prop("stopS", m_sStop);
+@@ -337,7 +355,7 @@ namespace Megastructure
+             for (int i = 0; i < m_crossT.Length; i++)
+             {
+                 double x = i < NocturneConstants.BeatCount ? NocturneConstants.BeatBoundaries[i] : NocturneConstants.GoalTriggerS;
+-                j.BeginObject(true).Prop("s", x).Prop("runnerT", m_crossT[i]).Prop("expectedT", ExpectedCrossing(x, m_speed, m_cinematic)).EndObject();
++                j.BeginObject(true).Prop("s", x).Prop("runnerT", m_crossT[i]).Prop("expectedT", ExpectedCrossing(x, m_speed, m_cinematic, m_s0)).EndObject();
+             }
+             j.EndArray();
+             var gb = GameBootstrap.Instance;
+diff --git a/Assets/_Game/Scripts/Runtime/Rendering/NocDebugViewFeature.cs b/Assets/_Game/Scripts/Runtime/Rendering/NocDebugViewFeature.cs
+new file mode 100644
+index 0000000..df37351
+--- /dev/null
++++ b/Assets/_Game/Scripts/Runtime/Rendering/NocDebugViewFeature.cs
+@@ -0,0 +1,223 @@
++// NocDebugViewFeature: the debug views of TEXTURE_PLAN 7.1 (TP-0), active only with -debug-view N (NocLookGlobals).
++// Sits in PC_Renderer AFTER NocGradeFeature (PipelineConfigurator), shader = Megastructure/NocDebugView. Game cameras only (the
++// capture harness' SubmitRenderRequest renders included). Two passes per frame share a texture through a ContextItem:
++//   views 1-8 and 10 (written by the lit template and the material hooks as raw display codes):
++//     A at AfterRenderingTransparents (before the rain at BeforeRenderingPostProcessing): the MSAA-resolved camera colour is
++//       copied into a float texture;
++//     B at AfterRenderingPostProcessing (after the grade, same event, enqueued later): the copy is written back into the
++//       camera colour, so neither the rain nor the grade nor the dither touch the codes (the grade output is sRGB 8-bit: a
++//       linear value is encoded exactly back into its code; without the grade FinalBlit copies the float colour 1:1).
++//   view 9 (overdraw of the chosen renderers, default every NocFacade renderer; -debug-shaders NocFacade+NocSurface):
++//     A at AfterRenderingOpaques: the renderers are drawn twice into a cleared R16G16 float texture with their own cleared depth,
++//       in the opaque order (CommonOpaque): pass Count (ZTest LEqual, ZWrite On: fragments the forward pass shades without a
++//       prepass) into R, pass Complexity (ZTest Always: depth complexity) into G;
++//     B at AfterRenderingPostProcessing: R = 8 x shaded, G = 8 x complexity, B = 255 where covered (Tools/qa/debugview.py --view 9:
++//       overdraw = sum R / sum covered, both / 8).
++//   The overdraw renderers are tagged once the world is built with rendering-layer bit 30 (MeshRenderer.renderingLayerMask; the
++//   URP opaque pass draws every rendering layer, so nothing else changes) and filtered by it.
++// Zero cost and no pass when -debug-view is 0. Allocation-free per frame after the first tagging.
++using System.Collections.Generic;
++using UnityEngine;
++using UnityEngine.Experimental.Rendering;
++using UnityEngine.Rendering;
++using UnityEngine.Rendering.RenderGraphModule;
++using UnityEngine.Rendering.Universal;
++
++namespace Megastructure
++{
++    [DisallowMultipleRendererFeature("Noc Debug View")]
++    public sealed class NocDebugViewFeature : ScriptableRendererFeature
++    {
++        /// <summary>Megastructure/NocDebugView (set by PipelineConfigurator; the reference also ships the shader).</summary>
++        public Shader shader;
++
++        /// <summary>Rendering-layer bit of the renderers counted by the overdraw view.</summary>
++        public const int OverdrawLayerBit = 30;
++        public const uint OverdrawLayerMask = 1u << OverdrawLayerBit;
++
++        Material m_Material;
++        CapturePass m_Capture;
++        OutputPass m_Output;
++        static int s_Tagged = -1;
++
++        sealed class DebugData : ContextItem
++        {
++            public TextureHandle tex;
++            public bool overdraw;
++            public override void Reset() { tex = TextureHandle.nullHandle; overdraw = false; }
++        }
++
++        public override void Create()
++        {
++            if (m_Material == null && shader != null && shader.isSupported) m_Material = CoreUtils.CreateEngineMaterial(shader);
++            m_Capture = new CapturePass();
++            m_Output = new OutputPass();
++        }
++
++        public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
++        {
++            int view = NocLookGlobals.DebugView;
++            if (view <= 0 || m_Material == null) return;
++            if (renderingData.cameraData.cameraType != CameraType.Game) return;
++            bool overdraw = view == NocLookGlobals.DebugViewOverdraw;
++            if (overdraw && s_Tagged <= 0 && NocRig.WorldReady) s_Tagged = TagOverdrawRenderers();
++            m_Capture.Setup(m_Material, overdraw);
++            m_Output.Setup(m_Material, overdraw);
++            renderer.EnqueuePass(m_Capture);
++            renderer.EnqueuePass(m_Output);
++        }
++
++        protected override void Dispose(bool disposing)
++        {
++            CoreUtils.Destroy(m_Material);
++            m_Material = null;
++        }
++
++        /// <summary>Sets OverdrawLayerBit on every MeshRenderer whose material uses one of NocLookGlobals.OverdrawShaders.</summary>
++        public static int TagOverdrawRenderers()
++        {
++            var names = new HashSet<string>(NocLookGlobals.OverdrawShaders);
++            int n = 0;
++            foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
++            {
++                bool hit = false;
++                foreach (var m in r.sharedMaterials) if (m != null && m.shader != null && names.Contains(m.shader.name)) { hit = true; break; }
++                if (!hit) continue;
++                r.renderingLayerMask |= OverdrawLayerMask;
++                n++;
++            }
++            Debug.Log(System.FormattableString.Invariant($"[NOC] NocDebugView: overdraw view counts {n} renderers ({string.Join(", ", NocLookGlobals.OverdrawShaders)})"));
++            return n;
++        }
++
++        // ------------------------------------------------------------------------------------------------ A: capture
++        sealed class CapturePass : ScriptableRenderPass
++        {
++            Material m_Mat;
++            bool m_Overdraw;
++            static readonly ShaderTagId[] s_Tags = { new ShaderTagId("UniversalForward"), new ShaderTagId("UniversalForwardOnly"), new ShaderTagId("SRPDefaultUnlit") };
++            static readonly List<ShaderTagId> s_TagList = new List<ShaderTagId>(s_Tags);
++            static readonly ProfilingSampler s_Sampler = new ProfilingSampler("NocDebugView Capture");
++
++            sealed class CopyData { public TextureHandle src; public Material mat; }
++            sealed class CountData { public RendererListHandle count, complexity; }
++
++            public CapturePass() { profilingSampler = s_Sampler; requiresIntermediateTexture = true; }
++
++            public void Setup(Material mat, bool overdraw)
++            {
++                m_Mat = mat;
++                m_Overdraw = overdraw;
++                renderPassEvent = overdraw ? RenderPassEvent.AfterRenderingOpaques : RenderPassEvent.AfterRenderingTransparents;
++            }
++
++            public override void RecordRenderGraph(RenderGraph rg, ContextContainer frameData)
++            {
++                var res = frameData.Get<UniversalResourceData>();
++                if (res.isActiveTargetBackBuffer || !res.cameraColor.IsValid()) return;
++                TextureDesc cd = rg.GetTextureDesc(res.cameraColor);
++                var dd = frameData.Create<DebugData>();
++                dd.overdraw = m_Overdraw;
++                var desc = new TextureDesc(cd.width, cd.height)
++                {
++                    format = m_Overdraw ? GraphicsFormat.R16G16_SFloat : GraphicsFormat.R16G16B16A16_SFloat,
++                    filterMode = FilterMode.Point,
++                    wrapMode = TextureWrapMode.Clamp,
++                    msaaSamples = MSAASamples.None,
++                    clearBuffer = m_Overdraw,
++                    clearColor = Color.clear,
++                    name = "_NocDbgTex",
++                };
++                dd.tex = rg.CreateTexture(desc);
++                if (!m_Overdraw)
++                {
++                    using (var b = rg.AddRasterRenderPass<CopyData>("NocDebugView Copy", out var d, s_Sampler))
++                    {
++                        d.src = res.cameraColor;
++                        d.mat = m_Mat;
++                        b.UseTexture(res.cameraColor, AccessFlags.Read);        // an MSAA camera colour is resolved here
++                        b.SetRenderAttachment(dd.tex, 0, AccessFlags.WriteAll);
++                        b.SetRenderFunc((CopyData data, RasterGraphContext ctx) =>
++                        {
++                            s_Mpb.Clear();
++                            s_Mpb.SetTexture(s_Src, data.src);
++                            ctx.cmd.DrawProcedural(Matrix4x4.identity, data.mat, PassCopy, MeshTopology.Triangles, 3, 1, s_Mpb);
++                        });
++                    }
++                    return;
++                }
++                var renderingData = frameData.Get<UniversalRenderingData>();
++                var cameraData = frameData.Get<UniversalCameraData>();
++                var lightData = frameData.Get<UniversalLightData>();
++                var depthDesc = new TextureDesc(cd.width, cd.height)
++                {
++                    format = GraphicsFormat.D32_SFloat,
++                    msaaSamples = MSAASamples.None,
++                    clearBuffer = true,
++                    name = "_NocDbgDepth",
++                };
++                TextureHandle depth = rg.CreateTexture(depthDesc);
++                var filter = new FilteringSettings(RenderQueueRange.opaque, -1, OverdrawLayerMask);
++                DrawingSettings ds = RenderingUtils.CreateDrawingSettings(s_TagList, renderingData, cameraData, lightData, SortingCriteria.CommonOpaque);
++                ds.overrideMaterial = m_Mat;
++                ds.overrideMaterialPassIndex = PassCount;
++                DrawingSettings ds2 = RenderingUtils.CreateDrawingSettings(s_TagList, renderingData, cameraData, lightData, SortingCriteria.CommonOpaque);
++                ds2.overrideMaterial = m_Mat;
++                ds2.overrideMaterialPassIndex = PassComplexity;
++                using (var b = rg.AddRasterRenderPass<CountData>("NocDebugView Overdraw", out var d, s_Sampler))
++                {
++                    d.count = rg.CreateRendererList(new RendererListParams(renderingData.cullResults, ds, filter));
++                    d.complexity = rg.CreateRendererList(new RendererListParams(renderingData.cullResults, ds2, filter));
++                    b.UseRendererList(d.count);
++                    b.UseRendererList(d.complexity);
++                    b.SetRenderAttachment(dd.tex, 0, AccessFlags.Write);
++                    b.SetRenderAttachmentDepth(depth, AccessFlags.Write);
++                    b.SetRenderFunc((CountData data, RasterGraphContext ctx) =>
++                    {
++                        ctx.cmd.DrawRendererList(data.count);
++                        ctx.cmd.DrawRendererList(data.complexity);
++                    });
++                }
++            }
++        }
++
++        // ------------------------------------------------------------------------------------------------ B: output
++        sealed class OutputPass : ScriptableRenderPass
++        {
++            Material m_Mat;
++            bool m_Overdraw;
++            static readonly ProfilingSampler s_Sampler = new ProfilingSampler("NocDebugView Output");
++            sealed class OutData { public TextureHandle src; public Material mat; public int pass; }
++
++            public OutputPass() { profilingSampler = s_Sampler; renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing; requiresIntermediateTexture = true; }
++
++            public void Setup(Material mat, bool overdraw) { m_Mat = mat; m_Overdraw = overdraw; }
++
++            public override void RecordRenderGraph(RenderGraph rg, ContextContainer frameData)
++            {
++                if (!frameData.Contains<DebugData>()) return;
++                var dd = frameData.Get<DebugData>();
++                var res = frameData.Get<UniversalResourceData>();
++                if (!dd.tex.IsValid() || res.isActiveTargetBackBuffer || !res.cameraColor.IsValid()) return;
++                using (var b = rg.AddRasterRenderPass<OutData>("NocDebugView Output", out var d, s_Sampler))
++                {
++                    d.src = dd.tex;
++                    d.mat = m_Mat;
++                    d.pass = dd.overdraw ? PassOverdraw : PassCopy;
++                    b.UseTexture(dd.tex, AccessFlags.Read);
++                    b.SetRenderAttachment(res.cameraColor, 0, AccessFlags.WriteAll);
++                    b.SetRenderFunc((OutData data, RasterGraphContext ctx) =>
++                    {
++                        s_Mpb.Clear();
++                        s_Mpb.SetTexture(s_Src, data.src);
++                        ctx.cmd.DrawProcedural(Matrix4x4.identity, data.mat, data.pass, MeshTopology.Triangles, 3, 1, s_Mpb);
++                    });
++                }
++            }
++        }
++
++        const int PassCount = 0, PassComplexity = 1, PassCopy = 2, PassOverdraw = 3;
++        static readonly int s_Src = Shader.PropertyToID("_NocDbgSrc");
++        static readonly MaterialPropertyBlock s_Mpb = new MaterialPropertyBlock();
++    }
++}
+diff --git a/Assets/_Game/Scripts/Runtime/Rendering/NocFacadeMath.cs b/Assets/_Game/Scripts/Runtime/Rendering/NocFacadeMath.cs
+index 6fbcb3c..7ed932d 100644
+--- a/Assets/_Game/Scripts/Runtime/Rendering/NocFacadeMath.cs
++++ b/Assets/_Game/Scripts/Runtime/Rendering/NocFacadeMath.cs
+@@ -243,5 +243,680 @@ namespace Megastructure
+             int o = (int)Math.Round(planeOffset / 0.25);
+             return NocHash.H3(unchecked((uint)k), unchecked((uint)o), 0x4E6F63u, 0) & 0xFFFFu;
+         }
++
++        // ================================================================== Look v2 (TEXTURE_PLAN 2, LOOK_V2 4, docs/FACADE_V2.md)
++        // The C# twin of Shaders/Include/NocFacadeSkin.hlsl (-facade-v 2) and the cell API that GE aligns its relief to. Every
++        // constant is NocFacadeConstants (NC_Fa* in HLSL). Cell coordinates: x = u - i Pu, y = vl - j Pv with vl = v - band H.
++
++        public const int SkinS0 = 0, SkinS1 = 1, SkinS2 = 2, SkinS3 = 3, SkinS4 = 4, SkinSection = 5;
++        public const int RegionD = 0, RegionOQ = 1;
++        public const int StratumRes = 0, StratumCom = 1, StratumMech = 2, StratumLobby = 3, StratumSection = 4;
++        /// <summary>Hero overrides (TEXTURE_PLAN 2.2): 0 spire, 1 screen-wall mass, 2 alley west tower, 3 alley east tower, 4 boulevard podium.</summary>
++        public const int OverrideSpire = 0, OverrideScreenWall = 1, OverrideAlleyWest = 2, OverrideAlleyEast = 3, OverridePodium = 4;
++
++        /// <summary>Skin of a tower or box: decoded from the skin byte (colour G) once per pixel in the shader.</summary>
++        public struct Skin
++        {
++            public int id, region, overrideK;   // overrideK -1: regional skin
++            public uint key;                    // tower key K = pcg(byte): strata, zone rows, lit groups, multiplier, variants
++            public bool s1Mullion, s2Ribbed, core, ledge, fins, ledStrips, stoneBase;
++        }
++
++        /// <summary>Region of a world point (tower or box centre): OQ inside the Old Quarter disc, else D.</summary>
++        public static int Region(double x, double z)
++        {
++            double dx = x - NocFacadeConstants.FaOqX, dz = z - NocFacadeConstants.FaOqZ;
++            return dx * dx + dz * dz < NocFacadeConstants.FaOqR * NocFacadeConstants.FaOqR ? RegionOQ : RegionD;
++        }
++
++        /// <summary>The seed a builder passes for hero override k (0..15): SkinByte maps it to byte 0xF0 + k.</summary>
++        public static uint SkinOverride(int k) => 0xFFFFFFF0u + (uint)(k & 15);
++
++        /// <summary>Skin byte (vertex colour G) of a tower or box with this seed in this region (TEXTURE_PLAN 2.2).</summary>
++        public static byte SkinByte(uint seed, int region)
++        {
++            if (seed >= 0xFFFFFFF0u) return (byte)(NocFacadeConstants.FaOverrideBase + (int)(seed - 0xFFFFFFF0u));
++            uint span = (uint)NocFacadeConstants.FaRegionSpan;
++            return (byte)(region == RegionOQ ? NocFacadeConstants.FaOqBase + (int)(seed % span) : (int)(seed % span));
++        }
++
++        /// <summary>Skin byte of a world point: SkinByte(seed, Region(x, z)).</summary>
++        public static byte SkinByteAt(uint seed, double x, double z) => SkinByte(seed, Region(x, z));
++
++        static double U01(uint h) => NocHash.U01(h);
++        static uint H3x(uint a, uint b, uint c) => NocHash.H3(a, b, c, 0);
++        static uint H3y(uint a, uint b, uint c) => NocHash.H3(a, b, c, 1);
++        static uint H3z(uint a, uint b, uint c) => NocHash.H3(a, b, c, 2);
++        static uint Pcg(uint v) => NocMath.Pcg(v);
++
++        /// <summary>Decodes a skin byte. Mode 1 (section) is the fixed section skin; the byte only keys it.</summary>
++        public static Skin SkinOf(int skinByte, int mode = 0)
++        {
++            uint b = (uint)(skinByte & 0xFF);
++            var s = new Skin { key = Pcg(b), overrideK = -1 };
++            uint K = s.key;
++            s.region = b >= (uint)NocFacadeConstants.FaOqBase && b < (uint)NocFacadeConstants.FaOverrideBase ? RegionOQ : RegionD;
++            if (mode == 1) { s.id = SkinSection; return s; }
++            if (b >= (uint)NocFacadeConstants.FaOverrideBase)
++            {
++                int k = (int)(b - (uint)NocFacadeConstants.FaOverrideBase);
++                s.overrideK = k;
++                switch (k)
++                {
++                    case OverrideSpire: s.id = SkinS0; s.fins = true; break;
++                    case OverrideScreenWall: s.id = SkinS2; s.ledStrips = true; break;
++                    case OverrideAlleyEast: s.id = SkinS4; break;
++                    case OverridePodium: s.id = SkinS1; s.stoneBase = true; break;
++                    default: s.id = SkinS1; break;      // 2 alley west tower (precast) and the reserved 5-15
++                }
++            }
++            else
++            {
++                double us = U01(Pcg(K ^ 0x534B4E31u));
++                bool q = s.region == RegionOQ;
++                double t0 = q ? NocFacadeConstants.FaShareQ0 : NocFacadeConstants.FaShareD0, t1 = q ? NocFacadeConstants.FaShareQ1 : NocFacadeConstants.FaShareD1;
++                double t2 = q ? NocFacadeConstants.FaShareQ2 : NocFacadeConstants.FaShareD2, t3 = q ? NocFacadeConstants.FaShareQ3 : NocFacadeConstants.FaShareD3;
++                s.id = us < t0 ? SkinS0 : (us < t1 ? SkinS1 : (us < t2 ? SkinS2 : (us < t3 ? SkinS3 : SkinS4)));
++            }
++            s.s1Mullion = U01(Pcg(K ^ 0x4D554C4Cu)) < NocFacadeConstants.FaS1MullionP;
++            s.s2Ribbed = U01(Pcg(K ^ 0x52494253u)) < NocFacadeConstants.FaS2RibbedP;
++            s.core = U01(Pcg(K ^ 0x434F5245u)) < NocFacadeConstants.FaCoreP;
++            s.ledge = U01(Pcg(K ^ 0x4C444745u)) < NocFacadeConstants.FaLedgeP;
++            return s;
++        }
++
++        /// <summary>Stratum of band `band` of a tower (keyed per tower, so floor lines continue around corners); mode 1: section.</summary>
++        public static int StratumV2(uint K, int band, int mode = 0)
++        {
++            if (mode == 1) return StratumSection;
++            double r = U01(H3x(K, unchecked((uint)(band + 65536)), 0x53545232u));
++            double a = NocturneConstants.FacadeShareRes, b = a + NocturneConstants.FacadeShareCom, c = b + NocturneConstants.FacadeShareMech;
++            return r < a ? StratumRes : (r < b ? StratumCom : (r < c ? StratumMech : StratumLobby));
++        }
++
++        /// <summary>Lit factor of a stratum (LOOK_V2 4) as a multiple of FaLit.</summary>
++        public static double FactorV2(int type) => type == StratumCom ? NocFacadeConstants.FaFactorCom : (type == StratumMech ? NocFacadeConstants.FaFactorMech
++            : (type == StratumLobby ? NocFacadeConstants.FaFactorLobby : (type == StratumSection ? NocFacadeConstants.FaSecLit / NocFacadeConstants.FaLit : NocFacadeConstants.FaFactorRes)));
++
++        /// <summary>Geometry of one cell of a (skin, stratum): pitch, opening (frame outer edge), frame, mullions, transom, slab band,
++        /// spandrel glass band, recess depth. All cell-local metres. This is the cell API GE aligns relief to.</summary>
++        public struct Cell
++        {
++            public double Pu, Pv, bandH;
++            public double ox0, ox1, oy0, oy1;   // opening
++            public double ff;                   // frame inside the opening (all four sides)
++            public double mOff, mP, mW;         // x mullions: centres at mOff + k mP strictly inside (ox0, ox1); mW 0 = none
++            public double tY, tW;               // one y transom (tW 0 = none)
++            public double slab;                 // slab band [0, slab)
++            public double sp0, sp1;             // spandrel glass band (S0; sp1 <= sp0 none), x = the opening's x range
++            public double D;                    // recess depth (glass plane behind the facade plane)
++            public int louvre;                  // 1: louvre blades over the glass (mechanical slit)
++        }
++
++        public static Cell CellOf(in Skin s, int type)
++        {
++            var c = new Cell { bandH = NocturneConstants.FacadeBand, ff = NocFacadeConstants.FaFrame };
++            int sk = s.id;
++            switch (type)
++            {
++                case StratumCom:
++                    c.Pu = NocturneConstants.FacadeComP; c.Pv = NocturneConstants.FacadeComH;
++                    c.ox0 = NocFacadeConstants.FaComOx0; c.ox1 = NocFacadeConstants.FaComOx1; c.oy0 = NocFacadeConstants.FaComOy0; c.oy1 = NocFacadeConstants.FaComOy1;
++                    c.ff = NocFacadeConstants.FaComFrame; c.mOff = NocFacadeConstants.FaComOx0; c.mP = NocFacadeConstants.FaComMullP; c.mW = NocFacadeConstants.FaComMull;
++                    c.D = sk == SkinS1 || sk == SkinS3 ? NocFacadeConstants.FaComDDeep : NocFacadeConstants.FaComD;
++                    c.slab = SlabOf(sk);
++                    if (sk == SkinS0) { c.sp0 = NocFacadeConstants.FaS0Cap; c.sp1 = c.oy0 - 0.06; }
++                    break;
++                case StratumMech:
++                    c.Pu = NocturneConstants.FacadeMechP; c.Pv = NocturneConstants.FacadeMechH;
++                    c.ox0 = NocFacadeConstants.FaMechOx0; c.ox1 = NocFacadeConstants.FaMechOx1; c.oy0 = NocFacadeConstants.FaMechOy0; c.oy1 = NocFacadeConstants.FaMechOy1;
++                    c.ff = NocFacadeConstants.FaMechFrame; c.D = NocFacadeConstants.FaMechD; c.louvre = 1; c.slab = SlabOf(sk);
++                    break;
++                case StratumLobby:
++                    c.Pu = NocturneConstants.FacadeLobbyP; c.Pv = NocturneConstants.FacadeLobbyH;
++                    c.ox0 = NocFacadeConstants.FaLobOx0; c.ox1 = NocFacadeConstants.FaLobOx1; c.oy0 = NocFacadeConstants.FaLobOy0; c.oy1 = NocFacadeConstants.FaLobOy1;
++                    c.ff = NocFacadeConstants.FaLobFrame; c.mOff = NocFacadeConstants.FaLobOx0; c.mP = NocFacadeConstants.FaLobMullP; c.mW = NocFacadeConstants.FaLobMull;
++                    c.tY = 0.5 * (NocFacadeConstants.FaLobOy0 + NocFacadeConstants.FaLobOy1); c.tW = NocFacadeConstants.FaLobMull;
++                    c.D = NocFacadeConstants.FaLobD; c.slab = SlabOf(sk);
++                    break;
++                case StratumSection:
++                    c.Pu = NocturneConstants.FacadeSecP; c.Pv = NocturneConstants.FacadeSecH; c.bandH = NocturneConstants.FacadeSecBand;
++                    c.ox0 = NocFacadeConstants.FaSecOx0; c.ox1 = NocFacadeConstants.FaSecOx1; c.oy0 = NocFacadeConstants.FaSecOy0; c.oy1 = NocFacadeConstants.FaSecOy1;
++                    c.ff = NocFacadeConstants.FaSecFrame; c.mOff = NocFacadeConstants.FaSecOx0; c.mP = NocFacadeConstants.FaSecMullP; c.mW = NocFacadeConstants.FaSecMull;
++                    c.D = NocFacadeConstants.FaSecD; c.slab = NocFacadeConstants.FaSecSlab;
++                    break;
++                default:   // residential 2.4 x 3.6
++                    c.Pu = NocturneConstants.FacadeColumn; c.Pv = NocturneConstants.FacadeFloor; c.slab = SlabOf(sk);
++                    switch (sk)
++                    {
++                        case SkinS0:
++                            c.ox0 = NocFacadeConstants.FaS0Ox0; c.ox1 = NocFacadeConstants.FaS0Ox1; c.oy0 = NocFacadeConstants.FaS0Oy0; c.oy1 = NocFacadeConstants.FaS0Oy1;
++                            c.ff = 0.0; c.mOff = 0.0; c.mP = 0.5 * NocturneConstants.FacadeColumn; c.mW = NocFacadeConstants.FaS0Mull; c.D = NocFacadeConstants.FaS0D;
++                            c.sp0 = NocFacadeConstants.FaS0Cap; c.sp1 = NocFacadeConstants.FaS0Sp1;
++                            break;
++                        case SkinS2:
++                            c.ox0 = NocFacadeConstants.FaS2Ox0; c.ox1 = NocFacadeConstants.FaS2Ox1; c.oy0 = NocFacadeConstants.FaS2Oy0; c.oy1 = NocFacadeConstants.FaS2Oy1;
++                            c.ff = NocFacadeConstants.FaS2Frame; c.mOff = 0.0; c.mP = 0.5 * NocturneConstants.FacadeColumn; c.mW = NocFacadeConstants.FaS2Mull; c.D = NocFacadeConstants.FaS2D;
++                            break;
++                        case SkinS3:
++                            c.ox0 = NocFacadeConstants.FaS3Ox0; c.ox1 = NocFacadeConstants.FaS3Ox1; c.oy0 = NocFacadeConstants.FaS3Oy0; c.oy1 = NocFacadeConstants.FaS3Oy1;
++                            c.ff = NocFacadeConstants.FaS3Frame; c.D = NocFacadeConstants.FaS3D;
++                            break;
++                        case SkinS4:
++                            c.ox0 = NocFacadeConstants.FaS4Ox0; c.ox1 = NocFacadeConstants.FaS4Ox1; c.oy0 = NocFacadeConstants.FaS4Oy0; c.oy1 = NocFacadeConstants.FaS4Oy1;
++                            c.ff = NocFacadeConstants.FaS4Frame; c.D = NocFacadeConstants.FaS4D;
++                            break;
++                        default:   // S1 precast (variant B: centre mullion, widened opening, same clear glass)
++                            bool m = s.s1Mullion;
++                            c.ox0 = m ? NocFacadeConstants.FaS1BOx0 : NocFacadeConstants.FaS1Ox0; c.ox1 = m ? NocFacadeConstants.FaS1BOx1 : NocFacadeConstants.FaS1Ox1;
++                            c.oy0 = NocFacadeConstants.FaS1Oy0; c.oy1 = NocFacadeConstants.FaS1Oy1; c.D = NocFacadeConstants.FaS1D;
++                            if (m) { c.mOff = 0.5 * NocturneConstants.FacadeColumn; c.mP = 100.0; c.mW = NocFacadeConstants.FaFrame; }
++                            break;
++                    }
++                    break;
++            }
++            return c;
++        }
++
++        static double SlabOf(int sk) => sk == SkinS0 ? NocFacadeConstants.FaS0Cap : (sk == SkinS2 ? NocFacadeConstants.FaS2Slab
++            : (sk == SkinS3 ? NocFacadeConstants.FaS3Slab : (sk == SkinS4 ? NocFacadeConstants.FaS4Slab : NocFacadeConstants.FaS1Slab)));
++
++        /// <summary>Whole bays of a face (TEXTURE_PLAN 2.5): cells iFirst..iLast have their opening inside [uMin + 0.6, uMax - 0.6];
++        /// the core strip (if any) is coreI0..coreI1 (empty when coreI1 &lt; coreI0). Coordinates are world-absolute u.</summary>
++        public static void Bays(in Skin s, in Cell c, int type, double uMin, double uMax, out int iFirst, out int iLast, out int coreI0, out int coreI1)
++        {
++            double a = uMin + NocFacadeConstants.FaCornerPier, b = uMax - NocFacadeConstants.FaCornerPier;
++            iFirst = (int)Math.Ceiling((a - c.ox0) / c.Pu);
++            iLast = (int)Math.Floor((b - c.ox1) / c.Pu);
++            coreI0 = 0; coreI1 = -1;
++            if (s.core && (type == StratumRes || type == StratumCom) && uMax - uMin > NocFacadeConstants.FaCoreMinFace)
++            {
++                double w = (U01(Pcg(s.key ^ 0x43575744u)) < 0.5 ? 3.0 : 6.0);      // lift and stair core 3 or 6 m
++                int n = Math.Max(1, (int)Math.Round(w / c.Pu));
++                double uc = 0.5 * (uMin + uMax);
++                coreI0 = (int)Math.Floor(uc / c.Pu - 0.5 * n + 0.5);
++                coreI1 = coreI0 + n - 1;
++            }
++        }
++
++        /// <summary>True when bay i of the face is a window column (whole bay, not the core strip).</summary>
++        public static bool BayHasWindow(int i, int iFirst, int iLast, int coreI0, int coreI1) => i >= iFirst && i <= iLast && (i < coreI0 || i > coreI1);
++
++        /// <summary>Rows of a band that carry windows: [jFirst, jLast] after the base band, the parapet and the mechanical stripe
++        /// (residential bands of towers keyed so: the top two floors are blind with louvres). y0 = y1 = 0: no vertical limits.</summary>
++        public static void Rows(in Skin s, in Cell c, int type, int band, double y0, double y1, out int jFirst, out int jLast)
++        {
++            int rows = (int)Math.Round(c.bandH / c.Pv);
++            jFirst = 0; jLast = rows - 1;
++            if (type == StratumRes && MechStripe(s.key, band)) jLast = rows - 3;
++            if (y1 > y0)
++            {
++                double baseH = y0 <= NocFacadeConstants.FaBaseY0 ? NocFacadeConstants.FaBase : 0.0;
++                double lo = y0 + baseH - band * c.bandH, hi = y1 - NocFacadeConstants.FaParapet - band * c.bandH;
++                jFirst = Math.Max(jFirst, (int)Math.Ceiling((lo - c.oy0) / c.Pv));
++                jLast = Math.Min(jLast, (int)Math.Floor((hi - c.oy1) / c.Pv));
++            }
++        }
++
++        /// <summary>A residential band of tower K ends in a two-floor mechanical stripe (louvres, no windows): every 24 floors on
++        /// FaMechStripeP of the bands (TEXTURE_PLAN 2.5 macro layer: 7.2 m, 2 px at 3 km).</summary>
++        public static bool MechStripe(uint K, int band) => U01(H3y(K, unchecked((uint)(band + 65536)), 0x4D454348u)) < NocFacadeConstants.FaMechStripeP;
++
++        // ------------------------------------------------------------------ lit probability (LOOK_V2 4, TEXTURE_PLAN 2.4)
++        /// <summary>Standard normal from two hashes (Box-Muller; u1 in (0, 1]).</summary>
++        public static double Normal(uint h1, uint h2)
++        {
++            double u1 = 1.0 - U01(h1), u2 = U01(h2);
++            return Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
++        }
++
++        /// <summary>Log-normal of mean 1 (before the clamp) with log-sigma sigma, clamped to [FaLnMin, FaLnMax].</summary>
++        public static double LogNormal1(double n, double sigma) => Math.Min(NocFacadeConstants.FaLnMax, Math.Max(NocFacadeConstants.FaLnMin, Math.Exp(sigma * n - 0.5 * sigma * sigma)));
++
++        /// <summary>Tower multiplier m_T (never fades: a tower is 9 px or wider at 3 km).</summary>
++        public static double TowerMul(uint K) => LogNormal1(Normal(H3x(K, 0x544F5752u, 7u), H3y(K, 0x544F5752u, 7u)), NocFacadeConstants.FaTowerSigma);
++
++        /// <summary>Lit floor group of row j of band `band` of tower K: groups of 4-12 rows laid out from the band's bottom.</summary>
++        public static void GroupOf(uint K, int band, int j, out int g, out int start, out int len)
++        {
++            start = 0; g = 0;
++            len = GroupLen(K, band, 0);
++            while (j >= start + len && g < 31) { start += len; g++; len = GroupLen(K, band, g); }
++        }
++
++        static int GroupLen(uint K, int band, int g) =>
++            NocFacadeConstants.FaGroupMinRows + (int)Math.Floor((NocFacadeConstants.FaGroupMaxRows - NocFacadeConstants.FaGroupMinRows + 1) * U01(H3x(K, unchecked((uint)(band + 65536)), 0x47525000u + (uint)g)));
++
++        public static double GroupMul(uint K, int band, int g)
++        {
++            uint a = K, b = unchecked((uint)(band + 65536)), c = 0x47525000u + (uint)g;
++            NocHash.Pcg3d(ref a, ref b, ref c);
++            return LogNormal1(Normal(b, c), NocFacadeConstants.FaGroupSigma);
++        }
++
++        /// <summary>Zone row level U (keyed per tower: lit and dark floors continue around corners) and the zone column level U
++        /// (per face), global zone row zrg = band x 16 + jl / 2.</summary>
++        public static double ZoneRowU(uint K, int zrg) => U01(H3x(K, unchecked((uint)(zrg + 1048576)), 0x5A524F57u));
++        public static double ZoneShiftV2(uint face, int zrg) => Math.Floor(NocturneConstants.FacadeZoneCols * U01(H3x(face, unchecked((uint)(zrg + 1048576)), 0x5A4F4E45u)));
++        public static double ZoneCellU(uint face, int zrg, int zc) => U01(H3y(unchecked((uint)(zc + 1048576)), unchecked((uint)(zrg + 1048576)), face));
++        public static double ZoneZ(double uRow, double uCell) => NocFacadeConstants.FaZoneLo + NocFacadeConstants.FaZoneSpan * 0.5 * (uRow + uCell);
++
++        /// <summary>Lit probability of window (i, jl) of band `band`: min(1, FaLit f m_T g z).</summary>
++        public static double PCell(uint K, uint face, int band, int type, int i, int jl)
++        {
++            int zrg = band * 16 + jl / NocturneConstants.FacadeZoneRows;
++            int zc = (int)Math.Floor((i + ZoneShiftV2(face, zrg)) / NocturneConstants.FacadeZoneCols);
++            GroupOf(K, band, jl, out int g, out _, out _);
++            double p = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(K) * GroupMul(K, band, g) * ZoneZ(ZoneRowU(K, zrg), ZoneCellU(face, zrg, zc));
++            return Math.Min(1.0, p);
++        }
++
++        // ------------------------------------------------------------------ hue and brightness (LOOK_V2 4)
++        static double Y709(C3 c) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
++        static C3 NormY(C3 c, double g) => c * (NocFacadeConstants.FaYMed * g / Math.Max(Y709(c), 1e-6));
++        static C3 Desat(NocPal p) { C3 c = NocFogMath.Pal(p); return C3.Lerp(c, NocFogMath.Pal(NocPal.WinNeutral), NocFacadeConstants.FaColDesat); }
++
++        /// <summary>Luminance-normalised class colours: 0 tungsten, 1 warm, 2 neutral, 3 cold, 4 blue (x0.6), 5-8 coloured (x0.8).</summary>
++        public static C3 ClassColour(int k)
++        {
++            switch (k)
++            {
++                case 0: return NormY(NocFogMath.Pal(NocPal.WinTungsten), 1.0);
++                case 1: return NormY(NocFogMath.Pal(NocPal.WinWarm), 1.0);
++                case 2: return NormY(NocFogMath.Pal(NocPal.WinNeutral), 1.0);
++                case 3: return NormY(NocFogMath.Pal(NocPal.WinCold), 1.0);
++                case 4: return NormY(NocFogMath.Pal(NocPal.WinBlue), NocFacadeConstants.FaBlueGain);
++                case 5: return NormY(Desat(NocPal.NeonCyan), NocFacadeConstants.FaColGain);
++                case 6: return NormY(Desat(NocPal.AviationRed), NocFacadeConstants.FaColGain);
++                case 7: return NormY(Desat(NocPal.LeafGlow), NocFacadeConstants.FaColGain);
++                default: return NormY(Desat(NocPal.NeonMagenta), NocFacadeConstants.FaColGain);
++            }
++        }
++
++        static double Step(double t, double U) => NocMath.Clamp01((t - U) / NocFacadeConstants.FaHueBand + 0.5);
++
++        /// <summary>Colour of a lit window with hue hash uh at warm fraction wf and neutral fraction nf (Y = FaYMed for the white
++        /// classes, before b and the interior factor). The moving boundaries are soft over FaHueBand; wf = 0 gives no warm weight.</summary>
++        public static C3 HueV2(double uh, double wf, double nf)
++        {
++            double gw = NocMath.Clamp01(wf / NocFacadeConstants.FaHueBand);
++            double s1 = Step(wf / 3.0, uh) * gw, s2 = Step(wf, uh) * gw, s3 = Step(wf + nf, uh);
++            C3 c;
++            if (uh < NocFacadeConstants.FaHueBlue0)
++                c = ClassColour(0) * s1 + ClassColour(1) * (s2 - s1) + ClassColour(2) * Math.Max(0.0, s3 - s2) + ClassColour(3) * (1.0 - Math.Max(s3, s2));
++            else if (uh < NocFacadeConstants.FaHueCol0) c = ClassColour(4);
++            else
++            {
++                double x = uh - NocFacadeConstants.FaHueCol0;
++                c = ClassColour(x < NocFacadeConstants.FaColCyan ? 5 : (x < NocFacadeConstants.FaColCyan + NocFacadeConstants.FaColRed ? 6
++                    : (x < NocFacadeConstants.FaColCyan + NocFacadeConstants.FaColRed + NocFacadeConstants.FaColLeaf ? 7 : 8)));
++            }
++            return c;
++        }
++
++        /// <summary>Expected lit-window colour (before b): the class shares at (wf, nf).</summary>
++        public static C3 MeanHueV2(double wf, double nf)
++        {
++            double gw = NocMath.Clamp01(wf / NocFacadeConstants.FaHueBand);
++            double tung = wf / 3.0 * gw, warm = 2.0 * wf / 3.0 * gw, neut = nf + wf * (1.0 - gw);
++            double cold = NocFacadeConstants.FaHueBlue0 - wf - nf, blue = NocFacadeConstants.FaHueCol0 - NocFacadeConstants.FaHueBlue0;
++            return ClassColour(0) * tung + ClassColour(1) * warm + ClassColour(2) * neut + ClassColour(3) * cold + ClassColour(4) * blue
++                 + ClassColour(5) * NocFacadeConstants.FaColCyan + ClassColour(6) * NocFacadeConstants.FaColRed + ClassColour(7) * NocFacadeConstants.FaColLeaf + ClassColour(8) * NocFacadeConstants.FaColMagenta;
++        }
++
++        /// <summary>Brightness b of a window: exp(0.45 N) clamped to [0.40, 2.40] (log-normal, mean FaBMean).</summary>
++        public static double BrightnessV2(uint hx) => Math.Min(NocFacadeConstants.FaBMax, Math.Max(NocFacadeConstants.FaBMin,
++            Math.Exp(NocFacadeConstants.FaBSigma * Normal(hx, Pcg(hx ^ 0x42524954u)))));
++
++        /// <summary>Mechanical slits: SodiumAmber on half of them x k_a (= wf / 0.32, LOOK_V2 R6), the rest SignWhite, at 0.6 Y_med.</summary>
++        public static C3 MechHue(double uh, double wf)
++        {
++            double ka = NocMath.Clamp01(wf / 0.32);
++            return uh < 0.5 * ka ? NormY(NocFogMath.Pal(NocPal.SodiumAmber), 0.6) : NormY(NocFogMath.Pal(NocPal.SignWhite), 0.6);
++        }
++
++        public static C3 MeanMechHue(double wf)
++        {
++            double ka = NocMath.Clamp01(wf / 0.32);
++            return NormY(NocFogMath.Pal(NocPal.SodiumAmber), 0.6) * (0.5 * ka) + NormY(NocFogMath.Pal(NocPal.SignWhite), 0.6) * (1.0 - 0.5 * ka);
++        }
++
++        // ------------------------------------------------------------------ one window (cell) state
++        public struct Win
++        {
++            public double lit;      // 0..1 with the toggle ramp
++            public C3 eLit;         // lit glass radiance (hue x b), interior factor excluded
++            public C3 eUn;          // unlit glass interior (stand-by part; the GlassDark x ambient part is added by the caller)
++            public int kind;        // 0 bare, 1 curtain, 2 blinds
++            public double cf, side, depth, tiltA, tiltB;
++        }
++
++        public static Win WindowV2(int i, int jl, int band, uint face, uint K, int type, double tEpoch, double wf, double nf)
++        {
++            var w = new Win();
++            int jg = band * 32 + jl;
++            uint a = unchecked((uint)(i + 1048576)), b = unchecked((uint)(jg + 1048576)), c = face;
++            NocHash.Pcg3d(ref a, ref b, ref c);
++            double p = PCell(K, face, band, type, i, jl);
++            double x = tEpoch + U01(c);
++            double e = Math.Floor(x);
++            uint ki = unchecked((uint)(i + 1048576)), kj = unchecked((uint)(jg + 1048576)), ke = (uint)e;
++            double aNow = U01(NocHash.H4x(ki, kj, face, ke)) <= p ? 1.0 : 0.0;
++            double aPrev = U01(NocHash.H4x(ki, kj, face, unchecked(ke - 1u))) <= p ? 1.0 : 0.0;
++            w.lit = aPrev + (aNow - aPrev) * NocMath.Smoothstep(0.0, NocFacadeConstants.FaToggle / NocFacadeConstants.FaEpoch, x - e);
++            double uh = U01(b);
++            C3 hue = type == StratumMech ? MechHue(uh, wf) : HueV2(uh, wf, nf);
++            w.eLit = hue * BrightnessV2(a);
++            w.eUn = NocFogMath.Pal(NocPal.WinNeutral) * (NocFacadeConstants.FaStandby * (0.5 + U01(Pcg(a ^ c))));
++            double uk = U01(Pcg(b ^ 0x43555254u));
++            w.kind = uk < NocFacadeConstants.FaCurtainP ? 1 : (uk < NocFacadeConstants.FaCurtainP + NocFacadeConstants.FaBlindP ? 2 : 0);
++            uint hc = Pcg(c ^ 0x43464F4Cu);
++            w.cf = 0.4 + 0.6 * U01(hc);                     // curtain closure 0.4..1.0 of the width
++            w.side = U01(Pcg(hc)) ;                         // < 1/3 left panel, < 2/3 right panel, else both sides
++            w.depth = U01(Pcg(b ^ c));
++            w.tiltA = 2.0 * U01(Pcg(a ^ 0x54494C54u)) - 1.0; w.tiltB = 2.0 * U01(Pcg(b ^ 0x54494C54u)) - 1.0;
++            return w;
++        }
++
++        /// <summary>E[I] of the interior factor: falloff mean (1 + FaFalloffSill) / 2 x the expected curtain / blind factor.</summary>
++        public static double InteriorMean()
++        {
++            double fall = 0.5 * (1.0 + NocFacadeConstants.FaFalloffSill);
++            double cfMean = 0.7, curtain = cfMean * NocFacadeConstants.FaCurtainGain + (1.0 - cfMean);
++            double kinds = NocFacadeConstants.FaCurtainP * curtain + NocFacadeConstants.FaBlindP * NocFacadeConstants.FaBlindOpen + (1.0 - NocFacadeConstants.FaCurtainP - NocFacadeConstants.FaBlindP);
++            return fall * kinds;
++        }
++
++        // ------------------------------------------------------------------ per-pixel evaluation (the HLSL twin)
++        public struct FaceIn
++        {
++            public double u, v, fwu, fwv;      // face coordinates; bounding-box footprints (m per pixel) per axis
++            public uint face; public int skinByte, mode;
++            public double uMin, uMax, y0, y1;  // y0 = y1 = 0: unknown (Gulf writers)
++            public double kx, ky;              // recess shift per metre of depth: dt / dn and (db / dn) B.y
++            public double tEpoch, wf, nf;
++            public double forceW;              // < 0: footprint fades; 0 or 1 forces the window axes (H2 tests)
++            public C3 ambEq;                   // equator ambient (unlit glass GlassDark x ambient)
++        }
++
++        public struct FaceOut
++        {
++            public C3 emission;                                  // glass interiors (lit and stand-by), room spill on reveals / frames, halo
++            public double aGlass, aSpandrel, aFrame, aJamb, aSillHead, aOpen, aSlab;
++            public double wu, wv, pEff;
++            public int skin, type, band;
++            public double Wall => Math.Max(0.0, 1.0 - aOpen - aSpandrel);
++        }
++
++        struct Axis { public double O0, O1, V0, V1, G0, G1, H0, H1; }   // per-cell coverages of the two cells (H: halo weight, y only)
++
++        static double Cov(double x, double fw, double a, double b) => NocMath.Clamp01((Math.Min(x + 0.5 * fw, b) - Math.Max(x - 0.5 * fw, a)) / Math.Max(fw, 1e-9));
++        static double Len(double a, double b) => Math.Max(0.0, b - a);
++        static C3 Mul(C3 a, C3 b) => new C3(a.r * b.r, a.g * b.g, a.b * b.b);
++
++        /// <summary>Clear-glass coverage along x of the cell starting at s (world u): the visible glass behind the recess (shifted by
++        /// -sx) minus the frame and the mullions (at most 4 inside the opening, as the HLSL loop). frac: the cell-mean fraction.</summary>
++        static double GlassX(double x, double fw, double s, in Cell c, double sx, bool frac, double P)
++        {
++            double v0 = Math.Max(c.ox0, c.ox0 - sx), v1 = Math.Min(c.ox1, c.ox1 - sx);
++            double g0 = Math.Max(v0, c.ox0 + c.ff - sx), g1 = Math.Min(v1, c.ox1 - c.ff - sx);
++            double r = frac ? Len(g0, g1) / P : Cov(x, fw, s + g0, s + g1);
++            if (c.mW > 0.0)
++            {
++                double k0 = Math.Floor((c.ox0 - c.mOff) / c.mP) + 1.0;
++                for (int k = 0; k < 4; k++)
++                {
++                    double mc = c.mOff + (k0 + k) * c.mP;
++                    if (mc >= c.ox1) break;
++                    double a = Math.Max(g0, mc - 0.5 * c.mW - sx), b = Math.Min(g1, mc + 0.5 * c.mW - sx);
++                    r -= frac ? Len(a, b) / P : Cov(x, fw, s + a, s + b);
++                }
++            }
++            return Math.Max(0.0, r);
++        }
++
++        static double GlassY(double y, double fw, double s, in Cell c, double sy, bool frac, double P)
++        {
++            double v0 = Math.Max(c.oy0, c.oy0 - sy), v1 = Math.Min(c.oy1, c.oy1 - sy);
++            double g0 = Math.Max(v0, c.oy0 + c.ff - sy), g1 = Math.Min(v1, c.oy1 - c.ff - sy);
++            double r = frac ? Len(g0, g1) / P : Cov(y, fw, s + g0, s + g1);
++            if (c.tW > 0.0)
++            {
++                double a = Math.Max(g0, c.tY - 0.5 * c.tW - sy), b = Math.Min(g1, c.tY + 0.5 * c.tW - sy);
++                r -= frac ? Len(a, b) / P : Cov(y, fw, s + a, s + b);
++            }
++            return Math.Max(0.0, r);
++        }
++
++        /// <summary>Box integral of the rain-scatter halo under an opening (TEXTURE_PLAN 2.6): exp(-d / FaHaloL) for d = oy0 - y in
++        /// [0, FaHaloMax], over the footprint (y, fw) of the cell starting at s; frac: the cell-mean fraction.</summary>
++        static double HaloY(double y, double fw, double s, in Cell c, bool frac, double P)
++        {
++            double L = NocFacadeConstants.FaHaloL, top = s + c.oy0, lo = top - NocFacadeConstants.FaHaloMax;
++            if (frac) return L * (1.0 - Math.Exp(-NocFacadeConstants.FaHaloMax / L)) / P;
++            double a = Math.Max(lo, y - 0.5 * fw), b = Math.Min(top, y + 0.5 * fw);
++            if (b <= a) return 0.0;
++            return L * (Math.Exp(-(top - b) / L) - Math.Exp(-(top - a) / L)) / Math.Max(fw, 1e-9);
++        }
++
++        /// <summary>The facade of one pixel (forward-pass twin, lighting excluded): emission and the element coverages, with the
++        /// exact 2 x 2 box filter where the cells resolve and the per-axis blend to the band means below the H2 fade.</summary>
++        public static FaceOut EvalV2(in FaceIn q)
++        {
++            var o = new FaceOut();
++            Skin s = SkinOf(q.skinByte, q.mode);
++            uint K = s.key;
++            double fwu = Math.Max(q.fwu, 1e-4), fwv = Math.Max(q.fwv, 1e-4);
++            double bandH = q.mode == 1 ? NocturneConstants.FacadeSecBand : NocturneConstants.FacadeBand;
++            int band = (int)Math.Floor(q.v / bandH);
++            double vl = q.v - band * bandH;
++            int type = StratumV2(K, band, q.mode);
++            Cell c = CellOf(s, type);
++            o.skin = s.id; o.type = type; o.band = band;
++            double wu = NocMath.Smoothstep(NocFacadeConstants.FaFadePx0, NocFacadeConstants.FaFadePx1, c.Pu / fwu);
++            double wv = NocMath.Smoothstep(NocFacadeConstants.FaFadePx0, NocFacadeConstants.FaFadePx1, c.Pv / fwv);
++            if (q.forceW >= 0) { wu = q.forceW; wv = q.forceW; }
++            o.wu = wu; o.wv = wv;
++            double sx = c.D * q.kx, sy = c.D * q.ky;
++            int rows = (int)Math.Round(c.bandH / c.Pv);
++
++            // whole bays and rows; the allowed coverage of the footprint (the mean regime counts the suppressed cells)
++            Bays(s, c, type, q.uMin, q.uMax, out int iF, out int iL, out int k0, out int k1);
++            Rows(s, c, type, band, q.y0, q.y1, out int jF, out int jL);
++            double Ax = Cov(q.u, fwu, iF * c.Pu, (iL + 1) * c.Pu);
++            if (k1 >= k0) Ax = Math.Max(0.0, Ax - Cov(q.u, fwu, k0 * c.Pu, (k1 + 1) * c.Pu));
++            double Ay = Cov(vl, fwv, jF * c.Pv, (jL + 1) * c.Pv), Aband = Cov(vl, fwv, 0.0, rows * c.Pv);
++
++            // per-axis mean fractions and the two cells under the footprint
++            double mOx = Len(c.ox0, c.ox1) / c.Pu, mOy = Len(c.oy0, c.oy1) / c.Pv;
++            double mVx = Len(Math.Max(c.ox0, c.ox0 - sx), Math.Min(c.ox1, c.ox1 - sx)) / c.Pu, mVy = Len(Math.Max(c.oy0, c.oy0 - sy), Math.Min(c.oy1, c.oy1 - sy)) / c.Pv;
++            double mGx = GlassX(0, 1, 0, c, sx, true, c.Pu), mGy = GlassY(0, 1, 0, c, sy, true, c.Pv), mHy = HaloY(0, 1, 0, c, true, c.Pv);
++            double mSx = GlassX(0, 1, 0, c, 0.0, true, c.Pu), mSlab = c.slab / c.Pv, mSpy = Len(c.sp0, c.sp1) / c.Pv;
++            int cx0 = (int)Math.Floor((q.u - 0.5 * fwu) / c.Pu), cy0 = (int)Math.Floor((vl - 0.5 * fwv) / c.Pv);
++            var X = new Axis(); var Y = new Axis();
++            double spx = 0, spy = 0, slabY = 0;
++            for (int a = 0; a < 2; a++)
++            {
++                int i = cx0 + a; double su = i * c.Pu;
++                bool fx = BayHasWindow(i, iF, iL, k0, k1);
++                double O = fx ? Cov(q.u, fwu, su + c.ox0, su + c.ox1) : 0, V = fx ? Cov(q.u, fwu, su + Math.Max(c.ox0, c.ox0 - sx), su + Math.Min(c.ox1, c.ox1 - sx)) : 0;
++                double G = fx ? GlassX(q.u, fwu, su, c, sx, false, c.Pu) : 0;
++                if (fx && c.sp1 > c.sp0) spx += GlassX(q.u, fwu, su, c, 0.0, false, c.Pu);
++                if (a == 0) { X.O0 = O; X.V0 = V; X.G0 = G; } else { X.O1 = O; X.V1 = V; X.G1 = G; }
++                int j = cy0 + a; double sv = j * c.Pv;
++                bool fy = j >= jF && j <= jL;
++                O = fy ? Cov(vl, fwv, sv + c.oy0, sv + c.oy1) : 0; V = fy ? Cov(vl, fwv, sv + Math.Max(c.oy0, c.oy0 - sy), sv + Math.Min(c.oy1, c.oy1 - sy)) : 0;
++                G = fy ? GlassY(vl, fwv, sv, c, sy, false, c.Pv) : 0;
++                double Hh = fy ? HaloY(vl, fwv, sv, c, false, c.Pv) : 0;
++                if (a == 0) { Y.O0 = O; Y.V0 = V; Y.G0 = G; Y.H0 = Hh; } else { Y.O1 = O; Y.V1 = V; Y.G1 = G; Y.H1 = Hh; }
++                if (j >= 0 && j < rows) slabY += Cov(vl, fwv, sv, sv + c.slab);
++                if (fy && c.sp1 > c.sp0) spy += Cov(vl, fwv, sv + c.sp0, sv + c.sp1);
++            }
++            // blended per-axis totals (resolved 2 x 2 coverage -> mean fraction x allowed coverage)
++            double OxE = wu * (X.O0 + X.O1) + (1 - wu) * mOx * Ax, VxE = wu * (X.V0 + X.V1) + (1 - wu) * mVx * Ax, GxE = wu * (X.G0 + X.G1) + (1 - wu) * mGx * Ax;
++            double OyE = wv * (Y.O0 + Y.O1) + (1 - wv) * mOy * Ay, VyE = wv * (Y.V0 + Y.V1) + (1 - wv) * mVy * Ay, GyE = wv * (Y.G0 + Y.G1) + (1 - wv) * mGy * Ay;
++            double HyE = wv * (Y.H0 + Y.H1) + (1 - wv) * mHy * Ay;
++            o.aOpen = OxE * OyE; o.aGlass = GxE * GyE; o.aFrame = Math.Max(0.0, VxE * VyE - o.aGlass);
++            o.aJamb = Math.Max(0.0, (OxE - VxE) * OyE); o.aSillHead = Math.Max(0.0, VxE * (OyE - VyE));
++            o.aSlab = wv * slabY + (1 - wv) * mSlab * Aband;
++            if (c.sp1 > c.sp0) o.aSpandrel = (wu * spx + (1 - wu) * mSx * Ax) * (wv * spy + (1 - wv) * mSpy * Ay);
++
++            // lit probability at the pixel (levels blended by their own fades) and the band means
++            double aT = NocFacadeConstants.FaLit * FactorV2(type) * TowerMul(K);
++            double wg = NocMath.Smoothstep(NocFacadeConstants.FaGroupFadePx0, NocFacadeConstants.FaGroupFadePx1, NocFacadeConstants.FaGroupMinRows * c.Pv / fwv);
++            double gEff = wg > 0 ? 1.0 + (GroupFiltered(K, band, vl, fwv, c) - 1.0) * wg : 1.0;
++            double wz = NocMath.Smoothstep(NocFacadeConstants.FaFadePx0, NocFacadeConstants.FaFadePx1, Math.Min(NocturneConstants.FacadeZoneCols * c.Pu / fwu, NocturneConstants.FacadeZoneRows * c.Pv / fwv));
++            double zEff = wz > 0 ? 1.0 + (ZoneFiltered(K, q.face, band, q.u, vl, fwu, fwv, c) - 1.0) * wz : 1.0;
++            double pEff = aT * gEff * zEff;
++            o.pEff = pEff;
++            C3 hueMean = type == StratumMech ? MeanMechHue(q.wf) : MeanHueV2(q.wf, q.nf);
++            C3 eLitMean = hueMean * NocFacadeConstants.FaBMean;
++            C3 eUnMean = NocFogMath.Pal(NocPal.WinNeutral) * NocFacadeConstants.FaStandby;
++            C3 eGlassMean = eLitMean * pEff + eUnMean * (1 - pEff);
++            C3 albRev = WallToken(s, type) * NocFacadeConstants.FaAoReveal, albFrame = NocFogMath.Pal(NocPal.MetalPaint), albWall = WallToken(s, type);
++            // resolved cells: per-cell glass and spill coverages x the cell state
++            C3 R = new C3(0, 0, 0), kS = new C3(0, 0, 0); double kG = 0;
++            double wuv = wu * wv;
++            if (wuv > 0)
++            {
++                for (int a = 0; a < 2; a++)
++                    for (int b = 0; b < 2; b++)
++                    {
++                        double gx = a == 0 ? X.G0 : X.G1, gy = b == 0 ? Y.G0 : Y.G1;
++                        double ox = a == 0 ? X.O0 : X.O1, oy = b == 0 ? Y.O0 : Y.O1, vx = a == 0 ? X.V0 : X.V1, vy = b == 0 ? Y.V0 : Y.V1, hy = b == 0 ? Y.H0 : Y.H1;
++                        double cg = gx * gy;
++                        C3 cs = SpillCov(ox, oy, vx, vy, gx, gy, hy, q.ky, albRev, albFrame, albWall);
++                        if (cg + cs.r + cs.g + cs.b <= 0) continue;
++                        Win w = WindowV2(cx0 + a, cy0 + b, band, q.face, K, type, q.tEpoch, q.wf, q.nf);
++                        R += w.eLit * (w.lit * cg) + Mul(w.eLit, cs) * w.lit + w.eUn * ((1 - w.lit) * cg);
++                        kG += cg; kS += cs;
++                    }
++            }
++            C3 spillE = SpillCov(OxE, OyE, VxE, VyE, GxE, GyE, HyE, q.ky, albRev, albFrame, albWall);
++            o.emission = R * wuv + eGlassMean * (o.aGlass - wuv * kG) + Mul(eLitMean, spillE - kS * wuv) * pEff;
++            return o;
++        }
++
++        /// <summary>Room-light spill of a lit cell (TEXTURE_PLAN 2.6) as a colour weight: jambs x 0.25, sill x 0.35 or head x 0.15 (by
++        /// the sign of the vertical shift) at the reveal albedo, frame edges x 0.20 at MetalPaint, the rain-scatter halo under the
++        /// opening x 0.02 at the wall albedo. Bilinear in the per-axis coverages, so the 2 x 2 sum equals the product of the sums.</summary>
++        static C3 SpillCov(double ox, double oy, double vx, double vy, double gx, double gy, double hy, double ky, C3 albRev, C3 albFrame, C3 albWall)
++        {
++            double jamb = Math.Max(0.0, (ox - vx) * oy), sh = Math.Max(0.0, vx * (oy - vy)), fr = Math.Max(0.0, vx * vy - gx * gy);
++            double fRev = NocFacadeConstants.FaSpillJamb * jamb + (ky < 0 ? NocFacadeConstants.FaSpillSill : NocFacadeConstants.FaSpillHead) * sh;
++            return albRev * fRev + albFrame * (NocFacadeConstants.FaSpillFrame * fr) + albWall * (NocFacadeConstants.FaHalo * ox * hy);
++        }
++
++        /// <summary>Mean wall albedo (the token; the photo variation has mean 1) of a skin's wall in a stratum.</summary>
++        public static C3 WallToken(in Skin s, int type)
++        {
++            if (type == StratumSection) return NocFogMath.Pal(NocPal.ConcreteDark);
++            switch (s.id)
++            {
++                case SkinS0: return NocFogMath.Pal(NocPal.MetalPaint);
++                case SkinS2: return NocFogMath.Pal(NocPal.MetalPaint) * NocFacadeConstants.FaS2Albedo;
++                case SkinS3: return NocFogMath.Pal(NocPal.Brick);
++                case SkinS4: return NocFogMath.Pal(NocPal.Plaster) * NocFacadeConstants.FaS4Albedo;
++                default: return NocFogMath.Pal(NocPal.ConcreteDark);
++            }
++        }
++
++        /// <summary>Lit-group factor box-filtered over the groups under the v footprint (groups are full-width row intervals).</summary>
++        static double GroupFiltered(uint K, int band, double vl, double fwv, in Cell c)
++        {
++            int rows = (int)Math.Round(c.bandH / c.Pv);
++            int jc = Math.Max(0, Math.Min(rows - 1, (int)Math.Floor(vl / c.Pv)));
++            GroupOf(K, band, jc, out int g, out int st, out int len);
++            double y0 = st * c.Pv, y1 = (st + len) * c.Pv;
++            double cIn = Cov(vl, fwv, y0, y1), cLo = Cov(vl, fwv, y0 - 64 * c.Pv, y0), cHi = Cov(vl, fwv, y1, y1 + 64 * c.Pv);
++            double gLo = g > 0 ? GroupMul(K, band, g - 1) : 1.0, gHi = st + len < rows ? GroupMul(K, band, g + 1) : 1.0;
++            return cIn * GroupMul(K, band, g) + cLo * gLo + cHi * gHi + Math.Max(0.0, 1.0 - cIn - cLo - cHi);
++        }
++
++        /// <summary>Zone level box-filtered over the 2 x 2 zones under the footprint (zone rows per tower, columns per face).</summary>
++        static double ZoneFiltered(uint K, uint face, int band, double u, double vl, double fwu, double fwv, in Cell c)
++        {
++            double zh = NocturneConstants.FacadeZoneRows * c.Pv, zw = NocturneConstants.FacadeZoneCols * c.Pu;
++            double r0 = Math.Floor((vl - 0.5 * fwv) / zh);
++            double acc = 0, wsum = 0;
++            for (int a = 0; a < 2; a++)
++            {
++                double zrl = r0 + a;
++                double cvz = Cov(vl, fwv, zrl * zh, (zrl + 1) * zh);
++                int zrg = band * 16 + (int)zrl;
++                double sh = ZoneShiftV2(face, zrg), ur = ZoneRowU(K, zrg);
++                double c0 = Math.Floor((u - 0.5 * fwu) / zw + sh / NocturneConstants.FacadeZoneCols);
++                for (int b = 0; b < 2; b++)
++                {
++                    double cc = c0 + b;
++                    double cuz = Cov(u, fwu, (NocturneConstants.FacadeZoneCols * cc - sh) * c.Pu, (NocturneConstants.FacadeZoneCols * (cc + 1) - sh) * c.Pu);
++                    double w = cuz * cvz;
++                    acc += w * ZoneZ(ur, ZoneCellU(face, zrg, (int)cc));
++                    wsum += w;
++                }
++            }
++            return acc / Math.Max(wsum, 1e-9);
++        }
++
++        // ------------------------------------------------------------------ schedules and means (TEXTURE_PLAN 2.11)
++        /// <summary>Warm fraction w_f(s) and neutral fraction n_f(s) (LOOK_V2 4): w_f 0.32 to s 400, 0.20 at 880, 0 from 1 250;
++        /// n_f 0.30 to s 880, 0.15 from 1 250 (piecewise linear).</summary>
++        public static double WarmFractionV2(double s) => s <= 400 ? 0.32 : (s <= 880 ? 0.32 - 0.12 * (s - 400) / 480.0 : (s <= 1250 ? 0.20 - 0.20 * (s - 880) / 370.0 : 0.0));
++        public static double NeutralFractionV2(double s) => s <= 880 ? 0.30 : (s <= 1250 ? 0.30 - 0.15 * (s - 880) / 370.0 : 0.15);
++
++        /// <summary>Frontal, unresolved mean radiance of a facade (lit glass + stand-by glass + wall x ambient + the analytic sky
++        /// reflection term) in a region at path position s, for the ambient luminance ambY (beat 2: 0.0223); mode 0 facade or
++        /// 1 section. The share-weighted expectation over skins and strata; the same expectation as the far regime.</summary>
++        public static C3 MeanRadiance(int mode, int region, double s, double ambY = 0.0223)
++        {
++            double wf = WarmFractionV2(s), nf = NeutralFractionV2(s);
++            C3 sum = new C3(0, 0, 0);
++            if (mode == 1)
++            {
++                var sk = SkinOf(0, 1);
++                return BandMeanRadiance(sk, StratumSection, wf, nf, ambY);
++            }
++            for (int k = 0; k < 5; k++)
++            {
++                double share = SkinShare(region, k);
++                var sk = new Skin { id = k, region = region, overrideK = -1, s1Mullion = false };
++                C3 m = BandMeanRadiance(sk, StratumRes, wf, nf, ambY) * NocturneConstants.FacadeShareRes
++                     + BandMeanRadiance(sk, StratumCom, wf, nf, ambY) * NocturneConstants.FacadeShareCom
++                     + BandMeanRadiance(sk, StratumMech, wf, nf, ambY) * NocturneConstants.FacadeShareMech
++                     + BandMeanRadiance(sk, StratumLobby, wf, nf, ambY) * (1.0 - NocturneConstants.FacadeShareRes - NocturneConstants.FacadeShareCom - NocturneConstants.FacadeShareMech);
++                sum += m * share;
++            }
++            return sum;
++        }
++
++        public static double SkinShare(int region, int k)
++        {
++            bool q = region == RegionOQ;
++            double[] t = q ? new[] { 0.0, NocFacadeConstants.FaShareQ0, NocFacadeConstants.FaShareQ1, NocFacadeConstants.FaShareQ2, NocFacadeConstants.FaShareQ3, 1.0 }
++                           : new[] { 0.0, NocFacadeConstants.FaShareD0, NocFacadeConstants.FaShareD1, NocFacadeConstants.FaShareD2, NocFacadeConstants.FaShareD3, 1.0 };
++            return t[k + 1] - t[k];
++        }
++
++        /// <summary>Clear-glass coverage of a cell seen frontally (no shift).</summary>
++        public static double GlassCoverage(in Cell c) => GlassX(0, 1, 0, c, 0, true, c.Pu) * GlassY(0, 1, 0, c, 0, true, c.Pv);
++
++        /// <summary>Frontal mean radiance of an unresolved band of one skin and stratum (whole-bay suppression excluded: an
++        /// infinitely wide face): window term + wall x ambient x 0.96 (URP Lambert) + glass stand-by + the mean analytic sky
++        /// reflection of walls and glass (LOOK_V2 4: 0.0006 per wall area, F0 0.04 x the sky on glass).</summary>
++        public static C3 BandMeanRadiance(in Skin s, int type, double wf, double nf, double ambY)
++        {
++            Cell c = CellOf(s, type);
++            double cg = GlassCoverage(c);
++            if (type == StratumRes && s.id == SkinS1) cg = 0.5 * (cg + GlassCoverage(CellOf(new Skin { id = SkinS1, s1Mullion = true }, type)));
++            double p = NocFacadeConstants.FaLit * FactorV2(type);
++            C3 hue = type == StratumMech ? MeanMechHue(wf) : MeanHueV2(wf, nf);
++            C3 lit = hue * (NocFacadeConstants.FaBMean * p * cg);
++            C3 stand = NocFogMath.Pal(NocPal.WinNeutral) * (NocFacadeConstants.FaStandby * (1 - p) * cg) + NocFogMath.Pal(NocPal.GlassDark) * (0.96 * ambY * (1 - p) * cg);
++            double open = Len(c.ox0, c.ox1) / c.Pu * (Len(c.oy0, c.oy1) / c.Pv);
++            double wallA = 1.0 - open;
++            C3 wall = WallToken(s, type) * (0.96 * ambY * wallA) + new C3(1, 1, 1) * (NocFacadeConstants.FaWallSpec * wallA);
++            C3 glassSpec = new C3(1, 1, 1) * (NocFacadeConstants.FaGlassSpec * cg);
++            return lit + stand + wall + glassSpec;
++        }
+     }
+ }
+diff --git a/Assets/_Game/Scripts/Runtime/Rendering/NocLookGlobals.cs b/Assets/_Game/Scripts/Runtime/Rendering/NocLookGlobals.cs
+new file mode 100644
+index 0000000..85909b1
+--- /dev/null
++++ b/Assets/_Game/Scripts/Runtime/Rendering/NocLookGlobals.cs
+@@ -0,0 +1,77 @@
++// NocLookGlobals: the Look v2 globals of TEXTURE_PLAN 1.6, 7.1 and 7.6 (TP-0), read once from the command line and written as
++// uniform shader globals (never keywords) before the first scene loads:
++//   -tex 0|1            _NocTexDetail  (-1 off, +1 on; default on)
++//   -debug-view N       _NocDebugView  (0 off; 1..10 the debug views of TEXTURE_PLAN 7.1; 9 = overdraw, NocDebugViewFeature)
++//   -facade-v 1|2       _NocFacadeV    (feature flags: 1 = the v1 path, 2 = Look v2; v1 is the default until each package is
++//   -surf-v 1|2         _NocSurfV       accepted, then the default of that flag moves to 2 here)
++//   -foliage-v 1|2      _NocFoliageV
++//   -debug-shaders a,b  the shader names (without "Megastructure/") whose renderers the overdraw view counts (default NocFacade)
++// _NocParity stays 0 in the player (ShaderParityTests set it). A global nobody wrote reads 0 in the shaders, and 0 always means
++// the default there (NocCommon.hlsl), so editor previews and EditMode renders need no setup.
++using System;
++using UnityEngine;
++
++namespace Megastructure
++{
++    public static class NocLookGlobals
++    {
++        /// <summary>Defaults of the feature flags (1 = v1). Each moves to 2 when its package is accepted (TEXTURE_PLAN 7.6).</summary>
++        public const int DefaultFacadeV = 1, DefaultSurfV = 1, DefaultFoliageV = 1;
++        public const int DebugViewMax = 10;
++        /// <summary>Debug view 9 (TEXTURE_PLAN 7.1): overdraw of the chosen renderers, drawn by NocDebugViewFeature.</summary>
++        public const int DebugViewOverdraw = 9;
++
++        public static bool TexDetail { get; private set; } = true;
++        public static int DebugView { get; private set; }
++        public static int FacadeV { get; private set; } = DefaultFacadeV;
++        public static int SurfV { get; private set; } = DefaultSurfV;
++        public static int FoliageV { get; private set; } = DefaultFoliageV;
++        /// <summary>Shader names (full, "Megastructure/..." added) whose renderers debug view 9 counts.</summary>
++        public static string[] OverdrawShaders { get; private set; } = { "Megastructure/NocFacade" };
++
++        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
++        static void Init()
++        {
++            Read();
++            Apply();
++            if (DebugView != 0 || !TexDetail || FacadeV != DefaultFacadeV || SurfV != DefaultSurfV || FoliageV != DefaultFoliageV)
++                Debug.Log(FormattableString.Invariant($"[NOC] NocLookGlobals: tex {(TexDetail ? 1 : 0)} debug-view {DebugView} facade-v {FacadeV} surf-v {SurfV} foliage-v {FoliageV}"));
++        }
++
++        static int Flag(string arg, int fallback)
++        {
++            int v = CliArgs.GetInt(arg, fallback);
++            return v == 1 || v == 2 ? v : fallback;
++        }
++
++        /// <summary>Reads the flags from CliArgs (tests may call CliArgs.Override first).</summary>
++        public static void Read()
++        {
++            TexDetail = CliArgs.GetInt("-tex", 1) != 0;
++            int dv = CliArgs.GetInt("-debug-view", 0);
++            DebugView = dv >= 0 && dv <= DebugViewMax ? dv : 0;
++            FacadeV = Flag("-facade-v", DefaultFacadeV);
++            SurfV = Flag("-surf-v", DefaultSurfV);
++            FoliageV = Flag("-foliage-v", DefaultFoliageV);
++            string ds = CliArgs.Get("-debug-shaders");
++            if (!string.IsNullOrEmpty(ds))
++            {
++                string[] parts = ds.Split(new[] { ';', '+' }, StringSplitOptions.RemoveEmptyEntries);
++                for (int i = 0; i < parts.Length; i++)
++                    parts[i] = parts[i].StartsWith("Megastructure/", StringComparison.Ordinal) ? parts[i] : "Megastructure/" + parts[i];
++                if (parts.Length > 0) OverdrawShaders = parts;
++            }
++        }
++
++        /// <summary>Writes the globals (idempotent).</summary>
++        public static void Apply()
++        {
++            Shader.SetGlobalFloat(ShaderIds.TexDetail, TexDetail ? 1f : -1f);
++            Shader.SetGlobalFloat(ShaderIds.DebugView, DebugView);
++            Shader.SetGlobalFloat(ShaderIds.FacadeV, FacadeV);
++            Shader.SetGlobalFloat(ShaderIds.SurfV, SurfV);
++            Shader.SetGlobalFloat(ShaderIds.FoliageV, FoliageV);
++            Shader.SetGlobalFloat(ShaderIds.Parity, 0f);
++        }
++    }
++}
+diff --git a/Assets/_Game/Shaders/Include/NocCommon.hlsl b/Assets/_Game/Shaders/Include/NocCommon.hlsl
+index d4c954a..cfafc0b 100644
+--- a/Assets/_Game/Shaders/Include/NocCommon.hlsl
++++ b/Assets/_Game/Shaders/Include/NocCommon.hlsl
+@@ -12,6 +12,29 @@ float4 _NocScreen;   // x = render height (px), y = minimum line width (px), z =
+ float4 _NocFloor;    // xyz = linear floor colour (NocFloor), w = LightCal
+ float  _NocKoiK;     // analytic koi light strength (14.2.3), 0 outside beat 7
+ 
++// Look v2 globals (TEXTURE_PLAN 1.6, 7.1, 7.4, 7.6; NocLookGlobals.cs writes them once at start-up). Uniform branches only, never
++// keywords. A global nobody wrote reads 0 (editor previews, EditMode renders): 0 always means the default.
++float  _NocTexDetail;   // -tex 0|1: -1 = texture detail off, +1 or 0 = on
++float  _NocDebugView;   // -debug-view N (7.1): 0 = off, 1..10 = the debug view (raw codes, no fog, floor or grade)
++float  _NocFacadeV;     // -facade-v 1|2: 2 = the Look v2 facade path; 0 or 1 = v1
++float  _NocSurfV;       // -surf-v 1|2: 2 = the Look v2 near-surface path; 0 or 1 = v1
++float  _NocFoliageV;    // -foliage-v 1|2: 2 = the Look v2 foliage path; 0 or 1 = v1
++float  _NocParity;      // ShaderParityTests (7.4): 1 = NocFog and NocFloor skipped, so the output is the shading alone
++
++bool NocTexOn()    { return _NocTexDetail > -0.5; }
++bool NocFacadeV2() { return _NocFacadeV > 1.5; }
++bool NocSurfV2()   { return _NocSurfV > 1.5; }
++bool NocFoliageV2(){ return _NocFoliageV > 1.5; }
++int  NocDebugView(){ return (int)(_NocDebugView + 0.5); }
++
++// Exact sRGB decode (IEC 61966-2-1), component-wise: a display code / 255 -> its linear value (debug views, captures)
++float3 NocSrgbToLinear(float3 c)
++{
++    float3 lo = c / 12.92;
++    float3 hi = pow(abs((c + 0.055) / 1.055), 2.4);
++    return c <= 0.04045 ? lo : hi;
++}
++
+ uint NocPcg(uint v)
+ {
+     uint state = v * 747796405u + 2891336453u;
+diff --git a/Assets/_Game/Shaders/Include/NocLighting.hlsl b/Assets/_Game/Shaders/Include/NocLighting.hlsl
+index 3a66b38..bf74b8f 100644
+--- a/Assets/_Game/Shaders/Include/NocLighting.hlsl
++++ b/Assets/_Game/Shaders/Include/NocLighting.hlsl
+@@ -115,7 +115,10 @@ half3 NocDirect(BRDFData brdfData, InputData inputData)
+     return direct * NocLightCal();
+ }
+ 
+-half3 NocShade(InputData inputData, SurfaceData surfaceData)
++// specOcc (TEXTURE_PLAN 8.3 TP-0) multiplies the specular environment only: the diffuse environment takes s.occlusion, the
++// specular s.occlusion x specOcc (URP's EnvironmentBRDF, split; specOcc = 1 is the old NocShade). NocFacade moves its city term
++// (D-017) from s.occlusion to f.specOcc in FA-1, so far walls keep their ambient.
++half3 NocShadeOcc(InputData inputData, SurfaceData surfaceData, half specOcc)
+ {
+     BRDFData brdfData;
+     InitializeBRDFData(surfaceData, brdfData);
+@@ -124,11 +127,14 @@ half3 NocShade(InputData inputData, SurfaceData surfaceData)
+     half NoV = saturate(dot(inputData.normalWS, inputData.viewDirectionWS));
+     half fresnelTerm = Pow4(1.0h - NoV);
+     half3 indirectSpecular = NocReflection(reflectVector, brdfData.perceptualRoughness);
+-    half3 color = EnvironmentBRDF(brdfData, inputData.bakedGI, indirectSpecular, fresnelTerm) * surfaceData.occlusion;
++    half3 color = inputData.bakedGI * brdfData.diffuse * surfaceData.occlusion
++                + indirectSpecular * EnvironmentBRDFSpecular(brdfData, fresnelTerm) * (surfaceData.occlusion * specOcc);
+ 
+     color += NocDirect(brdfData, inputData);
+     color += surfaceData.emission;
+     return min(color, 1000.0);
+ }
+ 
++half3 NocShade(InputData inputData, SurfaceData surfaceData) { return NocShadeOcc(inputData, surfaceData, 1.0h); }
++
+ #endif
+diff --git a/Assets/_Game/Shaders/Include/NocLitCore.hlsl b/Assets/_Game/Shaders/Include/NocLitCore.hlsl
+index 5654a45..77abedc 100644
+--- a/Assets/_Game/Shaders/Include/NocLitCore.hlsl
++++ b/Assets/_Game/Shaders/Include/NocLitCore.hlsl
+@@ -13,6 +13,15 @@
+ //   optional: #define NOC_HAS_FORWARD_HOOK + half3 NocForwardHook(NocFragData f, SurfaceData s, InputData inputData)
+ //             (replaces NocShade in the forward pass; NocFog and NocFloor still follow); #define NOC_SPECULAR_OFF before
+ //             the forward pass include turns off the GGX point-light specular (NocWet)
++// Look v2 (TEXTURE_PLAN 8.3 TP-0; each is off unless the shader defines it, so no existing picture changes):
++//   optional: #define NOC_PASS_UV1ZW   the vertex stage copies uv1.zw (the facade's y0, y1) into custom.zw before the vertex hook
++//   optional: #define NOC_ALPHA_OUT    the forward pass returns the surface alpha with the opaque colour (alpha to coverage)
++//   optional: #define NOC_FRONT_FACE   the forward pass reads SV_IsFrontFace into f.faceSign (+1 front, -1 back; else +1)
++//   f.specOcc (default 1)            multiplies the specular environment only (NocShadeOcc); s.occlusion stays on both terms
++//   f.debug (default 0)              a hook writes its debug view here: rgb = display codes / 255, a = 1 (TEXTURE_PLAN 7.1);
++//                                    the forward pass returns it, raw, while _NocDebugView > 0 (view 7, the world normal, is
++//                                    written by the template itself)
++//   NocFaceFrame(n, u, P)            the per-pixel facade frame with the measured orientation sign sigma (TEXTURE_PLAN 1.6)
+ // Then each pass does: #define NOC_PASS_FORWARD | NOC_PASS_SHADOW | NOC_PASS_DEPTH | NOC_PASS_DEPTHNORMALS and
+ // #include "Include/NocLitPass.hlsl". Every forward pass ends with NocFog, then NocFloor (14.2.2 order).
+ #ifndef NOC_LIT_CORE_INCLUDED
+@@ -50,8 +59,41 @@ struct NocFragData
+     float3 viewDirWS;
+     float viewDist;
+     float footprint;        // approximate pixel footprint (m) at the fragment
++    float faceSign;         // +1 front face, -1 back face (NOC_FRONT_FACE; +1 otherwise)
++    float specOcc;          // specular-only occlusion (NocShadeOcc), default 1
++    float4 debug;           // debug view output of the hook: rgb = display codes / 255, a = 1 when written
+ };
+ 
+ float3 NocPerturbNormal(NocFragData f, float3 dn) { return normalize(f.normalWS + dn); }
+ 
++// Per-pixel facade frame (TEXTURE_PLAN 1.6). u is the metric face coordinate (uv0.x) and v = world y. The writers disagree on the
++// direction of u (EdgeMesh face A: u grows with z while n = +x; the z 275 notch wall n = -z with u = x; the tongue hull), so the
++// sign is measured: Tp is the horizontal tangent projected into the surface, sigma = sign(ddx(u) ddx(P).Tp + ddy(u) ddy(P).Tp)
++// (+1 when the sum is under 1e-12: an edge-on face is sub-pixel anyway), T = sigma Tp is the direction in which u grows and
++// B = the world up projected into the surface (the direction in which v grows). The frame need not be right-handed: normals
++// and shifts are expressed along dP/du and dP/dv. Takes derivatives: call it before any branch. C# twin NocTexturingMath.FaceFrame.
++struct NocFrame
++{
++    float3 T;       // dP/du direction (unit)
++    float3 B;       // dP/dv direction (unit, projected world up)
++    float sigma;    // +1 or -1
++};
++
++NocFrame NocFaceFrame(float3 n, float u, float3 P)
++{
++    NocFrame fr;
++    float3 t0 = float3(n.z, 0.0, -n.x);
++    float3 tp = t0 - n * dot(n, t0);
++    float lt = dot(tp, tp);
++    tp = lt > 1e-12 ? tp * rsqrt(lt) : float3(1.0, 0.0, 0.0);
++    float3 dPx = ddx(P), dPy = ddy(P);
++    float sg = ddx(u) * dot(dPx, tp) + ddy(u) * dot(dPy, tp);
++    fr.sigma = sg < -1e-12 ? -1.0 : 1.0;
++    fr.T = fr.sigma * tp;
++    float3 bp = float3(0.0, 1.0, 0.0) - n * n.y;
++    float lb = dot(bp, bp);
++    fr.B = lb > 1e-12 ? bp * rsqrt(lb) : float3(0.0, 0.0, 1.0);
++    return fr;
++}
++
+ #endif
+diff --git a/Assets/_Game/Shaders/Include/NocLitPass.hlsl b/Assets/_Game/Shaders/Include/NocLitPass.hlsl
+index 515ad31..c9cad0f 100644
+--- a/Assets/_Game/Shaders/Include/NocLitPass.hlsl
++++ b/Assets/_Game/Shaders/Include/NocLitPass.hlsl
+@@ -3,6 +3,9 @@
+ // Forward order (14.2.2): c = NocShade(...) (or the material's NocForwardHook), then NocFog(c, posWS) (cloud mix + fog), then
+ // NocFloor(c) last; specular AA on the final normal first. NOC_TRANSPARENT returns premultiplied (c alpha, alpha). No shadow maps are rendered in
+ // Nocturne (14.2.3); the ShadowCaster pass is kept so the template stays URP-Lit compatible.
++// Look v2 (TEXTURE_PLAN 8.3 TP-0): uv1 is a float4 (the facade writers' uMin, uMax, y0, y1; xy as before); NOC_PASS_UV1ZW,
++// NOC_ALPHA_OUT, NOC_FRONT_FACE, f.specOcc and f.debug as listed in NocLitCore.hlsl; _NocDebugView > 0 returns the raw debug
++// codes before fog, floor and lighting (7.1); _NocParity skips NocFog and NocFloor (ShaderParityTests, 7.4).
+ #ifndef NOC_LIT_PASS_INCLUDED
+ #define NOC_LIT_PASS_INCLUDED
+ 
+@@ -22,7 +25,7 @@ struct NocAttributes
+     float4 tangentOS  : TANGENT;
+     float4 color      : COLOR;
+     float2 uv0        : TEXCOORD0;
+-    float2 uv1        : TEXCOORD1;
++    float4 uv1        : TEXCOORD1;   // xy as before; zw: the facade's y0, y1 (NOC_PASS_UV1ZW), (0, 1) when the mesh has 2 components
+ #if defined(NOC_INDIRECT)
+     uint instanceID   : SV_InstanceID;
+ #else
+@@ -61,8 +64,11 @@ NocVaryings NocVert(NocAttributes input)
+     v.tangentWS = float4(TransformObjectToWorldDir(input.tangentOS.xyz), input.tangentOS.w);
+ #endif
+     v.color = input.color;
+-    v.uv = float4(input.uv0, input.uv1);
++    v.uv = float4(input.uv0, input.uv1.xy);
+     v.custom = 0;
++#if defined(NOC_PASS_UV1ZW)
++    v.custom.zw = input.uv1.zw;
++#endif
+ #if defined(NOC_HAS_VERTEX_HOOK)
+     NocVertexHook(v);
+ #endif
+@@ -102,13 +108,32 @@ NocFragData NocMakeFrag(NocVaryings i)
+     f.viewDirWS = v / max(f.viewDist, 1e-4);
+     // metres per pixel at the fragment: 2 d tan(vFOV / 2) / H = 2 d / (P[1][1] H)
+     f.footprint = max(f.viewDist * 2.0 / max(abs(UNITY_MATRIX_P[1][1]) * max(_NocScreen.x, 1.0), 1e-4), 1e-5);
++    f.faceSign = 1.0;
++    f.specOcc = 1.0;
++    f.debug = float4(0.0, 0.0, 0.0, 0.0);
+     return f;
+ }
+ 
++// Debug-view output (TEXTURE_PLAN 7.1): display codes / 255 -> the linear value that the sRGB encode of the capture turns back
++// into exactly those codes. View 7 is the world shading normal (128 + 127 n); every other view is whatever the hook wrote into
++// f.debug (0 where it wrote nothing).
++half3 NocDebugOut(NocFragData f, float3 normalWS)
++{
++    float3 codes = NocDebugView() == 7 ? (128.0 + 127.0 * normalWS) / 255.0 : (f.debug.a > 0.5 ? f.debug.rgb : float3(0.0, 0.0, 0.0));
++    return (half3)NocSrgbToLinear(saturate(codes));
++}
++
+ #if defined(NOC_PASS_FORWARD)
++#if defined(NOC_FRONT_FACE)
++half4 NocFrag(NocVaryings i, FRONT_FACE_TYPE isFrontFace : FRONT_FACE_SEMANTIC) : SV_Target0
++#else
+ half4 NocFrag(NocVaryings i) : SV_Target0
++#endif
+ {
+     NocFragData f = NocMakeFrag(i);
++#if defined(NOC_FRONT_FACE)
++    f.faceSign = IS_FRONT_VFACE(isFrontFace, 1.0, -1.0);
++#endif
+ #if defined(NOC_HAS_CLIP_HOOK)
+     NocClipHook(f);
+ #endif
+@@ -139,14 +164,21 @@ half4 NocFrag(NocVaryings i) : SV_Target0
+ #if defined(NOC_HAS_FORWARD_HOOK)
+     half3 c = NocForwardHook(f, s, inputData);      // the material composes its own lighting (NocWet: diffuse + analytic mirror)
+ #else
+-    half3 c = NocShade(inputData, s);
++    half3 c = NocShadeOcc(inputData, s, f.specOcc);
+ #endif
++    // debug views (7.1): raw codes, no fog, floor or grade; a uniform branch after every derivative (the hooks' included)
++    [branch] if (_NocDebugView > 0.5) return half4(NocDebugOut(f, inputData.normalWS), 1.0h);
++    [branch] if (_NocParity < 0.5)
++    {
+ #if !defined(NOC_NO_FOG)
+-    c = NocFog(c, f.positionWS);                   // cloud mix, then fog toward NocSkyColor(ray) (14.2.2, H3)
++        c = NocFog(c, f.positionWS);               // cloud mix, then fog toward NocSkyColor(ray) (14.2.2, H3)
+ #endif
+-    c = NocFloor(c);                               // last (14.2.2)
++        c = NocFloor(c);                           // last (14.2.2)
++    }
+ #if defined(NOC_TRANSPARENT)
+     return half4(c * s.alpha, s.alpha);            // premultiplied (Blend One OneMinusSrcAlpha): the straight colour is floored
++#elif defined(NOC_ALPHA_OUT)
++    return half4(c, s.alpha);                      // alpha to coverage (AlphaToMask On): opaque colour, straight alpha
+ #else
+     return half4(c, 1.0h);
+ #endif
+diff --git a/Assets/_Game/Shaders/Include/NocMirror.hlsl b/Assets/_Game/Shaders/Include/NocMirror.hlsl
+index 648c9fc..1744394 100644
+--- a/Assets/_Game/Shaders/Include/NocMirror.hlsl
++++ b/Assets/_Game/Shaders/Include/NocMirror.hlsl
+@@ -20,6 +20,19 @@
+ #define NOC_SRC_MAX 32
+ #define NOC_WALL_MAX 4
+ 
++// Look v2 wet-floor constants (NocSurfaceConstants, generated into NocSurfaceConstantsGen.hlsl): guarded defaults so this file
++// compiles before the generator includes them (the generated values win; SU removes this block once they are included).
++#ifndef NC_SurfPuddleScale0
++#define NC_SurfPuddleScale0 2.0
++#define NC_SurfPuddleScale1 0.6
++#define NC_SurfRippleCell 0.2
++#define NC_SurfRippleSpeed 0.16
++#define NC_SurfRippleR0 0.01
++#define NC_SurfRippleLife 0.5
++#define NC_SurfRippleLambda 0.012
++#define NC_SurfRipplePeriod 0.6
++#endif
++
+ float4 _NocSrcP0[NOC_SRC_MAX];   // xyz end 0 (m), w = glow half-width rho (m)
+ float4 _NocSrcP1[NOC_SRC_MAX];   // xyz end 1 (= end 0 for a disc)
+ float4 _NocSrcL[NOC_SRC_MAX];    // rgb = L_eff x crossfade weight (linear, <= 3)
+@@ -143,37 +156,54 @@ float3 NocWallMacro(float3 H, float kind, float3 colour, float soft)
+     return colour * (1.0 + amp * cos(k * H.y));
+ }
+ 
+-// (a) + (b): sky and the first wall the lobe axis hits, not yet x F G1.
+-float3 NocMirrorEnv(float3 P, float dEye, NocLobe o)
++// The first registered wall plane hit by the ray P + t r (t > 0): rgb = its macro radiance fogged toward `sky` along the
++// mirror-consistent path (exp(-sigma^2 t (t + 2 dEye))), a = its coverage. softRad is the angular half-width (rad) over which
++// the rectangle's ends and top fade (the lobe width). Look v2 (-surf-v 2, TEXTURE_PLAN 3.3, CRIT0 #8): the fade is at least
++// NOC_WALL_BLEND_RAD wide, so a wall's end blends into the sky (or the next wall) over about 5 deg around its vanishing line
++// instead of switching: a macro plane has no real edge to mirror. FA's glass reflects the canyon and Gulf walls through it
++// (TEXTURE_PLAN 2.7; read-only include for FA).
++#define NOC_WALL_BLEND_RAD 0.0436   // 2.5 deg: the half-width of the 5 deg blend (NocMirrorMath.WallBlendRad)
++float4 NocWallReflect(float3 P, float3 r, float softRad, float dEye, float3 sky)
+ {
+-    float sy = sqrt(o.S.y);
+-    float3 sky = NocSkyColorBlur(o.r, sy);
+-    float3 env = sky;
+     float sig2 = NocMirrorSigma() * NocMirrorSigma();
+-    float bestT = 1e9;
+-    float3 wallCol = 0;
+-    float wallCov = 0;
++    bool v2 = NocSurfV2();
++    float ang = v2 ? max(softRad, NOC_WALL_BLEND_RAD) : softRad;
++    // the nearest hit (t1) and, in v2, the one behind it (t2): a near wall's fading end shows the wall behind it, not the sky
++    float t1 = 1e9, t2 = 1e9;
++    float3 c1 = sky, c2 = sky;
++    float a1 = 0, a2 = 0;
+     int nw = (int)min(_NocWallCount, (float)NOC_WALL_MAX);
+     [loop] for (int i = 0; i < nw; i++)
+     {
+         float4 A = _NocWallA[i], B = _NocWallB[i];
+         float2 nrm = A.zw;
+-        float denom = o.r.x * nrm.x + o.r.z * nrm.y;
+-        if (denom > -1e-4) continue;                                                  // the lobe moves away from this face
++        float denom = r.x * nrm.x + r.z * nrm.y;
++        if (denom > -1e-4) continue;                                                  // the ray moves away from this face
+         float t = ((A.x - P.x) * nrm.x + (A.y - P.z) * nrm.y) / denom;
+-        if (t <= 0.0 || t >= bestT) continue;
+-        float3 H = P + o.r * t;
++        if (t <= 0.0 || t >= t2) continue;
++        float3 H = P + r * t;
+         float2 U = float2(-nrm.y, nrm.x);
+         float u = (H.x - A.x) * U.x + (H.z - A.y) * U.y;
+-        float soft = t * sy + 1e-3;
++        float soft = t * ang + 1e-3;
+         float cov = saturate(0.5 + (B.x - abs(u)) / (2.0 * soft)) * saturate(0.5 + (B.y - H.y) / (2.0 * soft)) * B.w;
+         if (cov <= 0.0) continue;
+-        bestT = t;
+         float Tr = exp(-sig2 * t * (t + 2.0 * dEye));
+-        wallCol = lerp(sky, NocWallMacro(H, B.z, _NocWallC[i].rgb, soft), Tr);
+-        wallCov = cov;
++        float3 col = lerp(sky, NocWallMacro(H, B.z, _NocWallC[i].rgb, t * softRad + 1e-3), Tr);
++        if (t < t1) { t2 = v2 ? t1 : 1e9; c2 = c1; a2 = a1; t1 = t; c1 = col; a1 = cov; }
++        else if (v2) { t2 = t; c2 = col; a2 = cov; }
+     }
+-    return lerp(env, wallCol, wallCov);
++    if (!v2) return float4(c1, a1);                                                   // v1: the nearest wall only
++    float a = a1 + (1.0 - a1) * a2;                                                   // c1 over c2 over the sky
++    return float4((a1 * c1 + (1.0 - a1) * a2 * c2) / max(a, 1e-6), a);
++}
++
++// (a) + (b): sky and the first wall the lobe axis hits, not yet x F G1.
++float3 NocMirrorEnv(float3 P, float dEye, NocLobe o)
++{
++    float sy = sqrt(o.S.y);
++    float3 sky = NocSkyColorBlur(o.r, sy);
++    float4 w = NocWallReflect(P, o.r, sy, dEye, sky);
++    return lerp(sky, w.rgb, w.a);
+ }
+ 
+ // ------------------------------------------------------------------ puddles and ripples (R1 2.6)
+@@ -185,6 +215,45 @@ float NocPuddleNoise(float2 xz)
+     return 0.62 * NocValueNoise(a) + 0.38 * NocValueNoise(b);
+ }
+ 
++// Look v2 puddle noise (TEXTURE_PLAN 3.3): two rotated octaves at NC_SurfPuddleScale0 / 1 (2.0 / 0.6 m; v1 4.0 / 1.3 m read as
++// camouflage blots, CRIT0 #8, GB-10). NocWet adds the height bias 0.35 (0.5 - h) of the material's own height map, so joints and
++// low spots fill first, and thresholds the sum at its row's measured _PuddleTh (35 % +- 2 %). Twin: NocSurfaceMath.PuddleNoise.
++float NocPuddleNoise2(float2 xz)
++{
++    float2 a = float2(0.96 * xz.x + 0.28 * xz.y, -0.28 * xz.x + 0.96 * xz.y) / NC_SurfPuddleScale0 + 7.3;
++    float2 b = float2(0.6 * xz.x - 0.8 * xz.y, 0.8 * xz.x + 0.6 * xz.y) / NC_SurfPuddleScale1 + 31.7;
++    return 0.62 * NocValueNoise(a) + 0.38 * NocValueNoise(b);
++}
++
++// Look v2 rain ripples (TEXTURE_PLAN 3.3, CRIT0 #29): many small faint wavelets instead of 0.25 m target rings: one ring per
++// NC_SurfRippleCell cell every NC_SurfRipplePeriod / rho s, radius NC_SurfRippleR0 + NC_SurfRippleSpeed age over a life of
++// NC_SurfRippleLife (<= 0.09 m), wavelength NC_SurfRippleLambda, amplitude falling with the radius (the energy spreads over
++// the ring). Every ring centre lies in the middle half of its cell, so the 2 x 2 cells around the nearest corner hold every
++// ring that reaches xz (0.15 m >= R + 1.5 lambda). Slope of the height field (xz); 0 when rho is 0. Twin: NocSurfaceMath.Ripple.
++float2 NocRippleGrad2(float2 xz, float t, float rho)
++{
++    float2 g = 0;
++    float cell = NC_SurfRippleCell;
++    float2 base = floor(xz / cell + 0.5) - 1.0;
++    float period = NC_SurfRipplePeriod / max(rho, 0.05);
++    [unroll] for (int j = 0; j < 2; j++)
++    [unroll] for (int i = 0; i < 2; i++)
++    {
++        int2 c = int2(base) + int2(i, j);
++        uint h = NocPcg2(c.x + 7919, c.y - 104729);
++        float2 centre = (float2(c) + 0.25 + 0.5 * float2(NocU01(h), NocU01(NocPcg(h + 11u)))) * cell;
++        float age = fmod(t + NocU01(NocPcg(h + 23u)) * period, period);
++        float life = saturate(1.0 - age / NC_SurfRippleLife);
++        float R = NC_SurfRippleR0 + NC_SurfRippleSpeed * age;
++        float2 dv = xz - centre;
++        float r = length(dv);
++        float x = (r - R) / NC_SurfRippleLambda;
++        float s = exp(-1.5 * x * x) * sin(6.2831853 * x) * life * life * (NC_SurfRippleR0 / (NC_SurfRippleR0 + R));
++        g += s * dv / max(r, 1e-4);
++    }
++    return g;
++}
++
+ // Rain-ring slope (gradient of the height, xz) from the 2 x 2 cells around the nearest cell corner; 0 when rho is 0.
+ float2 NocRippleGrad(float2 xz, float t, float rho)
+ {
+diff --git a/Assets/_Game/Shaders/NocDebugView.shader b/Assets/_Game/Shaders/NocDebugView.shader
+new file mode 100644
+index 0000000..a6c36a3
+--- /dev/null
++++ b/Assets/_Game/Shaders/NocDebugView.shader
+@@ -0,0 +1,87 @@
++// NocDebugView - the passes of NocDebugViewFeature (TEXTURE_PLAN 7.1, TP-0). Not a scene material: the feature creates its own
++// material from this shader (Always Included like every Megastructure/* shader).
++//   0 Count       override material of the overdraw renderers, drawn in the opaque order (CommonOpaque: quantised front to back)
++//                 with ZTest LEqual and ZWrite On into a cleared depth: R += 1 per fragment that passes the depth test, i.e. per
++//                 fragment the facade forward pass would shade without a prepass (no depth priming, D-008)
++//   1 Complexity  the same renderers with ZTest Always: G += 1 per fragment (depth complexity, an upper bound)
++//   2 Copy        full screen: the debug colour saved before the rain and the grade (linear) back into the camera colour
++//   3 Overdraw    full screen: codes R = 8 x shaded count, G = 8 x complexity (both capped at 255), B = 255 where a counted
++//                 renderer covers the pixel; written as the linear value whose sRGB encode is that code
++// No keywords, no instancing; samplers: none (Load only).
++Shader "Megastructure/NocDebugView"
++{
++    Properties { }
++
++    HLSLINCLUDE
++    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
++    #include "Include/NocCommon.hlsl"
++
++    Texture2D<float4> _NocDbgSrc;
++
++    struct RendAttr { float4 positionOS : POSITION; };
++    float4 RendVert(RendAttr a) : SV_POSITION { return TransformWorldToHClip(TransformObjectToWorld(a.positionOS.xyz)); }
++
++    float4 FullVert(uint id : SV_VertexID) : SV_POSITION
++    {
++        float2 uv = float2((id << 1) & 2, id & 2);
++        return float4(uv * 2.0 - 1.0, UNITY_NEAR_CLIP_VALUE, 1.0);
++    }
++
++    float4 FragCount(float4 pos : SV_POSITION) : SV_Target { return float4(1.0, 0.0, 0.0, 0.0); }
++    float4 FragComplexity(float4 pos : SV_POSITION) : SV_Target { return float4(0.0, 1.0, 0.0, 0.0); }
++    float4 FragCopy(float4 pos : SV_POSITION) : SV_Target { return float4(_NocDbgSrc.Load(int3(pos.xy, 0)).rgb, 1.0); }
++    float4 FragOverdraw(float4 pos : SV_POSITION) : SV_Target
++    {
++        float2 n = _NocDbgSrc.Load(int3(pos.xy, 0)).rg;
++        float3 codes = float3(min(8.0 * round(n.x), 255.0), min(8.0 * round(n.y), 255.0), n.y > 0.5 ? 255.0 : 0.0) / 255.0;
++        return float4(NocSrgbToLinear(codes), 1.0);
++    }
++    ENDHLSL
++
++    SubShader
++    {
++        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
++
++        Pass
++        {
++            Name "Count"
++            ZTest LEqual ZWrite On Cull Back Blend One One ColorMask R
++            HLSLPROGRAM
++            #pragma target 4.5
++            #pragma vertex RendVert
++            #pragma fragment FragCount
++            ENDHLSL
++        }
++        Pass
++        {
++            Name "Complexity"
++            ZTest Always ZWrite Off Cull Back Blend One One ColorMask G
++            HLSLPROGRAM
++            #pragma target 4.5
++            #pragma vertex RendVert
++            #pragma fragment FragComplexity
++            ENDHLSL
++        }
++        Pass
++        {
++            Name "Copy"
++            ZTest Always ZWrite Off Cull Off
++            HLSLPROGRAM
++            #pragma target 4.5
++            #pragma vertex FullVert
++            #pragma fragment FragCopy
++            ENDHLSL
++        }
++        Pass
++        {
++            Name "Overdraw"
++            ZTest Always ZWrite Off Cull Off
++            HLSLPROGRAM
++            #pragma target 4.5
++            #pragma vertex FullVert
++            #pragma fragment FragOverdraw
++            ENDHLSL
++        }
++    }
++    Fallback Off
++}
+diff --git a/Tools/texprep/foliage.json b/Tools/texprep/foliage.json
+new file mode 100644
+index 0000000..71e053b
+--- /dev/null
++++ b/Tools/texprep/foliage.json
+@@ -0,0 +1,49 @@
++{
++  "_comment": "FO texprep config (TEXTURE_PLAN 1.2, 1.4 step 7, 4; LOOK_V2 5.1, 5.4; TEXTURES.md final sets LeafSet024 / LeafSet029). DRAFT until TP-0 publishes the texprep schema: field names follow TEXTURE_PLAN 1.4 and SU's surface.json and are renamed to TP's schema when texprep.py lands. Bark and Moss are SU rows (surface.json). One processed set per key: a 2 x 2 flipbook of cluster sprites (cells = sprites), each sprite = one leaf-cluster card of `spriteMetres` metres composed from the source atlas leaves at true leaf size (source leaf ~0.13 m on the 0.40 m LeafSet024 atlas, drawn at `leafScale` x). Opacity -> alpha (straight, linear in BC7), colour push-pull dilated into alpha 0; normals rotated in-plane with each leaf; height and AO from the stacking order (lower leaves darker, AO = 1 - aoDepth x layers above, then the class contrast). contrast = luminance std / mean of the albedo variation over alpha > 0.5 texels (leaves 0.40); satMax = mean HSV saturation cap of token x 2 x variation (0.45); smooth = absolute perceptual smoothness range (dry; LOOK_V2 5.1 leaves roughness 0.60 dry)",
++  "owner": "FO",
++  "sets": {
++    "LeafCrown": {
++      "source": "ambientcg_LeafSet024", "sourceMetres": 0.40, "sourceGrid": [3, 3],
++      "maps": { "albedo": "Color", "normal": "NormalGL", "rough": "Roughness", "height": "Displacement", "opacity": "Opacity" },
++      "leaves": [0, 1, 2, 3, 4, 5, 6, 7, 8], "maskLeaves": [],
++      "res": 2048, "flipbook": [2, 2], "sprites": 4, "spriteMetres": 2.0, "tile": 2.0,
++      "compose": {
++        "seed": 24,
++        "leafScale": [1.0, 1.3],
++        "leavesPerSprite": [48, 64, 72, 80],
++        "twigs": [3, 4, 3, 5], "twigColour": "bark", "twigWidthMetres": [0.006, 0.012],
++        "shape": "lobed", "lobes": [3, 5], "fillRadius": 0.40, "edgeFalloff": 0.10,
++        "borderPx": 24,
++        "leafAngleSpread": 70, "leafTiltShade": 0.25,
++        "aoDepth": 0.10, "aoMin": 0.55,
++        "hueJitter": 0.04, "valueJitter": 0.10,
++        "coverTarget": [0.50, 0.62]
++      },
++      "antiTiling": "none", "rotate": false, "metalFromMap": false, "alpha": true, "mipPreserveCoverage": true, "alphaRef": 0.5,
++      "class": "leaves", "contrast": 0.40, "satMax": 0.45, "smooth": [0.30, 0.48],
++      "rows": ["Leaves", "LeafCore"]
++    },
++    "LeafIvy": {
++      "source": "ambientcg_LeafSet029", "sourceMetres": 0.25, "sourceGrid": [3, 3],
++      "maps": { "albedo": "Color", "normal": "NormalGL", "rough": "Roughness", "height": "Displacement", "opacity": "Opacity", "scattering": "Scattering" },
++      "leaves": "all except the two autumn leaves (TEX-R)", "maskLeaves": "autumn",
++      "res": 2048, "flipbook": [2, 2], "sprites": 4, "spriteMetres": 1.2, "tile": 1.2,
++      "compose": {
++        "seed": 29,
++        "leafScale": [0.9, 1.2],
++        "leavesPerSprite": [40, 52, 60, 70],
++        "twigs": [2, 3, 2, 3], "twigColour": "bark", "twigWidthMetres": [0.003, 0.006],
++        "shape": "hanging", "fillRadius": 0.42, "edgeFalloff": 0.10,
++        "borderPx": 24,
++        "leafAngleSpread": 50, "leafTiltShade": 0.25,
++        "aoDepth": 0.10, "aoMin": 0.55,
++        "hueJitter": 0.04, "valueJitter": 0.10,
++        "coverTarget": [0.45, 0.60],
++        "scatteringToMaskB": true
++      },
++      "antiTiling": "none", "rotate": false, "metalFromMap": false, "alpha": true, "mipPreserveCoverage": true, "alphaRef": 0.5,
++      "class": "leaves", "contrast": 0.40, "satMax": 0.45, "smooth": [0.30, 0.48],
++      "rows": ["Leaves"]
++    }
++  }
++}

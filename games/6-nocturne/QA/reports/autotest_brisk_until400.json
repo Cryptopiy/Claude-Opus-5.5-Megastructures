@@ -2,9 +2,9 @@
   "tool": "Megastructure.AutoTestRunner",
   "report": "autotest_brisk_until400",
   "pass": true,
-  "started": "2026-11-16T03:17:41.618Z",
-  "finished": "2026-11-16T03:20:24.176Z",
-  "realSeconds": 162.552896,
+  "started": "2026-11-21T21:26:13.002Z",
+  "finished": "2026-11-21T21:28:58.997Z",
+  "realSeconds": 165.987915,
   "summary": "mode=brisk_until400 trigger=-1.000s stop=160.100s (expected 598.90 / 601.30) ending=n/as beats=3 errors=0",
   "env": {
     "unity": "6000.6.0f1",
@@ -21,7 +21,7 @@
     "seed": 1,
     "freezeDither": true,
     "freezeAmbient": false,
-    "args": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\Builds\\Nocturne\\Nocturne.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\Logs\\player-INT_smoke01.log -report-dir W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\QA\\reports -autotest -brisk -autotest-until 400"
+    "args": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\Builds\\Nocturne\\Nocturne.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\Logs\\player-lead-Nocturne-smoke.log -report-dir W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\reports -autotest -brisk -autotest-until 400"
   },
   "mode": "brisk_until400",
   "speed": 2.5,
@@ -56,11 +56,11 @@
     {"s":1260, "runnerT":null, "expectedT":504.1},
     {"s":1497, "runnerT":null, "expectedT":598.9}
   ],
-  "loadSeconds": 1.757361,
+  "loadSeconds": 4.911993,
   "beats": [
-    {"beat":1, "name":"alley", "boundary":0, "enteredS":0, "enteredT":0, "crossingT":0, "directorT":0.016666, "events":1},
-    {"beat":2, "name":"boulevard", "boundary":120, "enteredS":120.000008, "enteredT":48.1, "crossingT":48.099997, "directorT":48.166669, "events":1},
-    {"beat":3, "name":"edge", "boundary":400, "enteredS":400.000015, "enteredT":160.1, "crossingT":160.099994, "directorT":160.166675, "events":1},
+    {"beat":1, "name":"alley", "boundary":0, "enteredS":0, "enteredT":0, "crossingT":0, "directorT":0.137351, "events":1},
+    {"beat":2, "name":"boulevard", "boundary":120, "enteredS":120.000008, "enteredT":48.1, "crossingT":48.099997, "directorT":48.287354, "events":1},
+    {"beat":3, "name":"edge", "boundary":400, "enteredS":400.000015, "enteredT":160.1, "crossingT":160.099994, "directorT":160.287359, "events":1},
     {"beat":4, "name":"skybridge", "boundary":560, "enteredS":null, "enteredT":null, "crossingT":null, "directorT":null, "events":0},
     {"beat":5, "name":"garden", "boundary":880, "enteredS":null, "enteredT":null, "crossingT":null, "directorT":null, "events":0},
     {"beat":6, "name":"signs", "boundary":1080, "enteredS":null, "enteredT":null, "crossingT":null, "directorT":null, "events":0},
@@ -68,7 +68,7 @@
   ],
   "coverage": "CoverageCheck(1 params) -> Boolean, misses = 0",
   "coverageMisses": 0,
-  "gcAlloc": {"mode":"mono-heap", "steadyFrames":9304, "bytesPerFrame":33.458298, "engineBytesPerFrame":32, "excessBytesPerFrame":1.458298, "steadySeconds":155.079132, "worstFrameBytes":8192, "framesAllocating":75, "totalBytes":311296, "collections":0},
+  "gcAlloc": {"mode":"mono-heap", "steadyFrames":9304, "bytesPerFrame":37.420464, "engineBytesPerFrame":32, "excessBytesPerFrame":5.420464, "steadySeconds":155.077677, "worstFrameBytes":8192, "framesAllocating":82, "totalBytes":348160, "collections":0},
   "devices": "keyboard=yes mouse=yes gamepad=no",
   "checks": [
     {"name":"reachedUntil", "ok":true, "required":true, "detail":"s=400.000 at t=160.10 s"},
@@ -80,12 +80,12 @@
     {"name":"beatsAtBoundaries", "ok":true, "required":true, "detail":"entered at s = 0.000, 120.000, 400.000"},
     {"name":"noSafetySnaps", "ok":true, "required":true, "detail":"0 safety snaps"},
     {"name":"noCameraSphereContacts", "ok":true, "required":true, "detail":"0 frames"},
-    {"name":"gcAllocPerFrame", "ok":true, "required":true, "detail":"mode mono-heap, steady frames 9304, mean 33.5 B/frame (engine input box 32, excess 1.5), worst 8192 B, frames allocating 75, total 311296 B, GC collections 0 over 155.1 s (excess over the engine constant <= 1.0 B/frame + 400 B/s = 7.67 B/frame)"},
+    {"name":"gcAllocPerFrame", "ok":true, "required":true, "detail":"mode mono-heap, steady frames 9304, mean 37.4 B/frame (engine input box 32, excess 5.4), worst 8192 B, frames allocating 82, total 348160 B, GC collections 0 over 155.1 s (excess over the engine constant <= 1.0 B/frame + 400 B/s = 7.67 B/frame)"},
     {"name":"noErrorLogs", "ok":true, "required":true, "detail":"0 error/exception/assert messages"},
     {"name":"noKillVolumeEvents", "ok":true, "required":true, "detail":"PathGuide.KillCount = 0"},
     {"name":"colliderCoverage", "ok":true, "required":true, "detail":"CoverageCheck(1 params) -> Boolean, misses = 0"},
     {"name":"inputDevices", "ok":true, "required":false, "detail":"keyboard=yes mouse=yes gamepad=no"},
-    {"name":"loadUnder15s", "ok":true, "required":false, "detail":"1.76 s (T-LOAD)"}
+    {"name":"loadUnder15s", "ok":true, "required":false, "detail":"4.91 s (T-LOAD)"}
   ],
   "errorsLogged": 0,
   "warningsLogged": 0,

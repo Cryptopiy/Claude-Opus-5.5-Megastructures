@@ -31,8 +31,16 @@ luminance series (display 0..1), and the 14.10 checks by kind:
     brightening is inside the mask by construction: the luma-step and spike checks see it);
   - thin lines ("lines"): centroid jitter below 0.1 px and frame-to-frame energy variation below 10 percent;
   - "stability" crops: no pixel deviates more than 12 percent from the mean of 5 consecutive frames.
-Signs (photosensitivity), koi and traffic sequences get the generic checks here; their own gates (flashes,
-displacement) arrive with those beats.
+QA fix wave (Logs/fix/QA.md C20-C24, Tools/qa/seq_extra.py): kinds texpan / dolly / static / pan are refused unless captured with
+-rain 0 -freeze-clock; "pan" gets the texpan shimmer computation; one-frame block pops and blinks (32 / 64 px) on the boundary,
+pan, cinematic, dread and signs kinds (WARN on koi / traffic / encode; a blink by the temporal out-and-back rule or AL's sign
+rule); the photosensitivity gates G1-G7 (R4 3.3, D-010; G1 per D-041 (1): a flash is a pair of opposing changes >= 0.1 with the
+darker state < 0.8 inside a 1/3 s window, the R4 1 s pair area gated on a static camera only) on the signs, dread and cinematic
+kinds; the H5 rain image gate (streak count, coverage, minimum length); a montage per sequence (and
+the worst pop blocks at 4 x, an x264 clip for boundary / cinematic / dread) written into the sequence folder, then with
+--delete-frames the frames are deleted and an analysed.done marker written. A sequence whose required gate could not measure
+(texpan / pan without the -capture-ss 2 reference, signs / dread without photosensitivity, rain without -rain-noise-off) reads
+SKIP, never PASS; the report's Result is PASS only when nothing FAILed and nothing required was skipped.
 Writes QA/reports/sequences_<run>.json and .md.  Exit code 1 if any check FAILs.
 """
 import argparse
@@ -48,6 +56,10 @@ import numpy as np  # noqa: E402
 
 import qa_common as qc  # noqa: E402
 from qa_common import PASS, FAIL, SKIP, INFO, WARN, TH, check  # noqa: E402
+import seq_extra as sx  # noqa: E402
+
+# a sequence of these kinds reads SKIP (not PASS) when the named gate did not measure (QA fix wave: no gate passes unmeasured)
+REQUIRED = {"texpan": ("shimmer",), "pan": ("shimmer",), "signs": ("G1",), "dread": ("G1",), "rain": ("rain H5 streak count",)}
 
 _BLOCKS = u"▁▂▃▄▅▆▇█"
 
@@ -130,9 +142,9 @@ def _kind(seq):
     if k:
         return k
     n = seq["name"].lower()
-    for key in ("texpan", "dolly", "static", "pan", "encode", "signs", "rain", "koi", "traffic"):
+    for key in ("texpan", "dolly", "static", "pan", "encode", "signs", "rain", "koi", "traffic", "dread", "cin"):
         if key in n:
-            return key
+            return "cinematic" if key == "cin" else key
     if n in ("start", "end"):
         return "edge"
     return "boundary"
@@ -379,7 +391,8 @@ def texpan_checks(res, seq, ref_seq=None, th=TH, quiet=False):
         else:
             C.append(check("swimming", SKIP, 0, None, "no textured 64 px block (high-pass std >= %g levels)" % SWIM_TEX_MIN))
     if ref_seq is None:
-        C.append(check("shimmer vs -capture-ss 2 reference", SKIP, None, None, "no --reference given"))
+        C.append(check("shimmer vs -capture-ss 2 reference", SKIP, None, None,
+                       "no --reference given: the gate did not measure (the sequence reads SKIP, not PASS)"))
         return
     try:
         b = texpan_analysis(ref_seq, True)
@@ -407,6 +420,15 @@ def texpan_checks(res, seq, ref_seq=None, th=TH, quiet=False):
     ex = a["std_screen"] - b["std_screen"]
     bm = _block_means(ex, allv, SHIMMER_BLOCK)
     bm[mism] = np.nan
+    # D-037 (14): a minimum-width line (edge lights, cables) has a higher screen-space std than the ss2 line by construction; such
+    # blocks are gated on the stabilised residual below. A line block: >= 2 % of its pixels are ridges of the reference's mean
+    # (a pixel > 8 levels above both pixels 2 px away, horizontally or vertically)
+    rm = b["mean_screen"].astype(np.float32)
+    rx = (rm - np.maximum(np.roll(rm, 2, 1), np.roll(rm, -2, 1))) > 8.0
+    ry = (rm - np.maximum(np.roll(rm, 2, 0), np.roll(rm, -2, 0))) > 8.0
+    lb = _block_means((rx | ry).astype(np.float32), allv, SHIMMER_BLOCK) >= 0.02
+    S["line_block_share"] = float(np.nanmean(lb))
+    bm[lb] = np.nan
     worst = float(np.nanmax(bm))
     wy, wx = np.unravel_index(int(np.nanargmax(bm)), bm.shape)
     lim = float(meta.get("shimmerStdMax", th["shimmer_std_max"]))
@@ -414,8 +436,10 @@ def texpan_checks(res, seq, ref_seq=None, th=TH, quiet=False):
     S["shimmer_excess_block_p99"] = float(np.nanpercentile(bm, 99))
     S["shimmer_excess_mean"] = float(ex.mean())
     C.append(check("shimmer: temporal std above the -capture-ss 2 reference (32 px block max)", PASS if worst <= lim else FAIL,
-                   round(worst, 3), "<= %g levels" % lim, "block at (%d, %d) px; p99 %.3f, mean %.3f (14.10, TEXTURE_PLAN 10 R1)" % (
-                       wx * SHIMMER_BLOCK, wy * SHIMMER_BLOCK, S["shimmer_excess_block_p99"], S["shimmer_excess_mean"])))
+                   round(worst, 3), "<= %g levels" % lim, "block at (%d, %d) px; p99 %.3f, mean %.3f (14.10, TEXTURE_PLAN 10 R1); %.1f %% "
+                   "line blocks gated on the stabilised residual instead (D-037 14)" % (
+                       wx * SHIMMER_BLOCK, wy * SHIMMER_BLOCK, S["shimmer_excess_block_p99"], S["shimmer_excess_mean"],
+                       100.0 * S["line_block_share"])))
     if "std_stab" in a and "std_stab" in b:
         es = _block_means(a["std_stab"] - b["std_stab"], a["valid"] & b["valid"], SHIMMER_BLOCK)
         es[mism] = np.nan
@@ -455,6 +479,12 @@ def dolly_checks(res, seq, bdiffs, th=TH):
         nb[-1] = np.maximum(D[-2], 0.25)
         for i, b in zip(*np.nonzero((D > POP_RATIO * nb) & (D > POP_FLOOR))):
             events.append((int(i) + 1, int(b), float(D[i, b]), float(nb[i, b])))
+    # C20: frame 1 (the first pair after the pose jump) is a start transient: listed apart, not counted
+    start = [e for e in events if e[0] == 1]
+    events = [e for e in events if e[0] != 1]
+    if start:
+        C.append(check("dolly start transient (frame 1, after the pose jump)", INFO, len(start), None,
+                       "not counted (C20: dolly_face30 frame 1 block 30, 52.6 vs 3.0, also under -rain 0 -freeze-clock)"))
     res["summary"]["dolly_local_pop_events"] = len(events)
     ev = sorted(events, key=lambda e: -(e[2] - e[3]))[:10]
     res["dolly_pops"] = [{"frame": e[0], "block": e[1], "diff": round(e[2], 2), "median": round(e[3], 2),
@@ -476,8 +506,16 @@ def analyse_sequence(seq, th=TH, quiet=False, ref_seq=None):
         C.append(check("frames", FAIL if not frames else SKIP, len(frames), ">= 2"))
         res["status"] = qc.worst_status(C)
         return res
+    refuse = sx.conditions_check(kind, meta)
+    if refuse is not None:
+        C.append(refuse)
+        res["refused"] = True
+        res["summary"] = {}
+        res["status"] = FAIL
+        return res
     lines = [_resolve_item(l, 0, 0) for l in meta.get("lines", []) or []]
     stabs = [_resolve_item(s, 0, 0) for s in meta.get("stability", []) or []]
+    extra = None
     luma, luma_lin, mdiff, xdiff = [], [], [], []
     line_ser = [[] for _ in lines]
     stab_crops = [[] for _ in stabs]
@@ -504,8 +542,11 @@ def analyse_sequence(seq, th=TH, quiet=False, ref_seq=None):
         luma.append(float(g.mean() / 255.0))
         Ll = qc.luma_linear(rgb8)
         luma_lin.append(float(Ll.mean()))
+        if extra is None:
+            extra = sx.Extra(kind, meta, W, H, seq["fps"])
+        d = np.abs(g - prev) if prev is not None else None
+        extra.add(idx, rgb8, g, d)
         if prev is not None:
-            d = np.abs(g - prev)
             mdiff.append(float(d.mean()))
             xdiff.append(float(d.max()))
             if bdiffs is not None:
@@ -603,6 +644,7 @@ def analyse_sequence(seq, th=TH, quiet=False, ref_seq=None):
     elif kind == "rain" and rain_base is not None:
         rf = rain_flicker(frames, rain_base, th)
         S.update({"rain_" + k: v for k, v in rf.items()})
+        sx.rain_checks(res, frames, rain_base, meta, th)
         lim = float(meta.get("rainOutsideChangeMax", th["rain_outside_change_max"]))
         C.append(check("rain outside-streak change", PASS if rf["outside_change_max"] <= lim else FAIL,
                        rf["outside_change_max"], "<= %g levels" % lim,
@@ -666,11 +708,23 @@ def analyse_sequence(seq, th=TH, quiet=False, ref_seq=None):
         res["stability"][name] = {"max_rel_dev": worst, "window_start": worst_n}
         C.append(check("stability[%s]" % name, PASS if worst <= tol else FAIL, round(worst, 4), "<= %g" % tol,
                        "5-frame mean, floor %g" % floor))
-    if kind == "texpan":
+    if extra is not None:
+        fs = _frame_s(meta)
+        extra.pop_checks(res, fs, frames)
+        static_cam = (meta.get("mode") == "Static")
+        extra.photo_checks(res, luma, static_cam)
+    if kind in ("texpan", "pan"):
         texpan_checks(res, seq, ref_seq, th, quiet)
     elif kind == "dolly":
         dolly_checks(res, seq, bdiffs, th)
     res["status"] = qc.worst_status(C)
+    req = REQUIRED.get(kind, ())
+    if res["status"] in (PASS, WARN) and req:
+        miss = [c["name"] for c in C if any(c["name"].startswith(r) for r in req) and c["status"] == SKIP]
+        have = [c["name"] for c in C if any(c["name"].startswith(r) for r in req) and c["status"] in (PASS, WARN, FAIL)]
+        if miss or not have:
+            res["status"] = SKIP
+            res["skip_reason"] = "required gate did not measure: %s" % (", ".join(miss) or "/".join(req))
     return res
 
 
@@ -691,15 +745,18 @@ def build_markdown(run, results):
     L = ["# Frame sequences: %s" % run, "",
          "Sequences: %d. Checks: %d PASS, %d FAIL, %d WARN, %d SKIP." % (len(results), cnt[PASS], cnt[FAIL],
                                                                        cnt[WARN], cnt[SKIP]), "",
-         "**Result: %s**" % (FAIL if cnt[FAIL] else (PASS if results else SKIP)), "", "## Summary", ""]
+         "**Result: %s**" % overall_status(results), "",
+         "(PASS only when no check FAILed and every sequence's required gate measured; SKIP = something did not measure.)", "",
+         "## Summary", ""]
     rows = []
     for r in results:
         S = r.get("summary", {})
         rows.append([r["name"], r["kind"], r["n_frames"], qc.fmt(S.get("max_luma_step"), 4), qc.fmt(S.get("mean_diff")),
-                     qc.fmt(S.get("max_diff")), qc.fmt(S.get("max_pixel_diff"), 1), r["status"],
-                     ", ".join(c["name"] for c in r["checks"] if c["status"] == FAIL)])
+                     qc.fmt(S.get("max_diff")), qc.fmt(S.get("max_pixel_diff"), 1),
+                     "%s / %s" % (S.get("pop_events", "-"), S.get("blink_events", "-")), r["status"],
+                     ", ".join(c["name"] for c in r["checks"] if c["status"] == FAIL) or r.get("skip_reason", "")])
     L.append(qc.md_table(["Sequence", "Kind", "Frames", "Max luma step", "Mean diff", "Max diff", "Max px diff",
-                          "Result", "Failed checks"], rows))
+                          "Pops / blinks", "Result", "Failed checks"], rows))
     for r in results:
         L += ["## %s (%s)" % (r["name"], r["status"]), "", "`%s`, %d frames at %g fps, kind %s" % (
             r["dir"], r["n_frames"], r["fps"], r["kind"]), ""]
@@ -709,10 +766,31 @@ def build_markdown(run, results):
         L.append(qc.md_table(["Check", "Status", "Value", "Threshold", "Note"],
                              [[c["name"], c["status"], qc.fmt(c["value"], 4), c["threshold"] or "", c["note"] or ""]
                               for c in r["checks"]]))
+        if r.get("pops"):
+            L += ["", "Worst block events (frame = the later frame of the pair; block = x0, y0, x1, y1 px):", ""]
+            L.append(qc.md_table(["Type", "Frame", "s", "Block px", "Size", "Diff", "Neighbours"],
+                                 [[e["type"], e["frame"], qc.fmt(e.get("s"), 2), e["block_px"], e["k"], qc.fmt(e["diff"], 2),
+                                   qc.fmt(e["neighbours"], 2)] for e in r["pops"][:12]]))
+        for key, label in (("montage", "Montage"), ("crops", "Pop crops (4 x)")):
+            if r.get(key):
+                L += ["", "%s: %s" % (label, ", ".join("`%s`" % p for p in r[key]))]
+        if r.get("clip"):
+            L += ["", "x264 clip: `%s`" % r["clip"]]
+        if r.get("frames_deleted"):
+            L += ["", "Frames deleted after analysis: %d (analysed.done in the folder)" % r["frames_deleted"]]
     return "\n".join(L)
 
 
-def run(paths, run_name=None, out_dir=qc.REPORTS_DIR, quiet=False, reference=None):
+def overall_status(results):
+    allc = [c for r in results for c in r["checks"]]
+    if any(c["status"] == FAIL for c in allc) or any(r.get("status") == FAIL for r in results):
+        return FAIL
+    if not results or any(r.get("status") == SKIP for r in results):
+        return SKIP
+    return PASS
+
+
+def run(paths, run_name=None, out_dir=qc.REPORTS_DIR, quiet=False, reference=None, montage=True, delete_frames=False):
     seq_dirs = qc.resolve_sequence_dirs(paths)
     if run_name is None:
         base = paths[0] if paths else "."
@@ -721,9 +799,14 @@ def run(paths, run_name=None, out_dir=qc.REPORTS_DIR, quiet=False, reference=Non
     results = []
     for d in seq_dirs:
         sq = qc.load_sequence(d)
-        results.append(analyse_sequence(sq, TH, quiet, find_reference(sq, reference) if _kind(sq) == "texpan" else None))
+        res = analyse_sequence(sq, TH, quiet, find_reference(sq, reference) if _kind(sq) in ("texpan", "pan") else None)
+        if montage and not res.get("refused"):
+            sx.finish_sequence(sq, res, _frame_s(sq["meta"]), delete_frames, os.path.join(out_dir, "sequences_%s.md" % run_name))
+        results.append(res)
+        if not quiet:
+            print("[sequences] %s: %s%s" % (sq["name"], res["status"], (" (%d frames deleted)" % res["frames_deleted"]) if res.get("frames_deleted") else ""), flush=True)
     allc = [c for r in results for c in r["checks"]]
-    status = FAIL if any(c["status"] == FAIL for c in allc) else (PASS if results else SKIP)
+    status = overall_status(results)
     js = os.path.join(out_dir, "sequences_%s.json" % run_name)
     md = os.path.join(out_dir, "sequences_%s.md" % run_name)
     qc.write_json(js, {"run": run_name, "status": status, "sequences": results})
@@ -742,12 +825,14 @@ def main(argv=None):
     ap.add_argument("--out-dir", default=qc.REPORTS_DIR)
     ap.add_argument("--quiet", action="store_true")
     ap.add_argument("--reference", nargs="*", help="the -capture-ss 2 run of the same texpans set (capture or sequence folders): the R1 shimmer gate")
+    ap.add_argument("--no-montage", action="store_true", help="skip the montage, crops and clip")
+    ap.add_argument("--delete-frames", action="store_true", help="after the montage, delete each sequence's PNG frames (analysed.done marker)")
     a = ap.parse_args(argv)
     missing = [p for p in a.paths + (a.reference or []) if not os.path.isdir(p)]
     if missing:
         print("not found: %s" % ", ".join(missing), file=sys.stderr)
         return 1
-    r = run(a.paths, a.run, a.out_dir, a.quiet, a.reference)
+    r = run(a.paths, a.run, a.out_dir, a.quiet, a.reference, not a.no_montage, a.delete_frames)
     print("[sequences] %s: %d sequences, %d FAIL checks -> %s" % (r["status"], r["n"], len(r["fails"]), r["md"]))
     for f in r["fails"][:30]:
         print("  FAIL " + f)

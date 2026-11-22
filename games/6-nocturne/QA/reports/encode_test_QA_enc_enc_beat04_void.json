@@ -1,0 +1,282 @@
+{
+ "run": "QA_enc_enc_beat04_void",
+ "status": "FAIL",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat04_void",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_enc_enc_beat04_void\\enc_beat04_void",
+   "checks": [
+    {
+     "name": "x264_crf23[abyss]",
+     "status": "FAIL",
+     "value": 11.508,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 17.26 (run 33 px) (source score 2.238), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code)"
+    },
+    {
+     "name": "x264_crf30[abyss]",
+     "status": "INFO",
+     "value": 13.044,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 19.57 (run 33 px) (source score 2.238), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "vp9_crf31[abyss]",
+     "status": "INFO",
+     "value": 13.64,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 6.13 (max 1.22 code), BandScore 20.46 (run 90 px) (source score 2.238), frame 137; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 6.13 / 1.22 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\x264_crf23.mp4",
+     "encode_s": 10.3,
+     "kbps": 2884.7,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.605268313560957,
+     "decoded": {
+      "abyss": {
+       "direction": "v",
+       "n_strips": 3,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 17.2612700032552,
+       "longest_run_px": 33,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.05810409006614375,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 11.507513335503466,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf23_abyss_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf23_abyss_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf23_abyss_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "x264",
+     "crf": 30,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\x264_crf30.mp4",
+     "encode_s": 7.1,
+     "kbps": 1220.3,
+     "decoded_frames": 240,
+     "mean_abs_error": 2.1143712625385804,
+     "decoded": {
+      "abyss": {
+       "direction": "v",
+       "n_strips": 3,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 19.565385611979163,
+       "longest_run_px": 33,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.058235531047891136,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 13.043590407986109,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf30_abyss_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf30_abyss_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\x264_crf30_abyss_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "vp9",
+     "crf": 31,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\vp9_crf31.webm",
+     "encode_s": 14.0,
+     "kbps": 3294.7,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.376879782343107,
+     "decoded": {
+      "abyss": {
+       "direction": "v",
+       "n_strips": 3,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 6.134969325153374,
+       "steps": 1,
+       "step_max_code": 1.2170861728584725,
+       "bandscore": 20.46012426757813,
+       "longest_run_px": 90,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.1660552046790917,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         6.134969325153374,
+         1.2170861728584725
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 13.640082845052087,
+       "pass": false,
+       "frame": 137
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\vp9_crf31_abyss_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\vp9_crf31_abyss_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat04_void\\enc_beat04_void\\crops\\vp9_crf31_abyss_f00137_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 240,
+   "regions": [
+    {
+     "name": "abyss",
+     "rect": [
+      787,
+      572,
+      980,
+      735
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "abyss": {
+     "direction": "v",
+     "n_strips": 3,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 3.3575192762586794,
+     "longest_run_px": 7,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.06136552480277518,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       0.0,
+       0.0
+      ],
+      "R": [
+       0.0,
+       0.0
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 2.238346184172453,
+     "pass": false,
+     "frame": 239
+    }
+   },
+   "status": "FAIL"
+  }
+ ],
+ "lookv2_encoded": null
+}

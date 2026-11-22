@@ -1,4 +1,4 @@
-// ShotPlan: the capture lists of the harness as pure data (MASTER_PROMPT 11.2, 11.6, 11.12, 14.10, 14.6, 14.7), imported from
+﻿// ShotPlan: the capture lists of the harness as pure data (MASTER_PROMPT 11.2, 11.6, 11.12, 14.10, 14.6, 14.7), imported from
 // Thread with the Nocturne sets. No UnityEngine dependency, so EditMode tests check the plan (every key shot at every
 // resolution, tag format, window lengths, the -sequence names of 14.12, the run-player routing lists).
 //
@@ -30,6 +30,13 @@
 //              steps; seq_dolly_graze, the grazing pass along face B over the bridge deck (x 390-640, yaw 160 = 70 deg off
 //              face B's normal, 12.3 m above the deck so the glass tubes and lamps stay out of the frame)
 //   texclose   8 near stills at 1.5 m (alley wall, podium panel, plaza, bridge deck, tenement brick, noodle bar, trunk, glass tube)
+//              plus AL's two empty rooms behind the alley windows (DREAD 6)
+//   cinematic / cinematic60  (QA fix wave C23) the recorded cinematic camera (SeqMode.Cinematic: the runtime WalkPlanner at
+//              2.5 m/s with GazeSchedule, follower and sway) at 30 / 60 fps over s 96-130, 260-340, 380-440, 470-530, 530-590, 640-730,
+//              860-900, 950-1010, 1050-1110, 1240-1300 and 1490 to the ending (kind "cinematic": block pops, photosensitivity)
+//   dread      (DR's request, C22) the hull pass / sink, the shadow, the panel and the cabins walks at 60 fps, and the cinematic
+//              camera over every sheet lightning and both darkness waves (kind "dread": photosensitivity G1-G7)
+//   -encode-seconds S shortens the encode clips (4K H1 clips at 2 s on a full disk, C19); signs starts its clock at t 445 (SG)
 //   facadesheet  every pose of FA's NocFacadeSheet.Poses() (TEXTURE_PLAN 7.2; run with -facade-sheet; found by reflection, so this
 //              file does not depend on FA's); with -facade-sheet the dolly's 30 deg line runs to the sheet (seq_dolly_sheet30)
 //   pose:NAME:x:y:z:yaw:pitch:fov[:s]  the optional s replaces the path projection of (x, z) (parameters, fog, vFOV, ambient)
@@ -63,7 +70,10 @@ namespace Megastructure
         public QaView View => new QaView(x, y, z, yaw, pitch, fov, width, height);
     }
 
-    public enum SeqMode { Walk = 0, Static = 1, PanPitch = 2, PanYaw = 3, RealStart = 4, RealEnd = 5, Poses = 6 }
+    /// <summary>Cinematic (QA fix wave C23): one pose per frame precomputed by the runtime WalkPlanner in Cinematic mode at 2.5 m/s
+    /// (GazeSchedule, the critically damped follower with its rate limits, the seeded handheld sway) from rest at s 0, the
+    /// footage the video is made of; the ambient clock runs with the walk time.</summary>
+    public enum SeqMode { Walk = 0, Static = 1, PanPitch = 2, PanYaw = 3, RealStart = 4, RealEnd = 5, Poses = 6, Cinematic = 7 }
 
     /// <summary>One frame sequence of the plan.</summary>
     public sealed class SequenceSpec
@@ -114,6 +124,7 @@ namespace Megastructure
                     s = s0; px = x; py = y; pz = z; yawDeg = yaw + panStepDeg * (n - frames / 2); pitchDeg = pitch; fovDeg = fov;
                     return;
                 case SeqMode.Poses:
+                case SeqMode.Cinematic:
                 {
                     int i = Math.Max(0, Math.Min(n, (poseX != null ? poseX.Length : 1) - 1));
                     s = poseS[i]; px = poseX[i]; py = poseY[i]; pz = poseZ[i]; yawDeg = poseYaw[i]; pitchDeg = posePitch[i]; fovDeg = poseFov[i];
@@ -141,6 +152,9 @@ namespace Megastructure
     {
         public int seqWidth = 1920, seqHeight = 1080;
         public bool encode4k;
+        /// <summary>-encode-seconds S (QA fix wave C19): the length of the 10 s encode clips (the 30 s mouth transition scales with
+        /// it); 2 s keeps a 3840 x 2160 clip at 120 frames (about 2 GB of PNG) on a full disk.</summary>
+        public double encodeSeconds = ShotPlan.EncodeSeconds;
         public string[] only;         // keep only tags / sequence names containing one of these
         /// <summary>-facade-sheet is on (FA's sheet is built): the dolly's 30 deg line runs to the sheet instead of face B.</summary>
         public bool facadeSheet;
@@ -181,7 +195,7 @@ namespace Megastructure
         public static readonly string[] SequenceSets = { "boundaries", "statics", "signs", "rain", "koi", "traffic", "encode" };
         /// <summary>Sets that render long enough to go through gpu-guard (Part 2.5: run-player.ps1 $heavySets).</summary>
         public static readonly string[] HeavySets =
-            { "keyshots", "stills", "parity", "all", "everything", "sequences", "boundaries", "transitions", "statics", "pans", "edges", "encode", "signs", "rain", "koi", "traffic", "texpans", "dolly" };
+            { "keyshots", "stills", "parity", "all", "everything", "sequences", "boundaries", "transitions", "statics", "pans", "edges", "encode", "signs", "rain", "koi", "traffic", "texpans", "dolly", "dread", "cinematic", "cinematic60", "ark" };
         /// <summary>Sets that contain 3840x2160 renders (gpu-guard with 6500 MiB free, Part 2.5.1; run-player.ps1 $fourKSets).</summary>
         public static readonly string[] FourKSets = { "keyshots", "stills", "all", "everything" };
 
@@ -205,8 +219,8 @@ namespace Megastructure
             bool keys1080 = false;
             var poses = new List<StillShot>();
             bool parity = false, keys = false, beats = false, bounds = false, statics = false, pans = false, edges = false, encode = false;
-            bool signs = false, rain = false, koi = false, traffic = false;
-            bool texpans = false, dolly = false, texclose = false, sheet = false;
+            bool signs = false, rain = false, koi = false, traffic = false, dread = false, ark = false;
+            bool texpans = false, dolly = false, texclose = false, sheet = false, cine30 = false, cine60 = false;
             string[] parts = (string.IsNullOrEmpty(setList) ? "all" : setList).Split(',');
             for (int i = 0; i < parts.Length; i++)
             {
@@ -235,6 +249,10 @@ namespace Megastructure
                     case "rain": rain = true; break;
                     case "koi": koi = true; break;
                     case "traffic": traffic = true; break;
+                    case "dread": dread = true; break;
+                    case "ark": ark = true; break;
+                    case "cinematic": cine30 = true; break;
+                    case "cinematic60": cine60 = true; break;
                     case "texpans": texpans = true; break;
                     case "dolly": dolly = true; break;
                     case "texclose": texclose = true; break;
@@ -252,6 +270,7 @@ namespace Megastructure
             if (keys1080 && !keys) plan.stills.AddRange(KeyShotStills().FindAll(st => st.variant == "1080"));
             plan.stills.AddRange(poses);
             if (beats) plan.stills.AddRange(BeatStills());
+            if (ark) plan.stills.AddRange(ArkStills());
             if (texclose) plan.stills.AddRange(TexCloseStills());
             if (sheet)
             {
@@ -267,10 +286,14 @@ namespace Megastructure
             if (statics) plan.sequences.AddRange(StaticSequences(w, h));
             if (pans) plan.sequences.AddRange(PanSequences(w, h));
             if (signs) plan.sequences.Add(SignsSequence(w, h));
-            if (rain) plan.sequences.Add(RainSequence(w, h));
+            if (rain) { plan.sequences.Add(RainSequence(w, h)); plan.sequences.Add(AlleySteamSequence(w, h)); }
             if (koi) plan.sequences.AddRange(KoiSequences(w, h));
             if (traffic) plan.sequences.AddRange(TrafficSequences(w, h));
-            if (encode) plan.sequences.AddRange(EncodeClips(opt.encode4k));
+            if (dread) plan.sequences.AddRange(DreadSequences(w, h));
+            if (ark) plan.sequences.AddRange(ArkSequences(w, h));
+            if (cine30) plan.sequences.AddRange(CinematicSequences(w, h, SeqFps));
+            if (cine60) plan.sequences.AddRange(CinematicSequences(w, h, MotionFps));
+            if (encode) plan.sequences.AddRange(EncodeClips(opt.encode4k, opt.encodeSeconds));
             if (texpans) plan.sequences.AddRange(TexPanSequences(w, h));
             if (dolly) plan.sequences.AddRange(DollySequences(w, h, opt.facadeSheet));
             if (edges) plan.sequences.Add(EndSequence(w, h));
@@ -388,8 +411,35 @@ namespace Megastructure
                 for (int f = 0; f < s_freeLookTags.Length; f++) list.Add(PathStill(pre + "_" + s_freeLookTags[f], mid, s_freeLookYaw[f], 0));
                 list.Add(PathStill(pre + "_look_up60", mid, 0, FreeLookUpPitch));
                 if (i == 2 || i == 3) list.Add(PathStill(pre + "_look_down60", mid, 0, FreeLookDownPitch));
+                // BV's request (fix wave C29): the DREAD 6 open states, the tram at its stop with the doors open (s 212, capture mode
+                // open 196.25-226.25) and the terminus lobby (s 362, open 353.75-373.75, bearing 53.5 = heading 90 - 36.5)
+                if (i == 1) { list.Add(PathStill(pre + "_dread_dwell", 212.0, -10.0, 2.0)); list.Add(PathStill(pre + "_dread_lobby", 362.0, -36.5, 3.0)); }
+            }
+            // FX's request (fix wave C25): the D-034 camera layer as path poses (yaw relative to the heading, the layer's vFOV)
+            for (int c = 0; c < CameraLayerPoses.GetLength(0); c++)
+            {
+                double s = CameraLayerPoses[c, 0];
+                list.Add(CameraStill(BeatPrefix(NocMath.BeatIndex(s)) + "_" + s_cameraLayerTags[c], s, CameraLayerPoses[c, 1], CameraLayerPoses[c, 2], CameraLayerPoses[c, 3], CameraLayerPoses[c, 4]));
             }
             return list;
+        }
+
+        /// <summary>FX's request (C25): s, yaw relative to the heading, pitch, vFOV, lean (m along the gaze's horizontal direction) of the
+        /// D-034 look-ups at KS05, KS09, KS17 and the vertigo at KS10. D-043: the KS09 row is the look at the Ark's coming bow (s 494, rel -80 / +16;
+        /// the tag is kept for the tests and the reports' history).</summary>
+        public static readonly double[,] CameraLayerPoses =
+            { { 291.0, 0.0, 63.0, 66.0, 0.0 }, { 494.0, -80.0, 16.0, 68.0, 0.0 }, { 1330.0, -10.0, 60.0, 66.0, 0.0 }, { 547.0, -95.0, -32.0, 74.0, 0.35 } };
+        static readonly string[] s_cameraLayerTags = { "cam_lookup_ks05", "cam_lookup_ks09", "cam_lookup_ks17", "cam_vertigo_ks10" };
+
+        static StillShot CameraStill(string tag, double s, double yawOffset, double pitch, double fov, double lean)
+        {
+            StillShot st = PathStill(tag, s, yawOffset, pitch);
+            double yr = st.yaw * NocMath.Deg;   // yaw 0 = +z, yaw 90 = +x
+            st.x += lean * Math.Sin(yr);
+            st.z += lean * Math.Cos(yr);
+            st.fov = fov;
+            st.gameFov = false;
+            return st;
         }
 
         static StillShot PathStill(string tag, double s, double yawOffset, double pitch)
@@ -436,6 +486,9 @@ namespace Megastructure
                 sq.boundaryS = crossed.ToArray();
                 list.Add(sq);
             }
+            // AL's request (fix wave C14): the 60 fps re-capture of s 100-110 (the lit transoms beside the walker); shorter than the
+            // 20 s boundary windows by design (TransitionWindows stays the 14.10 list)
+            list.Add(WalkSeq("seq_al_transom", "boundaries", "boundary", "s 100-110 at 1.5 m/s and 60 fps: the lit transoms beside the walker (C14)", 100.0, 110.0, MotionFps, w, h));
             return list;
         }
 
@@ -507,9 +560,17 @@ namespace Megastructure
             return StaticSeq(name, set, kind, purpose, k.s, k.x, k.y, k.z, k.yaw, k.pitch, k.fov, frames, fps, w, h);
         }
 
-        public static SequenceSpec SignsSequence(int w, int h) =>
-            KeyStatic("seq_signs_ks16", "signs", "signs", "KS16 pose, 60 s at 30 fps, clock running (14.10 photosensitivity)", "KS16_signs_wall",
-                      (int)Math.Round(SignsSeconds * SeqFps), SeqFps, w, h);
+        /// <summary>SG's request (fix wave C28): the clock starts at t 445 so the 60 s hold covers the whole D-034 eye (canvas t 448-484);
+        /// the KS16 still stays at its own ambient.</summary>
+        public const double SignsAmbient0 = 445.0;
+
+        public static SequenceSpec SignsSequence(int w, int h)
+        {
+            var sq = KeyStatic("seq_signs_ks16", "signs", "signs", "KS16 pose, 60 s at 30 fps from t 445 (the D-034 eye, t 448-484), clock running (14.10 photosensitivity)", "KS16_signs_wall",
+                               (int)Math.Round(SignsSeconds * SeqFps), SeqFps, w, h);
+            sq.ambient0 = SignsAmbient0;   // SG fix wave C28: NocScreenMath.EyeIn0 - 3 s
+            return sq;
+        }
 
         public static SequenceSpec RainSequence(int w, int h)
         {
@@ -517,6 +578,11 @@ namespace Megastructure
             return StaticSeq("seq_rain_beat04", "rain", "rain", "static camera, rho 1.00, 120 frames at 60 fps, clock running (14.7 H5)",
                              RainS, p.x, p.y, p.z, QaDriveMath.HeadingDeg(RainS), 0.0, NocMath.Fov(RainS), RainFrames, MotionFps, w, h);
         }
+
+        /// <summary>AL's request (fix wave C38): 120 frames at 60 fps at s 20 looking up the alley with the clock running (the rain
+        /// set runs it), so the s 24 vent plume is seen rising. Kind "steam", not AL's "static": the static gate refuses a run
+        /// without -freeze-clock -rain 0 (C20), and this clip needs the clock (the generic luma-step / spike checks run on it).</summary>
+        public static SequenceSpec AlleySteamSequence(int w, int h) => StaticSeq("seq_al_steam_s20", "rain", "steam", "120 frames at 60 fps, s 20 looking up the alley, clock running: the s 24 vent plume rises 0.3-0.6 m/s (C38)", 20.0, 0.0, NocturneConstants.EyeHeight, 20.0, 0.0, -2.0, NocMath.Fov(20.0), StaticFrames, MotionFps, w, h);
 
         static SequenceSpec KeyWalk(string name, string set, string kind, string purpose, string keyTag, double seconds, int w, int h)
         {
@@ -544,6 +610,220 @@ namespace Megastructure
                 KeyWalk("seq_traffic_ks06_tram", "traffic", "traffic", "8 s at 2.5 m/s and 60 fps through KS06 (14.7 H7)", "KS06_tram", TrafficSeconds, w, h),
                 KeyWalk("seq_traffic_ks11_train", "traffic", "traffic", "8 s at 2.5 m/s and 60 fps through KS11 (14.7 H7)", "KS11_bridge_train", TrafficSeconds, w, h),
             };
+        }
+
+        // ------------------------------------------------------------------ dread (DR's request, QA fix wave C22) and cinematic (C23)
+
+        /// <summary>D-034 light events in the walk (DREAD 5.4 sheet lightning, 5.1 darkness waves): s of each event.</summary>
+        public static readonly double[] SheetLightningS = { 205, 345, 553, 790, 1140, 1420 };
+        public static readonly double[] DarknessWaveS = { 300, 1330 };
+        public const double LightningBefore = 5.0, LightningAfter = 10.0;   // m: 6 s at 2.5 m/s (rise 0.4 s, decay 1.5 s inside)
+        public const double DarknessWaveLength = 75.0;                      // m: 30 s at 2.5 m/s (the front runs 20-30 s)
+
+        /// <summary>
+        /// dread (DR's request; kind "dread": the photosensitivity, block-pop and generic checks of Tools/qa/sequences.py): walks at
+        /// 2.5 m/s and 60 fps through KS08 / KS09 (the hull, DREAD 2.1), KS13 (the shadow below, 3.1), the falling panel at s 468-500
+        /// (3.2), plus the cinematic camera (30 fps) over every sheet lightning (5.4) and both darkness waves (5.1).
+        /// </summary>
+        public static List<SequenceSpec> DreadSequences(int w, int h)
+        {
+            // DR's fix-wave request (docs/logs/DR.md, abyss copy): the hull walks at its new course (pass overhead abeam s 561, the sink
+            // after the s 430 launch), the shadow, the panel and face A's cabins; kind "dread" (DR wrote "traffic") so the
+            // photosensitivity gate runs on them
+            var list = new List<SequenceSpec>
+            {
+                WalkSeq("seq_dread_hull_pass", "dread", "dread", "s 544-556 at 2.5 m/s, world yaw 30 / pitch +40: the hull's belly slides north overhead at 18 m/s, abeam at s 561 (DREAD 2.1, D-040 C01)", 544.0, 556.0, MotionFps, w, h, 30.0, true, 40.0, NocturneConstants.CinematicSpeed),
+                WalkSeq("seq_dread_hull_sink", "dread", "dread", "s 450-466 at 2.5 m/s, world yaw 100 / pitch +50: the hull sinks out of the deck after its s 430 launch (DREAD 2.1)", 450.0, 466.0, MotionFps, w, h, 100.0, true, 50.0, NocturneConstants.CinematicSpeed),
+                KeyWalk("seq_dread_ks13_shadow", "dread", "dread", "8 s at 2.5 m/s and 60 fps through KS13: the shadow below drifts south under the strip (DREAD 3.1)", "KS13_bridge_glass", 8.0, w, h),
+                WalkSeq("seq_dread_panel", "dread", "dread", "s 468-500 at 2.5 m/s, world yaw 38 / pitch -8: the falling panel (DREAD 3.2)", 468.0, 500.0, MotionFps, w, h, 38.0, true, -8.0, NocturneConstants.CinematicSpeed),
+                WalkSeq("seq_dread_cabins", "dread", "dread", "s 480-486 at 2.5 m/s, world yaw 330 / pitch +10: face A's shafts, cabins and guide lights (DREAD 2.2)", 480.0, 486.0, MotionFps, w, h, 330.0, true, 10.0, NocturneConstants.CinematicSpeed),
+            };
+            for (int i = 0; i < SheetLightningS.Length; i++)
+            {
+                double s = SheetLightningS[i];
+                list.Add(CinematicSeq("seq_dread_lightning_s" + ((int)s).ToString("D4", CultureInfo.InvariantCulture), "dread", "dread",
+                                      "cinematic camera over the sheet lightning at s " + s.ToString("0", CultureInfo.InvariantCulture) + " (DREAD 5.4, D-010)",
+                                      s - LightningBefore, s + LightningAfter, SeqFps, w, h));
+            }
+            for (int i = 0; i < DarknessWaveS.Length; i++)
+            {
+                double s = DarknessWaveS[i];
+                list.Add(CinematicSeq("seq_dread_darkwave_s" + ((int)s).ToString("D4", CultureInfo.InvariantCulture), "dread", "dread",
+                                      "cinematic camera through the darkness wave from s " + s.ToString("0", CultureInfo.InvariantCulture) + " (DREAD 5.1, 30 s)",
+                                      s, s + DarknessWaveLength, SeqFps, w, h));
+            }
+            return list;
+        }
+
+        // ------------------------------------------------------------------ ark (D-043, FX: the Ark's capture poses and sequences)
+
+        /// <summary>D-043 Ark stills (set "ark") on DR's course (the Ark comes down the rift from the north, bow first, over z 195 at
+        /// s 596; DreadCourse HullCourse): s, yaw relative to the heading (90 on the pier and the bridge: -90 looks north, +90 south),
+        /// pitch, vFOV (0 = the game's FOV(s)). The cinematic gaze poses (s 494, 580, 774, 810) plus free looks at the bow lights
+        /// far out (s 430), near (s 540), overhead (s 590, 600), leaving south (s 615), the belly north from the bridge (s 660, the
+        /// zenith at s 700) and the stern from the garden (s 960, 1020).</summary>
+        public static readonly double[,] ArkPoses =
+        {
+            { 430.0, -83.0, 8.0, 0.0 }, { 494.0, -80.0, 16.0, 0.0 }, { 540.0, -76.0, 26.0, 0.0 }, { 580.0, -57.0, 39.0, 0.0 },
+            { 590.0, -32.0, 64.0, 0.0 }, { 600.0, 20.0, 84.0, 0.0 }, { 615.0, 68.0, 48.0, 0.0 }, { 660.0, -90.0, 20.0, 0.0 },
+            { 700.0, 0.0, 84.0, 0.0 }, { 774.0, -95.0, 28.0, 0.0 }, { 810.0, -77.0, 75.0, 0.0 }, { 960.0, -104.0, 18.0, 0.0 },
+            { 1020.0, -130.0, 34.0, 0.0 },
+        };
+        static readonly string[] s_arkTags =
+        {
+            "ark_s0430_bow_far", "ark_s0494_bow_gaze", "ark_s0540_bow_near", "ark_s0580_bow_gaze",
+            "ark_s0590_bow_over", "ark_s0600_zenith", "ark_s0615_bow_south", "ark_s0660_belly_north",
+            "ark_s0700_belly_zenith", "ark_s0774_belly_north_gaze", "ark_s0810_belly_up_gaze", "ark_s0960_garden_stern",
+            "ark_s1020_garden_stern_late",
+        };
+
+        public static List<StillShot> ArkStills()
+        {
+            int n = ArkPoses.GetLength(0);
+            var list = new List<StillShot>(n);
+            for (int i = 0; i < n; i++)
+            {
+                double s = ArkPoses[i, 0], fov = ArkPoses[i, 3];
+                StillShot st = PathStill(s_arkTags[i], s, ArkPoses[i, 1], ArkPoses[i, 2]);
+                st.set = "ark";
+                if (fov > 0.0) { st.fov = fov; st.gameFov = false; }
+                list.Add(st);
+            }
+            return list;
+        }
+
+        /// <summary>D-043 Ark sequences (set "ark", kind "dread": the photosensitivity, block-pop and generic gates of
+        /// Tools/qa/sequences.py; AB's bridge walks kind "traffic"). The cinematic camera over the three Ark moments of the gaze (the
+        /// coming bow s 470-530, the bow over the bridge's head s 564-600, the long look-up under the belly s 740-846) at 30 fps;
+        /// fixed-gaze walks at 30 fps over the bow lights coming out of the north haze (s 400-460, world yaw 8 / +8) and the bow
+        /// passing overhead (s 584-612, world yaw 0 / +75); AB's proof walks (ARK.md: no streak longer than 80 px within 200 m) along
+        /// the bridge at 60 fps, forward at pitch 2, in four 80 m parts (s 560-880; capture them one at a time with -capture-only, 1 921
+        /// frames each).</summary>
+        public static List<SequenceSpec> ArkSequences(int w, int h)
+        {
+            double v = NocturneConstants.CinematicSpeed;
+            var list = new List<SequenceSpec>
+            {
+                CinematicSeq("seq_ark_cin_coming", "ark", "dread", "cinematic camera s 470-530 at 30 fps: from the panel's tear to the Ark's coming bow up the rift and down to KS09 (D-043)", 470.0, 530.0, SeqFps, w, h),
+                CinematicSeq("seq_ark_cin_bow", "ark", "dread", "cinematic camera s 564-600 at 30 fps: out of gate A, the bow over the bridge's head, back to KS11 (D-043)", 564.0, 600.0, SeqFps, w, h),
+                CinematicSeq("seq_ark_cin_belly", "ark", "dread", "cinematic camera s 740-846 at 30 fps: the long look-up under the belly, down to KS14 (D-043)", 740.0, 846.0, SeqFps, w, h),
+                WalkSeq("seq_ark_emerge", "ark", "dread", "s 400-460 at 2.5 m/s and 30 fps, world yaw 8 / pitch +8: the bow lights come out of the northern haze (D-043)", 400.0, 460.0, SeqFps, w, h, 8.0, true, 8.0, v),
+                WalkSeq("seq_ark_overhead", "ark", "dread", "s 584-612 at 2.5 m/s and 30 fps, world yaw 0 / pitch +75: the bow passes overhead at s 596 (D-043)", 584.0, 612.0, SeqFps, w, h, 0.0, true, 75.0, v),
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                double a = 560.0 + 80.0 * i, b = a + 80.0;
+                list.Add(WalkSeq("seq_ark_bridge60_s" + ((int)a).ToString("D4", CultureInfo.InvariantCulture), "ark", "traffic",
+                                 "s " + a.ToString("0", CultureInfo.InvariantCulture) + "-" + b.ToString("0", CultureInfo.InvariantCulture) +
+                                 " at 2.5 m/s and 60 fps, forward at pitch 2: no traffic streak longer than 80 px within 200 m of the walk (ARK.md, AB)",
+                                 a, b, MotionFps, w, h, 0.0, false, 2.0, v));
+            }
+            return list;
+        }
+
+        /// <summary>C23 windows (s in metres) of the cinematic camera: the 14.6 boundaries, the hold into gate A, the 130 deg swing over
+        /// s 660-700 with the -75 deg dive, the KS15 hold, the D-034 look-ups (FX's C25 request: s 260-340 and 470-590, the KS05 / KS09
+        /// look-ups and the KS10 vertigo); the last runs from s 1490 through the stop ramp to
+        /// CinematicTailSeconds after the stop.</summary>
+        public static readonly double[,] CinematicWindows =
+            { { 96, 130 }, { 260, 340 }, { 380, 440 }, { 470, 530 }, { 530, 590 }, { 640, 730 }, { 860, 900 }, { 950, 1010 }, { 1050, 1110 }, { 1240, 1300 }, { 1490, 1500 } };
+        public const double CinematicTailSeconds = 1.0;
+        public const int CinematicSeed = 1;   // CliArgs.Seed's default: the sway of the recorded cinematic
+
+        /// <summary>cinematic (30 fps) / cinematic60 (60 fps): seq_cin_sNNNN / seq_cin60_sNNNN, kind "cinematic".</summary>
+        public static List<SequenceSpec> CinematicSequences(int w, int h, int fps)
+        {
+            int n = CinematicWindows.GetLength(0);
+            var list = new List<SequenceSpec>(n);
+            string pre = fps == SeqFps ? "seq_cin_s" : "seq_cin" + fps.ToString(CultureInfo.InvariantCulture) + "_s";
+            for (int i = 0; i < n; i++)
+            {
+                double a = CinematicWindows[i, 0], b = CinematicWindows[i, 1];
+                list.Add(CinematicSeq(pre + ((int)a).ToString("D4", CultureInfo.InvariantCulture), "cinematic", "cinematic",
+                                      "cinematic camera (WalkPlanner, 2.5 m/s, GazeSchedule + follower + sway) s " + a.ToString("0", CultureInfo.InvariantCulture) + "-" +
+                                      (b >= NocturneConstants.PathLength ? "ending" : b.ToString("0", CultureInfo.InvariantCulture)) + " at " + fps + " fps (C23)",
+                                      a, b, fps, w, h));
+            }
+            return list;
+        }
+
+        /// <summary>A window [s0, s1] of the cached cinematic trace as fixed per-frame poses (SeqMode.Cinematic). s1 &gt;= PathLength runs
+        /// through the stop ramp to the end of the trace (CinematicTailSeconds after the stop). Frames whose s crosses a 14.6
+        /// boundary feed the activation-frame check (boundaryS).</summary>
+        public static SequenceSpec CinematicSeq(string name, string set, string kind, string purpose, double s0, double s1, int fps, int w, int h)
+        {
+            CinematicTrace(fps, out double[] ts, out double[] tyaw, out double[] tpitch, out double[] tt);
+            int a = 0;
+            while (a < ts.Length - 1 && ts[a] < s0) a++;
+            int b = a;
+            bool toEnd = s1 >= NocturneConstants.PathLength;
+            while (b < ts.Length - 1 && (toEnd || ts[b + 1] <= s1)) b++;
+            int frames = Math.Max(1, b - a + 1);
+            var q = new SequenceSpec
+            {
+                name = name, set = set, kind = kind, purpose = purpose, mode = SeqMode.Cinematic, fps = fps, width = w, height = h,
+                frames = frames, advanceAmbient = true, ambient0 = tt[a], speed = NocturneConstants.CinematicSpeed,
+                poseS = new double[frames], poseX = new double[frames], poseY = new double[frames], poseZ = new double[frames],
+                poseYaw = new double[frames], posePitch = new double[frames], poseFov = new double[frames],
+            };
+            for (int i = 0; i < frames; i++)
+            {
+                double s = ts[a + i];
+                D3 p = NocMath.CorridorToWorld(s, GazeSchedule.LateralOffset(s), NocturneConstants.EyeHeight);
+                q.poseS[i] = s; q.poseX[i] = p.x; q.poseY[i] = p.y; q.poseZ[i] = p.z;
+                q.poseYaw[i] = tyaw[a + i]; q.posePitch[i] = tpitch[a + i]; q.poseFov[i] = NocMath.Fov(s);
+            }
+            q.s0 = q.poseS[0];
+            q.s1 = q.poseS[frames - 1];
+            var bnd = NocturneConstants.BeatBoundaries;
+            var crossed = new List<double>(2);
+            for (int k = 1; k < bnd.Length - 1; k++) if (bnd[k] > q.s0 && bnd[k] <= q.s1) crossed.Add(bnd[k]);
+            q.boundaryS = crossed.ToArray();
+            return q;
+        }
+
+        static int s_cineFps;
+        static double[] s_cineS, s_cineYaw, s_cinePitch, s_cineT;
+        static readonly object s_cineLock = new object();
+
+        /// <summary>
+        /// The whole cinematic walk of the RUNTIME WalkPlanner (the class the AutoWalker drives) at 1 / fps steps, cached per fps:
+        /// from rest at s 0 with GazeSchedule's pose there (the 0.5 s start ramp), fed its own target each frame (the controller
+        /// reaches it in a free lane), through the 14.11 stop ramp to CinematicTailSeconds after the stop. Per frame k (walk time
+        /// k / fps = the scene time of the sway): s, and the camera yaw / pitch the AutoWalker sets (OutYaw / OutPitch, sway included).
+        /// </summary>
+        public static void CinematicTrace(int fps, out double[] s, out double[] yaw, out double[] pitch, out double[] t)
+        {
+            lock (s_cineLock)
+            {
+                if (s_cineS == null || s_cineFps != fps)
+                {
+                    var path = NocLanes.Path;
+                    var plan = new WalkPlanner(path, CinematicSeed);
+                    path.PointAt(0.0, out double px, out double pz);
+                    GazeSchedule.Evaluate(0.0, out double y0, out double p0);
+                    plan.Begin(WalkMode.Cinematic, px, pz, 0.0, 0.0, 0.0, NocMath.WrapDeg(y0), p0, NocturneConstants.CinematicSpeed);
+                    double dt = 1.0 / Math.Max(1, fps);
+                    int cap = (int)Math.Ceiling((NocturneConstants.PathLength / NocturneConstants.CinematicSpeed + 20.0) * fps);
+                    var ls = new List<double>(cap); var ly = new List<double>(cap); var lp = new List<double>(cap); var lt = new List<double>(cap);
+                    double tt = 0.0;
+                    ls.Add(plan.D); ly.Add(plan.OutYaw); lp.Add(plan.OutPitch); lt.Add(0.0);
+                    int tail = -1;
+                    for (int guard = 0; guard < 4 * cap; guard++)
+                    {
+                        plan.Step(dt, plan.TargetX, plan.TargetZ, tt);
+                        tt += dt;
+                        ls.Add(plan.D); ly.Add(plan.OutYaw); lp.Add(plan.OutPitch); lt.Add(tt);
+                        if (plan.Finished)
+                        {
+                            if (tail < 0) tail = (int)Math.Ceiling(CinematicTailSeconds * fps);
+                            else if (--tail <= 0) break;
+                        }
+                    }
+                    s_cineS = ls.ToArray(); s_cineYaw = ly.ToArray(); s_cinePitch = lp.ToArray(); s_cineT = lt.ToArray(); s_cineFps = fps;
+                }
+                s = s_cineS; yaw = s_cineYaw; pitch = s_cinePitch; t = s_cineT;
+            }
         }
 
         // ------------------------------------------------------------------ edges (defect 22)
@@ -575,28 +855,30 @@ namespace Megastructure
 
         // ------------------------------------------------------------------ encode clips (11.12, 14.7 H1 (6))
 
-        public static List<SequenceSpec> EncodeClips(bool also4k)
+        public static List<SequenceSpec> EncodeClips(bool also4k, double seconds = EncodeSeconds)
         {
             var list = new List<SequenceSpec>(24);
+            double encSeconds = seconds > 0.0 ? Math.Min(seconds, ShotPlan.EncodeSeconds) : ShotPlan.EncodeSeconds;
+            double encTransSeconds = ShotPlan.EncodeTransitionSeconds * encSeconds / ShotPlan.EncodeSeconds;
             // 14.7 H1 (6): the sky of KS04, the abyss of KS10, the wall of KS16, the plaza of KS17; plus the darkest and the
             // brightest gradient of every beat (the banding regions of the 14.10 per-beat table)
-            AddEncode(list, also4k, "enc_beat01_slit", "slit cloud above the alley (KS02 view)", "KS02_alley_slit", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat02_axis", "sky above the facades, canyon axis (KS04 view, H1 gate)", "KS04_boulevard_axis", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat02_sky", "cloud ceiling (KS05 view)", "KS05_boulevard_up", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat03_abyss", "dark haze of the abyss (KS10 view, H1 gate)", "KS10_edge_plunge", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat04_void", "abyss below the bridge (KS12 view)", "KS12_bridge_void", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat05_crown", "crown glow (KS15 view)", "KS15_garden_canopy", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat06_wall", "wall panel gradient (KS16 view, H1 gate)", "KS16_signs_wall", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat07_plaza", "sky between koi and spire, plaza (KS17 view, H1 gate)", "KS17_heart_reveal", EncodeSeconds);
+            AddEncode(list, also4k, "enc_beat01_slit", "slit cloud above the alley (KS02 view)", "KS02_alley_slit", encSeconds);
+            AddEncode(list, also4k, "enc_beat02_axis", "sky above the facades, canyon axis (KS04 view, H1 gate)", "KS04_boulevard_axis", encSeconds);
+            AddEncode(list, also4k, "enc_beat02_sky", "cloud ceiling (KS05 view)", "KS05_boulevard_up", encSeconds);
+            AddEncode(list, also4k, "enc_beat03_abyss", "dark haze of the abyss (KS10 view, H1 gate)", "KS10_edge_plunge", encSeconds);
+            AddEncode(list, also4k, "enc_beat04_void", "abyss below the bridge (KS12 view)", "KS12_bridge_void", encSeconds);
+            AddEncode(list, also4k, "enc_beat05_crown", "crown glow (KS15 view)", "KS15_garden_canopy", encSeconds);
+            AddEncode(list, also4k, "enc_beat06_wall", "wall panel gradient (KS16 view, H1 gate)", "KS16_signs_wall", encSeconds);
+            AddEncode(list, also4k, "enc_beat07_plaza", "sky between koi and spire, plaza (KS17 view, H1 gate)", "KS17_heart_reveal", encSeconds);
             // LOOK_V2 7 (PA's request): the CRF-23 test also on the textured walls of KS00 and KS19. KS19's clip is static at its pose
             // (clock running: rain, koi): a 15 m walk at KS19's gaze scales the tenement wall 3 x (23.8 m -> 7.8 m away), so no fixed
             // banding rect stays on the wall (Tools/qa/regions_default.json seq_enc_beat07_goal = KS19's tenement_wall rect)
-            AddEncodeStatic(list, also4k, "enc_beat07_goal", "tenement wall beside the goal window, static at the KS19 pose (LOOK_V2 7 H1)", "KS19_goal_window", EncodeSeconds);
-            AddEncode(list, also4k, "enc_beat01_wall", "alley walls in the bulkhead pools (KS00 view, LOOK_V2 7 H1)", "KS00_alley_start", EncodeSeconds);
+            AddEncodeStatic(list, also4k, "enc_beat07_goal", "tenement wall beside the goal window, static at the KS19 pose (LOOK_V2 7 H1)", "KS19_goal_window", encSeconds);
+            AddEncode(list, also4k, "enc_beat01_wall", "alley walls in the bulkhead pools (KS00 view, LOOK_V2 7 H1)", "KS00_alley_start", encSeconds);
             // 30 s through the alley mouth (fog 5e-3 -> 4.4e-4, LOOK_V2 3), the heaviest gradient transition
-            var a = WalkSeq("enc_trans_mouth", "encode", "encode", "30 s through the alley mouth (fog 5e-3 -> 4.4e-4)", 90.0, 90.0 + EncodeTransitionSeconds * NocturneConstants.WalkSpeed,
+            var a = WalkSeq("enc_trans_mouth", "encode", "encode", "30 s through the alley mouth (fog 5e-3 -> 4.4e-4)", 90.0, 90.0 + encTransSeconds * NocturneConstants.WalkSpeed,
                             EncodeFps, W1080, H1080, 0, false, 14.0);
-            a.frames = (int)Math.Round(EncodeTransitionSeconds * EncodeFps);
+            a.frames = (int)Math.Round(encTransSeconds * EncodeFps);
             list.Add(a);
             if (also4k)
             {
@@ -826,6 +1108,10 @@ namespace Megastructure
             new TexClosePose("tc_tenement_brick", "tenement west face x 1156 (StoneWall)", 1500.0, 1154.5, 3.35, 383.4, 90.0, 0.0, 1.50),
             // the noodle bar's counter front (x -3.03, y 0-1.0) under the window y 1.0-2.3
             new TexClosePose("tc_noodle_bar", "noodle bar counter and window (x -3.0)", 45.0, -1.55, 1.30, 45.0, 270.0, -15.0, 1.53),
+            // AL's request (QA fix wave): the D-034 / DREAD 6 empty rooms head-on through their windows from the far side of the
+            // lane; dist = the horizontal distance to the window wall (QaTests), not 1.5 m
+            new TexClosePose("tc_empty_room_e", "empty room behind the east window z 14.0-15.4 (DREAD 6)", 14.7, -1.0, 1.70, 14.7, 90.0, -6.0, 3.2),
+            new TexClosePose("tc_empty_room_w", "empty room behind the west window z 37.6-39.0 (DREAD 6, in KS01)", 38.3, 1.2, 1.70, 38.3, 270.0, -6.0, 4.2),
             // tree T7 (800, 160): r(14) = 5.01 m (r0 5.589, taper 0.884, flare 1.014; buttress lobes <= 0.17 m), seen from the path side
             new TexClosePose("tc_trunk", "garden trunk T7 at y 14 (bark)", 984.7, 800.0, 14.0, 166.51, 180.0, 0.0, 1.50),
             // the south train tube (axis z 183, y 2, r 4.5): its north face z 187.5, from the gap between the tube and the deck
@@ -876,8 +1162,13 @@ namespace Megastructure
                 if ((a == "-capture-set" || a == "-sequence") && i + 1 < args.Count)
                 {
                     set = true;
-                    if (Array.IndexOf(HeavySets, v) >= 0) heavy = true;
-                    if (Array.IndexOf(FourKSets, v) >= 0) fourK = true;
+                    // a comma list is classified per set (run-player splits it the same way, HT's request)
+                    foreach (string part in v.Split(','))
+                    {
+                        string pv = part.Trim();
+                        if (Array.IndexOf(HeavySets, pv) >= 0) heavy = true;
+                        if (Array.IndexOf(FourKSets, pv) >= 0) fourK = true;
+                    }
                 }
                 if ((a == "-res" || a == "-perf-rt" || a == "-seq-res") && TryWidth(v, out int rw) && rw >= W4K) heavy = fourK = true;
                 if (a == "-screen-width" && int.TryParse(v, NumberStyles.Integer, CultureInfo.InvariantCulture, out int sw) && sw >= W4K) heavy = fourK = true;

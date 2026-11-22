@@ -323,6 +323,9 @@ namespace Megastructure
             mat.SetFloat("_FinBudget", KoiShaderMath.FinBudget);
             mat.SetFloat("_VeilGain", KoiShaderMath.VeilGain);
             mat.SetFloat("_VeilBudget", KoiShaderMath.VeilBudget);
+            mat.SetFloat("_CoreClear", KoiShaderMath.CoreClear);      // fix wave C02: transmission and structure
+            mat.SetFloat("_GhostGain", KoiShaderMath.GhostGain);
+            mat.SetFloat("_GapDepth", KoiShaderMath.GapDepth);
             Mesh mesh = BuildMesh();
             var mr = ctx.AddMesh(root, "koi", mesh, mat);
             mr.allowOcclusionWhenDynamic = false;

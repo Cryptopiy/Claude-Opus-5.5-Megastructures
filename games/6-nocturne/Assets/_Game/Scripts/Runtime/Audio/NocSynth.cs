@@ -61,8 +61,8 @@ namespace Megastructure
         NocMixer m_mixer;
         NocAudioParams m_a, m_b;
         volatile int m_front;
-        int m_callbacks;
-        long m_lastTicks, m_maxTicks;
+        int m_callbacks, m_slow, m_overruns;
+        long m_lastTicks, m_maxTicks, m_windowMaxTicks;
         Exception m_lastError;
         AudioCapture m_capture;
 
@@ -70,6 +70,12 @@ namespace Megastructure
         public int Callbacks => Volatile.Read(ref m_callbacks);
         public double LastCallbackMs => Interlocked.Read(ref m_lastTicks) * 1000.0 / Stopwatch.Frequency;
         public double MaxCallbackMs => Interlocked.Read(ref m_maxTicks) * 1000.0 / Stopwatch.Frequency;
+        /// <summary>Callbacks that took longer than half of their buffer's period (fix wave C52: the budget of a 2160p recording).</summary>
+        public int SlowCallbacks => Volatile.Read(ref m_slow);
+        /// <summary>Callbacks that took longer than their buffer's period (the device would underrun: a dropout).</summary>
+        public int Overruns => Volatile.Read(ref m_overruns);
+        /// <summary>Main thread: the longest callback (ms) since the last call (the heartbeat window), and reset it.</summary>
+        public double TakeWindowMaxMs() => Interlocked.Exchange(ref m_windowMaxTicks, 0) * 1000.0 / Stopwatch.Frequency;
         public int NanResets { get { var m = Volatile.Read(ref m_mixer); return m != null ? m.NanResets : 0; } }
 
         public AudioCapture Capture
@@ -111,6 +117,11 @@ namespace Megastructure
                 long dt = Stopwatch.GetTimestamp() - t0;
                 Interlocked.Exchange(ref m_lastTicks, dt);
                 if (dt > Interlocked.Read(ref m_maxTicks)) Interlocked.Exchange(ref m_maxTicks, dt);
+                if (dt > Interlocked.Read(ref m_windowMaxTicks)) Interlocked.Exchange(ref m_windowMaxTicks, dt);
+                int rate = SampleRate > 0 ? SampleRate : 48000;
+                long period = (long)(data.Length / Math.Max(1, channels)) * Stopwatch.Frequency / rate;
+                if (2 * dt > period) Interlocked.Increment(ref m_slow);
+                if (dt > period) Interlocked.Increment(ref m_overruns);
             }
             catch (Exception e)
             {

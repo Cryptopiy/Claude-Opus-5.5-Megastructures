@@ -1,0 +1,282 @@
+{
+ "run": "QA_enc_enc_beat06_wall",
+ "status": "PASS",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat06_wall",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\captures\\QA_enc_enc_beat06_wall\\enc_beat06_wall",
+   "checks": [
+    {
+     "name": "x264_crf23[wall_panel]",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 7.62 (run 24 px) (source score 1.773), frame 137; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code)"
+    },
+    {
+     "name": "x264_crf30[wall_panel]",
+     "status": "INFO",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 10.91 (run 28 px) (source score 1.773), frame 0; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    },
+    {
+     "name": "vp9_crf31[wall_panel]",
+     "status": "INFO",
+     "value": 0.0,
+     "threshold": "<= 2 steps / 1000, max <= 1.5 code",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 14.21 (run 45 px) (source score 1.773), frame 137; Y 0.00 / 0.00, Cb 0.00 / 0.00, Cr 0.00 / 0.00 (steps/1000 / max code); regression row (the gate is x264 CRF 23)"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\x264_crf23.mp4",
+     "encode_s": 4.7,
+     "kbps": 3443.4,
+     "decoded_frames": 240,
+     "mean_abs_error": 2.0777785815329217,
+     "decoded": {
+      "wall_panel": {
+       "direction": "v",
+       "n_strips": 1,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 7.617948544973542,
+       "longest_run_px": 24,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.3121154855147311,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 5.078632363315695,
+       "pass": false,
+       "frame": 137
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf23_wall_panel_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf23_wall_panel_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf23_wall_panel_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "x264",
+     "crf": 30,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\x264_crf30.mp4",
+     "encode_s": 6.2,
+     "kbps": 1407.5,
+     "decoded_frames": 240,
+     "mean_abs_error": 2.919821023823302,
+     "decoded": {
+      "wall_panel": {
+       "direction": "v",
+       "n_strips": 1,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 10.914377472899726,
+       "longest_run_px": 28,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.01661154213481908,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 7.276251648599818,
+       "pass": false,
+       "frame": 0
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf30_wall_panel_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf30_wall_panel_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\x264_crf30_wall_panel_f00137_x8.png"
+     ],
+     "video_kept": false
+    },
+    {
+     "codec": "vp9",
+     "crf": 31,
+     "video": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\vp9_crf31.webm",
+     "encode_s": 16.4,
+     "kbps": 4614.2,
+     "decoded_frames": 240,
+     "mean_abs_error": 1.7976858281893004,
+     "decoded": {
+      "wall_panel": {
+       "direction": "v",
+       "n_strips": 1,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 0.0,
+       "steps": 0,
+       "step_max_code": 0.0,
+       "bandscore": 14.214078437499994,
+       "longest_run_px": 45,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.31918219083322213,
+       "chan": {
+        "Y": [
+         0.0,
+         0.0
+        ],
+        "Cb": [
+         0.0,
+         0.0
+        ],
+        "Cr": [
+         0.0,
+         0.0
+        ],
+        "R": [
+         0.0,
+         0.0
+        ],
+        "G": [
+         0.0,
+         0.0
+        ],
+        "B": [
+         0.0,
+         0.0
+        ]
+       },
+       "score": 9.476052291666663,
+       "pass": false,
+       "frame": 137
+      }
+     },
+     "crops": [
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\vp9_crf31_wall_panel_f00137_100.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\vp9_crf31_wall_panel_f00137_200.png",
+      "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\integ\\QA\\encode\\QA_enc_enc_beat06_wall\\enc_beat06_wall\\crops\\vp9_crf31_wall_panel_f00137_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 240,
+   "regions": [
+    {
+     "name": "wall_panel",
+     "rect": [
+      268,
+      572,
+      384,
+      670
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "wall_panel": {
+     "direction": "v",
+     "n_strips": 1,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 2.6587964541245777,
+     "longest_run_px": 5,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.01918831642908972,
+     "chan": {
+      "Y": [
+       0.0,
+       0.0
+      ],
+      "Cb": [
+       0.0,
+       0.0
+      ],
+      "Cr": [
+       0.0,
+       0.0
+      ],
+      "R": [
+       0.0,
+       0.0
+      ],
+      "G": [
+       0.0,
+       0.0
+      ],
+      "B": [
+       0.0,
+       0.0
+      ]
+     },
+     "score": 1.772530969416385,
+     "pass": false,
+     "frame": 0
+    }
+   },
+   "status": "PASS"
+  }
+ ],
+ "lookv2_encoded": null
+}

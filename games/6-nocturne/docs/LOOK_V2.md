@@ -548,7 +548,7 @@ only then (3) the palette. Optional, only if that test shows no chroma steps: fa
 | KS | Mean luma | Dominant colours | Accent | Must read |
 |---|---|---|---|---|
 | KS00 alley_start | 16-30 | charcoal brick and render walls (17-22), bulkhead pools (25-45), black wet asphalt with warm streaks | the warm-grey slit of the boulevard far ahead (45-48), a few cold windows | brick courses and render stains within 10 m, transom pools grazing the walls, vertical streaks on the floor, the slit (33 px) |
-| KS01 alley_noodle | 20-34 | the 2 900 K bar pool (80-140 near the bar), charcoal elsewhere | one cyan vending glow, one red sign | bar window interior, sign strokes, warm-lit steam, the bar's streak on the floor, halos in the air |
+| KS01 alley_noodle | 20-36 (D-041 3: the modelled noodle bar is the subject) | the 2 900 K bar pool (80-140 near the bar), charcoal elsewhere | one cyan vending glow, one red sign | bar window interior, sign strokes, warm-lit steam, the bar's streak on the floor, halos in the air |
 | KS02 alley_slit | 22-40 | walls rising into a warm-grey slit of cloud (55-64 over the north-leg glow, billows visible) | cold and warm windows, fire-escape silhouettes | cloud structure, catwalk and roof edges against it, wall texture in window and bulkhead spill |
 | KS03 boulevard_mouth (beat 1) | 24-40 | podium stone and concrete lit by LampWarm, warm-grey sky (44-50) | first blades (white, cyan) | stone texture of the facade base, arcade columns, blades |
 | KS04 boulevard_axis | 30-48 | dark textured towers (walls 22-26, unresolved mass 34) with 18 % lit mixed windows (~100), the luminous lid (55-69 over the axis), the street as a mirror of it | blades: white, cyan, warm white, amber, tungsten; no magenta, no red | face B's window strata dark against the lid, blade glyphs, long lamp streaks on the wet street, lamp halos |
@@ -595,7 +595,8 @@ Per-beat mean-luma windows for all stills of a beat (replacing 14.10's): 1: 14-4
 9. **separation** (KS04, KS05, KS07, KS08, KS17, KS18): median sky luma minus the median of the adjacent unresolved-tower box
    >= 6 codes (boxes set by hand from the 14.10 poses, in the script).
 10. **highlights**: p99 >= 120 (>= 90 in beat 1 and KS13); p99.9 >= 200 in KS04-KS06, KS09-KS10 and KS17-KS19.
-11. **dark cast**: on pixels at luma 12-40, mean (B - G) in -2..+6 codes and |mean (R - G)| <= 4 codes.
+11. **dark cast**: on pixels at luma 12-40, mean (B - G) in -2..+6 codes and |mean (R - G)| <= 4 codes (beat 1: <= 6, D-032 4;
+    beat 5, the green leaves: R - G in -8..+4, D-040 5, and no B - G lower bound, D-041 4).
 12. **Heart discipline** (KS17, KS18): pixels with hue 25-50, sat >= 0.45, luma >= 90 outside the KS17 goal point <= 0.05 %;
     the KS17 goal point (box x 0.43-0.475, y 0.71-0.76 around the projected window at 0.452, 0.736) has >= 4 such pixels and a
     core >= 200; the koi patch pixels in the koi box (hue <= 40 or >= 350, sat >= 0.30, luma >= 60, at least 200 px) have a

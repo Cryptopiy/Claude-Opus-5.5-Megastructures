@@ -1,4 +1,4 @@
-// CaptureHarness: deterministic stills and frame sequences through a RenderTexture
+﻿// CaptureHarness: deterministic stills and frame sequences through a RenderTexture
 // (MASTER_PROMPT 11.2, 11.6, 11.12, 14.10, 14.10; Part 10 items 6, 12, 21, 22, 35, 36).
 //
 // Active only with -capture <dir>. After GameBootstrap.Ready it freezes the player, hides every
@@ -73,6 +73,9 @@ namespace Megastructure
         bool m_flip;
         /// <summary>-capture-ss: render scale per axis (1 or 2) and the largest supersampled render (VRAM, 6500 MiB guard turn).</summary>
         int m_ss = 1;
+        /// <summary>AB's request (fix wave C30): NocStreak's size minima are output pixels; the shader multiplies them by
+        /// max(_NocPxScale, 1), so every supersampled render sets it to the factor and resets it to 1 afterwards.</summary>
+        static readonly int s_pxScale = Shader.PropertyToID("_NocPxScale");
         bool m_refused;
         public const int MaxSupersample = 2, MaxSsRenderWidth = 3840, MaxSsRenderHeight = 2160;
         CapturePlan m_plan;
@@ -193,6 +196,7 @@ namespace Megastructure
             if (Instance == this) { Instance = null; Active = false; }
             ReleaseTargets();
             if (m_writer != null) { m_writer.Dispose(); m_writer = null; }
+            Shader.SetGlobalFloat(s_pxScale, 1f);   // AB's request (C30): no supersample scale outside a capture render
         }
 
         void Update()
@@ -312,6 +316,7 @@ namespace Megastructure
 
             var opt = new CapturePlanOptions { encode4k = CliArgs.Has("-capture-4k"), facadeSheet = CliArgs.Has("-facade-sheet") };
             if (TryParseRes(CliArgs.Get("-seq-res"), out int sw, out int sh)) { opt.seqWidth = sw; opt.seqHeight = sh; }
+            opt.encodeSeconds = CliArgs.GetDouble("-encode-seconds", ShotPlan.EncodeSeconds);
             string only = CliArgs.Get("-capture-only");
             if (!string.IsNullOrEmpty(only)) opt.only = only.Split(',');
             m_plan = ShotPlan.Build(CliArgs.CaptureSet, opt);
@@ -327,10 +332,26 @@ namespace Megastructure
                 if (guard != null) { Note("refused: " + guard); m_failures++; m_refused = true; }
             }
             if (m_ss > 1 && m_plan.parity != null) { m_parityNote = "skipped: -capture-ss " + m_ss + " renders the RT at another size than the window"; m_plan.parity = null; }
+            // AB's request (fix wave C30): shader minimum sizes (NocStreak heads / lamps >= 3 px) are in OUTPUT pixels: render pixels
+            // per output pixel = the supersample factor, set around every capture render (RenderToBuffer) and 1 otherwise
+            Shader.SetGlobalFloat(s_pxScale, 1f);
             bool texSeq = false;
             foreach (SequenceSpec q in m_plan.sequences) if (q.kind == "texpan" || q.kind == "dolly") texSeq = true;
+            // QA fix wave C20: a texture gate captured under the wrong conditions measures rain and the clock, not the camera, so the
+            // run is refused (a gate that cannot measure must not read PASS): texpans / dolly need -freeze-clock -rain 0, the facade
+            // sheet needs -facade-sheet (else the sheet towers are not built: "0 triangles", the stills show fog)
             if (texSeq && (!NocClock.Frozen || !(NocRainState.Override == 0.0)))
-                Note("texpans / dolly measure the camera motion only: run them with -freeze-clock -rain 0 (clock frozen " + NocClock.Frozen + ", rain override " + NocRainState.Override.ToString(CultureInfo.InvariantCulture) + ")");
+            {
+                Note("refused: texpans / dolly measure the camera motion only: run them with -freeze-clock -rain 0 (clock frozen " + NocClock.Frozen + ", rain override " + NocRainState.Override.ToString(CultureInfo.InvariantCulture) + ")");
+                m_failures++; m_refused = true;
+            }
+            bool sheetSet = false;
+            foreach (string st in m_plan.sets) if (st == "facadesheet") sheetSet = true;
+            if (sheetSet && !opt.facadeSheet)
+            {
+                Note("refused: the facadesheet set needs -facade-sheet (the sheet towers are built only with it; without it the poses show fog)");
+                m_failures++; m_refused = true;
+            }
 
             int threads = CliArgs.GetInt("-capture-threads", Math.Max(1, Math.Min(4, SystemInfo.processorCount / 2)));
             long queueBytes = (long)CliArgs.GetInt("-capture-queue-mb", 768) << 20;
@@ -908,43 +929,48 @@ namespace Megastructure
             m_request.destination = m_target;
             if (!RenderPipeline.SupportsRenderRequest(cam, m_request)) { error = "StandardRequest not supported by the active pipeline"; return false; }
             cam.ResetAspect();
-            Submit(cam);
-            if (m_ss > 1)
+            Shader.SetGlobalFloat(s_pxScale, m_ss);   // AB's request (C30): output-pixel minima of NocStreak at the render scale
+            try
             {
-                // -capture-ss 2: MSAA resolve at the render size, then one bilinear Blit to half the size per axis: every output
-                // pixel centre (i + 0.5) / w lands on the shared corner of source texels 2i and 2i + 1 (weights 0.25 each), an
-                // exact 2 x 2 box in linear light; the sRGB target encodes on write
-                Graphics.Blit(m_target, m_resolve);
-                Graphics.Blit(m_resolve, m_srgb);
-            }
-            else Graphics.Blit(m_target, m_srgb);   // MSAA resolve + linear -> sRGB encode on write
-
-            rgba = m_writer.Rent(w * h * 4);
-            if (SystemInfo.supportsAsyncGPUReadback)
-            {
-                AsyncGPUReadbackRequest rb = AsyncGPUReadback.Request(m_srgb, 0, GraphicsFormat.R8G8B8A8_SRGB);
-                rb.WaitForCompletion();
-                if (rb.hasError) { error = "AsyncGPUReadback failed"; return false; }
-                NativeArray<byte> data = rb.GetData<byte>();
-                if (data.Length != rgba.Length) { error = "readback size " + data.Length + " != " + rgba.Length; return false; }
-                data.CopyTo(rgba);
-            }
-            else
-            {
-                RenderTexture prev = RenderTexture.active;
-                RenderTexture.active = m_srgb;
-                if (m_readTex == null || m_readTex.width != w || m_readTex.height != h)
+                Submit(cam);
+                if (m_ss > 1)
                 {
-                    if (m_readTex != null) Destroy(m_readTex);
-                    m_readTex = new Texture2D(w, h, TextureFormat.RGBA32, false, false);
+                    // -capture-ss 2: MSAA resolve at the render size, then one bilinear Blit to half the size per axis: every output
+                    // pixel centre (i + 0.5) / w lands on the shared corner of source texels 2i and 2i + 1 (weights 0.25 each), an
+                    // exact 2 x 2 box in linear light; the sRGB target encodes on write
+                    Graphics.Blit(m_target, m_resolve);
+                    Graphics.Blit(m_resolve, m_srgb);
                 }
-                m_readTex.ReadPixels(new Rect(0, 0, w, h), 0, 0, false);
-                m_readTex.Apply(false, false);
-                RenderTexture.active = prev;
-                NativeArray<byte> data = m_readTex.GetRawTextureData<byte>();
-                if (data.Length != rgba.Length) { error = "ReadPixels size mismatch"; return false; }
-                data.CopyTo(rgba);
+                else Graphics.Blit(m_target, m_srgb);   // MSAA resolve + linear -> sRGB encode on write
+
+                rgba = m_writer.Rent(w * h * 4);
+                if (SystemInfo.supportsAsyncGPUReadback)
+                {
+                    AsyncGPUReadbackRequest rb = AsyncGPUReadback.Request(m_srgb, 0, GraphicsFormat.R8G8B8A8_SRGB);
+                    rb.WaitForCompletion();
+                    if (rb.hasError) { error = "AsyncGPUReadback failed"; return false; }
+                    NativeArray<byte> data = rb.GetData<byte>();
+                    if (data.Length != rgba.Length) { error = "readback size " + data.Length + " != " + rgba.Length; return false; }
+                    data.CopyTo(rgba);
+                }
+                else
+                {
+                    RenderTexture prev = RenderTexture.active;
+                    RenderTexture.active = m_srgb;
+                    if (m_readTex == null || m_readTex.width != w || m_readTex.height != h)
+                    {
+                        if (m_readTex != null) Destroy(m_readTex);
+                        m_readTex = new Texture2D(w, h, TextureFormat.RGBA32, false, false);
+                    }
+                    m_readTex.ReadPixels(new Rect(0, 0, w, h), 0, 0, false);
+                    m_readTex.Apply(false, false);
+                    RenderTexture.active = prev;
+                    NativeArray<byte> data = m_readTex.GetRawTextureData<byte>();
+                    if (data.Length != rgba.Length) { error = "ReadPixels size mismatch"; return false; }
+                    data.CopyTo(rgba);
+                }
             }
+            finally { Shader.SetGlobalFloat(s_pxScale, 1f); }   // the readback is done (synchronous): back to 1 for the window
             ms = sw.Elapsed.TotalMilliseconds;
             return true;
         }
@@ -1082,6 +1108,9 @@ namespace Megastructure
             j.Prop("freezeClock", NocClock.Frozen).Prop("freezeDither", NocClock.Dither != DitherMode.Temporal).Prop("dither", NocClock.Dither.ToString());
             // D-020: -rain X overrides rho (null: the schedule); rho = the density at the sequence start
             j.Prop("rainOverride", NocRainState.Override).Prop("rho", NocRainState.RhoAt(sp.s0)).Prop("speed", sp.speed);
+            // QA fix wave: the run conditions the gates of Tools/qa check (H5 needs -rain 1 -rain-noise-off, D-020; -dither off is
+            // the undithered comparison of the encode test)
+            j.Prop("rainNoiseOff", CliArgs.Has("-rain-noise-off")).Prop("facadeSheet", CliArgs.Has("-facade-sheet"));
             j.Key("boundaryS").BeginArray(true);
             if (sp.boundaryS != null) for (int k = 0; k < sp.boundaryS.Length; k++) j.Value(sp.boundaryS[k]);
             j.EndArray();

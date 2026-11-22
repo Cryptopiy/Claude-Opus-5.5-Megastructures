@@ -20,13 +20,14 @@
 // Pieces are merged per face and material (8 draws). Plain boxes (12 triangles): chamfers are invisible at 100-1 200 m.
 // AB (Phase 4 wave A, INT-01 "the lower faces fade into the haze"): lit structure runs down into the depths:
 //   * the pieces continue below the deck to level 5 (y -1 860; 14.5.3 "900 FaceRib pieces per face within |z - 195| < 1 200");
-//   * galleries: lit glazed corridors on a floor line (1.6 m tall, 0.4 m proud, 6-24 bays), one hash per (face, level, band,
-//     24-column segment) at 50 % (r02; 30 % in r01), within |z - 195| < 2 000 so they run down the rift as horizontal light lines at every depth
+//   * galleries: lit glazed corridors on a floor line (2.0 m tall (r03; 1.6 before), 0.4 m proud, 6-24 bays), one hash per (face, level, band,
+//     24-column segment) at 65 % (r03; 50 % in r02, 30 % in r01), within |z - 195| < 2 000 so they run down the rift as horizontal light lines at every depth
 //     (warm WinWarm or neutral WinNeutral, never neon);
 //   * atria (14.5.3 "glowing atria R 12-30 m"): a lit multi-storey hall seen through the cut, 3-7 bays wide and 2R-3R tall, as
 //     stacked emissive bands two floors high with the dark slab gaps between them (1.2 m), brighter at the bottom (the hall's floor
 //     light), in a concrete surround (jambs 2 m, head and sill 2 m, 1.2 m proud); one hash per (face, level, band, 8-column segment)
-//     at 4 %, levels 0-5, |z - 195| < 1 200;
+//     at 4 %, levels 0-5, |z - 195| < 1 200; r03: steel curtain-wall mullions every 3 m in front of the hall (r02's plain glow read
+//     as a flat beige card), a dimmer hall (AtriumLoGain 0.12) behind 0.6 m luminaire lines, and never across another piece;
 //   * terrace lip lights: an emissive 0.6 m strip on the front of every terrace edge beam (levels 1-5), the long lines that converge
 //     down the rift.
 // Emissive pieces use NocSurface variants with a flat linear emission (ReliefBuilder.Resolve: GalleryWarm / GalleryCool /
@@ -46,15 +47,26 @@ namespace Megastructure
         public const double PPod = 0.06, PTower = 0.03, PDeck = 0.06, PPipe = 0.02;
         /// <summary>Levels with pieces (AB: 0..5, y -1 860..560; GE had 0..2).</summary>
         public const int Levels = 6;
-        /// <summary>Galleries (AB): probability per 24-column segment (r02: 0.5; r01 0.3 left the faces below the deck nearly dark),
-        /// length 6-24 bays, height, proud, range |z - 195|.</summary>
-        public const double PGallery = 0.50, GalleryH = 1.6, GalleryProud = 0.4, GalleryRange = 2000.0;
+        /// <summary>Galleries (AB): probability per 24-column segment (r02: 0.5; r01 0.3 left the faces below the deck nearly dark;
+        /// r03: 0.65, D-032 5 light content: AB_r02 KS10 has 0.22 % of its pixels at luma >= 120 without the handrail), length 6-24
+        /// bays, height (r03: 1.6 -> 2.0 m, a storey-high glazed corridor), proud, range |z - 195|.</summary>
+        public const double PGallery = 0.75, GalleryH = 2.0, GalleryProud = 0.4, GalleryRange = 2000.0;   // r06: 0.65 -> 0.75 (KS07 / KS11 / KS12 p99)
+        /// <summary>r04: probability of a second gallery in the same band and segment (another floor, >= 2.5 floors away) and the
+        /// share of a gallery's inner bays left dark (AB_r03 KS12 p99 87.7: more corridors; uniform bars read as LED tubes).</summary>
+        public const double PGallery2 = 0.55, GalleryDarkBay = 0.18;   // r06: 0.45 -> 0.55
+        /// <summary>ARK (D-043): above the deck (bands from y 0 up) the faces carry more corridors - the first and second at PGalleryUp /
+        /// PGallery2Up and a third at PGallery3Up: the layers that lit KS07 / KS08 / KS11 left the walker's level, and the Ark's dark
+        /// mass reads as a silhouette against lit walls (every corridor it passes in front of goes out).</summary>
+        public const double PGalleryUp = 0.92, PGallery2Up = 0.85, PGallery3Up = 0.6;
         public const int GallerySeg = 24, GalleryMin = 6;
         /// <summary>Atria (AB): probability per 8-column segment, radius 12-30 m, slab gap, surround width / proud, glow proud.</summary>
         public const double PAtrium = 0.04, AtriumRMin = 12.0, AtriumRMax = 30.0, AtriumGap = 1.2, AtriumFrame = 2.0, AtriumFrameProud = 1.2, AtriumGlowProud = 0.35;
         public const int AtriumSeg = 8, AtriumBandFloors = 2;
-        /// <summary>Atrium floor-plate edge lights (AB r02): height (m), share lit.</summary>
-        public const double AtriumLineH = 1.0, AtriumLineLit = 0.75;
+        /// <summary>Atrium floor-plate edge lights (AB r02): height (m), share lit (r03: 1.0 -> 0.6 m, a luminaire line, not a band).</summary>
+        public const double AtriumLineH = 0.6, AtriumLineLit = 0.75;
+        /// <summary>Atrium curtain-wall mullions (AB r03; AB_r02 KS07 / KS08: the atria read as flat beige cards): pitch, width (m),
+        /// out of the face from / to (m; in front of the hall glow and the floor-plate lines).</summary>
+        public const double AtriumMullionP = 3.0, AtriumMullionW = 0.35, AtriumMullionN0 = 0.45, AtriumMullionN1 = 1.0;
         /// <summary>Terrace lip light (AB): height of the strip on the edge beam's front, proud of the beam.</summary>
         public const double LipLightH = 0.6, LipLightProud = 0.05;
         /// <summary>Terrace edge beam run length (m; AB: 20 m instead of GE's 100 m, so the straight beams follow the flared faces
@@ -223,7 +235,24 @@ namespace Megastructure
             // the cross bridges and the sight lines from the Edge to their ends (KS09 / KS10: the bridge at z 850, y -180, whole)
             for (int i = 0; i < EdgeDims.BridgeZ.Length; i++)
                 if (Hits(EdgeDims.BridgeZ[i] - 60.0, EdgeDims.BridgeZ[i] + 60.0, EdgeDims.BridgeY[i] - 50.0, EdgeDims.BridgeY[i] + 30.0)) return false;
+            // ARK: the air crossings' portals (CrossBridge.AirZ / AirBase: 16 x 8 m opening, 3 m surround, the sill); a03: a +-40 m
+            // margin cost KS11 1 187 px of corridors >= 120, so only the portal's own footprint (+ Hits' 6 m) stays clear
+            for (int i = 0; i < CrossBridge.AirZ.Length; i++)
+                if (Hits(CrossBridge.AirZ[i] - 11.0, CrossBridge.AirZ[i] + 11.0, CrossBridge.AirBase(i) - 4.0, CrossBridge.AirBase(i) + 12.0)) return false;
             return true;
+        }
+
+        /// <summary>True when a piece already built on face f (any level, any kind) overlaps the arc-length span [ua, ub] and the
+        /// height span [ya, yb] (AB r03: atria keep clear of pods, towers, decks, risers and galleries).</summary>
+        static bool Overlaps(int f, double ua, double ub, double ya, double yb)
+        {
+            foreach (var p in Pieces)
+            {
+                if (p.face != f) continue;
+                double u0 = Math.Min(p.u0, p.u1) - (p.kind == 'r' ? 3.0 : 0.0), u1 = Math.Max(p.u0, p.u1) + (p.kind == 'r' ? 3.0 : 0.0);
+                if (u1 > ua && u0 < ub && p.y1 > ya && p.y0 < yb) return true;
+            }
+            return false;
         }
 
         // ------------------------------------------------------------------ shapes
@@ -343,19 +372,58 @@ namespace Megastructure
                     for (int sg = s0; sg <= s1; sg++)
                     {
                         uint h = NocHash.H3(unchecked((uint)(sg + 50000)), unchecked((uint)(b + 3000)), (uint)(f * 8 + k), 0x47414C);
-                        if (NocHash.U01(h) >= PGallery) continue;
+                        bool up = b * BandH >= 0.0;                                    // ARK: bands above the deck
+                        if (NocHash.U01(h) >= (up ? PGalleryUp : PGallery)) continue;
                         double r2 = NocHash.U01(NocHash.H3(h, 1u, 0u, 0)), r3 = NocHash.U01(NocHash.H3(h, 2u, 0u, 0));
                         double r4 = NocHash.U01(NocHash.H3(h, 3u, 0u, 0)), r5 = NocHash.U01(NocHash.H3(h, 4u, 0u, 0));
                         int n = Math.Min(GallerySeg, GalleryMin + (int)(r2 * (GallerySeg - GalleryMin + 1)));
                         int start = (int)(r3 * (GallerySeg - n + 1));
                         double ua = (sg * GallerySeg + start) * ColP, ub = ua + n * ColP;
                         double yj = b * BandH + (1 + (int)(r4 * (floorsInBand - 2))) * FloorH;
-                        if (yj < yLo + 2.0 || yj + FloorH > yHi - 2.0 || !Clear(f, frame, ua, ub, yj, yj + FloorH, GalleryProud, k, GalleryRange)) continue;
-                        var part = r5 < 0.6 ? w.GalWarm : w.GalCool;
-                        Strip(part, frame, k, ua, ub, yj + SlabT + 0.2, yj + SlabT + 0.2 + GalleryH, GalleryProud);
-                        Pieces.Add((f, k, ua, ub, yj, yj + FloorH, 'g')); Galleries++;
+                        Gallery(frame, f, k, w, h, ua, ub, yj, yLo, yHi, r5);
+                        // r04 (D-032 5, AB_r03 KS12 p99 87.7): a second corridor on another floor of the same band and segment
+                        uint h2 = NocHash.H3(h, 7u, 0u, 0);
+                        if (NocHash.U01(h2) >= (up ? PGallery2Up : PGallery2)) continue;
+                        double r6 = NocHash.U01(NocHash.H3(h2, 1u, 0u, 0)), r7 = NocHash.U01(NocHash.H3(h2, 2u, 0u, 0)), r8 = NocHash.U01(NocHash.H3(h2, 3u, 0u, 0));
+                        int n2 = Math.Min(GallerySeg, GalleryMin + (int)(r6 * (GallerySeg - GalleryMin + 1)));
+                        double ua2 = (sg * GallerySeg + (int)(r7 * (GallerySeg - n2 + 1))) * ColP, ub2 = ua2 + n2 * ColP;
+                        double yj2 = b * BandH + (1 + (int)(r8 * (floorsInBand - 2))) * FloorH;
+                        if (Math.Abs(yj2 - yj) < 2.5 * FloorH) continue;
+                        Gallery(frame, f, k, w, h2, ua2, ub2, yj2, yLo, yHi, 1.0 - r5);
+                        // ARK: a third corridor above the deck, on a floor >= 2.5 floors from both
+                        if (!up) continue;
+                        uint h3 = NocHash.H3(h, 11u, 0u, 0);
+                        if (NocHash.U01(h3) >= PGallery3Up) continue;
+                        double r9 = NocHash.U01(NocHash.H3(h3, 1u, 0u, 0)), r10 = NocHash.U01(NocHash.H3(h3, 2u, 0u, 0)), r11 = NocHash.U01(NocHash.H3(h3, 3u, 0u, 0));
+                        int n3 = Math.Min(GallerySeg, GalleryMin + (int)(r9 * (GallerySeg - GalleryMin + 1)));
+                        double ua3 = (sg * GallerySeg + (int)(r10 * (GallerySeg - n3 + 1))) * ColP, ub3 = ua3 + n3 * ColP;
+                        double yj3 = b * BandH + (1 + (int)(r11 * (floorsInBand - 2))) * FloorH;
+                        if (Math.Abs(yj3 - yj) < 2.5 * FloorH || Math.Abs(yj3 - yj2) < 2.5 * FloorH) continue;
+                        Gallery(frame, f, k, w, h3, ua3, ub3, yj3, yLo, yHi, r9);
                     }
             }
+        }
+
+        /// <summary>One gallery: a lit glazed corridor GalleryH tall on the floor line yj over [ua, ub] (whole bays), warm when r &lt; 0.6;
+        /// r04: its bays are lit in runs, a bay dark with GalleryDarkBay (AB_r03: uniform bars read as LED tubes, not corridors; a dark
+        /// bay is 9 m, >= 4 px at 2 km, so the breaks never alias).</summary>
+        static void Gallery(FaceFrame frame, int f, int k, Writers w, uint h, double ua, double ub, double yj, double yLo, double yHi, double r)
+        {
+            if (yj < yLo + 2.0 || yj + FloorH > yHi - 2.0 || !Clear(f, frame, ua, ub, yj, yj + FloorH, GalleryProud, k, GalleryRange)) return;   // (no Overlaps: AB_r04 lost most galleries to it)
+            var part = r < 0.6 ? w.GalWarm : w.GalCool;
+            int n = (int)Math.Round((ub - ua) / ColP);
+            int run = -1;
+            for (int j = 0; j <= n; j++)
+            {
+                bool lit = j < n && (j == 0 || j == n - 1 || NocHash.U01(NocHash.H3(h, 40u + (uint)j, 0u, 0)) >= GalleryDarkBay);
+                if (lit && run < 0) run = j;
+                if (!lit && run >= 0)
+                {
+                    Strip(part, frame, k, ua + run * ColP, ua + j * ColP, yj + SlabT + 0.2, yj + SlabT + 0.2 + GalleryH, GalleryProud);
+                    run = -1;
+                }
+            }
+            Pieces.Add((f, k, ua, ub, yj, yj + FloorH, 'g')); Galleries++;
         }
 
         /// <summary>Atria (AB, 14.5.3 "glowing atria R 12-30 m"): one hash per (face, level, band, AtriumSeg-column segment); width
@@ -386,6 +454,8 @@ namespace Megastructure
                         double ya = b * BandH + (int)(NocHash.U01(NocHash.H3(h, 4u, 0u, 0)) * floorsInBand) * FloorH, yb = ya + bands * band;
                         double fr = AtriumFrame;
                         if (ya - fr < yLo + 2.0 || yb + fr > yHi - 2.0 || !Clear(f, frame, ua - fr, ub + fr, ya - fr, yb + fr, AtriumFrameProud, k)) continue;
+                        // r03 (AB_r02 KS08: a riser bundle ran down through an atrium): never across another piece of this face
+                        if (Overlaps(f, ua - fr - 6.0, ub + fr + 6.0, ya - fr - 2.0, yb + fr + 2.0)) continue;
                         // surround: jambs (outside the bays), head, sill
                         Box(w.Conc, frame, k, ua - fr, ua, ya - fr, yb + fr, -0.5, AtriumFrameProud);
                         Box(w.Conc, frame, k, ub, ub + fr, ya - fr, yb + fr, -0.5, AtriumFrameProud);
@@ -399,6 +469,9 @@ namespace Megastructure
                             double y0 = ya + j * band - 0.5 * AtriumLineH;
                             Strip(w.AtrHi, frame, k, ua, ub, y0, y0 + AtriumLineH, AtriumGlowProud + 0.25);
                         }
+                        // r03: the curtain wall's mullions in front of the hall and its floor-plate lines (steel, full height)
+                        for (double um = ua + AtriumMullionP; um < ub - 0.5 * AtriumMullionP; um += AtriumMullionP)
+                            Box(w.Steel, frame, k, um - 0.5 * AtriumMullionW, um + 0.5 * AtriumMullionW, ya, yb, AtriumMullionN0, AtriumMullionN1);
                         Pieces.Add((f, k, ua, ub, ya, yb, 'a')); Atria++;
                     }
             }

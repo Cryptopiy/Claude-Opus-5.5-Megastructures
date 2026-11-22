@@ -76,6 +76,7 @@ Limiter: The Ring's look-ahead limiter with an ITU-R BS.1770-4 true-peak detecto
 | `NocSynth.cs`, `AudioDirector.cs` | the player host (OnAudioFilterRead, snapshot mailbox, capture for -audio-dump) |
 | `OfflineAudioRenderer.cs`, `WavWriter.cs` | offline renders, sinks (RMS, meter, WAV stream) |
 | `AudioAnalysis.cs` | `WalkAnalysis` (100 ms bins, 3 s windows, gates), `ClickMeter`, `AudioGates` (the test renders), snapshot scripts |
+| `DreadScore.cs`, `DreadVoices.cs`, `DreadAnalysis.cs` | the D-034 dread layer, stem E (section 11): its score, its voices and `DreadLayer`, `DreadProbe` |
 
 ## 3. The score (`NocturneScore`)
 
@@ -136,8 +137,8 @@ sqrt(rho / rho_schedule), so `-rain 0` silences the rain.
 
 ## 5. Stems
 
-`NocturneScore.StemCount` = 9 stems: R rain, D drips, H hum, T traffic, W wind, P pad (with its FDN), K koi, X beat-specific
-(beds, tram, trains, leaf rain, lamp), F footsteps. The environment reverb returns into the mix only (it is not a stem).
+`NocturneScore.StemCount` = 10 stems: R rain, D drips, H hum, T traffic, W wind, P pad (with its FDN), K koi, X beat-specific
+(beds, tram, trains, leaf rain, lamp), F footsteps, E the dread layer (section 11, with its Gulf echoes). The environment reverb returns into the mix only (it is not a stem).
 `NocMixer.MeterStems` meters each stem's mean square after its own 20 Hz DC blocker (what the master's blocker lets through);
 `NocMixer.SoloMask` (bit = stem index; `OfflineRenderSettings.SoloMask`) renders any subset.
 
@@ -223,48 +224,282 @@ S-windows (logged): S1 -36.8, S2 -33.1, S3 -32.3, S4 -32.9, S6 -33.5, S7 -29.4 (
   beat median, -62 in S8 and -60 at the stop.
 - X beds in every beat (D-011): a transient-only X misses the median gate.
 
+- D-034 timing (section 11): the seconds of DREAD.md are metres at the reference speed 2.5 m/s (the cinematic walk the video is
+  cut from), so every dread cue is a pure function of s like the rest of the score: exact in the video, 1.67 x longer at
+  1.5 m/s (a drop lead of 2.0 s becomes 3.3 s), held while the player stands. (AUDIO.md section 11 of 2026-11-19 had 2.0 m/s.)
+- D-034 echo: image sources (A1 = 2 d_A / 343, B1 = 2 d_B / 343, AB2 = 1 200 / 343 = 3.50 s) instead of "repeats spaced by
+  1.75 s": at mid-Gulf (x 535) the arrivals 1.63 / 1.86 / 3.50 s are 1.75 s apart as DREAD says; at the mouth B1 (3.41 s at
+  x 230) and AB2 (3.50 s) merge into its "one long echo".
+- The dread stem E counts in the 14.3 level gate like every layer (no new exclusion window): the beat medians stay within
+  +0.53 dB of Sum (beat 3 at 1.5 m/s; 2.5 m/s +0.38 at most).
+
 ## 10. Open items
 
 - (closed 2026-11-19) The in-game `-audio-dump` check passes in a built player: +0.10 dB at s 1125 (docs/logs/AU.md).
 - The integrated loudness of the walk is -26.8 LUFS by the 14.3 table; a video upload normalised to -14 LUFS needs +12.8 dB of
   make-up gain at the edit (the limiter leaves 3.4 dB of true-peak headroom, so the edit needs its own limiter), or the table is
-  raised as a whole (a lead decision; the per-beat shape is unchanged either way).
+  raised as a whole (a lead decision; the per-beat shape is unchanged either way). The step is written below (fix wave C50).
 
-## 11. Wave-B hooks (D-034, docs/DREAD.md section 1 and the cues of sections 2-6)
+**Upload loudness: the step at the edit (D-038, fix wave C50; the lead copies it into README).** The game is mixed to the 14.3
+table: the cinematic walk measures -27.3 LUFS integrated (BS.1770-4) with its true peak at -7.6 dBTP (harness render f08 at 2.5 m/s,
+QA/reports/audio_AU-walk25-f08.md). YouTube turns loud uploads down to about -14 LUFS and never turns quiet ones up, so an untreated
+capture plays about 13.3 dB below a typical upload.
+1. The audio track. Best: replace the screen capture's audio with the offline render of the same walk,
+   `Nocturne.exe -render-audio walk.wav -cinematic` (48 kHz, 32-bit float; the same DSP as the game, a pure function of s at the
+   cinematic pace; the footsteps are scheduled by distance, so they can sit a few ms off the picture's strides). Align it on the
+   0.6 s fade-in: cross-correlate the first 10 s with the capture's own track and shift by the peak (a constant offset; no drift,
+   both run at 48 kHz). Otherwise capture the game at unity gain: the Windows output device and the OBS source at 100 % / 0 dB,
+   48 kHz, no OBS filters (no noise suppression, gain, compressor or limiter on the source or the master).
+2. The gain. Add +13.3 dB into a true-peak limiter with its ceiling at -1.0 dBTP (oversampled detection, look-ahead >= 1 ms,
+   release 50-100 ms) for about -14 LUFS integrated. In the f08 render this asks the limiter for up to 6.7 dB on the loudest
+   peaks, in 2.7 % of the 10 ms blocks (mostly the train passes of beat 4, s 600-830): listen there, and
+   through the KS09 and KS17 silence drops, for pumping or a lifted floor. If it pumps, use +11 dB (about -16.3 LUFS:
+   YouTube then plays it about 2.3 dB under -14, which is still far better than untreated). Do not compress or normalise
+   per scene: the dread layer's drops and swells are level contrasts of 10-15 dB by design.
+3. Check: measure the exported file (ffmpeg -af ebur128=peak=true or the editor's loudness meter): integrated -14 +-1 LUFS, true
+   peak <= -1 dBTP.
 
-Nothing is built for wave B yet. This is where each item plugs into the wave-A graph, so that wave A blocks none of it.
+- (D-034) A human listen of the dread layer on a laptop and on headphones (AU-17): the swells and the hull are speaker and
+  headphone effects by their spectrum; the numbers say the horn, the creak, the groans and the strikes reach laptops.
+- (D-034) The picture owners take the audio's positions (section 11, Hooks): DR's hull, panel and shafts, AT's lightning
+  glows, BV's door chime; if they move, DreadScore follows them.
 
-- **One-shot sources** (horn, metal strike, groan, the hull drone): one class per source, like `TubeTrain` / `TramPass`.
-  - Events come from an event-index hash at absolute sample indices, so the output stays independent of the callback size.
-  - Each class owns its own unit-RMS gain law, keyed to s.
-  - Each sums into the X stem, or into a new stem E. A new stem needs `StemCount`, `LayerNames`, the `SoloMask` letters of the
-    harness and a row in QA/audio-trims.json.
-- **Echo across the Gulf (1.1)**: an `EchoBus` after the one-shot sum and before the env FDN send.
-  - It is a stereo multi-tap delay line. The taps are recomputed per 32-sample control block from the listener x:
-    - delay = 2 d / 343 s, gain 1 / (1 + d / 150), then a one-pole low-pass whose cutoff falls with d;
-    - d_A = |x - 215.3|, d_B = |815.3 - x| at the neck; the face-to-face repeats add 600 m = 1.75 s each.
-  - The taps glide with the same 50 ms one-pole as the gains, which keeps them click-free at any walk speed. A tap that jumps
-    by more than 1 ms in a block cross-fades over 20 ms instead of sliding (no pitch zip).
-  - Memory: the longest path is the Boulevard mouth (3.5 s) plus one repeat (1.75 s) = 5.25 s, that is 5.25 x 48 000 x 2
-    floats = 2.0 MB, preallocated in the constructor. Process stays allocation-free.
-  - Only the one-shot bus feeds it. The beds already carry the env FDN.
-- **Sub swell (1.2)** under KS04, KS09, KS10, KS13 and KS17: a 35-55 Hz sine pair with 2nd-3rd harmonics (<= 160 Hz).
-  - Its gain is a function of s: it rises over 6-10 s of walk before each key-shot s and decays over 8 s.
-  - Seconds are converted to metres at the reference speed 2.0 m/s, so the swell keeps its place at any speed and holds while
-    the player stands still.
-  - Headroom: the walk's true peak is -4.9 dBTP (beat 4 trains) against the limiter knee at -4.5 dBFS. A swell at -36 dBFS RMS
-    adds 0.2 dB to a -30 dBFS beat median. The level gate excludes S3/S4/S6/S7 only, so swells outside those windows have to
-    fit the beat's +-1.5 dB, or join the excluded windows (needs a lead decision).
-- **Structural groans (1.3)**, every 20-60 s from s 120 on: resonant comb plus filtered noise with a slow pitch bend.
-  - Event times come from the index hash of the walk-time counter.
-  - Panned on the nearest large mass: the listener x/z and yaw are already in the snapshot.
-- **Silence drop (1.4)**, 2.0 s before KS09 and KS17: a duck factor on the R and H gains in `NocturneScore`.
-  - -18 to -24 dB over 0.6 s, back over 1.5 s; the window is given in s at the reference speed.
-  - It passes through the existing 50 ms gain ramps, so it cannot click.
-  - It lies inside S4 (KS09) and S7 (KS17), which the level gate already excludes. The click gate (20 ms envelope step
-    < 0.05) and the step gate apply.
-- **Hull drone (2.1)**: a point source on the hull path with the finite-source Doppler of the passes (section 9), plus the
-  echo bus.
-- **Tests to add with each item**: the swell and the drop as functions of s (positions, slopes, at both speeds); the echo delays
-  against the DREAD table (0.93 / 2.57 s at the tongue tip, 1.87 / 1.63 s at mid-bridge); 0 bytes per Process; callback-size
-  invariance; the level, peak and click gates at 1.5 and 2.5 m/s.
+## 11. The dread layer (D-034, docs/DREAD.md section 1 and the cues of sections 2-6; built 2026-11-20)
+
+Stem E (`NocturneScore.E` = 9, `StemCount` 10, harness solo letter E) is `DreadLayer` (DreadVoices.cs) inside `NocMixer`:
+nothing outside the audio files is wired. Its score is `DreadScore` (pure functions of s; the event table is built once).
+`DreadProbe` (DreadAnalysis.cs) holds the measurements shared by the tests and the harness. Tests: `AudioDreadTests`.
+
+**Time.** Durations of DREAD.md are metres at the reference speed 2.5 m/s (the cinematic walk the video is cut from): exact in
+the video, 1.67 x longer at 1.5 m/s, held while the player stands. One-shots fire when s first crosses their s (re-armed when
+s falls 12 m below, the vehicle rule; on a jump the past ones count as done), start at an exact sample (the trigger block plus
+the flight time d / 343 s), and come from voice pools per kind; a busy pool skips the event (it never steals: no click).
+
+**1.1 Echo across the Gulf** (`EchoBus`): image sources off the face planes x_A 215.3 and x_B 815.3.
+
+| Tap | Delay | Gain | Low-pass |
+|---|---|---|---|
+| A1 (face A) | 2 d_A / 343 | 1 / (1 + d_A / 150) | 6 kHz / (1 + L / 250), L = 2 d |
+| B1 (face B) | 2 d_B / 343 | 1 / (1 + d_B / 150) | same |
+| AB2 (face to face) | 1 200 / 343 = 3.50 s | 1 / (1 + 600 / 150) x 0.7 | 1.03 kHz |
+
+- Measured impulse arrivals (harness `dread`, `DreadProbe.EchoImpulse`): tongue tip x 375: 0.9312 / 2.5674 / 3.4986 s (DREAD
+  0.93 / 2.57); bridge middle x 535: 1.8642 / 1.6344 / 3.4986 s (DREAD 1.87 / 1.63); x 230 (the mouth): 0.0857 / 3.4129 /
+  3.4986 s (B1 and AB2 merge into DREAD's "one long echo" of 3.5 s). At mid-Gulf the arrivals come at 1.63, 1.86 and 3.50 s:
+  spaced by 600 m = 1.75 s, as DREAD 1.1 says; elsewhere the image model gives the physical spacing (proposed decision, AU-12).
+- Taps under 30 ms merge into the room (smootherstep 0.03-0.15 s on the gain): no comb filter at a face. The bus is heard inside
+  the Gulf only (smootherstep over 40 m at each face: weight 0.5 at the mouth).
+- One mono float line of 2^18 samples (5.46 s at 48 kHz, 1 MB, preallocated). The taps glide per block with the listener (a
+  walker at 2.5 m/s moves a tap by 0.015 s per s: the echo's own Doppler). A jump over 50 ms fades the tap out over 20 ms,
+  moves the head after one silent block and fades it back in (`EchoBus_GlidesWithTheWalkerWithoutClicks`).
+- Fed by the horn, the strikes, the groans (x 0.8), the creak, the hull (x 0.4) and the rumbles (x 0.3); not by the chime.
+
+**1.1 Sources.** Horn (`HornVoice`): a PolyBLEP saw fifth with a 30-cent scoop and a 0.31 Hz vibrato, LP 560 Hz, 7 s, at
+s 440 (Eb2 + Bb2, 1.6 km north down the rift) and s 740 (F2 + C3, 1.8 km south; fix wave C08: s 700 sat on T4's meet): chord
+tones of C3 and of C5 Dm11.
+Metal strikes (`StrikeVoice`): six inharmonic modes (1, 2.32, 4.25, 6.63, 9.38, 12.53 x 170-300 Hz, T60 4.0-0.8 s) inside a
+face, every 25-40 s from s 405 to 990 (six since the fix wave: s 489, 578, 673, 785, 858, 922).
+
+**1.2 Sub-bass swells** (`SubSwell`) under KS04 (s 250, F1 43.65 Hz), KS09 (520, Eb1 38.89), KS10 (548, F1), KS13 (718, D1
+36.71) and KS17 (1 296, G1 49.00): chord tones of the pad. Partials 1-5 up to 200 Hz (amplitudes 1, 0.7, 0.55, 0.45, 0.35),
+each a centre voice and two side voices detuned by +-0.16 % (a slow beating, decorrelated left and right), plus a brown
+pressure bed (LP 55 Hz, 35 %). Envelope: smootherstep rise over 20 m (8 s at 2.5 m/s), hold 2.5 m (1 s), decay over 20 m (8 s).
+Peaks -38 / -36 / -35 / -37 / -36 dBFS through the master's 20 Hz DC blocker. Rendered over +-3 s (d05): KS04 -36.7, KS09 -35.0,
+KS10 -35.3, KS13 -35.9, KS17 -36.6 dBFS.
+
+**1.3 Structural groans** (`GroanVoice`): a resonant comb at 34-64 Hz with a 6-14 % downward bend over 4-6.5 s and a damped
+loop, excited by band noise; stick-slip creak grains (9-22 Hz, band 250-480 Hz) on top; a low boom on a third of them. Every
+20-60 s from s 120 (eight since the fix wave: s 163, 239, 365, 531, 873, 983, 1 131, 1 277; beat 4's train stretch s 587-831
+leaves no slot 18 m clear of the meets), placed on the nearest large mass
+(`NearestMass`: the canyon walls 24-40 m off the walk in beats 2, 5 and 6; the Gulf faces or the bridge truss under the deck in
+beats 3-4; the spire in beat 7), heard after the flight time, attenuated by 8 log10(1 + d / 100) dB. A slot within 8-18 m of
+the horns, the creak, the chime, a swell peak, a drop or a rumble moves on in 8 m steps. S7 (the koi) and the last 60 m stay
+free.
+
+**1.4 Silence drops** (fix wave C07): `DreadScore.DropShape(s)` (0..1) scales each layer's own depth (`DropGainAt`): R, D, H, T,
+the X beds and the X passes -21 dB, the koi -21 dB, the pad -15 dB after its own FDN (its tail goes too), the wind -4 dB (the
+breath of the place); the footsteps and E stay. The shape starts 5 m before KS09 and KS17 (2.0 s), is at full depth 1.5 m later
+(0.6 s) and returns over 3.75 m (1.5 s) after the key shot, through the 50 ms ramps. Rendered (f08): everything but E falls
+-11.0 / -14.8 dB at 2.5 m/s (K-weighted -11.2 / -15.1 LU, laptop model -10.6 / -14.8 dB) and -11.1 / -14.4 dB at 1.5 m/s; the
+swell is then the loudest element (E re rest +8.1 / +7.4 dB). Before the fix: -1.19 / -0.83 dB (d05).
+
+**2-6 cues.**
+- Hull (`HullDrone`, 2.1): the course is DR's `HullCourse` (D-038 / D-040: one source of truth): `DreadScore.HullCentreZ(tau)` =
+  `HullCourse.SternZ(tau)` + 900, launch s 430 (`VehicleClock`), 18 m/s after the 10 s smooth start (`HullVelocity`), x 515.3,
+  belly y 432, 1 800 m; with DR's C01 re-park (centre -660 at launch) the centre is abeam z 195 at tau 52.5 s (s 561.25 at
+  2.5 m/s, `HullAbeamTau` solved from the course). Body = 13.75 Hz x 1..12 (the fundamental infrasonic, LP 120 Hz) as a line
+  source (subtended angle); stern engines = 27.5 Hz x 1..8 + an exhaust band at 150 Hz + a 0.55 Hz throb as a point source with
+  the Doppler c / (c + v_r) of the course's speed (+5 % far ahead, 1.00 overhead, -5 % receding); the small-speaker harmonics
+  9 / 12 / 8 x 27.5 Hz (B3 E4 A3) at the engines' Doppler on the whole hull's gain, 3 dB under it (C09). Peak -42 dBFS; it ends
+  with beat 4 (s 860-880). Rendered -38.5 dBFS over s 480-630 (f08, DR's C01 course).
+- Panel (`CreakVoice`, 3.2): accelerating friction grains (18 -> 120 Hz) through four resonators bending down 12 %, 4 s, at s 470
+  from DR's `PanelCourse` centre at the tear (814.85, 150, 800), heard 2.38 s later (818 m). No impact.
+- Elevators and gantries (`MachineHum`, 2.2; integration round, AU-28 and DR's request): one hum per shaft of DR's 8 (on the
+  loudest of its 4 cabins, times the cabin light's ramp at the hidden ends, so a wrap never jumps; the traffic clock) and one per
+  gantry (2, at `DreadBuilder.GantryPos`, the scene clock), all from `DreadCabinCourse` (Beats/Dread/DreadCourse.cs; Mesh-free, so
+  the harness compiles it); 108-129 Hz cabins, 50 Hz gantries; -48 / -46 dBFS within 20 m, (20 / d)^1.2 beyond. DR's shafts stand
+  135 m or more from the walk, so the hums are far and faint (AudioDreadTests logs the loudest on the walk); the audio's own
+  boulevard-tower shafts are gone (no cabin rides there in the picture).
+- Bridge (`BridgeGust`, 4.3): deck creaks at the extremes of TR's sway sin(2 pi 0.12 t), scaled by its amplitude
+  (`SwayAmplitude`, the mirror of Beats/Beat04_Skybridge/BridgeSway.cs), and a cable whistle at 1.05-1.6 kHz with the heard
+  wind gust; -49 dBFS at full gust; beat 4 only.
+- Tram (`ChimeVoice`, 6): D5 then Bb4 bell tones 0.55 s apart from the terminus (210, 2.5, 227) at s 226.25 (BV's door close),
+  1.5 s before the launch at s 230; -40 dBFS (C53: +3 dB), 0.5 s flight; T and the X beds duck 9 dB around it
+  (`ChimeDuckShape`: from 0.3 s before ChimeS, fall 0.6 s, held 3.5 s, back over 1.5 s).
+- Lightning (`RumbleVoice`, 5.4): brown noise LP 85 Hz with a rolling 220 Hz band, rise 1 s, decay 2.2 s, 7 s long, 3.0 s after
+  each glow at s 205, 345, 553 (the hull), 790, 1 140 and 1 420 (at most one per 25 s, none in beats 1 and 5); -37 dBFS; no crack.
+
+**Levels and gates** (harness d05 with `--ending`, whole walk; noE = the same render without E):
+
+| Gate | Limit | 2.5 m/s | noE 2.5 | 1.5 m/s | noE 1.5 |
+|---|---|---|---|---|---|
+| beat medians - Sum (dB) | +-1.5 | -0.01 +0.16 +0.22 +0.38 +0.25 +0.04 +0.02 | -0.01 +0.13 -0.23 +0.27 +0.13 +0.00 -0.17 | -0.01 -0.06 +0.53 -0.17 -0.10 +0.03 -0.06 | -0.01 -0.13 +0.22 -0.27 -0.11 +0.01 -0.18 |
+| true peak (dBTP) | <= -1 | -4.84 | -4.91 | -5.50 | -5.49 |
+| max sample step | <= 0.25 | 0.147 | 0.147 | 0.138 | 0.138 |
+| 20 ms envelope step, worst chord change | < 0.05 | 0.0427 (C4->C5: horn, trains, KS13 swell) | 0.037 | 0.0337 | 0.0330 |
+| DC | < 0.001 | 0.000000 | | 0.000000 | |
+
+- The EditMode level stretches (harness `gates`, 24 s per beat): -0.20 +0.19 +0.47 +0.81 -0.12 +0.00 -0.36 dB at 2.5 m/s;
+  -0.35 -0.20 +0.22 -0.02 -0.13 +0.00 -0.17 dB at 1.5.
+- Tools/qa/audio_analysis.py: PASS at both speeds (QA/reports/audio_AU-walk25-d05.md, audio_AU-walk15-d05.md).
+- DSP cost of E: 2-6 % of one core (harness `dreadcost`, on a loaded machine).
+- Chord chroma of the mix (analyze.py): 0.47-0.84 on the chord's pitch classes (wave A 0.48-0.85): the swells and the horns
+  are chord tones.
+
+**Audibility** (Tools/audio/dread_analysis.py on d05: E against the rest of the same render, per cue window; JSON in
+QA/reports/audio_dread_AU-walk25-d05.json and audio_dread_AU-walk15-d05.json):
+
+| Cue (2.5 m/s) | E dBFS | E - rest | laptop, best 1/3 octave | AAC 128 kept | Opus 128 kept | E - pad, pad octaves |
+|---|---|---|---|---|---|---|
+| horn s 440 | -40.1 | -8.9 | -4.0 (252 Hz) | 0.98 | 0.99 | -1.9 |
+| creak s 470 | -42.3 | -10.6 | -2.6 (504 Hz) | 0.98 | 1.00 | -0.7 |
+| groans (10) | -37.0 .. -43.3 | -6.0 .. -19.6 | -4.1 .. -21.6 | 0.96-0.99 | 0.98-1.00 | -4.5 .. -17.0 |
+| strikes (7) | -40.1 .. -44.5 | -9.3 .. -20.5 | -5.5 .. -15.6 | 0.97-0.99 | 0.99-1.01 | -6.4 .. -20.4 |
+| swells KS04-KS17 | -35.0 .. -36.7 | -2.5 .. -8.7 | -8.5 .. -24.5 (200 Hz) | 0.98-0.99 | 0.99 | -8.9 .. -23.7 |
+| drops KS09 / KS17 | | the rest's 2-16 kHz: -10.3 / -13.8 dB | | | | |
+| hull (60 s) | -39.1 | -10.5 | -14.8 | 0.99 | 0.99 | -8.8 |
+| rumbles (6) | -41.4 .. -47.5 | -11.1 .. -18.5 | -13.6 .. -24.0 | 0.98-0.99 | 0.96-0.98 | -12.7 .. -21.8 |
+| chime s 226 | -48.0 | -17.4 | -12.7 (504 Hz) | 0.98 | 0.99 | -4.2 |
+
+- "Never masks the pad": in every cue window E stays under the pad in each of the pad's own octaves (250 Hz and up, within
+  15 dB of its strongest). The closest are the creak (-0.7 dB at 500 Hz for 4 s) and the horn (-1.9 dB).
+- "Audible after YouTube's encoder": the AAC and Opus 128 kbit/s round trips keep 96-101 % of E's projection in every window.
+- "Audible on laptop speakers" (a 200 Hz 4th-order high-pass): the horn, the creak, and most groans and strikes come within
+  2.6-10 dB of the rest in their best third octave (partially masked: heard as events). The swells and the hull are speaker
+  and headphone effects (their partials end at 200 Hz); on a laptop the moment is carried by the drop (the rain band falls
+  10-14 dB). A human listen on a laptop is still open (AU-17).
+
+**Hooks** (since the fix wave the picture's code is the source where it exists): the hull and the panel come from DR's
+`HullCourse` / `PanelCourse` (Beats/Dread/DreadCourse.cs: since the integration round the drone uses `HullCourse.CentreZ` and
+`BellyY(tau)`, so it sinks out of the deck with the picture over tau 0-24, and the creak sounds from `PanelCourse.Centre(0)`); the
+machine hums sit on DR's 32 cabins and 2 gantries (`DreadCabinCourse`, AU-28 closed); AT's sheet-lightning glows at `DreadScore.LightningS`; BV's
+tram doors close with the chime at `DreadScore.ChimeS` (s 226.25); TR's sway is mirrored in `DreadScore.SwayAmplitude`.
+
+**Fix wave (2026-11-21, panel p4_01: C07, C08, C09, C49-C53).** Final renders f08 (harness with DR's C01 DreadCourse from the
+abyss copy; whole walk with `--ending`; JSON and tables in QA/reports/audio_dread_AU-walk25-f08.* / -walk15-f08.*, the walks'
+gates in audio_walk_AU-walk25-f08.txt / -walk15-f08.txt, QA's checker in audio_AU-walk25-f08.md / -walk15-f08.md, the hum and the
+pad in audio_AU-f08-hum-pad.txt). Tools/audio/dread_analysis.py now prints a gate list: 62 / 62 pass at both speeds.
+
+| Gate | Limit | 2.5 m/s | 1.5 m/s |
+|---|---|---|---|
+| beat medians - Sum (dB) | +-1.5 | -0.03 +0.18 +0.18 +0.47 +0.23 -0.02 -0.14 | +0.01 -0.13 +0.61 -0.17 +0.08 +0.01 -0.02 |
+| true peak (dBTP) | <= -1 | -7.62 | -8.05 |
+| max sample step | <= 0.25 | 0.144 | 0.134 |
+| 20 ms envelope step, worst chord change | < 0.05 | 0.0277 (C4->C5; was 0.0427) | 0.0257 |
+| integrated loudness (LUFS) | info | -27.26 | -27.55 |
+| C07 rest in the drops (dB): KS09 / KS17 | <= -10 | -11.0 / -14.8 | -11.1 / -14.4 |
+| C07 rest K-weighted (LU) / laptop (dB) | <= -8 | -11.2 / -15.1; -10.6 / -14.8 | -12.1 / -15.6; -10.8 / -14.2 |
+| C07 swell re rest in the drop (dB) | > 0 | +8.1 / +7.4 | +7.2 / +7.5 |
+| C08 horn 740 / strike 784.8 E re rest (dB) | siblings | -10.6 / -11.7 (strikes -8.5..-14.6) | -12.7 / -12.4 |
+| C08 closest horn / strike / groan to a meet | >= 15 m | 19.1 m (horn 740 vs T2) | |
+| C09 swells, best laptop third octave re rest (dB) | >= -3 | KS04 -1.5, KS09 +3.8, KS10 +0.8, KS13 -0.6, KS17 +9.6 | -2.7 +5.8 +0.5 -0.9 +11.8 |
+| C09 hull, best laptop third octave (dB) | >= -3 | -2.5 (was -14.8) | -1.2 |
+| C09 koi in S7, laptop band re rest (dB) | >= -6 | -5.5 (phone -7.3; was -15.1 / -29.7) | -4.5 |
+| D-038 (10) E under the pad in its octaves (swells; koi) | < 0 | -1.3..-2.8; koi -2.7 | -0.1..-5.8; koi -0.5 |
+| C53 chime, best third octave re rest (dB) | about -3 | -3.3 at 504 Hz (was -12.7); under the pad -0.2 | -5.3 |
+| AAC / Opus 128 kept of E (every cue) | | 0.97-0.99 / 0.95-1.00 | 0.97-0.99 / 0.95-1.01 |
+| C49 H below 30 Hz (share of H) | < 15 % | 4.1-11.5 % per beat (was 20-56 %) | |
+| C51 pad L/R correlation, mono loss | >= +0.1, <= 2 dB | +0.37..+0.78, -0.51..-1.64 dB (beat 5 was -0.16 / -3.74) | +0.38..+0.78, -0.51..-1.60 |
+| loudest 1 s windows (train passes) | | -22.8..-23.3 dBFS, +6.3 over the beat-4 median (was +8.5..+9.0) | |
+
+- The D-038 (10) check skips the drop spans (the pad is ducked 15 dB there by design and the swell leads: C07); outside them
+  the closest margins are KS09 -0.1 and KS10 -0.3 dB at 1.5 m/s and the chime -0.2 dB at 2.5 m/s.
+- C08's acceptance names "the groan 597.6 or its moved slot": there is none. With every horn, strike and groan 18 m clear of the
+  meets (tram 272.0, T1 602.0, T5 624.7, T3 653.6, T4 699.3, T6 715.8, T2 759.1, T7 816.3), s 587-831 has no free slot; the drone,
+  the swells KS10 / KS13, two strikes and horn 2 carry the train stretch.
+- The passes are 3 dB down (TubeTrain PeakDb -24, whoosh -27, thump -33; C08's option, AU-06); the beat-4 median moved
+  +0.51 -> +0.47 dB and the walk's true peak -4.92 -> -7.62 dBTP (f07 -> f08).
+- The pad FDN's wet side is narrowed to 0.35 (C51; `NocMixer.PadWetWidth`), its power kept, and the per-chord level shifts went
+  back into `PadChordTrimDb` (QA/audio-trims.json): the pad per chord is 0.00 dB from before.
+- The koi's partials (14.3 lists 123.6, 164.8, 247.2 Hz at -6, -10, -14 dB) are now 3, 4, 6, 8, 9, 12 x E1 at -6, -10, -8, -10,
+  -10, -9 dB with a 0.13 Hz +-0.6 % vibrato on the upper four: an ADR request against the 14.3 list (DEVELOPMENT line proposed
+  in the report).
+- C52: the player logs `[NOC] audio heartbeat ...` every 30 s after a 10 s intro baseline (the window's longest callback, the
+  callbacks over 50 % and 100 % of their buffer's period) and `[NOC] audio summary ...` at quit ("audio overruns after the intro
+  = N"); the 4K full-length cinematic dump is the lead's (a long GPU job).
+
+## 12. The Ark (D-043, Logs/ark/ARK.md; built 2026-11-21 evening; replaces the 2.1 hull's drone)
+
+The 5 000 m ship comes down the rift from the far north haze (DR's direction note: every beat-3 / beat-4 gaze looks north), bow
+(the leading, south end) first, on x 515.3 with its belly at y 330, 328 m over the walker; DR's course launches it at s 380, its
+bow is over z 195 at tau 86.4 (s 596 at 2.5 m/s, s 509.6 at 1.5) and its stern at tau 270.3 (s 1 055.7 at 2.5, 785 at 1.5).
+`DreadScore` reads every Ark number through the alias `ArkC` (DreadScore.cs, top): DR's `HullCourse` of the abyss copy (20:41)
+mirrored in `ArkCourseMirror` until the merge, when the alias becomes `using ArkC = Megastructure.HullCourse;` and the mirror is
+deleted (`AudioDreadTests.Ark_MirrorIsDrsCourse_D043` holds the numbers). `ArkDir` -1: the motion is toward -z.
+
+**What the walker hears.** In beat 3 the ship's first call (s 440, Eb2 + Bb2 over Ebmaj7#11) arrives from its bow 2.1 km up the rift
+after 6.4 s of flight, and the pressure starts to rise out of the haze (the drone -56 dBFS at s 440, -37 at the bow's pass). Nine
+seconds before the bow is over the walker the world falls silent: rain, drips, the city hum, the traffic wash, the X beds and the
+passes -21 dB, the pad -18, the wind -12 (a breath stays), over 2 s; only the footsteps, the breath of the wind and the Ark remain.
+The bow slides over in that silence with its long Doppler (the bow wave's 27.5 Hz harmonics 2-6 and its air band glide from about
++8 % to -7 % as it passes), the hull's first groan rolls down from the belly 1.8 s after the bow is overhead, and the world comes
+back over 5 s from 2 s after it (T1's pass at s 602 rises with the return). Under the belly the city stays hushed: the hum and the
+traffic wash -8 dB, the X beds and the train passes -6 dB (`ArkCover`, 400 m soft edges, the beam's half 220 m plus 250 m), the
+Ark's body pressure is overhead (13.75 Hz x 1..12 with a detuned side voice and a brown bed, breathing over 22 s; its laptop layer
+A3 E4 A4), four engine pods pass over one by one with their own Doppler glides, and the hull groans every 22-32 s from overhead
+(7 groans, 22-30 Hz combs with creak grains, 7-9.5 s). The second call (s 740, F2 + C3 over Dm11) comes from the bow 1.6 km south,
+the third (s 1 090, D2 + A2 over the Dmaj9 -> Bm11 change) from the stern going away; as the stern passes over in the garden the
+cover lifts and the city comes back.
+
+| Part | Where | Level |
+|---|---|---|
+| `ArkDrone` body (line source: the share of the zenith half-circle the hull fills, ^0.8) | 13.75 Hz x 1..12 (LP 120), side voice +0.21 % on 2-6, brown bed LP 40 Hz, breath 0.045 Hz +-15 % | `ArkPeakDb` -38 dBFS x 0.8; `ArkGardenTrimDb` -2.5 in beat 5 |
+| body's small-speaker layer | 8 / 12 / 16 x 27.5 Hz (A3 E4 A4), side voice +0.35 % | `ArkBodyUpperDb` -2 re the body, x (1 - 0.8 swell envelope) |
+| bow wave (point source at the bow, y 390) | 27.5 Hz x 2..6, air band 70 Hz; Doppler of the course's speed | `ArkBowGain` 1.27 / (1 + (r / 420)^2) |
+| engine pods (4, 1 150 / 2 350 / 3 550 / 4 820 m behind the bow, x +-90) | 27.5 Hz x 1..6, exhaust band, throb 0.37-0.53 Hz, distance LP 2.4 kHz / (1 + r / 150); 9 / 12 / 8 x 27.5 Hz layer | 0.7 x {0.75, 0.8, 0.85, 1.25} / (1 + (r / 330)^2) |
+| the silence (`ArkDropShape`, keyed to the bow's seconds to the listener) | fall -9..-7 s, hold to +2 s, back by +7 s | R D H T X passes K -21, pad -18, wind -12 dB |
+| cover (`ArkCover`) | under the belly | H T -8 dB, X beds and passes -6 dB |
+| calls (`HornS` 440 / 740 / 1 090 at 2.5 m/s, fired on the Ark's clock `ArkCallTau` 24 / 144 / 284 s; `HornPart` bow / bow / stern) | position, flight time at fire time; played at the heard pitch (chord tones at both speeds) | -41.5 / -41.5 / -44 dBFS at 1 700 m, +-10 log10 of the distance (-8..+3), none beyond 3.5 km |
+| groans (`ArkGroanTau`: on the Ark's clock, the first 0.8 s after the bow is over z 195) | the belly point over the listener | `ArkGroanDb` -35 dBFS overhead |
+
+Face strikes and face groans keep out of the Ark's stretch (s 565.5-1 075.7 at 2.5 m/s, `ArkQuietS0` / `ArkQuietS1`); no glow or
+rumble falls in the silence (AudioDreadTests checks the schedule).
+
+**Measured** (harness a06 with `--ending`, whole walk; QA/reports/audio_walk_AU-ark-walk25-a06.txt / -walk15-a06.txt,
+audio_dread_AU-ark-walk25-a06.* / -walk15-a06.*, audio_AU-ark-walk25-a06.md / -walk15-a06.md):
+
+| Gate | Limit | 2.5 m/s | 1.5 m/s |
+|---|---|---|---|
+| beat medians - Sum (dB) | +-1.5 | -0.03 +0.18 -0.01 -0.12 +0.67 -0.02 -0.12 | +0.01 -0.14 +0.32 -0.40 -0.01 +0.00 -0.09 |
+| EditMode level stretches (harness `gates`) | +-1.5 | -0.25 +0.02 +0.08 -0.34 +0.88 +0.02 -0.51 | -0.38 -0.45 -0.02 -0.68 +0.66 +0.02 -0.30 |
+| true peak (dBTP) / max sample step | <= -1 / <= 0.25 | -11.42 / 0.142 | -9.10 / 0.134 |
+| the Ark's silence: the rest (full / K / laptop) | <= -10 dB | -13.6 dB / -15.2 LU / -14.2 dB | -16.1 / -16.3 / -15.2 (one silence with KS09's) |
+| the Ark the loudest element in its silence (E re rest) | > 0 | +5.9 dB | +9.5 dB |
+| under the belly: laptop best third octave re rest | >= -3 dB | +1.1 dB (200 Hz) | -5.5 dB (the bridge's train passes; deviation) |
+| D-038 (10) E under the pad in its octaves (Ark windows) | < 0 | belly -4.9, groans -3.5..-6.5, calls -3.8..-8.2 | belly -5.0 |
+| dread_analysis gates | all | 60 / 60 | 59 / 60 |
+| AAC / Opus 128 kept of E (Ark windows) | | 0.98-0.99 / 0.99-1.00 | |
+
+- At 1.5 m/s the bow passes at s 509.6, so the Ark's silence and KS09's drop make one silence (s 496-524); dread_analysis then
+  measures KS09's drop against the Ark's reference (bow -18..-10 s).
+- Spectrograms looked at: QA/reports/audio_AU-ark-a06-bowpass-spec.png (the rain band leaves over 2 s and comes back over 5 s
+  with no vertical line; the footsteps alone in the hole; the Ark at -38 dBFS) and audio_AU-ark-a06-E-low-spec.png (E alone,
+  20-500 Hz, s 405-680: the pods' glides, the groans, the swells).
+- The calls fire on the Ark's clock, so at 1.5 m/s the ship still calls three times at the same points of its course (s 416 /
+  596 / 806, from about 2.1 / 1.6 / 0.6 km; a03 had the second and third from 4-5 km): E -41.2 / -35.9 / -40.2 dBFS, under the pad
+  -3.4 / -2.3 / -5.9 dB (a06).
+- In the built player (AU-b01, -autotest -cinematic -beat 4, 44 s -audio-dump from about s 585; QA/reports/AU-ark-walkdump.wav,
+  audio_AU-ark-walkdump-spec.png): the recording opens in the silence (no rain band, the footsteps, the 220 Hz line and the low
+  stack), the world returns at t 7-12 s with T1's pass, then the hushed crossing; dump -29.97 vs offline -30.26 dBFS (+0.28 dB).
+  Standing at s 590 (AU-ark-dump01): -30.20 vs -29.72 dBFS (-0.48 dB, <= 1.0: PASS), 1 s windows -32.3..-29.2, max step 0.099,
+  no zero run longer than 1 sample.

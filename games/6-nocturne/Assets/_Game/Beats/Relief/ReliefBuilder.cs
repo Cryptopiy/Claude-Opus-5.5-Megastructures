@@ -3,8 +3,8 @@
 // Parts are pure (BuildParts: no scene objects, so ReliefTests build, validate and count them), turned into renderers under the
 // always-active beat roots (14.6) at load; meshes are validated (MeshValidation) and a failure logs [NOC-FAIL]. Materials are
 // library rows (agreement 9: runtime variants derived once): NocFacade for the building faces, NocSurface Concrete for structure,
-// two emissive Concrete variants for the lit tunnel mouths (WinCold x 0.40) and the tube-portal rings (NeonCyan x 2.0, the lower
-// tube portals' ring of GulfPortal).
+// two emissive Concrete variants for the lit tunnel mouths (WinCold x 0.40) and the tube-portal collar lamps (GulfPortal.LampLinear:
+// NeonCyan half-way to WinNeutral x 2.0 x 0.35, the lower tube portals' lamps of GulfPortal; fix wave C03).
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,12 +26,15 @@ namespace Megastructure
         public const float ShopGain = 0.28f;
         /// <summary>AB (INT-01, INT-03): the Gulf faces' light content, linear radiance x token: galleries (WinWarm / WinNeutral), atria
         /// (WinWarm, the lower bands brighter), terrace lip lights (WinNeutral). Light content, never brighter windows (D-032 5).</summary>
-        public const float GalleryWarmGain = 1.4f, GalleryCoolGain = 1.2f, AtriumHiGain = 1.6f, AtriumLoGain = 0.3f, LipGain = 0.9f;
+        // r03: AtriumLoGain 0.3 -> 0.12 (AB_r02 KS08: the hall glow sat above the lit windows' level and read as a beige card).
+        // r04: AtriumLoGain 0.12 -> 0.04 (AB_r03 KS07 / KS11: still pale beige cards at 600 m; now a dark hall behind its lit floor
+        // edges), galleries 1.4 / 1.2 -> 1.7 / 1.45 (lit glazed corridors with linear luminaires: the faces' highlight lines, D-032 5);
+        // r06: 2.1 / 1.8 (AB_r05: the galleries beyond 800 m sat at luma 90-120 after the fog; KS07 / KS11 / KS12 p99 114 / 119 / 105).
+        public const float GalleryWarmGain = 2.1f, GalleryCoolGain = 1.8f, AtriumHiGain = 1.6f, AtriumLoGain = 0.04f, LipGain = 0.9f;
 
-        /// <summary>The relief of TEXTURE_PLAN 5 (Gulf ribs, T0 relief) is aligned to FA's v2 cells, so it is built with the v2
-        /// facade: `-relief-v 2` forces it, `-relief-v 1` drops it, the default follows `-facade-v` (D-030: the default picture keeps
-        /// the v1 facade without relief until FA's package is accepted). The gate structures of D-029 are always built.</summary>
-        public static bool ReliefOn => CliArgs.GetInt("-relief-v", NocLookGlobals.FacadeV) == 2;
+        /// <summary>The relief of TEXTURE_PLAN 5 (Gulf ribs, T0 relief) is aligned to FA's v2 cells (TP-2: the v2 facade is the only
+        /// path), so it is on by default; `-relief-v 1` drops it (a debug switch). The gate structures of D-029 are always built.</summary>
+        public static bool ReliefOn => CliArgs.GetInt("-relief-v", 2) == 2;
 
         /// <summary>Every part, in build order (pure); relief: include the v2 relief (tests pass true).</summary>
         public static List<ReliefPart> BuildParts(bool relief)
@@ -81,7 +84,7 @@ namespace Megastructure
             m[(int)ReliefMat.Concrete] = lib.Concrete;
             m[(int)ReliefMat.Steel] = lib.SteelPainted;
             m[(int)ReliefMat.TunnelLight] = Emissive(lib.Concrete, NocPal.WinCold, TunnelGain, "Relief_tunnelLight");
-            m[(int)ReliefMat.PortalRing] = Emissive(lib.Concrete, NocPal.NeonCyan, NocturnePalette.EmissionTube, "Relief_portalRing");
+            m[(int)ReliefMat.PortalRing] = EmissiveLinear(lib.Concrete, GulfPortal.LampLinear(), "Relief_portalRing");
             m[(int)ReliefMat.ShopWarm] = Emissive(lib.Concrete, NocPal.WinWarm, ShopGain, "Relief_shopWarm");
             m[(int)ReliefMat.ShopCold] = Emissive(lib.Concrete, NocPal.WinCold, ShopGain, "Relief_shopCold");
             m[(int)ReliefMat.GalleryWarm] = Emissive(lib.Concrete, NocPal.WinWarm, GalleryWarmGain, "Relief_galleryWarm");
@@ -95,9 +98,11 @@ namespace Megastructure
         static readonly int s_emission = Shader.PropertyToID("_EmissionColor");
 
         static Material Emissive(Material baseMat, NocPal token, float gain, string name)
+            => EmissiveLinear(baseMat, NocturnePalette.Linear(token) * gain, name);
+
+        static Material EmissiveLinear(Material baseMat, Color c, string name)
         {
             if (baseMat == null) return null;
-            Color c = NocturnePalette.Linear(token) * gain;
             var mat = new Material(baseMat) { name = name };
             mat.SetVector(s_emission, new Vector4(c.r, c.g, c.b, 1f));       // linear HDR (SetVector: no colour-space conversion)
             return mat;

@@ -6,6 +6,9 @@
 // headlight 1.2 m ahead of the nose (SignWhite r 22 i 3) and two saloon lights in modules 1 and 3 (WinNeutral r 11 i 1.4) that
 // put the tram's light on the wet street; each fades by TramSchedule before it could shine out of a sealed mesh. Once the tram is
 // fully clipped inside the depot its renderers and lights are disabled (nothing is visible: no pop). Zero allocations per frame.
+// DREAD 6 (BV fix wave): while the tram waits at the stop its south doors follow TramSchedule.DoorOpen (capture mode: the value
+// at s; play: TramSchedule.StepDoors, at most 1 / 0.8 s per second): each module's two leaf meshes slide 0.64 m apart along the
+// body (local z), shut by s 229.25 (the chime at 226.25), before the launch at s 230.
 using UnityEngine;
 
 namespace Megastructure
@@ -19,6 +22,8 @@ namespace Megastructure
         readonly Renderer[] m_renderers;
         readonly Light m_head;
         readonly Light[] m_saloon;
+        readonly Transform[] m_doorA, m_doorB;
+        double m_door, m_doorShown = -1.0;
         TramState m_state;
         bool m_visible = true;
 
@@ -27,9 +32,12 @@ namespace Megastructure
         public double HeadP { get; private set; }
         public TramPhase Phase => NocState.Capture ? (TramSchedule.Hidden(HeadP) ? TramPhase.Done : TramPhase.Running) : m_state.Phase;
 
-        public TramDriver(Transform[] cars, Renderer[] renderers, Light head, Light[] saloon)
+        /// <summary>The doors' opening (0 shut .. 1 open; QA, tests).</summary>
+        public double DoorOpening => m_door;
+
+        public TramDriver(Transform[] cars, Renderer[] renderers, Light head, Light[] saloon, Transform[] doorA = null, Transform[] doorB = null)
         {
-            m_cars = cars; m_renderers = renderers; m_head = head; m_saloon = saloon;
+            m_cars = cars; m_renderers = renderers; m_head = head; m_saloon = saloon; m_doorA = doorA; m_doorB = doorB;
             TramSchedule.Reset(ref m_state);
         }
 
@@ -38,6 +46,18 @@ namespace Megastructure
             double tau = NocState.Capture ? TramSchedule.CaptureTau(f.s) : TramSchedule.Step(ref m_state, f.s, NocState.Dt);
             double p = TramSchedule.HeadP(tau);
             Tau = tau; HeadP = p;
+            m_door = NocState.Capture ? (tau <= 0.0 ? TramSchedule.DoorOpen(f.s) : 0.0)
+                                      : TramSchedule.StepDoors(m_door, f.s, NocState.Dt, m_state.Phase == TramPhase.Waiting);
+            if (m_door != m_doorShown && m_doorA != null && m_doorB != null)
+            {
+                m_doorShown = m_door;
+                float off = (float)(m_door * TramSchedule.DoorTravel);
+                for (int k = 0; k < m_doorA.Length; k++)
+                {
+                    if (m_doorA[k] != null) m_doorA[k].localPosition = new Vector3(0f, 0f, -off);
+                    if (m_doorB[k] != null) m_doorB[k].localPosition = new Vector3(0f, 0f, off);
+                }
+            }
             bool visible = !TramSchedule.Hidden(p);
             if (visible != m_visible)
             {

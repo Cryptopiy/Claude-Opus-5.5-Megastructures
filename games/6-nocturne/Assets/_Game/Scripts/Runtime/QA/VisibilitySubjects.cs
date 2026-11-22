@@ -240,8 +240,8 @@ namespace Megastructure
               "west roof edge x -0.10..-0.07 (half-angle 6.19 deg)");
             S(k, "roof_edge_east", VisRule.Part, Line(new D3(2.2, 31.0, 60.0), new D3(2.2, 31.0, 120.0), 13), 0.06, 0.07, N, N,
               "east roof edge x +0.06..+0.07 (half-angle 4.29 deg)");
-            S(k, "tower_flank", VisRule.Part, PlaneX(-30.0, 150.0, 250.0, 90.0, 110.0, 5, 3), -0.20, -0.10, 0.58, 0.66,
-              "tower flank in the slit x -0.20..-0.10, y +0.58..+0.66", "west shaft set back 30 m");
+            // fix wave (lead decision, panel p4_01): KS02's tower_flank is dropped - hidden by the alley's west podium from every eye
+            // within +-6 m of the path (visibility.json p4_01: 0.00 unoccluded, spec and built)
             k = Shot(L, "KS03", "G1", 106, 123.5);
             S(k, "north_facade_base", VisRule.Whole, PlaneZ(270.0, -30.0, 30.0, 0.0, 40.0, 7, 3), -0.18, 0.18, -0.42, 0.0,
               "north facade base x +-0.18, y -0.42..0", "podium 40 m, x -30..30");
@@ -250,11 +250,13 @@ namespace Megastructure
 
             // ---------------- beat 2 (G1): 14.5.2
             k = Shot(L, "KS04", "G1", 205, 253);
-            S(k, "blade_n198", VisRule.Whole, Box(198.0, 212.0, 40.0, 140.0, 263.0, 270.0), -0.47, -0.31, -0.20, 0.69, "north blade x 198 (y 40-140) x -0.47..-0.31, y -0.20..+0.69");
-            S(k, "blade_s186", VisRule.Whole, Box(186.0, 200.0, 60.0, 160.0, 120.0, 127.0), 0.32, 0.49, 0.04, 0.91, "south blade x 186 (y 60-160) x +0.32..+0.49, y +0.04..+0.91");
-            S(k, "canyon_end", VisRule.Part, Line(new D3(215.3, 0.0, 125.0), new D3(215.3, 0.0, 265.0), 15), N, N, -0.64, -0.64, "canyon end at y -0.64");
-            S(k, "face_B", VisRule.Part, FaceB(-105.0, 495.0, 21, 0.0, 200.0, 5), 0.0, 0.0, -0.63, -0.19,
-              "far Gulf face (x 815.3, 750 m away) at x 0, y -0.63..-0.19",
+            // D-040 (2): KS04's pitch 22 -> 27 (BV's and FX's requests; projections of FX's proj.py, asserted by BV's
+            // Beat02BoulevardTests.KeyShots_Subjects); the Box / Line / FaceB geometry is unchanged
+            S(k, "blade_n198", VisRule.Whole, Box(198.0, 212.0, 40.0, 140.0, 263.0, 270.0), -0.48, -0.30, -0.34, 0.54, "north blade x 198 (y 40-140) x -0.48..-0.30, y -0.34..+0.54 (D-040 pitch 27)");
+            S(k, "blade_s186", VisRule.Whole, Box(186.0, 200.0, 60.0, 160.0, 120.0, 127.0), 0.31, 0.49, -0.10, 0.74, "south blade x 186 (y 60-160) x +0.31..+0.49, y -0.10..+0.74 (D-040 pitch 27)");
+            S(k, "canyon_end", VisRule.Part, Line(new D3(215.3, 0.0, 125.0), new D3(215.3, 0.0, 265.0), 15), N, N, -0.81, -0.81, "canyon end at y -0.81 (D-040 pitch 27)");
+            S(k, "face_B", VisRule.Part, FaceB(-105.0, 495.0, 21, 0.0, 200.0, 5), 0.0, 0.0, -0.79, -0.33,
+              "far Gulf face (x 815.3, 750 m away) at x 0, y -0.79..-0.33 (D-040)",
               "agreement 5 cuts face B above y 0 away for z 115..275 (garden notch): the face is checked on the notch flanks").surface = true;
             S(k, "lane_n185", VisRule.Part, Line(new D3(100.0, 185.0, 245.0), new D3(800.0, 185.0, 245.0), 29), -0.36, -0.10, N, N, "north lane (y 112) x -0.36..-0.10",
               "GE GB-06: the lane rises from the spec's y 112 to 185 (it would enter the garden crowns at face B; NocTraffic, GateDims)");

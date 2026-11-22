@@ -221,5 +221,111 @@ namespace Megastructure.Tests
             var r = G1TestGeo.Rect(v6, pts);
             G1TestGeo.Inside(r, -0.24, 0.23, -0.43, -0.29, 0.06, "KS06 tram (built modules)");
         }
+
+        // ------------------------------------------------------------------ BV fix wave: DREAD 6 (panel p4_01 C29)
+        /// <summary>The empty tram's dwell: the doors are fully open 12 s (at 2.5 m/s: 30 m) before the chime, start closing with AU's
+        /// chime at DreadScore.ChimeS (226.25 = 230 - 1.5 s x 2.5 m/s), are shut before the launch at s 230 (capture mode and a
+        /// stepped play walk at 1.5 and 2.5 m/s), never move more than 1 / 0.8 s per second in play, and the 14.5.2 schedule (the
+        /// abeam s, KS06) is untouched; the leaf meshes are valid and lie outside the body wall.</summary>
+        [Test]
+        public void Dwell_DoorsOpen12s_CloseWithTheChime_ShutBeforeTheLaunch()
+        {
+            Assert.AreEqual(226.25, DreadScore.ChimeS, 1e-9, "AU's chime s");
+            Assert.AreEqual(DreadScore.ChimeS, TramSchedule.DoorsCloseS, 1e-12);
+            double fullOpen = TramSchedule.DoorsOpenS + DreadScore.M(TramSchedule.DoorOpenSeconds);
+            Assert.AreEqual(12.0, (TramSchedule.DoorsCloseS - fullOpen) / 2.5, 1e-9, "12 s open at the reference 2.5 m/s");
+            Assert.AreEqual(0.0, TramSchedule.DoorOpen(TramSchedule.DoorsOpenS - 0.01), 1e-12);
+            Assert.AreEqual(1.0, TramSchedule.DoorOpen(fullOpen), 1e-9);
+            Assert.AreEqual(1.0, TramSchedule.DoorOpen(TramSchedule.DoorsCloseS), 1e-9);
+            Assert.Less(TramSchedule.DoorOpen(TramSchedule.DoorsCloseS + 1.0), 1.0, "closing after the chime");
+            Assert.IsTrue(TramSchedule.DoorsClosing(DreadScore.ChimeS) && !TramSchedule.DoorsClosing(DreadScore.ChimeS - 1e-6), "AU: doorsClosing = s >= ChimeS");
+            double shut = TramSchedule.DoorsCloseS + DreadScore.M(TramSchedule.DoorCloseSeconds);
+            Assert.Less(shut, TramSchedule.LaunchS, "shut before the launch");
+            for (double s = shut; s <= 400.0; s += 0.25) Assert.AreEqual(0.0, TramSchedule.DoorOpen(s), 1e-12, "shut at s " + s);
+            // play mode at 1.5 and 2.5 m/s, 60 fps: the doors follow, are shut before the launch frame, never jump
+            foreach (double v in new[] { 1.5, 2.5 })
+            {
+                var st = new TramState(); TramSchedule.Reset(ref st);
+                double door = 0.0, maxOpen = 0.0, maxStep = 0.0, dt = 1.0 / 60.0;
+                for (double s = 150.0; s <= 300.0; s += v * dt)
+                {
+                    TramSchedule.Step(ref st, s, dt);
+                    double nd = TramSchedule.StepDoors(door, s, dt, st.Phase == TramPhase.Waiting);
+                    maxStep = Math.Max(maxStep, Math.Abs(nd - door)); door = nd;
+                    maxOpen = Math.Max(maxOpen, door);
+                    if (st.Phase == TramPhase.Running) Assert.AreEqual(0.0, door, 1e-12, "doors shut while the tram runs (v " + v + ", s " + s + ")");
+                }
+                Debug.Log(FormattableString.Invariant($"[NOC] tram dwell at {v} m/s: max opening {maxOpen:F3}, max step {maxStep:F4} per frame"));
+                Assert.AreEqual(1.0, maxOpen, 1e-6, "fully open during the dwell");
+                Assert.LessOrEqual(maxStep, dt / TramSchedule.DoorRateSeconds + 1e-9);
+            }
+            // the 14.5.2 pass is unchanged
+            Assert.AreEqual(272.03, TramSchedule.AbeamS(2.5), 0.01);
+            Assert.AreEqual(258.18, TramSchedule.AbeamS(1.5), 0.01);
+            // the leaves: valid meshes, outside the body wall (south: x <= -1.7), two doors of two leaves per side and module
+            for (int k = 0; k < TramSchedule.Cars; k++)
+                foreach (int dir in new[] { -1, 1 })
+                {
+                    var mb = new MeshBuilder();
+                    TramBuilder.DoorLeaves(mb, k, dir);
+                    var rep = MeshValidation.Validate(mb, "tramDoors" + k);
+                    Assert.IsTrue(rep.Ok, rep.ToString());
+                    foreach (var q in mb.Positions) Assert.LessOrEqual(q.x, -TramBuilder.HalfW - TramBuilder.LeafIn + 1e-4f, "south leaf outside the wall");
+                }
+            Assert.Less(TramBuilder.VehicleTriangles(), 6000);
+        }
+
+        /// <summary>The terminus lobby: the doors open over 1.5 s when s first crosses 350, stay fully open 8 s, close over 1.5 s
+        /// (capture mode: open s 353.75-373.75); a 60 fps step is at most 1.875 / 1.5 / 60 of the opening (no flash); play mode
+        /// triggers once, runs on real seconds and re-arms below s 338 once shut; the opening is in the west face's southern bay,
+        /// clear of the tram portal; the leaves slide fully behind the reveals; the lobby lies in frame at s 350-366.</summary>
+        [Test]
+        public void Lobby_DoorsOpen8s_SmoothNoFlash_ReArm()
+        {
+            Assert.AreEqual(0.0, LobbyDoors.Opening(0.0), 1e-12);
+            Assert.AreEqual(1.0, LobbyDoors.Opening(LobbyDoors.OpenSeconds), 1e-9);
+            Assert.AreEqual(1.0, LobbyDoors.Opening(LobbyDoors.OpenSeconds + LobbyDoors.HoldSeconds), 1e-9);
+            Assert.AreEqual(8.0, LobbyDoors.HoldSeconds, 1e-12, "DREAD 6: close again after 8 s");
+            Assert.AreEqual(0.0, LobbyDoors.Opening(LobbyDoors.TotalSeconds), 1e-12);
+            Assert.AreEqual(1.0, LobbyDoors.Opening(LobbyDoors.CaptureTau(353.75)), 1e-9);
+            Assert.AreEqual(1.0, LobbyDoors.Opening(LobbyDoors.CaptureTau(373.75)), 1e-9);
+            Assert.AreEqual(0.0, LobbyDoors.Opening(LobbyDoors.CaptureTau(349.0)), 1e-12);
+            Assert.AreEqual(0.0, LobbyDoors.Opening(LobbyDoors.CaptureTau(377.6)), 1e-12);
+            double dt = 1.0 / 60.0, maxStep = 0.0, prev = 0.0;
+            for (double t = 0.0; t <= LobbyDoors.TotalSeconds + 1.0; t += dt) { double o = LobbyDoors.Opening(t); maxStep = Math.Max(maxStep, Math.Abs(o - prev)); prev = o; }
+            Assert.LessOrEqual(maxStep, 1.875 / LobbyDoors.OpenSeconds * dt + 1e-6, "smooth 1.5 s ramps");
+            // play: trigger once, re-arm below 338 once shut
+            var st = new LobbyDoors.State();
+            double s = 340.0, maxOpen = 0.0; int opens = 0; bool wasOpen = false;
+            for (int i = 0; i < 60 * 40; i++)
+            {
+                s += 2.5 * dt;
+                double o = LobbyDoors.Step(ref st, s, dt);
+                if (o > 0.5 && !wasOpen) opens++;
+                wasOpen = o > 0.5; maxOpen = Math.Max(maxOpen, o);
+            }
+            Assert.AreEqual(1, opens, "one opening on the way"); Assert.AreEqual(1.0, maxOpen, 1e-6);
+            Assert.IsTrue(st.Done && !st.Running);
+            LobbyDoors.Step(ref st, 345.0, dt); Assert.IsTrue(st.Done, "no re-arm above s 338");
+            LobbyDoors.Step(ref st, 330.0, dt); Assert.IsFalse(st.Done, "re-armed below s 338");
+            // geometry: the southern bay of the west face, clear of the portal; the leaves hide behind the reveals when open
+            float pz0 = (float)(BoulevardLayout.TrackNorthZ - 0.5 * BoulevardLayout.PortalW);
+            Assert.Greater(LobbyDoors.Z0, (float)BoulevardLayout.TerminusZ0 + 1.5f);
+            Assert.Less(LobbyDoors.Z1, pz0 - 2.0f, "south of the tram portal");
+            Assert.AreEqual(0.5f * (LobbyDoors.Z1 - LobbyDoors.Z0), LobbyDoors.Travel, 1e-5f);
+            Assert.Greater(LobbyDoors.LeafX0, (float)BoulevardLayout.TerminusX0 + 0.1f, "the leaves stand in the reveal (pockets in the wall)");
+            Assert.Less(LobbyDoors.LeafX1, (float)BoulevardLayout.TerminusX0 + TramTerminus.WestWall - 0.1f);
+            var parts = Beat02_Boulevard.BuildParts();
+            Assert.IsNotNull(parts.Find("lobbyDoorA")); Assert.IsNotNull(parts.Find("lobbyDoorB")); Assert.IsNotNull(parts.Find("lobbySpill"));
+            Assert.Greater(parts.Find("lobbyRoom").Mb.TriangleCount, 0);
+            Assert.Greater(LobbyDoors.RoomPanelX, LobbyDoors.LeafX1, "the lit room behind the leaves");
+            // in frame on the walk (gaze yaw 0): the lobby bearing from the walker at s 350-366 is under the 49 deg half-width
+            for (double sw = 350.0; sw <= 366.0; sw += 2.0)
+            {
+                double xe = sw - NocturneConstants.EastLegOffset, dz = 0.5 * (LobbyDoors.Z0 + LobbyDoors.Z1) - 195.0, dx = BoulevardLayout.TerminusX0 - xe;
+                double bearing = Math.Atan2(dz, dx) * 180.0 / Math.PI;
+                Assert.Less(bearing, 46.0, "lobby in frame at s " + sw);
+            }
+        }
     }
 }

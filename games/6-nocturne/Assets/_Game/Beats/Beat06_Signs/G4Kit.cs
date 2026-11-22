@@ -58,9 +58,10 @@ namespace Megastructure
         public static Color Mix(Color a, Color b, double t) => new Color((float)(a.r + (b.r - a.r) * t), (float)(a.g + (b.g - a.g) * t), (float)(a.b + (b.b - a.b) * t), 1f);
 
         /// <summary>SG: the state of one shop panel in BV's NocShopfront vertex-colour contract (R random, G light reduction, B state x 32,
-        /// A half-shutter edge). Closed bays get a roller shutter (state 1; some leak a line of light, some are perforated). Open bays:
-        /// 56 % lit (gain 0.55-0.85), 20 % dim (0.16-0.30), 12 % a half-lowered shutter over a lit room (0.50-0.80, edge at 42-70 % of
-        /// the height), 7 % dark (state 3, stand-by light), 5 % shuttered. Gain multiplies the room light (never above the lit room).</summary>
+        /// A half-shutter edge). Closed bays get a roller shutter (state 1; some leak a line of light, some are perforated). Open bays
+        /// (SG r03: a row of 56 % lit rooms read as a band of white boxes in KS16 / KS17): 40 % lit (gain 0.42-0.68), 22 % dim
+        /// (0.12-0.24), 13 % a half-lowered shutter over a lit room (0.40-0.62, edge at 42-70 % of the height), 13 % dark (state 3,
+        /// stand-by light), 12 % shuttered. Gain multiplies the room light (never above the lit room).</summary>
         public struct ShopPanel { public int State; public double Gain, Rnd, ShutterFrac; public bool Open; }
 
         public static ShopPanel PickShop(uint h, bool closed)
@@ -68,10 +69,10 @@ namespace Megastructure
             double u0 = NocHash.U01(NocHash.Pcg(h ^ 0x53544154u)), u1 = NocHash.U01(NocHash.Pcg(h ^ 0x4741494Eu));
             double u2 = NocHash.U01(NocHash.Pcg(h ^ 0x524E4421u)), u3 = NocHash.U01(NocHash.Pcg(h ^ 0x46524143u));
             var p = new ShopPanel { Rnd = u2, ShutterFrac = 1.0 };
-            if (closed || u0 >= 0.95) { p.State = 1; p.Gain = 0.40 + 0.30 * u1; }
-            else if (u0 < 0.56) { p.State = 0; p.Gain = 0.55 + 0.30 * u1; p.Open = true; }
-            else if (u0 < 0.76) { p.State = 0; p.Gain = 0.16 + 0.14 * u1; p.Open = true; }
-            else if (u0 < 0.88) { p.State = 2; p.Gain = 0.50 + 0.30 * u1; p.ShutterFrac = 0.42 + 0.28 * u3; p.Open = true; }
+            if (closed || u0 >= 0.88) { p.State = 1; p.Gain = 0.30 + 0.30 * u1; }
+            else if (u0 < 0.40) { p.State = 0; p.Gain = 0.42 + 0.26 * u1; p.Open = true; }
+            else if (u0 < 0.62) { p.State = 0; p.Gain = 0.12 + 0.12 * u1; p.Open = true; }
+            else if (u0 < 0.75) { p.State = 2; p.Gain = 0.40 + 0.22 * u1; p.ShutterFrac = 0.42 + 0.28 * u3; p.Open = true; }
             else { p.State = 3; p.Gain = 0.5; }
             return p;
         }
@@ -90,13 +91,13 @@ namespace Megastructure
 
         /// <summary>SG (INT-34): a lit shop room behind glass, a variant of BV's NocShopfront row (lib.Shopfront): room light token x
         /// factor (the panel mean; the shader adds its room gain 0.6), room depth, shelf pitch, product width (m) and seed. Without the
-        /// row (-surf-v 1) a flat dark-glass panel at 0.6 x the light (the room's mean).</summary>
+        /// row (editor previews before RebuildAll) a flat dark-glass panel at 0.6 x the light (the room's mean).</summary>
         public static Material ShopRoom(MaterialLibrary lib, string name, NocPal token, double factor, float depth, float pitch, float itemW, int seed)
         {
             if (lib == null) return null;
             Color e = NocturnePalette.Linear(token) * (float)factor;
             e.a = 1f;
-            if (NocLookGlobals.SurfV != 2 || lib.Shopfront == null) return Emissive(lib.Concrete, e, 0.6, name + "_Flat");
+            if (lib.Shopfront == null) return Emissive(lib.Concrete, e, 0.6, name + "_Flat");
             var m = new Material(lib.Shopfront) { name = name };
             m.SetColor(s_emission, e.gamma);                 // an [HDR] Color property: the gamma value is linearised by Unity (G1Materials.Room)
             m.SetFloat(s_roomDepth, depth);

@@ -2,7 +2,7 @@
 // uniform shader globals (never keywords) before the first scene loads:
 //   -tex 0|1            _NocTexDetail  (-1 off, +1 on; default on)
 //   -debug-view N       _NocDebugView  (0 off; 1..10 the debug views of TEXTURE_PLAN 7.1; 9 = overdraw, NocDebugViewFeature)
-//   -foliage-v 1|2      _NocFoliageV   (feature flag: 1 = the v1 foliage path, 2 = Look v2, the default; GD deletes v1 in wave B)
+//   -foliage-v          removed in wave B (GD): the v1 foliage is deleted; passing it logs a warning and changes nothing
 //   -facade-v, -surf-v  removed in TP-2 (FX, Phase 4 wave A): the v1 facade and surface paths are deleted, FacadeV and SurfV
 //                       read 2 for the callers that still test them; passing either flag logs a warning and changes nothing
 //   -debug-shaders a+b  the shader names (without "Megastructure/") whose renderers the overdraw view counts (default NocFacade)
@@ -32,10 +32,11 @@ namespace Megastructure
         public static int FacadeV => DefaultFacadeV;
         /// <summary>Always 2 (TP-2): kept for the beat builders that still test it.</summary>
         public static int SurfV => DefaultSurfV;
-        public static int FoliageV { get; private set; } = DefaultFoliageV;
+        /// <summary>Always 2 (GD deleted the v1 foliage in wave B).</summary>
+        public static int FoliageV => DefaultFoliageV;
         public static bool FacadePrepass { get; private set; } = DefaultFacadePrepass;
         /// <summary>Flags deleted in TP-2: a warning if passed, no effect.</summary>
-        public static readonly string[] RemovedFlags = { "-facade-v", "-surf-v" };
+        public static readonly string[] RemovedFlags = { "-facade-v", "-surf-v", "-foliage-v" };
         /// <summary>Shader names (full, "Megastructure/..." added) whose renderers debug view 9 counts.</summary>
         public static string[] OverdrawShaders { get; private set; } = { "Megastructure/NocFacade" };
 
@@ -44,8 +45,8 @@ namespace Megastructure
         {
             Read();
             Apply();
-            if (DebugView != 0 || !TexDetail || FoliageV != DefaultFoliageV || FacadePrepass != DefaultFacadePrepass)
-                Debug.Log(FormattableString.Invariant($"[NOC] NocLookGlobals: tex {(TexDetail ? 1 : 0)} debug-view {DebugView} foliage-v {FoliageV} facade-prepass {(FacadePrepass ? 1 : 0)}"));
+            if (DebugView != 0 || !TexDetail || FacadePrepass != DefaultFacadePrepass)
+                Debug.Log(FormattableString.Invariant($"[NOC] NocLookGlobals: tex {(TexDetail ? 1 : 0)} debug-view {DebugView} facade-prepass {(FacadePrepass ? 1 : 0)}"));
             foreach (string gone in RemovedFlags)
                 if (CliArgs.Has(gone)) Debug.LogWarning("[NOC] NocLookGlobals: " + gone + " was removed in TP-2 (the v1 facade / surface paths are deleted); Look v2 is the only path");
         }
@@ -62,7 +63,6 @@ namespace Megastructure
             TexDetail = CliArgs.GetInt("-tex", 1) != 0;
             int dv = CliArgs.GetInt("-debug-view", 0);
             DebugView = dv >= 0 && dv <= DebugViewMax ? dv : 0;
-            FoliageV = Flag("-foliage-v", DefaultFoliageV);
             FacadePrepass = CliArgs.GetInt("-facade-prepass", DefaultFacadePrepass ? 1 : 0) != 0;
             string ds = CliArgs.Get("-debug-shaders");
             if (!string.IsNullOrEmpty(ds))

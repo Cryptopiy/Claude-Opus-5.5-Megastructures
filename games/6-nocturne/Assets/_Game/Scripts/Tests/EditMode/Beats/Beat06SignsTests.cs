@@ -12,7 +12,8 @@
 // its programmes average m about 1 and stay <= 0.11 Hz; the photosensitivity model (60 s at 30 fps over the KS16 wall: T-WAVE,
 // zero flashes, dominant frequency <= 0.5 Hz per point); the bloom bound with the imagery and the resolved LED dots; failure
 // and age rates; the nine glyph signs (60-120 m, y 20-420, off KS16's wall-point sight lines, off the lane); the arcade below
-// its 38 m roof line and off the lane; the H4 wall plane of kind 2.
+// its 38 m roof line and off the lane; the H4 wall plane of kind 2. Fix wave (panel p4_01): the eye (C28) once inside KS16's
+// window and through the photosensitivity model; the cradles and ledges (C17): speed, wraps, clearances, on the KS16 frame.
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -130,13 +131,26 @@ namespace Megastructure.Tests
             peak *= SignsLayout.EmitGain * (SignsLayout.PanelLevel + SignsLayout.BreathAmp);
             Debug.Log(FormattableString.Invariant($"[NOC] screen emission peak channel {peak:F3} (bloom threshold 0.9)"));
             Assert.Less(peak, 0.9);
-            // the LED wall: the brightest programme (m capped at 2.42), a resolved LED dot (diffuser floor 0.15 + 0.85 x energy / 0.66^2),
-            // the brightest panel (1.04), module (1.03) and white point (1.05): still below the bloom threshold, so the wall reads as
-            // screens, not as glare
+            // the LED wall (imagery v3): the brightest colour of the ramp and of its saturated accents, the brightest programme (m
+            // capped at ContentMaxM / (1 + DotGain wp), so cap x the resolved dot's peak gain 1 + DotGain wp is ContentMaxM at any
+            // dot fade), the brightest panel (1.04), module (1.03) and white point (1.05): still below the bloom threshold, so the wall
+            // reads as screens, not as glare; the accents stay within the 14.5.6 red share
             double dot = NocScreenMath.LedFloor + (1.0 - NocScreenMath.LedFloor) / (NocScreenMath.LedDot * NocScreenMath.LedDot);
-            double led = peak * NocScreenMath.ContentMaxM * dot * 1.04 * 1.03 * 1.05;
-            Debug.Log(FormattableString.Invariant($"[NOC] LED wall peak channel {led:F3} (imagery x {NocScreenMath.ContentMaxM}, dot x {dot:F2})"));
+            Assert.AreEqual(dot - 1.0, NocScreenMath.DotGain, 1e-9);
+            Assert.AreEqual(0.842195, NocScreenMath.DotGain, 1e-5, "SCR_DOTG in NocScreenWave.hlsl");
+            double peakC = 0.0, redAcc = 0.0;
+            for (int i = 0; i <= 400; i++)
+            {
+                D3 r = NocScreenMath.Ramp(i / 400.0, 1.0), c = NocScreenMath.Accent(i / 400.0, 1.0);
+                peakC = Math.Max(peakC, Math.Max(Math.Max(r.x, r.y), Math.Max(r.z, Math.Max(c.x, Math.Max(c.y, c.z)))));
+                redAcc = Math.Max(redAcc, c.x / Math.Max(1e-9, c.x + c.y + c.z));
+                double mx = Math.Max(c.x, Math.Max(c.y, c.z)), sat = mx > 0 ? (mx - Math.Min(c.x, Math.Min(c.y, c.z))) / mx : 0.0;
+                Assert.IsFalse(HueOf(c) >= 250 && HueOf(c) <= 340 && sat > 0.20, "R7: no violet accent (LOOK_V2 R1: hue 250-340 at saturation > 0.35)");
+            }
+            double led = peakC * SignsLayout.EmitGain * (SignsLayout.PanelLevel + SignsLayout.BreathAmp) * NocScreenMath.ContentMaxM * 1.04 * 1.03 * 1.05;
+            Debug.Log(FormattableString.Invariant($"[NOC] LED wall peak channel {led:F3} (colour peak {peakC:F3}, imagery cap x dot = {NocScreenMath.ContentMaxM}, dot x {dot:F2}); accent red share max {redAcc:F3}"));
             Assert.Less(led, 0.9);
+            Assert.LessOrEqual(redAcc, 0.70, "14.5.6 red share <= 0.70 for the saturated accents");
         }
 
         [Test]
@@ -151,7 +165,7 @@ namespace Megastructure.Tests
                 }
             // T-WAVE: the relative luminance of a wall pixel changes <= 0.12 per second (14.10). The D-010 wave alone (Simplified
             // tier, R4 3.5: about 0.007 /s) and the Full tier's LED wall (three waves, imagery: the programme crossfades and the
-            // glyph cores dominate; design bound 0.04 /s, a third of the limit)
+            // glyph cores dominate; design bound 0.06 /s, half the limit)
             foreach (var tier in new[] { 1, 0 })
             {
                 double worst = 0.0;
@@ -169,7 +183,7 @@ namespace Megastructure.Tests
                 }
                 Debug.Log(FormattableString.Invariant($"[NOC] T-WAVE tier {tier}: max wall-pixel luminance rate {worst:F4} /s (14.10 limit 0.12)"));
                 Assert.LessOrEqual(worst, 0.12);
-                Assert.LessOrEqual(worst, tier == 0 ? 0.04 : 0.012, tier == 0 ? "the LED wall's design bound" : "the D-010 wall (R4 3.5: about 0.007 /s)");
+                Assert.LessOrEqual(worst, tier == 0 ? 0.06 : 0.012, tier == 0 ? "the LED wall's design bound (half the 14.10 limit; v3 at the LOOK_V2 wall mean)" : "the D-010 wall (R4 3.5: about 0.007 /s)");
             }
         }
 
@@ -244,7 +258,8 @@ namespace Megastructure.Tests
         {
             // every display period divides the 600 s clock (the wrap lands on an epoch boundary: no jump), every display edge lies on
             // a seam, programmes of every kind occur, and the imagery's mean m times the LED hardware's mean (seams, bezels, joints,
-            // panel brightness, failures) is 1 +- 0.08: the LED wall keeps the 14.5.6 mean emission (ramp x 0.45 x 0.55)
+            // panel brightness, failures) is WallMeanGain (1.43) +- 8 %: the LED wall is the 14.5.6 mean emission (ramp x 0.45 x 0.55)
+            // x 1.43, the LOOK_V2 KS16 wall of 60-85 codes (SG r03: 51.5 codes at 0.97); the peak stays capped (bloom check above)
             var kinds = new int[NocScreenMath.ProgramCount];
             double sum = 0.0; int n = 0;
             var rng = new System.Random(16);
@@ -259,7 +274,7 @@ namespace Megastructure.Tests
                 Assert.AreEqual(0.0, Math.IEEERemainder(y - ly, SignsLayout.PanelPitchY), 1e-6, "display bottom on a seam");
                 kinds[NocScreenMath.ProgramOf(id, (uint)(i % 12))]++;
                 NocScreenMath.Content(zl, y, t, 0.5, out double m, out double a);
-                Assert.That(m, Is.InRange(0.25, NocScreenMath.ContentMaxM + 1e-9)); Assert.That(a, Is.InRange(0.0, 1.0));
+                Assert.That(m, Is.InRange(0.10, NocScreenMath.ContentMaxM + 1e-9)); Assert.That(a, Is.InRange(0.0, 1.0));
                 sum += m; n++;
             }
             double mean = sum / n;
@@ -271,9 +286,9 @@ namespace Megastructure.Tests
                     hw += kb * d * mm; np++;
                 }
             hw = hw / np * NocScreenMath.SeamMean;
-            Debug.Log(FormattableString.Invariant($"[NOC] imagery: mean m {mean:F3}, LED hardware mean {hw:F3}, product {mean * hw:F3}; programmes {string.Join(" / ", kinds)} (wave, glyph, aurora, sun, column, horizon, tiles, standby)"));
-            Assert.That(mean * hw, Is.InRange(0.92, 1.08), "the LED wall keeps the 14.5.6 mean");
-            foreach (var k in kinds) Assert.Greater(k, 150);
+            Debug.Log(FormattableString.Invariant($"[NOC] imagery: mean m {mean:F3}, LED hardware mean {hw:F3}, product {mean * hw:F3}; programmes {string.Join(" / ", kinds)} ({string.Join(", ", NocScreenMath.ProgramNames)})"));
+            Assert.That(mean * hw / NocScreenMath.WallMeanGain, Is.InRange(0.92, 1.08), "the LED wall at its design mean: the 14.5.6 wave x 1.43 (LOOK_V2 KS16 wall 60-85)");
+            foreach (var k in kinds) Assert.Greater(k, 80, "every programme occurs (the samples cluster on a few displays: the 6 % wave gave 149 of 4000)");
             // the wrapped clock: content at t600 and at t600 + 600 (one wrap later) is identical, and continuous across the wrap
             for (int i = 0; i < 200; i++)
             {
@@ -288,18 +303,33 @@ namespace Megastructure.Tests
         public void Photosensitivity_Model_KS16Wall60s()
         {
             // 14.10 photosensitivity on the wall model (the -sequence signs capture checks the picture): 48 points of the KS16 wall
-            // (z 280-515, y 0-450), 60 s at 30 fps from t 300: per point the relative luminance changes <= 0.12 /s (T-WAVE), no flash
-            // (a rise and a fall of >= 10 % of the point's maximum within 1 s), and the dominant non-DC frequency <= 0.5 Hz
+            // (z 280-515, y 0-450), 60 s at 30 fps from t 300, and (fix wave C28) the eye's window t 445 - 505 with 16 more points on
+            // its canvas: per point the relative luminance changes <= 0.12 /s (T-WAVE), no flash (a rise and a fall of >= 10 % of the
+            // point's maximum within 1 s), and the dominant non-DC frequency <= 0.5 Hz
+            Photosens(300.0, 0, out double r0, out int f0, out double d0);
+            Photosens(445.0, 16, out double r1, out int f1, out double d1);
+            Debug.Log(FormattableString.Invariant($"[NOC] photosensitivity model (48 KS16 wall points, 60 s from t 300): max rate {r0:F4} /s, flashes {f0}, dominant frequency max {d0:F3} Hz; eye window (t 445, + 16 canvas points): max rate {r1:F4} /s, flashes {f1}, dominant {d1:F3} Hz"));
+            Assert.LessOrEqual(Math.Max(r0, r1), 0.12, "T-WAVE");
+            Assert.AreEqual(0, f0 + f1, "zero flashes");
+            Assert.LessOrEqual(Math.Max(d0, d1), 0.5, "dominant frequency of every point");
+        }
+
+        static void Photosens(double t0, int eyePoints, out double worstRate, out int flashes, out double worstF)
+        {
             const int fps = 30, frames = 1800;
             var rng = new System.Random(1150);
-            double worstRate = 0, worstF = 0;
-            int flashes = 0;
+            worstRate = 0; worstF = 0; flashes = 0;
             var L = new double[frames];
-            for (int p = 0; p < 48; p++)
+            for (int p = 0; p < 48 + eyePoints; p++)
             {
                 double z = 280.0 + 235.0 * rng.NextDouble(), y = 450.0 * rng.NextDouble();
+                if (p >= 48)
+                {
+                    z = NocScreenMath.EyeZ0 + (NocScreenMath.EyeZ1 - NocScreenMath.EyeZ0) * rng.NextDouble();
+                    y = NocScreenMath.EyeY0 + (NocScreenMath.EyeY1 - NocScreenMath.EyeY0) * rng.NextDouble();
+                }
                 double lmax = 0;
-                for (int f = 0; f < frames; f++) { L[f] = NocScreenMath.PixelLuminance(z, y, 300.0 + f / (double)fps, SignsLayout.WavesFull, 1.0); lmax = Math.Max(lmax, L[f]); }
+                for (int f = 0; f < frames; f++) { L[f] = NocScreenMath.PixelLuminance(z, y, t0 + f / (double)fps, SignsLayout.WavesFull, 1.0); lmax = Math.Max(lmax, L[f]); }
                 for (int f = 1; f < frames; f++) worstRate = Math.Max(worstRate, Math.Abs(L[f] - L[f - 1]) * fps);
                 // 14.10's flash: an increase AND a decrease of >= 10 % of the maximum within 1 s (a peak or a trough); per point, so
                 // stricter than the picture test's 25 % of the screen. A monotonic ramp into a plateau is not a flash (SG-t01: the
@@ -329,10 +359,86 @@ namespace Megastructure.Tests
                 }
                 worstF = Math.Max(worstF, bestF);
             }
-            Debug.Log(FormattableString.Invariant($"[NOC] photosensitivity model (48 KS16 wall points, 60 s): max rate {worstRate:F4} /s, flashes {flashes}, dominant frequency max {worstF:F3} Hz"));
-            Assert.LessOrEqual(worstRate, 0.12, "T-WAVE");
-            Assert.AreEqual(0, flashes, "zero flashes");
-            Assert.LessOrEqual(worstF, 0.5, "dominant frequency of every point");
+        }
+
+        [Test]
+        public void Eye_OnceInTheKS16Window_OnTheFrame()
+        {
+            // D-034 5.3 / fix wave C28: one eye per 600 s, its canvas weight zero outside t 448 - 484, fully open over 460 - 472 (the
+            // KS16 still is t 460, AmbientForS(1150)); the event lies inside KS16's readable window s 1 134 - 1 196 (t 453.6 - 478.4
+            // at 2.5 m/s) from the opening to the closing; the canvas edges lie on panel seams; the eye's centre is on the KS16 frame
+            var k = Shot("KS16");
+            double tKs = ShotPlan.AmbientForS(k.s), tw0 = 1134.0 / NocturneConstants.CinematicSpeed, tw1 = 1196.5 / NocturneConstants.CinematicSpeed;
+            int on = 0;
+            for (int i = 0; i < 6000; i++)
+            {
+                double t = i * 0.1;
+                double env = NocScreenMath.EyeEnvelope(t, out double open);
+                if (env > 0.0) { on++; Assert.That(t, Is.InRange(448.0, 484.0), "the canvas only in 448 - 484"); }
+                if (open > 0.0) Assert.That(t, Is.InRange(tw0, tw1), "the lids move inside the KS16 readable window");
+                if (t >= 460.0 && t <= 472.0) Assert.AreEqual(1.0, open, 1e-9, "fully open 460 - 472");
+            }
+            NocScreenMath.EyeEnvelope(tKs, out double openKs);
+            Assert.AreEqual(1.0, openKs, 1e-9, "the KS16 still shows the eye open");
+            Assert.AreEqual(0.0, NocScreenMath.EyeEnvelope(0.0, out _), 1e-12);
+            Assert.AreEqual(NocScreenMath.EyeEnvelope(470.0, out _), NocScreenMath.EyeEnvelope(470.0 - 600.0 + 600.0, out _), 1e-12);
+            foreach (double z in new[] { NocScreenMath.EyeZ0, NocScreenMath.EyeZ1 })
+                Assert.AreEqual(0.0, Math.IEEERemainder(z - NocScreenMath.Z0, NocScreenMath.PitchZ), 1e-9, "canvas z edge on a seam");
+            foreach (double y in new[] { NocScreenMath.EyeY0, NocScreenMath.EyeY1 })
+                Assert.AreEqual(0.0, Math.IEEERemainder(y, NocScreenMath.PitchY), 1e-9, "canvas y edge on a seam");
+            // no glyph-sign housing on the canvas (SG_f02: a board covered the iris)
+            foreach (var g in SignsLayout.GlyphSigns)
+            {
+                double r = g.blade ? SignsLayout.BladeRim : SignsLayout.BoardRim;
+                double za = g.blade ? g.z - 0.5 * SignsLayout.BladeT : g.z - 0.5 * g.w - r, zb = g.blade ? g.z + 0.5 * SignsLayout.BladeT : g.z + 0.5 * g.w + r;
+                bool clear = zb < NocScreenMath.EyeZ0 || za > NocScreenMath.EyeZ1 || g.y0 - r > NocScreenMath.EyeY1 || g.y0 + g.h + r < NocScreenMath.EyeY0;
+                Assert.IsTrue(clear, FormattableString.Invariant($"the sign at z {g.z} lies on the eye's canvas"));
+            }
+            var v = new QaView(k.x, k.y, k.z, k.yaw, k.pitch, k.fov, 1920, 1080);
+            Assert.IsTrue(QaProjection.ProjectPoint(v, new D3(874.0, NocScreenMath.EyeCy, NocScreenMath.EyeCz), out double nx, out double ny));
+            Debug.Log(FormattableString.Invariant($"[NOC] eye: canvas on {on / 10.0:F1} s of 600, KS16 still at t {tKs:F1} (open {openKs:F2}), centre at KS16 ndc ({nx:F3}, {ny:F3})"));
+            Assert.That(nx, Is.InRange(-0.9, 0.9)); Assert.That(ny, Is.InRange(-0.9, 0.9));
+            // the open eye is bright where the closed canvas is dark (it reads), and never above the bloom bound
+            D3 open1 = NocScreenMath.Eye(424.2, 71.4, 465.0, 0.5, NocScreenMath.ContentMaxM, 1.0, out double w1);   // sclera
+            D3 field = NocScreenMath.Eye(330.0, 115.0, 465.0, 0.5, NocScreenMath.ContentMaxM, 1.0, out double w2);  // canvas field
+            Assert.AreEqual(1.0, w1, 1e-9); Assert.AreEqual(1.0, w2, 1e-9);
+            Assert.Greater(NocMath.Luma709(open1.x, open1.y, open1.z), 3.0 * NocMath.Luma709(field.x, field.y, field.z));
+        }
+
+        [Test]
+        public void ScaleMarkers_CradlesAndLedges()
+        {
+            // fix wave C17: four cradles riding at <= 0.2 m/s with exact 600 s wraps, clear of the ledges and of each other; the ledges
+            // flush (within the audit's 0.5 m) on row seams; at least two cradles and a ledge lamp row on the KS16 frame at t 460
+            var k = Shot("KS16");
+            var v = new QaView(k.x, k.y, k.z, k.yaw, k.pitch, k.fov, 1920, 1080);
+            int inFrame = 0;
+            for (int i = 0; i < SignsLayout.CradleZ.Length; i++)
+            {
+                double vmax = 0, lo = double.MaxValue, hi = double.MinValue;
+                for (int f = 0; f < 6000; f++)
+                {
+                    double y0 = SignsLayout.CradleY(i, f * 0.1), y1 = SignsLayout.CradleY(i, (f + 1) * 0.1);
+                    vmax = Math.Max(vmax, Math.Abs(y1 - y0) / 0.1); lo = Math.Min(lo, y0); hi = Math.Max(hi, y0);
+                }
+                Assert.LessOrEqual(vmax, 0.2, "cradle speed <= 0.2 m/s");
+                Assert.AreEqual(SignsLayout.CradleY(i, 0.0), SignsLayout.CradleY(i, 600.0), 1e-9, "exact wrap");
+                Assert.That(lo, Is.InRange(30.0, 250.0)); Assert.That(hi + SignsLayout.CradleH, Is.InRange(30.0, 250.0));
+                foreach (double ly in SignsLayout.LedgeY)
+                    Assert.IsTrue(hi + 2.0 < ly - 0.5 * SignsLayout.LedgeT || lo > ly + 0.5 * SignsLayout.LedgeT + 0.12, FormattableString.Invariant($"cradle {i} clears the ledge at y {ly}"));
+                if (QaProjection.ProjectPoint(v, new D3(SignsLayout.CradleX0 + 0.5, SignsLayout.CradleY(i, 460.0) + 0.75, SignsLayout.CradleZ[i]), out double x, out double y)
+                    && Math.Abs(x) < 0.97 && Math.Abs(y) < 0.97) inFrame++;
+            }
+            int lamps = 0;
+            for (double z = SignsLayout.LedgeLampZ0; z <= SignsLayout.WallZ1 - 2.0; z += SignsLayout.LedgeLampPitch)
+                if (QaProjection.ProjectPoint(v, new D3(874.24, SignsLayout.LedgeY[0] - 0.2, z), out double x, out double y) && Math.Abs(x) < 1.0 && Math.Abs(y) < 1.0) lamps++;
+            foreach (double ly in SignsLayout.LedgeY) Assert.AreEqual(0.0, Math.IEEERemainder(ly, SignsLayout.PanelPitchY), 1e-9, "ledge on a row seam");
+            Assert.Less(SignsLayout.LedgeX1 - SignsLayout.WallX1, 0.5, "the ledge is flush");
+            Debug.Log(FormattableString.Invariant($"[NOC] scale markers: {inFrame} cradles and {lamps} lamps of the y 81.6 ledge on the KS16 frame at t 460"));
+            Assert.GreaterOrEqual(inFrame, 2); Assert.GreaterOrEqual(lamps, 6);
+            var ledges = ScreenWallBuilder.Ledges(new MeshBuilder(), null);
+            AssertClearOfLane("ledges", ledges, ScreenWallBuilder.Origin, 1200);
+            AssertClearOfLane("cables", ScreenWallBuilder.Cables(), ScreenWallBuilder.Origin, 1200);
         }
 
         [Test]
@@ -372,7 +478,7 @@ namespace Megastructure.Tests
             }
             var faces = new List<ArcadeBuilder.Sign>();
             var housings = ScreenWallBuilder.SignHousings(faces);
-            Assert.AreEqual(14, faces.Count, "five blades x 2 faces + four boards");
+            Assert.AreEqual(11, faces.Count, "two blades x 2 faces + seven boards (fix wave C16: z 438, 490, 505 became flush boards)");
             AssertClearOfLane("glyph signs", housings, ScreenWallBuilder.Origin, 1200);
             // KS16's three wall points stay visible: the eye -> point segments miss every housing box
             var k = Shot("KS16");
@@ -447,15 +553,15 @@ namespace Megastructure.Tests
             {
                 var p = G4Kit.PickShop(NocHash.Pcg(i * 2654435761u + 7u), (i % 6u) == 0u);
                 n++;
-                Assert.That(p.Gain, Is.InRange(0.15, 0.85));
+                Assert.That(p.Gain, Is.InRange(0.10, 0.70));
                 var c = G4Kit.ShopColour(p);
                 Assert.AreEqual(p.State * 32, c.b);
                 Assert.AreEqual(p.Open, p.State == 0 || p.State == 2);
-                if (p.State == 0 && p.Gain >= 0.5) lit++; else if (p.State == 0) dim++; else if (p.State == 2) half++; else if (p.State == 3) dark++; else shut++;
+                if (p.State == 0 && p.Gain >= 0.4) lit++; else if (p.State == 0) dim++; else if (p.State == 2) half++; else if (p.State == 3) dark++; else shut++;
             }
             Debug.Log(FormattableString.Invariant($"[NOC] shop states: lit {100.0 * lit / n:F1} %, dim {100.0 * dim / n:F1} %, half {100.0 * half / n:F1} %, dark {100.0 * dark / n:F1} %, shutter {100.0 * shut / n:F1} %"));
-            Assert.That((double)lit / n, Is.InRange(0.38, 0.56)); Assert.Greater((double)shut / n, 0.15); Assert.Greater((double)dim / n, 0.10);
-            Assert.Greater((double)half / n, 0.06); Assert.Greater((double)dark / n, 0.03);
+            Assert.That((double)lit / n, Is.InRange(0.28, 0.45)); Assert.Greater((double)shut / n, 0.15); Assert.Greater((double)dim / n, 0.10);
+            Assert.Greater((double)half / n, 0.06); Assert.Greater((double)dark / n, 0.06);
             double room = 0.0;
             foreach (var (tok, k) in new[] { (NocPal.WinCold, 1.0), (NocPal.SignWhite, 0.9), (NocPal.WinNeutral, 0.85), (NocPal.WinBlue, 0.8) })
             {
@@ -479,7 +585,7 @@ namespace Megastructure.Tests
             double lf = NocMath.Luma709(full.x, full.y, full.z), lw = NocMath.Luma709(wave.x, wave.y, wave.z);
             Debug.Log(FormattableString.Invariant($"[NOC] H4 wall plane kind {ScreenWallBuilder.MirrorKind}: macro ({full.x:F4}, {full.y:F4}, {full.z:F4}) Y {lf:F4}; the wave alone Y {lw:F4}"));
             Assert.AreEqual(2, ScreenWallBuilder.MirrorKind);
-            Assert.That(lf / lw, Is.InRange(0.65, 0.95), "the LED wall's mean (seams, panels, view angle) below the bare wave");
+            Assert.That(lf / lw / NocScreenMath.WallMeanGain, Is.InRange(0.65, 0.95), "the LED wall's mean (seams, panels, view angle) below the wall's design mean");
         }
 
         static void LanePoints(double s0, double s1, double margin, List<Vector3> into)
@@ -561,7 +667,16 @@ namespace Megastructure.Tests
                 new KeyValuePair<string, MeshBuilder>("screenMass", ScreenWallBuilder.MassFaces()),
                 new KeyValuePair<string, MeshBuilder>("promenadeFloor", PromenadeBuilder.Floor()),
                 new KeyValuePair<string, MeshBuilder>("glyphSignHousings", ScreenWallBuilder.SignHousings(null)),
+                new KeyValuePair<string, MeshBuilder>("cradleCables", ScreenWallBuilder.Cables()),
             };
+            var ledgeLenses = new MeshBuilder();
+            list.Add(new KeyValuePair<string, MeshBuilder>("serviceLedges", ScreenWallBuilder.Ledges(ledgeLenses, null)));
+            list.Add(new KeyValuePair<string, MeshBuilder>("serviceLedgeLamps", ledgeLenses));
+            for (int i = 0; i < SignsLayout.CradleZ.Length; i++)
+            {
+                var cs = new MeshBuilder(); var cc = new MeshBuilder(); ScreenWallBuilder.Cradle(cs, cc);
+                list.Add(new KeyValuePair<string, MeshBuilder>("cradleSteel", cs)); list.Add(new KeyValuePair<string, MeshBuilder>("cradleCabin", cc));
+            }
             foreach (var p in ArcadeBuilder.BuildParts(null, null)) list.Add(new KeyValuePair<string, MeshBuilder>(p.Name, p.Mb));
             foreach (var r in Beat06_Signs.SignBaseRooms(null)) list.Add(new KeyValuePair<string, MeshBuilder>("signBaseShops", r));
             var planters = new MeshBuilder(); var hedges = new MeshBuilder(); PromenadeBuilder.Planters(planters, hedges);

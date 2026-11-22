@@ -13,9 +13,10 @@ namespace Megastructure
     {
         // ------------------------------------------------------------------ layers (14.3)
         public const int R = 0, D = 1, H = 2, T = 3, W = 4, P = 5, K = 6, X = 7, LayerCount = 8;
-        /// <summary>Footsteps (not in the 14.3 table: -30 dBFS peaks) and the stem index of the whole mix (meters).</summary>
-        public const int F = 8, StemCount = 9;
-        public static readonly string[] LayerNames = { "R rain", "D drips", "H hum", "T traffic", "W wind", "P pad", "K koi", "X beat", "F steps" };
+        /// <summary>Footsteps (not in the 14.3 table: -30 dBFS peaks), the D-034 dread layer E (docs/DREAD.md, DreadScore; not in the
+        /// 14.3 table: its levels are dBFS at the listener) and the number of stems.</summary>
+        public const int F = 8, E = 9, StemCount = 10;
+        public static readonly string[] LayerNames = { "R rain", "D drips", "H hum", "T traffic", "W wind", "P pad", "K koi", "X beat", "F steps", "E dread" };
         const double N = double.NaN;
 
         /// <summary>14.3 layer table, RMS dBFS before the limiter (rows beats 1-7, columns R D H T W P K X; NaN = "-").</summary>
@@ -162,8 +163,10 @@ namespace Megastructure
         }
 
         /// <summary>Per-chord level trims of the pad (dB): the five voices of each chord, normalised per bank, still differ by up to
-        /// +-1.5 dB after the chorus and the pad FDN (measured by Tools/audio/calibrate.py on the 2.5 m/s walk, run walk25_r03).</summary>
-        public static readonly double[] PadChordTrimDb = { 0.5, -0.2, -0.9, 0.1, 1.3, 0.8, -0.8, 0.1, -1.55, -0.1, 0.0 };
+        /// +-1.5 dB after the chorus and the pad FDN (measured by Tools/audio/calibrate.py on the 2.5 m/s walk, run walk25_r03).
+        /// Fix wave C51 (2026-11-21): the pad FDN's wet side narrowed to NocMixer.PadWetWidth moved the chords by +0.31 +0.92 +0.83
+        /// +0.61 +0.11 +0.61 -1.45 +0.76 -0.31 +1.48 dB (pad solo, f05 vs c51); the trims take those shifts back (all within 2 dB).</summary>
+        public static readonly double[] PadChordTrimDb = { 0.19, -1.12, -1.73, -0.51, 1.19, 0.19, 0.65, -0.66, -1.24, -1.58, 0.0 };
 
         /// <summary>The pad trim at s (dB): the chord weights g_c(s) blend the per-chord trims.</summary>
         public static double PadTrimDb(double s)

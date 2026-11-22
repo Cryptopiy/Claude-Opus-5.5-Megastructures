@@ -212,8 +212,20 @@ namespace Megastructure.Tests
         [Test]
         public void Lamps21_LightsAndWetSources()
         {
-            var lights = _root.GetComponentsInChildren<Light>(true);
+            var lights = _root.Find("lamps").GetComponentsInChildren<Light>(true);
             Assert.AreEqual(SkybridgeDims.LampCount, lights.Length, "21 realtime lamp lights (14.2.3 row 4)");
+            // TR: the trains' moving lights (TrainBuilder: one headlight and one or two wash lights per train, LOOK_V2 6 row 4)
+            var tl = _root.Find("trains") != null ? _root.Find("trains").GetComponentsInChildren<Light>(true) : new Light[0];
+            foreach (var l in tl)
+            {
+                Assert.AreEqual(LightShadows.None, l.shadows, "no shadow maps (14.2.3)");
+                Assert.LessOrEqual(l.range, TrainBuilder.HeadRange + 1e-4f);
+            }
+            // TR fix wave (C31): gate B's four gate lights (SkybridgeGate.GateLights)
+            var gl = _root.Find("gateB/lights") != null ? _root.Find("gateB/lights").GetComponentsInChildren<Light>(true) : new Light[0];
+            Assert.AreEqual(SkybridgeGate.GateLightCount, gl.Length, "gate B: lintel, two lanterns, passage");
+            foreach (var l in gl) Assert.AreEqual(LightShadows.None, l.shadows, "no shadow maps (14.2.3)");
+            Assert.AreEqual(_root.GetComponentsInChildren<Light>(true).Length, lights.Length + tl.Length + gl.Length, "no other lights in beat 4");
             foreach (var l in lights)
             {
                 Assert.AreEqual(LightShadows.None, l.shadows, "no shadow maps (14.2.3)");
@@ -221,11 +233,66 @@ namespace Megastructure.Tests
                 // LOOK_V2 6 row 4 (PA, SkybridgeLamps): i 3.5; the v1 14.2.3 value 4.0 stays in SkybridgeDims
                 Assert.AreEqual(SkybridgeLamps.LampIntensityV2, l.intensity, 1e-4, "lamp intensity (LOOK_V2 6 beat 4)");
             }
-            Assert.AreEqual(SkybridgeDims.LampCount, NocWetRegistry.TotalSources, "one wet source per lamp head");
+            Assert.AreEqual(SkybridgeDims.LampCount + SkybridgeGate.GateWetSources, NocWetRegistry.TotalSources, "one wet source per lamp head + gate B's five");
             Assert.LessOrEqual(NocWetRegistry.MaxActive(), NocturneConstants.WetSourceMax);
             Assert.AreEqual(SkybridgeDims.LampHeight, G3BeatWorld.MeshOf(_root, "lamps/poles").bounds.max.y, 0.01, "lamp posts 4.2 m");
             Assert.Greater(SkybridgeDims.LampX(0), SkybridgeDims.GateAX1);
             Assert.Less(SkybridgeDims.LampX(SkybridgeDims.LampCount - 1), SkybridgeDims.GateBX0);
+        }
+
+        [Test]
+        public void GateB_LightContent_ConcreteFrame()
+        {
+            // C31 (TR fix wave): the lintel luminaire hangs under the lintel between the pylons, the lanterns flank the opening
+            // above the lane envelope, the passage lines sit under the passage ceiling; the frames are the blocks' concrete
+            var lens = G3BeatWorld.MeshOf(_root, "gateB/lampLenses").bounds;
+            Assert.Less(lens.max.y, SkybridgeDims.LintelBottom, "lenses under the lintel");
+            Assert.Greater(lens.min.y, 4.5f, "every lens above the walker (the lanterns from y 4.92)");
+            Assert.GreaterOrEqual(lens.min.x, SkybridgeDims.FrameBX0 - 0.41f, "lanterns on the pylons' bridge faces");
+            Assert.LessOrEqual(lens.max.x, SkybridgeDims.GateBX1, "inside gate B");
+            var hs = G3BeatWorld.MeshOf(_root, "gateB/lampHousings").bounds;
+            Assert.GreaterOrEqual(hs.min.y, SkybridgeGate.LanternY - 0.48f, "housings above y 4.7");
+            foreach (string g in new[] { "gateA", "gateB" })
+            {
+                var fr = _root.Find(g + "/frame").GetComponent<MeshRenderer>().sharedMaterial;
+                var bl = _root.Find(g + "/block").GetComponent<MeshRenderer>().sharedMaterial;
+                if (fr != null && bl != null) Assert.AreSame(bl, fr, g + ": frame in the blocks' concrete (C31)");
+            }
+            Assert.IsNull(_root.Find("gateA/lights"), "gate A keeps its plain frame (KS10)");
+        }
+
+        [Test]
+        public void FaceTubes_Ribs24_UpperLedChannels()
+        {
+            // C41 (TR fix wave): rib bands on the bridge's 24 m grid inside both face tubes' open sections, a faint LED arc on every
+            // rib of the upper tube (+-75 deg around the bottom, on the rib's outer face)
+            foreach (int t in new[] { TrainSchedule.TubeUpper, TrainSchedule.TubeLower })
+            {
+                var xs = SkybridgeTubes.FaceRibXs(t);
+                var tb = TrainSchedule.Tubes[t];
+                Assert.Greater(xs.Length, 15, "ribs every 24 m");
+                foreach (float x in xs)
+                {
+                    Assert.AreEqual(0.0, System.Math.IEEERemainder(x - SkybridgeDims.SpanX0, SkybridgeDims.OutriggerPitch), 1e-3, "on the 24 m grid");
+                    Assert.Greater(x, tb.MouthLo + 1.0); Assert.Less(x, tb.MouthHi - 1.0);
+                }
+            }
+            var ribs = G3BeatWorld.MeshOf(_root, "tubes/faceTubeRibs");
+            foreach (var v in ribs.vertices)
+            {
+                var tb = v.y > 0f ? TrainSchedule.Tubes[TrainSchedule.TubeUpper] : TrainSchedule.Tubes[TrainSchedule.TubeLower];
+                float r = new Vector2(v.y - (float)tb.AxisY, v.z - (float)tb.AxisZ).magnitude;
+                Assert.GreaterOrEqual(r, SkybridgeTubes.FaceRibRi - 1e-3f, "rib outside the r 5 glass");
+                Assert.LessOrEqual(r, SkybridgeTubes.FaceRibRo + 1e-3f);
+            }
+            var ln = G3BeatWorld.MeshOf(_root, "tubes/faceTubeLines").bounds;
+            var up = TrainSchedule.Tubes[TrainSchedule.TubeUpper];
+            var ux = SkybridgeTubes.FaceRibXs(TrainSchedule.TubeUpper);
+            Assert.AreEqual(ux[0], ln.min.x, 0.1, "arcs on the first rib");
+            Assert.AreEqual(ux[ux.Length - 1], ln.max.x, 0.1, "to the last rib");
+            Assert.Less(ln.max.y, up.AxisY - SkybridgeTubes.FaceLineR * Mathf.Cos(SkybridgeTubes.FaceLineAngle * Mathf.Deg2Rad) + 0.1, "around the bottom only");
+            Assert.Greater(SkybridgeTubes.FaceLineR - 0.5f * SkybridgeTubes.FaceLineD, SkybridgeTubes.FaceRibRo, "the arcs on the ribs' outer faces");
+            Debug.Log(FormattableString.Invariant($"[TR] face ribs upper {SkybridgeTubes.FaceRibXs(TrainSchedule.TubeUpper).Length}, lower {SkybridgeTubes.FaceRibXs(TrainSchedule.TubeLower).Length}; LED channels x {ln.min.x:F2}..{ln.max.x:F2}, y {ln.min.y:F2}..{ln.max.y:F2}"));
         }
 
         [Test]

@@ -253,25 +253,37 @@ namespace Megastructure.Tests
         public void LookV2_DisplayLumaTable_3_2()
         {
             // LOOK_V2 3.2 (beats 2, 3, 5, 7; EV / saturation of section 7), +-3 codes; base deck far from every glow. Abyss columns
-            // (e -6 / -30 / -60 / -90): AT's model at the noise mean (v1 3.2: 40.9 / 50.1 / 60.1 / 65.9 at beat 3): the band of the
-            // upper sheet at -5.7 lifts e -6 to 48.5, the faster base rise lifts the shallow drop (LOOK_V2 8.1 drop 50-66)
+            // (e -6 / -30 / -60 / -90): AT's fifth-start veil model at this camera (v1 3.2: 40.9 / 50.1 / 60.1 / 65.9 at beat 3): the
+            // near veil keeps the band under the horizon at 39-40 (LOOK_V2's darker gap), the lifted depths glow at -30..-60 (8.1:
+            // drop 50-66) and the nadir is not lifted (KS13 60-66); values from the exact twin (AT log, AB-final / AT-t05)
             double[] els = { 90, 60, 35, 10, 5, 0, -6, -30, -60, -90 };
             var rows = new[]
             {
-                (s: 300.0, ev: 0.1, sat: 4.0, want: new[] { 40.9, 40.9, 40.6, 43.8, 46.1, 46.7, 50.1, 61.2, 62.8, 66.8 }, hot: 68.0, cool: 51.1),
-                (s: 480.0, ev: 0.0, sat: 2.0, want: new[] { 39.6, 39.6, 39.3, 42.4, 44.7, 45.2, 48.5, 59.2, 60.8, 64.6 }, hot: 65.8, cool: 49.4),
-                (s: 980.0, ev: -0.2, sat: 0.0, want: new[] { 36.8, 36.8, 36.4, 40.3, 41.9, 42.4, 45.5, 55.3, 56.7, 60.6 }, hot: 60.8, cool: 45.7),
-                (s: 1400.0, ev: 0.0, sat: 4.0, want: new[] { 39.8, 39.8, 39.6, 41.8, 44.5, 45.2, 48.5, 59.5, 61.0, 64.8 }, hot: 66.2, cool: 49.7),
+                (s: 300.0, ev: 0.1, sat: 4.0, want: new[] { 40.9, 40.9, 40.6, 43.8, 46.1, 46.7, 40.2, 60.0, 64.8, 63.8 }, hot: 68.0, cool: 51.1),
+                (s: 480.0, ev: 0.0, sat: 2.0, want: new[] { 39.6, 39.6, 39.3, 42.4, 44.7, 45.2, 39.0, 58.1, 62.8, 61.8 }, hot: 65.8, cool: 49.4),
+                (s: 980.0, ev: -0.2, sat: 0.0, want: new[] { 36.8, 36.8, 36.4, 40.3, 41.9, 42.4, 36.5, 55.3, 59.5, 58.5 }, hot: 60.8, cool: 45.7),
+                (s: 1400.0, ev: 0.0, sat: 4.0, want: new[] { 39.8, 39.8, 39.6, 41.8, 44.5, 45.2, 39.0, 57.2, 62.2, 61.3 }, hot: 66.2, cool: 49.7),
             };
+            foreach (var row in rows)                                       // log every row first (one failure hides the rest)
+            {
+                var sl = new NocAtmoState();
+                NocFogMath.StateAt(sl, row.s, 0.0);
+                sl.CamX = 575; sl.CamZ = -1500;
+                string all = "";
+                for (int i = 0; i < els.Length; i++) all += FormattableString.Invariant($" {SkyLuma(sl, els[i], 0, row.ev, row.sat):F1}");
+                UnityEngine.Debug.Log(FormattableString.Invariant($"[NOC] 3.2 table s {row.s}:{all}"));
+            }
             foreach (var row in rows)
             {
                 var st = new NocAtmoState();
                 NocFogMath.StateAt(st, row.s, 0.0);
                 st.CamX = 575; st.CamZ = -1500;
+                string got = "";
+                for (int i = 0; i < els.Length; i++) got += FormattableString.Invariant($" {SkyLuma(st, els[i], 0, row.ev, row.sat):F1}");
                 for (int i = 0; i < els.Length; i++)
                 {
                     double y = SkyLuma(st, els[i], 0, row.ev, row.sat);
-                    Assert.AreEqual(row.want[i], y, 3.0, FormattableString.Invariant($"s {row.s} e {els[i]}"));
+                    Assert.AreEqual(row.want[i], y, 3.0, FormattableString.Invariant($"s {row.s} e {els[i]}:{got}"));
                 }
                 st.CamX = 115; st.CamZ = 195;                              // under the boulevard axis (east leg): the hot lid
                 Assert.AreEqual(row.hot, SkyLuma(st, 90, 0, row.ev, row.sat), 3.0, "hot core s " + row.s);

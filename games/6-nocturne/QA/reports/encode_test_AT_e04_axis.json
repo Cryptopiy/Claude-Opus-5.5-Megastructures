@@ -1,0 +1,97 @@
+{
+ "run": "AT_e04_axis",
+ "status": "FAIL",
+ "ffmpeg": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+ "encoders": [
+  "libvpx-vp9",
+  "libx264"
+ ],
+ "safety_factor": 1.0,
+ "sequences": [
+  {
+   "name": "enc_beat02_axis",
+   "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\abyss\\QA\\captures\\AT_e04\\enc_beat02_axis",
+   "checks": [
+    {
+     "name": "x264_crf23[cli0]",
+     "status": "FAIL",
+     "value": 6.944,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 13.89 (max 1.28 code), BandScore 2.93 (run 32 px) (source score 0.614), frame 86"
+    }
+   ],
+   "variants": [
+    {
+     "codec": "x264",
+     "crf": 23,
+     "video": "QA/encode/AT_e04_axis\\enc_beat02_axis\\x264_crf23.mp4",
+     "encode_s": 23.7,
+     "kbps": 3860.9,
+     "decoded_frames": 600,
+     "mean_abs_error": 1.9979284617734052,
+     "decoded": {
+      "cli0": {
+       "direction": "v",
+       "n_strips": 3,
+       "gate": "steps+bandscore",
+       "steps_per_1000": 13.88888888888889,
+       "steps": 3,
+       "step_max_code": 1.275710362622121,
+       "bandscore": 2.9266717391304393,
+       "longest_run_px": 32,
+       "resid_rms": null,
+       "resid_pp": null,
+       "slope_abs_max": 0.05119252128508287,
+       "score": 6.944444444444445,
+       "pass": false,
+       "frame": 86
+      }
+     },
+     "crops": [
+      "QA/encode/AT_e04_axis\\enc_beat02_axis\\crops\\x264_crf23_cli0_f00342_100.png",
+      "QA/encode/AT_e04_axis\\enc_beat02_axis\\crops\\x264_crf23_cli0_f00342_200.png",
+      "QA/encode/AT_e04_axis\\enc_beat02_axis\\crops\\x264_crf23_cli0_f00342_x8.png"
+     ],
+     "video_kept": false
+    }
+   ],
+   "size": [
+    1920,
+    1080
+   ],
+   "fps": 60.0,
+   "frames_encoded": 600,
+   "regions": [
+    {
+     "name": "cli0",
+     "rect": [
+      806,
+      22,
+      1056,
+      238
+     ],
+     "dir": "v"
+    }
+   ],
+   "source": {
+    "cli0": {
+     "direction": "v",
+     "n_strips": 3,
+     "gate": "steps+bandscore",
+     "steps_per_1000": 0.0,
+     "steps": 0,
+     "step_max_code": 0.0,
+     "bandscore": 0.9209653198653193,
+     "longest_run_px": 8,
+     "resid_rms": null,
+     "resid_pp": null,
+     "slope_abs_max": 0.05069186739393168,
+     "score": 0.6139768799102129,
+     "pass": true,
+     "frame": 0
+    }
+   },
+   "status": "FAIL"
+  }
+ ]
+}

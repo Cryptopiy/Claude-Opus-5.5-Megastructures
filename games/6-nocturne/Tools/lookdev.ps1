@@ -17,11 +17,12 @@ param(
     [string]$CaptureOnly = "",
     [string]$Extra = "",
     [switch]$NoBuild,
+    [string]$BuildDir = "",   # e.g. Builds\BV (default Builds\lookdev_<Slot>)
     [int]$TimeoutMin = 20
 )
 $ErrorActionPreference = 'Continue'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$buildDir = "Builds\lookdev_$Slot"
+$buildDir = if ($BuildDir -ne "") { $BuildDir } else { "Builds\lookdev_$Slot" }
 $exe = Join-Path $root "$buildDir\Nocturne.exe"
 if (-not $NoBuild) {
     $env:NOC_BUILD_DIR = $buildDir

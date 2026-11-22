@@ -1,0 +1,963 @@
+{
+ "run": "TR_r10",
+ "capture_dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10",
+ "status": "FAIL",
+ "meta": {
+  "tool": "Megastructure.CaptureHarness",
+  "version": 1,
+  "started": "2026-11-21T01:06:42.364Z",
+  "finished": "2026-11-21T01:06:48.501Z",
+  "seconds": 6.137062,
+  "dir": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10",
+  "captureSet": "keyshots1080",
+  "env": {
+   "unity": "6000.6.0f1",
+   "isEditor": false,
+   "batchMode": false,
+   "platform": "WindowsPlayer",
+   "graphicsApi": "Direct3D11",
+   "gpu": "NVIDIA GeForce RTX 5070",
+   "gpuMemoryMB": 11944,
+   "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor ",
+   "reversedZ": true,
+   "screen": "1920x1080",
+   "vSyncCount": 0,
+   "seed": 1,
+   "freezeDither": true,
+   "freezeAmbient": false,
+   "args": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\Builds\\TR\\Nocturne.exe -screen-fullscreen 0 -screen-width 1920 -screen-height 1080 -logFile W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\Logs\\player-TR-r10.log -report-dir W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\reports -capture W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10 -capture-set keyshots1080 -capture-only KS11,KS12,KS13,KS14,KS15"
+  },
+  "render": {
+   "colorFormat": "R16G16B16A16_SFloat",
+   "depthFormat": "D32_SFloat_S8_UInt",
+   "msaa": 4,
+   "supersample": 1,
+   "path": "SubmitRenderRequest(StandardRequest) -> Blit R8G8B8A8_SRGB -> AsyncGPUReadback",
+   "asyncReadback": true,
+   "urpHdr": true,
+   "urpHdrPrecision": "_64Bits",
+   "urpMsaa": 4,
+   "cameraAllowMsaa": true,
+   "cameraAllowHdr": true,
+   "cameraNear": 0.05,
+   "cameraFar": 12000,
+   "pngRgb": true,
+   "writerThreads": 4,
+   "writerProbe": "encoding on 4 worker threads",
+   "flipRows": false,
+   "warmupFrames": 30,
+   "settleFrames": 3,
+   "pixelOrigin": "top-left (PNG rows); subject boxes use the same origin",
+   "luma": "Rec.709 weights on sRGB-encoded values, 0..1"
+  },
+  "gradeProbe": {
+   "meanAbsDiff": 1.84793,
+   "minDiff": 0.5,
+   "note": "grade active in the RT path"
+  },
+  "parity": {
+   "ran": false,
+   "ok": false,
+   "meanAbsDiff": null,
+   "meanAbsDiffFlipped": null,
+   "maxAbsDiff": -1,
+   "width": 0,
+   "height": 0,
+   "limit": 1,
+   "note": ""
+  },
+  "failures": 0,
+  "framingFailures": 0,
+  "lumaOutOfRange": 0,
+  "errorsLogged": 0,
+  "warningsLogged": 0
+ },
+ "spec_source": "NocturneConstants.cs",
+ "warnings": [],
+ "keyshot_coverage": {
+  "KS00_alley_start": [],
+  "KS01_alley_noodle": [],
+  "KS02_alley_slit": [],
+  "KS03_boulevard_mouth": [],
+  "KS04_boulevard_axis": [],
+  "KS06_tram": [],
+  "KS05_boulevard_up": [],
+  "KS07_edge_window": [],
+  "KS08_edge_flank": [],
+  "KS09_edge_gulf": [],
+  "KS10_edge_plunge": [],
+  "KS11_bridge_train": [
+   "1920x1080"
+  ],
+  "KS12_bridge_void": [
+   "1920x1080"
+  ],
+  "KS13_bridge_glass": [
+   "1920x1080"
+  ],
+  "KS14_garden_gate": [
+   "1920x1080"
+  ],
+  "KS15_garden_canopy": [
+   "1920x1080"
+  ],
+  "KS16_signs_wall": [],
+  "KS17_heart_reveal": [],
+  "KS18_koi_pass": [],
+  "KS19_goal_window": []
+ },
+ "images": [
+  {
+   "tag": "KS11_bridge_train",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10\\KS11_bridge_train.png",
+   "beat": 4,
+   "s": 600.0,
+   "keyshot": "KS11_bridge_train",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 0 (mode all), dark 1, first at [[1419, 605]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[1086, 101], [1087, 101]]; neon mask 2.463 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0195,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.067,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1192,
+     "threshold": "0.0941..0.1961",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 2.025462962962963e-05,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 0,
+    "nan_like_dark": 1,
+    "nan_like_pos": [
+     [
+      1419,
+      605
+     ]
+    ],
+    "clipped_pct": 0.019483024691358024,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.462721836419753,
+    "isolated_px": 2,
+    "isolated_pos": [
+     [
+      1086,
+      101
+     ],
+     [
+      1087,
+      101
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.11924227327108383,
+     "p1": 0.0669654980301857,
+     "p50": 0.097488634288311,
+     "p99": 0.4875217929482462,
+     "std": 0.08454494923353195
+    },
+    "luma_linear": {
+     "mean": 0.019978821277618408,
+     "p1": 0.005651996470987797,
+     "p50": 0.009640329517424107,
+     "p99": 0.20700435906648698,
+     "std": 0.058834727853536606
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS12_bridge_void",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10\\KS12_bridge_void.png",
+   "beat": 4,
+   "s": 660.0,
+   "keyshot": "KS12_bridge_void",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 4,
+     "threshold": "0",
+     "note": "bright 4 (mode all), dark 0, first at [[1330, 12], [1327, 16], [546, 612], [548, 622]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[426, 118]]; neon mask 0.636 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0633,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.125,
+     "threshold": "0.0941..0.1961",
+     "note": "display"
+    },
+    {
+     "name": "banding[abyss]",
+     "status": "FAIL",
+     "value": 1.485,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 2.23 (run 6 px), - / -, 3 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 4,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      1330,
+      12
+     ],
+     [
+      1327,
+      16
+     ],
+     [
+      546,
+      612
+     ],
+     [
+      548,
+      622
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 0.6364776234567902,
+    "isolated_px": 1,
+    "isolated_pos": [
+     [
+      426,
+      118
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.1250474601984024,
+     "p1": 0.0633113756775856,
+     "p50": 0.08767450600862503,
+     "p99": 0.708084762096405,
+     "std": 0.106822669506073
+    },
+    "luma_linear": {
+     "mean": 0.024808911606669426,
+     "p1": 0.005244136787950993,
+     "p50": 0.008219250477850437,
+     "p99": 0.4604721665382385,
+     "std": 0.06709453463554382
+    },
+    "banding": {
+     "abyss": {
+      "direction": "v",
+      "n_strips": 3,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 2.227953861531987,
+      "longest_run_px": 6,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.04931826141803316,
+      "score": 1.485302574354658,
+      "pass": false,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         216
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 1.076756048387097,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         64,
+         128
+        ],
+        "rows": [
+         0,
+         216
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 0.95597156862745,
+        "longest_run_px": 6
+       },
+       {
+        "strip": [
+         128,
+         192
+        ],
+        "rows": [
+         0,
+         216
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 2.227953861531987,
+        "longest_run_px": 5
+       }
+      ]
+     }
+    },
+    "band_score_worst": 1.485302574354658
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS13_bridge_glass",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10\\KS13_bridge_glass.png",
+   "beat": 4,
+   "s": 718.0,
+   "keyshot": "KS13_bridge_glass",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0",
+     "note": "bright 1 (mode all), dark 0, first at [[887, 727]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 outside neon masks",
+     "note": "5 x 5 median, display luma; neon mask 1.401 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0006,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0683,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1344,
+     "threshold": "0.0941..0.1961",
+     "note": "display"
+    },
+    {
+     "name": "banding[abyss]",
+     "status": "FAIL",
+     "value": 1.337,
+     "threshold": "score <= 1",
+     "note": "visible steps/1000 0.00 (max 0.00 code), BandScore 2.00 (run 7 px), - / -, 1 strips"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 1,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      887,
+      727
+     ]
+    ],
+    "clipped_pct": 0.000626929012345679,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 1.400800540123457,
+    "isolated_px": 0,
+    "isolated_pos": [],
+    "luma_display": {
+     "mean": 0.1344417929649353,
+     "p1": 0.06834981590509415,
+     "p50": 0.1039113774895668,
+     "p99": 0.3289576768875122,
+     "std": 0.0735877975821495
+    },
+    "luma_linear": {
+     "mean": 0.021035287529230118,
+     "p1": 0.005800026934593916,
+     "p50": 0.010695056989789009,
+     "p99": 0.08991052210330963,
+     "std": 0.03678581491112709
+    },
+    "banding": {
+     "abyss": {
+      "direction": "v",
+      "n_strips": 1,
+      "gate": "steps+bandscore",
+      "steps_per_1000": 0.0,
+      "steps": 0,
+      "step_max_code": 0.0,
+      "bandscore": 2.0049785783178997,
+      "longest_run_px": 7,
+      "resid_rms": null,
+      "resid_pp": null,
+      "slope_abs_max": 0.128221698008856,
+      "score": 1.3366523855452666,
+      "pass": false,
+      "strips": [
+       {
+        "strip": [
+         0,
+         64
+        ],
+        "rows": [
+         0,
+         217
+        ],
+        "steps_per_1000": 0.0,
+        "step_max_code": 0.0,
+        "bandscore": 2.0049785783178997,
+        "longest_run_px": 7
+       }
+      ]
+     }
+    },
+    "band_score_worst": 1.3366523855452666
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS14_garden_gate",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10\\KS14_garden_gate.png",
+   "beat": 4,
+   "s": 846.0,
+   "keyshot": "KS14_garden_gate",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 21,
+     "threshold": "0",
+     "note": "bright 21 (mode all), dark 0, first at [[753, 15], [1820, 188], [218, 199], [1354, 205], [213, 209]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 2,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[1580, 245], [1423, 494]]; neon mask 2.645 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0036,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0558,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1234,
+     "threshold": "0.0941..0.1961",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 21,
+    "nan_like_dark": 0,
+    "nan_like_pos": [
+     [
+      753,
+      15
+     ],
+     [
+      1820,
+      188
+     ],
+     [
+      218,
+      199
+     ],
+     [
+      1354,
+      205
+     ],
+     [
+      213,
+      209
+     ],
+     [
+      1252,
+      216
+     ],
+     [
+      1257,
+      216
+     ],
+     [
+      1173,
+      217
+     ],
+     [
+      1479,
+      230
+     ],
+     [
+      291,
+      290
+     ],
+     [
+      474,
+      332
+     ],
+     [
+      1463,
+      333
+     ],
+     [
+      662,
+      343
+     ],
+     [
+      661,
+      347
+     ],
+     [
+      362,
+      349
+     ],
+     [
+      1405,
+      386
+     ],
+     [
+      1403,
+      391
+     ],
+     [
+      1269,
+      403
+     ],
+     [
+      1238,
+      445
+     ],
+     [
+      1334,
+      461
+     ]
+    ],
+    "clipped_pct": 0.003616898148148148,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 2.6451099537037037,
+    "isolated_px": 2,
+    "isolated_pos": [
+     [
+      1580,
+      245
+     ],
+     [
+      1423,
+      494
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.12336550652980804,
+     "p1": 0.05575137585401535,
+     "p50": 0.09803922474384308,
+     "p99": 0.42309337854385376,
+     "std": 0.07713835686445236
+    },
+    "luma_linear": {
+     "mean": 0.01955472305417061,
+     "p1": 0.0044790892861783504,
+     "p50": 0.009721217676997185,
+     "p99": 0.15401943027973175,
+     "std": 0.04460698366165161
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  },
+  {
+   "tag": "KS15_garden_canopy",
+   "file": "W:\\YouTube\\Megastructures\\6 Megastructures\\6 Megastructures\\.worktrees\\waveb\\QA\\captures\\TR_r10\\KS15_garden_canopy.png",
+   "beat": 5,
+   "s": 970.0,
+   "keyshot": "KS15_garden_canopy",
+   "checks": [
+    {
+     "name": "size",
+     "status": "PASS",
+     "value": "1920x1080",
+     "threshold": "1920x1080",
+     "note": null
+    },
+    {
+     "name": "black frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels <= code 3",
+     "note": null
+    },
+    {
+     "name": "white frame",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "< 0.98 of pixels >= code 252",
+     "note": null
+    },
+    {
+     "name": "magenta",
+     "status": "PASS",
+     "value": 0,
+     "threshold": "0 px",
+     "note": "ratio 0 (exact 255,0,255: 0 px)"
+    },
+    {
+     "name": "NaN-like pixels",
+     "status": "FAIL",
+     "value": 18,
+     "threshold": "0",
+     "note": "bright 13 (mode all), dark 5, first at [[1919, 87], [1457, 115], [87, 332], [1599, 398], [752, 416]]"
+    },
+    {
+     "name": "isolated pixels > 8x median",
+     "status": "FAIL",
+     "value": 1,
+     "threshold": "0 outside neon masks",
+     "note": "first at [[1249, 1007]]; neon mask 3.121 % of the frame"
+    },
+    {
+     "name": "clipped highlights",
+     "status": "PASS",
+     "value": 0.0,
+     "threshold": "<= 0.8 %",
+     "note": "any channel at 255; 0 px excluded"
+    },
+    {
+     "name": "luma p1",
+     "status": "PASS",
+     "value": 0.0544,
+     "threshold": ">= 0.0353",
+     "note": "display"
+    },
+    {
+     "name": "mean luma",
+     "status": "PASS",
+     "value": 0.1259,
+     "threshold": "0.0784..0.1725",
+     "note": "display"
+    }
+   ],
+   "metrics": {
+    "black_frac": 0.0,
+    "white_frac": 0.0,
+    "magenta_strict": 0,
+    "magenta_like": 0,
+    "nan_like_bright": 13,
+    "nan_like_dark": 5,
+    "nan_like_pos": [
+     [
+      1919,
+      87
+     ],
+     [
+      1457,
+      115
+     ],
+     [
+      87,
+      332
+     ],
+     [
+      1599,
+      398
+     ],
+     [
+      752,
+      416
+     ],
+     [
+      1641,
+      424
+     ],
+     [
+      1396,
+      468
+     ],
+     [
+      1378,
+      472
+     ],
+     [
+      1082,
+      523
+     ],
+     [
+      1359,
+      528
+     ],
+     [
+      1082,
+      530
+     ],
+     [
+      1722,
+      566
+     ],
+     [
+      359,
+      652
+     ],
+     [
+      392,
+      675
+     ],
+     [
+      1575,
+      697
+     ],
+     [
+      1079,
+      713
+     ],
+     [
+      401,
+      723
+     ],
+     [
+      1146,
+      978
+     ]
+    ],
+    "clipped_pct": 0.0,
+    "clipped_all_pct": 0.0,
+    "clip_excluded_px": 0,
+    "neon_mask_pct": 3.1206114969135803,
+    "isolated_px": 1,
+    "isolated_pos": [
+     [
+      1249,
+      1007
+     ]
+    ],
+    "luma_display": {
+     "mean": 0.1259291023015976,
+     "p1": 0.05435137450695038,
+     "p50": 0.10783765465021133,
+     "p99": 0.5445632213354111,
+     "std": 0.08386838436126709
+    },
+    "luma_linear": {
+     "mean": 0.02126004360616207,
+     "p1": 0.004341310355812311,
+     "p50": 0.011415748856961727,
+     "p99": 0.2737163218855868,
+     "std": 0.04998578131198883
+    },
+    "band_score_worst": null
+   },
+   "size": [
+    1920,
+    1080
+   ],
+   "status": "FAIL"
+  }
+ ]
+}

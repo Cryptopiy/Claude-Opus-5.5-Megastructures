@@ -1,6 +1,6 @@
 # Encode test: lookv2_01_enc_beat07_goal
 
-ffmpeg: `C:\Users\Cryptopiy\AppData\Local\Microsoft\WinGet\Links\ffmpeg.EXE`, encoders: libvpx-vp9, libx264
+ffmpeg: `C:\Users\<user>\AppData\Local\Microsoft\WinGet\Links\ffmpeg.EXE`, encoders: libvpx-vp9, libx264
 
 Sequences: 1. Checks: 1 PASS, 0 FAIL, 0 WARN, 0 SKIP.
 

@@ -46,6 +46,12 @@ namespace Megastructure
         /// 0.22) taking 12 % of the frame through the glass, drop 36 %; a ray model of this frame gives 5 %, drop about 43 %): edge
         /// girder under the shoe, cantilever ribs every LedgeBeamPitch, the pane's lip under the girder.</summary>
         public const double LedgeGirderW = 0.14, LedgeGirderD = 0.14, LedgeBeamPitch = 2.5, LedgeBeamW = 0.05, LedgeBeamD = 0.16, LedgeGlassLip = 0.04;
+        /// <summary>AB fix wave (C05, p4_01 KS10: the 0.14 m girder plus the 0.11 m shoe drew a 110-170 px dark bar across the drop at
+        /// frame centre, built near structure 15.4 %): the edge is frameless. The girder becomes a stainless channel that clamps the
+        /// pane's edge under the balustrade shoe, LedgeGirderW wide (the pane's lip and InGlassLedge unchanged) and LedgeChannelD
+        /// deep (<= 0.12 m; the pane at -0.03 sits in its slot), and the cantilever ribs become structural glass fins LedgeFinW thick
+        /// (<= 0.08 m) under the pane (NocGlass: no opaque bar crosses the drop below the shoe).</summary>
+        public const double LedgeChannelD = 0.06, LedgeFinW = 0.04;
         /// <summary>True when (x, lateral |z - 195|) lies over the glass ledge's open area (between the nosing and the girder; 1 cm of
         /// slack under the girder's inner edge, which follows w(x) linearly between the 1 m deck samples).</summary>
         public static bool InGlassLedge(double x, double lateral) =>
@@ -67,6 +73,18 @@ namespace Megastructure
         /// all 14 lamps and 14 balustrade lights are wet sources (H4).</summary>
         public const int BalustradeLights = 14, RealtimeLampFrom = 4;
         public const double BalustradeLightX0 = 296.0, BalustradeLightDx = 12.0, BalustradeLightY = 0.16;
+        /// <summary>AB fix wave (C13, p4_01 b23 s 392.6: the first step-light pair popped to clipped white bloom orbs for 6-8 frames
+        /// at a time on the approach): the balustrade light was a point light 0.15 m from the balustrade glass and 6 cm from its own
+        /// housing, so the glass's GGX image and the housing's lit chamfer were millimetre-sized spots of extreme radiance that a
+        /// far camera's MSAA samples caught or missed as the walker moved. The light is a spot aimed inward and down at
+        /// BalSpotPitch below the horizontal (the step light's real throw onto the walk): its outer cone (BalSpotAngle) leaves the
+        /// glass, the shoe and the housing behind it unlit (they lie >= 90 deg off its axis), and the floor straight under it sits
+        /// in the cone's soft edge.</summary>
+        public const double BalSpotPitch = 45.0, BalSpotAngle = 100.0, BalSpotInner = 60.0;
+        /// <summary>AB fix wave (C13, AB_c13b): the plaza lamps' realtime lights are spots aimed down (outer LampSpotAngle, inner
+        /// LampSpotInner, like the boulevard's lamps): the emissive head 7 cm above the light (>= 100 deg off the axis) is no
+        /// longer lit by it, which drew the same sub-pixel pops at s 391-394.</summary>
+        public const double LampSpotAngle = 130.0, LampSpotInner = 80.0;
         public const double LampRange = 14.0, LampIntensity = 4.0, BalLightRange = 10.0, BalLightIntensity = 2.5;
 
         // ------------------------------------------------------------------ Gulf faces (14.4, 14.5.3)

@@ -16,7 +16,8 @@ param(
   [switch]$NoQuit,
   [switch]$NoGraphics,
   [int]$TimeoutMin = 60,
-  [int]$StallMin = 6   # 0 disables the silent-log watchdog (test runs log nothing while tests execute)
+  [int]$StallMin = 6,  # 0 disables the silent-log watchdog (test runs log nothing while tests execute)
+  [string]$BuildDir = ""   # BuildWindows output folder (sets NOC_BUILD_DIR), relative to this root, e.g. Builds\BV
 )
 
 $ErrorActionPreference = "Stop"
@@ -33,14 +34,25 @@ function Write-Q([string]$msg) {
   Write-Output $line
 }
 
+# A Unity process has THIS project open when its command line carries -projectPath "<root>" followed by a quote, a space
+# or the end. A plain substring test would also match the worktrees under <root>\.worktrees\ (2026-11-20, game 4 lesson).
 function Get-ProjectUnityProcesses {
-  $rootNorm = $root.ToLowerInvariant().TrimEnd('\')
+  $rootNorm = [Regex]::Escape($root.ToLowerInvariant().TrimEnd('\'))
+  $pattern = '-projectpath\s+"?' + $rootNorm + '\\?("|\s|$)'
   Get-CimInstance Win32_Process -Filter "Name='Unity.exe'" | Where-Object {
-    $_.CommandLine -and $_.CommandLine.ToLowerInvariant().Contains($rootNorm)
+    $_.CommandLine -and ($_.CommandLine.ToLowerInvariant() -match $pattern)
   }
 }
 
-$mutex = New-Object System.Threading.Mutex($false, "Global\NocturneUnityQueue_6Megastructures")
+# One queue per project folder (2026-11-20, user's order): the main project and each worktree under .worktrees\ are
+# separate Unity projects with their own Library, so each gets its own mutex derived from its path.
+$queueName = "Global\NocturneUnityQueue_" + (($root.ToLowerInvariant().TrimEnd('\')) -replace '[^a-z0-9]', '_')
+if ($queueName.Length -gt 250) { $queueName = $queueName.Substring(0, 250) }
+if ($BuildDir -ne "") {
+  if (-not [System.IO.Path]::IsPathRooted($BuildDir)) { $BuildDir = Join-Path $root $BuildDir }
+  $env:NOC_BUILD_DIR = $BuildDir
+}
+$mutex = New-Object System.Threading.Mutex($false, $queueName)
 $acquired = $false
 try {
   try { $acquired = $mutex.WaitOne([TimeSpan]::FromMinutes(90)) }
@@ -66,6 +78,7 @@ try {
 
   # a list passed through 'powershell -File' arrives as one comma-joined string: split it
   if ($ExtraArgs.Count -eq 1 -and $ExtraArgs[0] -match ',') { $ExtraArgs = $ExtraArgs[0].Split(',') }
+  if ($ExtraArgs -contains "-runTests") { $StallMin = 0; $NoQuit = $true }   # tests log nothing while they run; -quit breaks -runTests
   $argList = @("-batchmode", "-projectPath", "`"$root`"", "-logFile", "`"$log`"")
   if (-not $NoQuit) { $argList += "-quit" }
   if ($NoGraphics) { $argList += "-nographics" }
@@ -73,9 +86,11 @@ try {
   foreach ($a in $ExtraArgs) { if ($a -match '\s') { $argList += "`"$a`"" } else { $argList += $a } }
 
   if (Test-Path $log) { Remove-Item $log -Force -ErrorAction SilentlyContinue }
-  Write-Q ("start: Unity.exe " + ($argList -join " "))
+  $bd = if ($env:NOC_BUILD_DIR) { " (NOC_BUILD_DIR=$($env:NOC_BUILD_DIR))" } else { "" }
+  Write-Q ("start: Unity.exe " + ($argList -join " ") + $bd)
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   $proc = Start-Process -FilePath $unity -ArgumentList $argList -PassThru -WindowStyle Hidden
+  $null = $proc.Handle   # cache the handle so ExitCode is readable after exit (PowerShell 5.1)
   $lastSize = -1; $lastChange = Get-Date; $ilppCheck = Get-Date
   while (-not $proc.HasExited) {
     Start-Sleep -Milliseconds 1000
@@ -105,6 +120,7 @@ try {
   }
   $proc.WaitForExit()
   $code = $proc.ExitCode
+  if ($null -eq $code) { $code = 99 }
   Write-Q ("exit code {0} after {1:N1} s; log {2}" -f $code, $sw.Elapsed.TotalSeconds, $log)
   if (Test-Path $log) {
     $errs = Select-String -Path $log -Pattern "error CS\d+|Exception:|\[NOC-FAIL\]|Scripts have compiler errors" -SimpleMatch:$false | Where-Object { $_.Line -notmatch "Burst|burst" } | Select-Object -First 25

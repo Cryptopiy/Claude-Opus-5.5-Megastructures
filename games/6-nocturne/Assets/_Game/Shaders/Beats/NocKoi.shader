@@ -21,7 +21,15 @@
 // filtered by its pixel footprint (fwidth, taken before any branch) and fades to its mean below 2.5-5 px of pitch. Budgets by
 // the brightest channel, hue kept: body front 1.8 (the 1.5-2.0 clamp of TEXTURE_PLAN 6), back 0.8, fins 0.6, veil 0.35; radiance
 // clamp 3.0; fogged additively as col T (1 - cloudMix) and never floored (D-009). Queue Transparent+30 (3030), Blend One One,
-// ZWrite Off, ZTest LEqual, Cull Off; only a UniversalForward pass. No texture, no sampler, no keyword.
+// ZWrite Off, ZTest LEqual, Cull Off. No texture, no sampler, no keyword.
+// Fix wave p4_01 C02 (HT, a hologram, not an inflatable; LOOK_V2 reference 4): (1) transmission - the front shell's body term
+// thins toward the centre of the silhouette (x 1 - _CoreClear n.v^2; the Fresnel rim keeps its 210-235) and a first pass
+// "Ghost" (LightMode SRPDefaultUnlit, which URP draws before UniversalForward for the same renderer; Blend DstColor One:
+// dst x (1 + k)) lifts what lies behind the body centre by k = _GhostGain n.v^2 T (1 - cloudMix) (front body shell only, 0 on the
+// fins, veil and barbels, 0 at the rim), so the towers' windows and the spire behind ghost through at about 10-20 % contrast;
+// (2) structure - interference gaps across the body every KOI_GAPP m along the spine (lines of half-width KOI_GAPW of the pitch,
+// -_GapDepth x (line - its mean 2 KOI_GAPW): the body keeps its mean; faded below 6 px of pitch) and a half-cell feather on the
+// Kohaku patch edges (the scalloped scale-centre mask is mixed 50 / 50 with the smooth mask).
 Shader "Megastructure/NocKoi"
 {
     Properties
@@ -37,6 +45,10 @@ Shader "Megastructure/NocKoi"
         _FinBudget ("Fin max-channel budget", Float) = 0.6
         _VeilGain ("Veil gain (x body)", Float) = 0.12
         _VeilBudget ("Veil max-channel budget", Float) = 0.35
+        _KoiPupil ("Pupil offsets in the eyes (outer a, arc; inner a, arc; m): DREAD 5.2 hook, 0 = centred", Vector) = (0, 0, 0, 0)
+        _CoreClear ("Front-shell body thinning at the silhouette centre (x 1 - k n.v^2), C02", Float) = 0.8
+        _GhostGain ("Background lift behind the body centre (dst x (1 + k n.v^2)), C02", Float) = 1.5
+        _GapDepth ("Interference gap depth along the spine, C02", Float) = 0.22
     }
 
     HLSLINCLUDE
@@ -55,6 +67,10 @@ Shader "Megastructure/NocKoi"
         float _FinBudget;
         float _VeilGain;
         float _VeilBudget;
+        float4 _KoiPupil;
+        float _CoreClear;
+        float _GhostGain;
+        float _GapDepth;
     CBUFFER_END
 
     // KoiMath constants (Beat07HeartTests reads these lines and compares them with KoiMath)
@@ -98,6 +114,8 @@ Shader "Megastructure/NocKoi"
     #define KOI_RIMP 3.0         // Fresnel rim exponent (a thin glowing edge, the core keeps its structure)
     #define KOI_TAILA0 820.0     // the caudal peduncle dissolves into the veil (body x 1 - 0.9 f, rim x 1 - 0.85 f)
     #define KOI_TAILA1 900.0
+    #define KOI_GAPP 7.0         // C02: interference gap pitch along the spine (m) and line half-width (fraction of the pitch)
+    #define KOI_GAPW 0.15
 
     struct Attributes
     {
@@ -368,7 +386,7 @@ Shader "Megastructure/NocKoi"
                 float patchP = KoiPatch(a, st);
                 float patchQ;
                 float sc = KoiScales(X, sv, fwE, a, rowM, patchP, patchQ);
-                patchM = lerp(patchP, patchQ, sFade);
+                patchM = lerp(patchP, patchQ, 0.5 * sFade);                      // C02: half-cell feather on the patch edges
                 // head: smooth skin ahead of the gill cover (a bright arc, posterior-most on the side axes, its shadow behind)
                 float gill = KOI_GILLA + KOI_GILLB * abs(ct);
                 float onBody = smoothstep(gill - 3.0, gill + 5.0, a);
@@ -388,11 +406,18 @@ Shader "Megastructure/NocKoi"
                 dthI -= KOI_TAU * floor(dthI / KOI_TAU + 0.5);
                 float rr = max(rad, 1.0);
                 float dE = min(length(float2(a - KOI_EYEA, dthO * rr)), length(float2(a - KOI_EYEA, dthI * rr)));
+                // the pupil may look aside (DREAD 5.2, wave B: _KoiPupil, at most 0.3 R off the centre; 0 = centred, as in wave A)
+                float dP = min(length(float2(a - KOI_EYEA - _KoiPupil.x, dthO * rr - _KoiPupil.y)),
+                               length(float2(a - KOI_EYEA - _KoiPupil.z, dthI * rr - _KoiPupil.w)));
                 float fwD = fwA + 1e-3;
-                float eye = lerp(1.0, 0.15, 1.0 - smoothstep(KOI_EYER * 0.62 - fwD, KOI_EYER * 0.62 + fwD, dE));
+                float eye = lerp(1.0, 0.15, 1.0 - smoothstep(KOI_EYER * 0.62 - fwD, KOI_EYER * 0.62 + fwD, dP));
                 eye += 0.6 * KoiLine(dE - KOI_EYER, 0.45, fwD);
                 eye = lerp(eye, 1.0, smoothstep(KOI_EYER * 0.8, KOI_EYER * 2.5, fwD));          // gone below about 2.5 px
                 body = (KOI_STRB + KOI_STRK * vein) * (0.88 + 0.12 * st) * eye * scanK;
+                // C02 interference gaps across the body (mean kept: the line's mean 2 KOI_GAPW is subtracted)
+                float fwG = fwA * (1.0 / KOI_GAPP);
+                float gapL = KoiLine(frac(a * (1.0 / KOI_GAPP)) - 0.5, KOI_GAPW, fwG);
+                body *= 1.0 - _GapDepth * smoothstep(3.0, 6.0, 1.0 / max(fwG, 1e-4)) * (gapL - 2.0 * KOI_GAPW);
                 rimK = 0.8 + 0.5 * (vein - 0.5);                                 // the scales carry into the Fresnel edge
                 // the back shell takes the colour of the light that reaches the camera through the front shell: vermilion
                 // behind a front patch, aqua with a faint warm hint where only the back is patched (no grey stain)
@@ -403,7 +428,9 @@ Shader "Megastructure/NocKoi"
             float pk = patchM;
             float3 rimC = lerp(PAL_KoiGlow, pc, pk) * (1.0 - 0.5 * pk);           // a patch glows vermilion at its edge, never pink
             float tailF = smoothstep(KOI_TAILA0, KOI_TAILA1, a);
-            c = col * (_BodyGain * body * (1.0 - 0.9 * tailF)) + rimC * (_RimGain * rim * rimK * (1.0 - 0.85 * tailF));
+            // C02: the front shell thins at the centre; the Kohaku pigment stays denser (patch sat >= 0.60, LOOK_V2 6)
+            float clearK = 1.0 - _CoreClear * front * ndv * ndv * (1.0 - 0.7 * pk);
+            c = col * (_BodyGain * body * clearK * (1.0 - 0.9 * tailF)) + rimC * (_RimGain * rim * rimK * (1.0 - 0.85 * tailF));
             c *= front > 0.5 ? 1.0 : _BackWeight;
             budget = front > 0.5 ? _FrontBudget : _BackBudget;
         }
@@ -476,11 +503,40 @@ Shader "Megastructure/NocKoi"
         c = min(c * (T * cloud), 3.0);
         return half4(c, 0.0);                                                // additive light: no NocFloor (D-009)
     }
+
+    // C02 transmission: the background behind the front body shell is lifted by dst x (1 + k) (Blend DstColor One), k largest at
+    // the silhouette centre and 0 at the Fresnel rim, faded with the fog like the hologram itself; drawn before the additive pass
+    half4 KoiGhostFrag(Varyings i, FRONT_FACE_TYPE ff : FRONT_FACE_SEMANTIC) : SV_Target
+    {
+        float part = i.data0.w;
+        float front = IS_FRONT_VFACE(ff, 1.0, 0.0);
+        float3 toCam = _WorldSpaceCameraPos.xyz - i.positionWS;
+        float3 vdir = toCam * rsqrt(max(dot(toCam, toCam), 1e-6));
+        float ndv = saturate(dot(i.normalWS * rsqrt(max(dot(i.normalWS, i.normalWS), 1e-12)), vdir));
+        float bodyK = part < 0.5 ? 1.0 : 0.0;
+        float tailF = smoothstep(KOI_TAILA0, KOI_TAILA1, i.data0.x);
+        float T = NocFogT(i.positionWS);
+        float cloud = 1.0 - smoothstep(NC_CloudMixY0, NC_CloudMixY1, i.positionWS.y);
+        float k = _GhostGain * front * bodyK * ndv * ndv * (1.0 - tailF) * T * cloud;
+        return half4(0.9 * k, k, k, 0.0);
+    }
     ENDHLSL
 
     SubShader
     {
         Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" "Queue" = "Transparent+30" "IgnoreProjector" = "True" }
+        Pass
+        {
+            Name "Ghost"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+            Blend DstColor One
+            ZWrite Off ZTest LEqual Cull Off
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex KoiVert
+            #pragma fragment KoiGhostFrag
+            ENDHLSL
+        }
         Pass
         {
             Name "Koi"

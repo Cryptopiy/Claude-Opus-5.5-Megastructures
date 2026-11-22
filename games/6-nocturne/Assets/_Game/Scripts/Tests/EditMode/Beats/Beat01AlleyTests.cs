@@ -6,10 +6,14 @@
 //   KS00 camera), the KS02 slit half-angles 6.19 / 4.29 deg (ray sweeps across the roof edges at s 88) and the roof-edge, catwalk
 //   and tower-flank projections, the KS01 window / sign / counter projections, every mesh valid, <= 480 k triangles, and the
 //   walkability clearances: along both lane edges and the centre (s 0-120, every 0.25 m) the camera sphere (r 0.2 at y 1.7) and
-//   the player capsule (r 0.35, y 0..1.8) never enter a triangle; the wet sources of the beat never exceed 32 at any s.
+//   the player capsule (r 0.35, y 0..1.8) never enter a triangle (solid parts: AL's steam, pool decals and mouth haze excluded); the
+//   wet sources of the beat never exceed 32 at any s; AL (wave B): the kit counts, the framed windows and the modelled rooms;
+//   AL (fix wave): the catwalk work floodlights aim at the KS02 texture regions and their baked wash (D-039 (6)) triples the walls
+//   there and leaves the catwalk walls dark; the empty rooms are enclosed with the CC0 plaster (C37); the vents' steam (C38).
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace Megastructure.Tests
@@ -184,7 +188,10 @@ namespace Megastructure.Tests
         static G1TestGeo s_walls;
 
         static G1Parts Parts => s_parts ?? (s_parts = Beat01_Alley.BuildParts());
-        static G1TestGeo Geo => s_geo ?? (s_geo = new G1TestGeo(Parts));
+        /// <summary>AL (wave B): steam plumes, light-pool decals and the mouth haze card are not solid (no collider, transparent, the
+        /// steam fades within 2.5 m of the camera): the clearance test measures the solid parts only.</summary>
+        static bool NonSolid(string n) => n == "steam" || n == "barSteam" || n == "lightPools" || n == "mouthGlow" || n == "workLampPools";
+        static G1TestGeo Geo => s_geo ?? (s_geo = new G1TestGeo(Parts, n => !NonSolid(n)));
         /// <summary>The masses only (walls, roofs, dead end, towers, bar, niche, side doors): the profile and slit measurements must not hit a
         /// 6 mm cable or a fire-escape rod that happens to cross the measuring ray (those are checked by the clearance test).</summary>
         static G1TestGeo Walls => s_walls ?? (s_walls = new G1TestGeo(Parts, n =>
@@ -343,6 +350,111 @@ namespace Megastructure.Tests
             Debug.Log(FormattableString.Invariant($"[NOC] beat 1 clearance: camera sphere min {cam:F3} m (>= 0.2), capsule min {cap:F3} m (>= 0.35) {worst}"));
             Assert.GreaterOrEqual(cam, NocturneConstants.CameraSphere, worst);
             Assert.GreaterOrEqual(cap, NocturneConstants.PlayerRadius - 2e-3, worst);
+        }
+
+        /// <summary>AL (wave B): the 14.5.1 kit counts and the INT-06 / DREAD 6 content on the built parts.</summary>
+        [Test]
+        public void Kit_Windows_Rooms_Counts()
+        {
+            var p = Parts;
+            // 140 cables of 12 segments x 6 sides (2 triangles each)
+            Assert.AreEqual(AlleyLayout.CableCount * 12 * 6 * 2, p.Find("cables").Mb.TriangleCount, "140 catenary cables (14.5.1)");
+            for (int i = 0; i < AlleyFixtures.AcCount; i++)
+            {
+                AlleyFixtures.Ac(i, out int side, out float z, out float y, out _);
+                Assert.AreNotEqual(0, side, "AC unit " + i + " placed");
+                Assert.Greater(y, 5.0f, "AC unit above the doors and awnings");
+                Assert.IsFalse(z > AlleyFixtures.ClearZ0 && z < AlleyFixtures.ClearZ1, "AC unit outside the KS02 clear band");
+            }
+            // every grid window is a framed window now (INT-06), about 45 % lit
+            Assert.Greater(AlleyWindows.Built, 200, "framed windows");
+            double lit = AlleyWindows.Lit / (double)AlleyWindows.Built;
+            Debug.Log(FormattableString.Invariant($"[NOC] beat 1 windows: {AlleyWindows.Built} framed, {AlleyWindows.Lit} lit ({lit:P1}); parts {p.Parts.Count}"));
+            Assert.AreEqual(AlleyLayout.WinLit, lit, 0.1, "lit share");
+            Assert.Greater(p.Find("alleyWindowTrim").Mb.TriangleCount, 0, "sills and heads");
+            // the noodle bar room and the two empty rooms are modelled; steam rises at the vents and the pots
+            Assert.Greater(p.Find("barRoom").Mb.TriangleCount, 1000, "noodle bar interior");
+            for (int r = 0; r < AlleyRooms.Count; r++) Assert.Greater(p.Find("roomInterior" + r).Mb.TriangleCount, 200, "empty room " + r);
+            Assert.AreEqual(4 * 2 * 2, p.Find("steam").Mb.TriangleCount, "four vents, two plumes each");
+            Assert.AreEqual(3 * 2, p.Find("barSteam").Mb.TriangleCount, "three pots");
+            Assert.Greater(p.Find("lightPools").Mb.TriangleCount, 40, "pools of every lamp (INT-21)");
+        }
+
+        /// <summary>Fix wave, D-039 (6): the C# twin of NocAlleyPool's spot mode, E = sum I N.L cone / (d^2 + 0.25), on a wall point.</summary>
+        static float WorkWash(Vector3 p)
+        {
+            var n = new Vector3(p.x > 0f ? -1f : 1f, 0f, 0f);
+            float cosOut = Mathf.Cos(AlleyFixtures.WorkLampOuterDeg * Mathf.Deg2Rad), cosIn = Mathf.Cos(AlleyFixtures.WorkLampInnerDeg * Mathf.Deg2Rad);
+            float e = 0f;
+            for (int k = 0; k < 2; k++)
+            {
+                AlleyFixtures.WorkLamp(k, out Vector3 pos, out Vector3 aim);
+                Vector3 L = pos - p;
+                float d2 = L.sqrMagnitude;
+                L /= Mathf.Sqrt(d2);
+                float c = Mathf.Clamp01((Vector3.Dot(-L, aim) - cosOut) / (cosIn - cosOut));
+                c = c * c * (3f - 2f * c);
+                e += AlleyFixtures.WorkLampIntensity * Mathf.Max(0f, Vector3.Dot(n, L)) * c / (d2 + 0.25f);
+            }
+            return e;
+        }
+
+        [Test]
+        public void WorkLamps_WashTheKS02Walls_NotTheCatwalk()
+        {
+            var p = Parts;
+            Assert.AreEqual(4, p.Find("workLampPools").Mb.TriangleCount, "one wash panel per wall");
+            Assert.Greater(p.Find("workLampLens").Mb.TriangleCount, 0, "lit lenses");
+            Assert.Greater(p.Find("workLampFixture").Mb.TriangleCount, 0, "housings, guards, yokes, hangers");
+            float hw = (float)AlleyLayout.HalfWidth(89.6);
+            float lum = AlleyFixtures.WorkLampPoolColour().grayscale;
+            for (int k = 0; k < 2; k++)
+            {
+                AlleyFixtures.WorkLamp(k, out Vector3 pos, out Vector3 aim);
+                Assert.Greater(pos.y, 8.5f, "under the catwalk, far above the walk");
+                // the aim meets the opposite wall inside the KS02 texture region (y 3.3-4.8, z 88.7-90.6 beside the eye)
+                float side = k == 0 ? 1f : -1f;
+                float t = (side * hw - pos.x) / aim.x;
+                Vector3 hit = pos + aim * t;
+                Assert.That(hit.y, Is.InRange(2.5f, 4.8f), "lamp " + k + " aim height on the opposite wall");
+                Assert.That(hit.z, Is.InRange(88.5f, 91.0f), "lamp " + k + " aim z on the opposite wall");
+            }
+            foreach (float side in new[] { -1f, 1f })
+            {
+                // x ~1.7 at the KS02 regions' centre (AL_f01: I 350 flattened the walls to a grey wash), none beside the catwalk (the slit stays dark)
+                float mid = 1f + lum * WorkWash(new Vector3(side * hw, 4.0f, 89.6f));
+                float high = 1f + lum * WorkWash(new Vector3(side * hw, 9.5f, 96.5f));
+                float far = 1f + lum * WorkWash(new Vector3(side * hw, 4.0f, 80.0f));
+                Debug.Log(FormattableString.Invariant($"[NOC] work wash side {side}: x{mid:0.00} at the KS02 region, x{high:0.00} at the catwalk, x{far:0.00} at z 80"));
+                Assert.That(mid, Is.InRange(1.4f, 2.1f), "the wash at the KS02 region");
+                Assert.Less(high, 1.05f, "no wash on the walls beside the catwalk");
+                Assert.Less(far, 1.6f, "the wash fades before z 80");
+            }
+            Assert.LessOrEqual(Parts.Lights.Count, 20, "baked, not a 21st realtime light (14.2.3, D-039 (6))");
+        }
+
+        [Test]
+        public void FixWave_EnclosedRooms_Plaster_SteamOpacity()
+        {
+            var lib = AssetDatabase.LoadAssetAtPath<MaterialLibrary>(Megastructure.EditorTools.NocPaths.LibraryAsset);
+            var room = AlleyMaterials.Make(G1Mat.AlleyRoomB, lib);
+            if (room == null) Assert.Ignore("Megastructure/NocAlleyRoom not found");
+            Assert.AreEqual(1f, room.GetFloat("_Interior"), "the empty rooms take their own lamp only (C37)");
+            Assert.AreEqual(AlleyMaterials.InteriorAmbient, room.GetFloat("_InteriorAmb"), 1e-6f);
+            if (lib != null && lib.Plaster != null && lib.Plaster.GetTexture("_AlbedoTex2") != null)
+            {
+                Assert.AreEqual(1f, room.GetFloat("_WallTexOn"), "the CC0 plaster on the walls");
+                Assert.AreSame(lib.Plaster.GetTexture("_AlbedoTex2"), room.GetTexture("_WallTex"));
+            }
+            var bar = AlleyMaterials.Make(G1Mat.AlleyRoomBar, lib);
+            Assert.AreEqual(0f, bar.GetFloat("_Interior"), "the noodle bar keeps the template's lighting");
+            Assert.AreEqual(0f, bar.GetFloat("_WallTexOn"));
+            var steam = AlleyMaterials.Make(G1Mat.Steam, lib);
+            Assert.AreEqual(AlleyMaterials.VentOpacity, steam.GetFloat("_Opacity"), 1e-6f, "C38");
+            Assert.Greater(steam.GetFloat("_Scatter"), 0.5f, "the plumes in-scatter the lamps");
+            var wash = AlleyMaterials.Make(G1Mat.AlleyWorkPool, lib);
+            Assert.AreEqual(1f, wash.GetFloat("_Spot"));
+            Assert.AreEqual(AlleyFixtures.WorkLampIntensity, wash.GetVector("_SpotA").w, 1e-3f);
         }
 
         [Test]

@@ -18,6 +18,7 @@ Shader "Megastructure/NocLine"
         _LineWidth ("True width (m)", Float) = 0.03
         _MinWidthPx ("Minimum width (px, 0 = global)", Float) = 0
         _AlphaFloor ("Energy alpha floor", Float) = 0.35
+        _EmissionDown ("Emission on the underside only (0 all round, 1 the lower facets: an LED channel)", Float) = 0
 
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src blend", Float) = 1
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst blend", Float) = 0
@@ -41,6 +42,7 @@ Shader "Megastructure/NocLine"
             float _LineWidth;
             float _MinWidthPx;
             float _AlphaFloor;
+            float _EmissionDown;
         CBUFFER_END
 
         #include "Include/NocAtmosphere.hlsl"
@@ -214,7 +216,12 @@ Shader "Megastructure/NocLine"
                 s.alpha = 1.0;
                 s.smoothness = smooth;
                 s.occlusion = 1.0;
-                s.emission = _EmissionColor.rgb;
+                // AB (KS09 / KS10 r02: the lit handrail read as a 50 px flat clipped bar across the frame): with _EmissionDown 1 only the
+                // lower half glows (n.y below -0.05, full below -0.55: the LED channel in a handrail's underside, aimed down and inward),
+                // so the walker sees a dark rail with a lit sliver along its lower edge (about a third of the tube's width from 2-3 m);
+                // 0 keeps the all-round emission of every other line
+                float down = 1.0 - smoothstep(-0.55, -0.05, normalWS.y);
+                s.emission = _EmissionColor.rgb * lerp(1.0, down, saturate(_EmissionDown));
                 s.normalTS = half3(0, 0, 1);
                 InputData inputData = (InputData)0;
                 inputData.positionWS = positionWS;

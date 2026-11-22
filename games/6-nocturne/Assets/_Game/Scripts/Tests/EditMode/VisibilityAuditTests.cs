@@ -19,6 +19,7 @@ namespace Megastructure.Tests
     public sealed class VisibilityAuditTests
     {
         static VisibilityAudit s_audit;
+        static VisibilityRaycaster s_built;
         static string s_buildInfo;
         static Exception s_error;
         CultureInfo m_culture;
@@ -43,6 +44,7 @@ namespace Megastructure.Tests
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
                 VisibilityRaycaster built = VisibilityWorld.Build(out VisibilityWorld.Info info);
+                s_built = built;
                 s_buildInfo = info.ToString();
                 var audit = new VisibilityAudit(new VisibilitySpecWorld(), built.TriangleCount > 0 ? built : null) { BuiltInfo = s_buildInfo };
                 audit.Run();
@@ -87,6 +89,28 @@ namespace Megastructure.Tests
             foreach (var f in a.Failures) Report($"FAILURE {f.shot} {f.subject} [{f.kind}, {f.owner}]: {f.detail}");
             var findings = Kind(a, "follower-lag", "frame", "occlusion", "hidden", "composition", "composition-built", "readable", "schedule");
             if (findings.Count > 0) Debug.LogWarning("[VIS] " + findings.Count + " findings for the lead / owners (see QA/reports/visibility.md):" + Lines(findings));
+        }
+
+        /// <summary>Fix wave C10 (lead): KS04's subjects at FX's new pitch +27 (D-040; blvd copy's NocturneConstants): every subject
+        /// framed and visible at the target pose for the three aspects, spec model and built meshes.</summary>
+        [Test]
+        public void KS04_SubjectsHoldAtPitch27()
+        {
+            Audit();
+            var shots = VisibilitySubjects.All().FindAll(v => v.id == "KS04");
+            Assert.AreEqual(1, shots.Count);
+            KeyShot k = shots[0].ks;
+            double pitch0 = k.pitch;
+            k.pitch = 27.0;
+            shots[0].ks = k;
+            var a = new VisibilityAudit(new VisibilitySpecWorld(), s_built != null && s_built.TriangleCount > 0 ? s_built : null);
+            a.Run(shots, false);
+            Assert.AreEqual(1, a.Results.Count);
+            foreach (var sr in a.Results[0].subjects)
+                Report(FormattableString.Invariant($"KS04 pitch {pitch0:0} -> 27: {sr.subject.name} {(sr.pass ? "pass" : "FAIL")} visible spec {sr.visSpec:0.00} built {sr.visBuilt:0.00} {sr.why}"));
+            var f = a.Failures.FindAll(x => x.kind == "frame" || x.kind == "hidden" || x.kind == "occlusion");
+            foreach (var x in f) Report($"KS04@27 FAILURE {x.subject} [{x.kind}]: {x.detail}");
+            Assert.IsEmpty(f, "KS04's subjects at pitch 27:" + Lines(f));
         }
 
         [Test]

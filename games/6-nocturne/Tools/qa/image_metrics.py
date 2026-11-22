@@ -36,7 +36,42 @@ from qa_common import PASS, FAIL, SKIP, INFO, WARN, TH, check  # noqa: E402
 
 
 # --------------------------------------------------------------------------------------------- pixel tests
-def nan_like_pixels(rgb8, dark_t, bright_t, bright_mode="all"):
+def thin_line_masks(lum, med):
+    """QA fix wave C47 (HT's request: the image_metrics neon-line mask): pixels on thin 1-3 px features (NocLine strips, spire
+    ribs, mortar joints, pendant edges): components (8-connected) of the loose outlier masks - brighter than max(2 x, + 12 codes)
+    the 9 x 9 median, or darker than min(0.6 x, - 12 codes) - whose length (bounding-box long side) is >= 3 px, at pixels whose 7 x 7
+    neighbourhood is at most 55 % mask (a line or a junction of lines, not a blob interior). A NaN / Inf single pixel or a 2-px speck is never on such a line, so the NaN-like and
+    isolated-pixel tests still see it. Returns (bright_lines, dark_lines) H x W bool masks."""
+    try:
+        import cv2
+    except Exception:  # pragma: no cover
+        z = np.zeros(lum.shape, dtype=bool)
+        return z, z
+    lf = lum.astype(np.float64)
+    # the background of a line is the 9 x 9 median: in a 5 x 5 window a 2-3 px line is half the pixels, so the 5 x 5 median sits
+    # on the line itself and splits it into the edge pixels the isolated test flags (KS18's diagonal spire ribs)
+    bg = np.asarray(Image.fromarray(lum).filter(ImageFilter.MedianFilter(9)), dtype=np.float64)
+    out = []
+    for m in ((lf > np.maximum(2.0 * bg, bg + 12.0)), (lf < np.minimum(0.6 * bg, bg - 12.0))):
+        n, lab, st, _ = cv2.connectedComponentsWithStats(m.astype(np.uint8), connectivity=8)
+        if n <= 1:
+            out.append(np.zeros(lum.shape, dtype=bool))
+            continue
+        L = np.maximum(st[:, cv2.CC_STAT_WIDTH], st[:, cv2.CC_STAT_HEIGHT])
+        keep = L >= 3
+        keep[0] = False
+        # thin where the 7 x 7 neighbourhood is at most 55 % mask (a 3 px line, or a junction of lines: the spire's ribs and rings
+        # are one connected network); blob interiors are not lines
+        dens = cv2.blur(m.astype(np.float32), (7, 7))
+        out.append(keep[lab] & (dens <= 0.55))
+    return out[0], out[1]
+
+
+# owners of the 1-2 px emitters left after the line mask, by beat (MASTER_PROMPT 14.5 packages; QA fix wave C47)
+BEAT_OWNER = {1: "AL", 2: "BV", 3: "AB", 4: "AB / TR", 5: "GD", 6: "SG", 7: "HT"}
+
+
+def nan_like_pixels(rgb8, dark_t, bright_t, bright_mode="all", line_masks=None):
     """Isolated extreme pixels: display luma more than bright_t above the MAX (or dark_t below the MIN) of all
     24 other pixels of its 5 x 5 neighbourhood.  Thin lines and object corners are never isolated, so they do not
     count; a NaN (black after saturate) or Inf / firefly (white) single pixel does.  bright_mode 'clipped' only
@@ -58,8 +93,17 @@ def nan_like_pixels(rgb8, dark_t, bright_t, bright_mode="all"):
     if bright_mode == "clipped":
         bright &= rgb8.max(axis=2) >= 254
     dark = (nmin - L) > dark_t
+    if line_masks is not None:
+        bright &= ~line_masks[0]
+        dark &= ~line_masks[1]
+    # C47: a NaN renders black; a dark single pixel that is not near-black (max channel > 12 codes) is a texture speck (KS19's mortar
+    # pits at 22 among 70-90), reported apart as a WARN inventory, not as a NaN
+    speck = dark & (rgb8.max(axis=2) > 12)
+    dark &= ~speck
     ys, xs = np.nonzero(bright | dark)
     pos = [[int(x), int(y)] for y, x in list(zip(ys, xs))[:20]]
+    sy, sx = np.nonzero(speck)
+    nan_like_pixels.last_specks = (int(speck.sum()), [[int(x), int(y)] for y, x in list(zip(sy, sx))[:10]])
     return int(bright.sum()), int(dark.sum()), pos
 
 
@@ -193,13 +237,26 @@ def analyse_image(shot, region_entries, opts):
     ropt = reg["options"]
     cam = qc.cam_for(shot, W, H)
 
-    # NaN-like
+    # NaN-like (pixels on thin 1-3 px lines are not isolated extremes: C47 line mask)
+    lm = luma_median5(rgb8) if Image is not None else None
+    lines = thin_line_masks(*lm) if (lm is not None and ropt.get("lineMask", True)) else None
+    if lines is not None:
+        M["line_mask_pct"] = 100.0 * float((lines[0] | lines[1]).mean())
+    owner = BEAT_OWNER.get(beat, "?")
     bmode = ropt.get("nanBrightMode", "all")
     nb, nd, pos = nan_like_pixels(rgb8, float(ropt.get("nanDarkT", TH["nan_dark_t"])),
-                                  float(ropt.get("nanBrightT", TH["nan_bright_t"])), bmode)
+                                  float(ropt.get("nanBrightT", TH["nan_bright_t"])), bmode, lines)
     M["nan_like_bright"], M["nan_like_dark"], M["nan_like_pos"] = nb, nd, pos
+    ns, spos = getattr(nan_like_pixels, "last_specks", (0, []))
+    M["dark_specks"], M["dark_speck_pos"] = ns, spos
+    if ns:
+        C.append(check("dark single-pixel specks (not NaN)", WARN, ns, "inventory",
+                       "darker than all 24 neighbours by > %.2f but not black (max channel > 12 codes): texture specks; first at %s; "
+                       "owner %s (beat %s)" % (float(ropt.get("nanDarkT", TH["nan_dark_t"])), qc.fmt(spos[:5]), owner, beat)))
     C.append(check("NaN-like pixels", FAIL if nb + nd > 0 else PASS, nb + nd, "0",
-                   "bright %d (mode %s), dark %d%s" % (nb, bmode, nd, (", first at " + qc.fmt(pos[:5])) if pos else "")))
+                   "bright %d (mode %s), dark %d%s; thin-line mask %.3f %%%s" % (
+                       nb, bmode, nd, (", first at " + qc.fmt(pos[:5])) if pos else "", M.get("line_mask_pct", 0.0),
+                       ("; owner %s (beat %s)" % (owner, beat)) if nb + nd > 0 else "")))
 
     # exclusion discs
     clip_mask = np.zeros((H, W), dtype=bool)
@@ -234,14 +291,15 @@ def analyse_image(shot, region_entries, opts):
 
     # isolated pixels above 8 x the 5 x 5 median, outside the neon masks (14.10): the emitter mask of the frame
     # (neon_mask) plus the declared exclusion discs
-    lm = luma_median5(rgb8) if Image is not None else None
     nm = neon_mask(rgb8, lm) if (lm is not None and ropt.get("neonMask", True)) else np.zeros((H, W), dtype=bool)
     M["neon_mask_pct"] = 100.0 * float(nm.mean())
-    ni, ipos = isolated_pixels(rgb8, float(ropt.get("isolatedFactor", TH["isolated_factor"])), clip_mask | nm, lm)
+    lmask = (lines[0] | lines[1]) if lines is not None else np.zeros((H, W), dtype=bool)
+    ni, ipos = isolated_pixels(rgb8, float(ropt.get("isolatedFactor", TH["isolated_factor"])), clip_mask | nm | lmask, lm)
     M["isolated_px"], M["isolated_pos"] = ni, ipos
-    C.append(check("isolated pixels > 8x median", FAIL if ni > 0 else PASS, ni, "0 outside neon masks",
+    C.append(check("isolated pixels > 8x median", FAIL if ni > 0 else PASS, ni, "0 outside neon and thin-line masks",
                    (("first at " + qc.fmt(ipos[:5])) if ipos else "5 x 5 median, display luma") +
-                   "; neon mask %.3f %% of the frame" % M["neon_mask_pct"]))
+                   "; neon mask %.3f %% of the frame, thin-line mask %.3f %%" % (M["neon_mask_pct"], M.get("line_mask_pct", 0.0)) +
+                   (("; owner %s (beat %s): real 1-2 px emitters" % (owner, beat)) if ni > 0 else "")))
     if beat in TH["clip_pct_max"]:
         lim = TH["clip_pct_max"][beat]
         C.append(check("clipped highlights", PASS if cpct <= lim else FAIL, round(cpct, 4), "<= %g %%" % lim,
