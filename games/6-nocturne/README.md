@@ -12,6 +12,8 @@ geometry, shaders, score and soundscape are procedural, built in Unity 6000.6.0f
 MSAA 4x, HDR, D3D11). The only imported assets are CC0 textures (D-027, `docs/TEXTURES.md`). There are no people, no
 real text, no shadow maps and no flashing. The game was made for a YouTube video.
 
+**Licensing:** [MIT for code](../../LICENSE), [CC BY 4.0 for original assets](../../LICENSE-ASSETS.md), [third-party notices](../../THIRD_PARTY_NOTICES.md). The imported CC0 texture registry is in [ASSET_NOTICES.md](ASSET_NOTICES.md).
+
 **Status (2026-11-21 23:35): finished, including the Ark wave (D-043); the known issues below are accepted for this
 release (D-042).**
 - How to get the game running, from a download or from these sources: **[HOW_TO_PLAY.md](HOW_TO_PLAY.md)**.

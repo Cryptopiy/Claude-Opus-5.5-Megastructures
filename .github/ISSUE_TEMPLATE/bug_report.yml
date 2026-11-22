@@ -1,0 +1,68 @@
+name: 🐞 Ошибка / Bug report
+description: Сообщить об ошибке в игре, исходниках или документации
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Спасибо за сообщение. / Thanks for the report.
+        Не добавляйте секреты, токены и персональные данные. Уязвимости сообщайте через Security Advisory.
+  - type: dropdown
+    id: game
+    attributes:
+      label: Игра или область / Game or area
+      options:
+        - Abyss
+        - The Ring
+        - Thread
+        - Bulwark
+        - Nocturne
+        - Repository / documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Коммит или релиз / Commit or release
+      placeholder: Например, main или v1.0
+    validations:
+      required: true
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: Что произошло? / What happened?
+      description: Опишите фактический и ожидаемый результат. / Describe actual and expected behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Шаги воспроизведения / Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Окружение / Environment
+      description: ОС, GPU, версия Unity, тип сборки. / OS, GPU, Unity version, build type.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Логи и изображения / Logs and screenshots
+      description: Добавьте только относящиеся к ошибке фрагменты. / Add only relevant excerpts.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Проверка / Confirmation
+      options:
+        - label: В сообщении нет секретов, токенов и чужих персональных данных.
+          required: true

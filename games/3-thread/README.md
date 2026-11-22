@@ -6,6 +6,8 @@ A first-person "corridor" walk up a space elevator, in flat-colour minimalism. Y
 
 Everything is procedural: C# geometry generated at load, handwritten URP HLSL shaders, code-generated textures (blue noise) and synthesised audio. No imported assets.
 
+**Licensing:** [MIT for code](../../LICENSE), [CC BY 4.0 for original assets](../../LICENSE-ASSETS.md), [third-party notices](../../THIRD_PARTY_NOTICES.md).
+
 - Engine: Unity 6000.6.0f1, URP 17.6.0 (Forward+, HDR 64-bit, MSAA 4x), Input System 1.20.0.
 - Walk time: 9 min 33 s at the default speed (860 m at 1.5 m/s); 5 min 44 s brisk.
 

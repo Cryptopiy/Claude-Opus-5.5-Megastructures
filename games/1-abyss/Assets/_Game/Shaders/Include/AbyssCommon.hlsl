@@ -62,7 +62,8 @@ float AbSmootherstep(float a, float b, float x)
 float AbPixelAngle() { return _AbPixelAngle > 0.0 ? _AbPixelAngle : AB_DEFAULT_PIXEL_ANGLE; }
 
 // ------------------------------------------------------------------------------------------------ hashes (PCG, integer)
-// PCG RXS-M-XS (Jarzynski & Olano, JCGT 2020; docs/research/art-technique.md section 5).
+// PCG RXS-M-XS (Melissa E. O'Neill / PCG Project, Apache-2.0; Jarzynski & Olano, JCGT 2020).
+// Attribution and full license: repository-root THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt.
 uint AbPcg(uint v)
 {
     uint s = v * 747796405u + 2891336453u;

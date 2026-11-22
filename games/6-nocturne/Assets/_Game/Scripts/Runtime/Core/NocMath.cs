@@ -96,6 +96,8 @@ namespace Megastructure
         }
 
         // ------------------------------------------------------------------ hashes (The Ring RingMath, PCG; twin of the HLSL hash)
+        // PCG: Melissa E. O'Neill / PCG Project, Apache-2.0; Jarzynski & Olano, JCGT 2020.
+        // See repository-root THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt.
         public static uint Pcg(uint v)
         {
             unchecked

@@ -15,6 +15,8 @@ About 11 minutes. No combat, no HUD — made to be recorded.
 
 Everything is procedural (C# geometry, handwritten URP HLSL shaders, code-generated textures and audio). Unity 6000.6.0f1, URP 17.6.
 
+**Licensing:** [MIT for code](../../LICENSE), [CC BY 4.0 for original assets](../../LICENSE-ASSETS.md), [third-party notices](../../THIRD_PARTY_NOTICES.md).
+
 ## Run
 Ready-made builds are in `Game/`: `Game/Windows/Abyss.exe` (Windows 10/11, 64-bit) and `Game/Mac/Abyss.app` (macOS 11+, Intel and
 Apple silicon); the `PLAY_*` files next to this README start them. The game starts black, fades in with the title, and ends on

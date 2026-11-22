@@ -30,13 +30,14 @@
 
 - [BLENDER_MCP_GUIDE.md](BLENDER_MCP_GUIDE.md#русский) — гайд: Claude / Codex + Unity · Godot · Unreal + Blender MCP (PDF: [RU](docs/blender-mcp/Blender_MCP_Guide_RU.pdf), [EN](docs/blender-mcp/Blender_MCP_Guide_EN.pdf))
 - [prompts/](prompts) — промпты, по которым ИИ создавал проекты
-- [NOTICE.md](NOTICE.md) — товарные знаки, сторонние ресурсы, отказ от ответственности
+- [NOTICE.md](NOTICE.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — товарные знаки, сторонние ресурсы, отказ от ответственности
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [SUPPORT.md](SUPPORT.md) — участие и поддержка
 
 ### Лицензия
 
-Код — **MIT** ([LICENSE](LICENSE)). Собственные ассеты (3D-модели, текстуры, звуки, уровни) — **CC BY 4.0** ([LICENSE-ASSETS.md](LICENSE-ASSETS.md)). Сторонние библиотеки и ресурсы — под своими лицензиями ([NOTICE.md](NOTICE.md)).
+Код — **MIT** ([LICENSE](LICENSE)). Собственные ассеты (3D-модели, текстуры, звуки, уровни) — **CC BY 4.0** ([LICENSE-ASSETS.md](LICENSE-ASSETS.md)). Сторонние библиотеки и ресурсы — под своими лицензиями ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Полные тексты — в [LICENSES/](LICENSES/README.md). Модели Tripo3D и их производные исключены из CC BY 4.0; см. [особые условия Bulwark](games/4-bulwark/ASSET_NOTICES.md).
 
-> Некоммерческий учебный проект: игры созданы ИИ для YouTube-обзора. Проект не связан с владельцами упомянутых игр, брендов и товарных знаков и не одобрен ими.
+> Учебный проект для YouTube-обзора. Эта цель не ограничивает коммерческие разрешения MIT и CC BY 4.0; сторонние исключения сохраняют свои условия. Проект не связан с владельцами упомянутых игр, брендов и товарных знаков и не одобрен ими.
 
 ---
 
@@ -66,10 +67,11 @@ From the **Megastructures** video: atmospheric Unity walks — down the brutalis
 
 - [BLENDER_MCP_GUIDE.md](BLENDER_MCP_GUIDE.md#english) — guide: Claude / Codex + Unity · Godot · Unreal + Blender MCP (PDF: [EN](docs/blender-mcp/Blender_MCP_Guide_EN.pdf), [RU](docs/blender-mcp/Blender_MCP_Guide_RU.pdf))
 - [prompts/](prompts) — the prompts the AI used to build the projects
-- [NOTICE.md](NOTICE.md) — trademarks, third-party components, disclaimer
+- [NOTICE.md](NOTICE.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — trademarks, third-party components, disclaimer
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [SUPPORT.md](SUPPORT.md) — contributing and support
 
 ### License
 
-Code — **MIT** ([LICENSE](LICENSE)). Original assets (3D models, textures, sounds, levels) — **CC BY 4.0** ([LICENSE-ASSETS.md](LICENSE-ASSETS.md)). Third-party libraries and assets keep their own licenses ([NOTICE.md](NOTICE.md)).
+Code — **MIT** ([LICENSE](LICENSE)). Original assets (3D models, textures, sounds, levels) — **CC BY 4.0** ([LICENSE-ASSETS.md](LICENSE-ASSETS.md)). Third-party libraries and assets keep their own licenses ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Full texts are in [LICENSES/](LICENSES/README.md). Tripo3D models and derivatives are excluded from CC BY 4.0; see the [Bulwark asset terms](games/4-bulwark/ASSET_NOTICES.md).
 
-> Non-commercial educational project: the games were made by AI for a YouTube review. It is not affiliated with or endorsed by the owners of any games, brands or trademarks mentioned.
+> An educational project for a YouTube review. That purpose does not restrict the commercial permissions of MIT and CC BY 4.0; third-party exceptions keep their own terms. It is not affiliated with or endorsed by the owners of any games, brands or trademarks mentioned.

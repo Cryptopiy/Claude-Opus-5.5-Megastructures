@@ -79,6 +79,8 @@ Everything is procedural except the kraken. It is built from the user's two Trip
 (`3D Models/SM_Creature_Octopus.glb`, `3D Models/SM_Creature_MonsterTentacles.glb`). That breaks the "no external assets"
 rule on the user's order, and the exception is logged in `DEVELOPMENT.md` (row "2026-11-19 Wave A1 (user order)").
 
+**Licensing:** [MIT for code](../../LICENSE), [CC BY 4.0 for original assets](../../LICENSE-ASSETS.md), [third-party notices](../../THIRD_PARTY_NOTICES.md). The Tripo3D sources and kraken derivatives are excluded from CC BY 4.0; see [ASSET_NOTICES.md](ASSET_NOTICES.md).
+
 The game is made to be recorded: a cinematic autowalk at a constant 2.5 m/s walks the whole path by itself.
 
 ## How to run it

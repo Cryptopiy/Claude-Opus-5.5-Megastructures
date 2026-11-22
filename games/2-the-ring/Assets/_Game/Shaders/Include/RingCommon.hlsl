@@ -47,6 +47,7 @@ float RingLuma(float3 c) { return dot(c, float3(0.2126, 0.7152, 0.0722)); }
 float RingSafeDiv(float a, float b) { return a / (abs(b) < 1e-8 ? (b < 0.0 ? -1e-8 : 1e-8) : b); }
 
 // ---------------- hashes (PCG, Jarzynski & Olano 2020); twin of RingMath.Pcg ----------------
+// PCG: Melissa E. O'Neill / PCG Project, Apache-2.0. See repository-root THIRD_PARTY_NOTICES.md.
 uint RingPcg(uint v)
 {
     uint state = v * 747796405u + 2891336453u;

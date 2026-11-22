@@ -50,7 +50,9 @@ float ThSmoothstepIntegral(float a, float w, float y)
     return w * (u * u * u - 0.5 * u * u * u * u) + max(y - (a + w), 0.0);
 }
 
-// Hash without sine (Dave Hoskins, "Hash without Sine", MIT); input should be moderate-sized (cell indices).
+// Hash without Sine, David Hoskins, https://www.shadertoy.com/view/4djSRW
+// MIT License, Copyright (c) 2014 David Hoskins. See repository-root LICENSES/MIT-David-Hoskins.txt.
+// Input should be moderate-sized (cell indices).
 float ThHash12(float2 p)
 {
     float3 p3 = frac(p.xyx * 0.1031);
@@ -69,7 +71,8 @@ float3 ThHash32(float2 p)
     p3 += dot(p3, p3.yxz + 33.33);
     return frac((p3.xxy + p3.yzz) * p3.zyx);
 }
-// Integer hash (PCG) for exact cell hashing.
+// Integer PCG hash (Melissa E. O'Neill / PCG Project, Apache-2.0; Jarzynski & Olano, JCGT 2020).
+// See repository-root THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt.
 uint ThPcg(uint v)
 {
     uint state = v * 747796405u + 2891336453u;
@@ -138,7 +141,8 @@ float3 ThreadHorizonColor() { return ThreadSkyColor(0.0, _ThSky.x); }
 
 float ThreadLuma(float3 c) { return dot(c, float3(0.2126729, 0.7151522, 0.0721750)); } // pal:ok (Rec.709 luminance weights)
 
-// OKLab (B. Ottosson 2020, public domain): linear sRGB <-> Lab.
+// OKLab (Björn Ottosson 2020, public domain or MIT): linear sRGB <-> Lab.
+// MIT option: Copyright (c) 2020 Björn Ottosson. See repository-root LICENSES/MIT-Bjorn-Ottosson.txt.
 float3 ThreadOklabFromLinear(float3 c)
 {
     float3 lms = float3(dot(float3(0.4122214708, 0.5363325363, 0.0514459929), c),   // pal:ok (matrix row)

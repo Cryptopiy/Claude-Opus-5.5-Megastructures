@@ -13,6 +13,8 @@ that rises beyond sight, pass through a tunnel in that wall and step out onto a 
 Everything is procedural: C# geometry, handwritten URP HLSL shaders, code-generated audio. No imported assets.
 Built with Unity 6000.6.0f1, URP 17.6.0, Input System 1.20.0.
 
+**Licensing:** [MIT for code](../../LICENSE), [CC BY 4.0 for original assets](../../LICENSE-ASSETS.md), [third-party notices](../../THIRD_PARTY_NOTICES.md).
+
 ## Run
 `PLAY_WINDOWS.bat` (Windows 10/11, DX12; the game is in `Game\Windows`) or `PLAY_MAC.command` (macOS, Intel and Apple silicon; `Game/Mac/The Ring.app`). Step by step: [HOW_TO_RUN.md](HOW_TO_RUN.md). The walk takes about 10:40 at the default speed (about 11:30 in cinematic autowalk).
 

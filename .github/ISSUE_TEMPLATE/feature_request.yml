@@ -1,0 +1,43 @@
+name: 💡 Предложение / Feature request
+description: Предложить улучшение игры, кода или документации
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: game
+    attributes:
+      label: Игра или область / Game or area
+      options:
+        - Abyss
+        - The Ring
+        - Thread
+        - Bulwark
+        - Nocturne
+        - Repository / documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Какую задачу это решит? / What problem will this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предлагаемое решение / Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Альтернативы и ограничения / Alternatives and constraints
+      description: Укажите влияние на производительность, сборку, ассеты и лицензии.
+  - type: checkboxes
+    id: license
+    attributes:
+      label: Лицензии / Licensing
+      options:
+        - label: Новые сторонние материалы будут указаны с источником и лицензией, либо их не будет.
+          required: true
